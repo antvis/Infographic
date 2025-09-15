@@ -16,6 +16,7 @@ export const ItemLabel = ({
     height: 26,
     lineHeight: 1.4,
     children,
+    backgroundColor: 'rgba(199, 207, 145, 0.1)'
   };
   return <Text {...defaultProps} {...props} />;
 };
