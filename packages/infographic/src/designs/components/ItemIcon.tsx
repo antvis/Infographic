@@ -10,16 +10,13 @@ export interface ItemIconProps extends RectProps {
 
 export const ItemIcon = (props: ItemIconProps) => {
   const { indexes, size = 32, ...restProps } = props;
-  const defaultProps: RectProps = {
+  const finalProps: RectProps = {
     fill: 'lightgray',
     width: size,
     height: size,
+    ...restProps,
   };
   return (
-    <Rect
-      {...defaultProps}
-      {...restProps}
-      id={`item-${getItemKeyFromIndexes(indexes)}-icon`}
-    />
+    <Rect {...finalProps} id={`item-${getItemKeyFromIndexes(indexes)}-icon`} />
   );
 };
