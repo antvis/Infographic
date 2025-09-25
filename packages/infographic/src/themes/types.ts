@@ -11,11 +11,12 @@ export type DynamicItemAttribute<T extends object> = DynamicAttributes<
 >;
 
 export interface ThemeConfig {
+  colorBg?: string;
+  colorPrimary?: string;
   base?: {
     shape?: TextAttributes;
     text?: TextAttributes;
   };
-  background?: string;
   palette?: Palette;
   title?: TextAttributes;
   desc?: TextAttributes;

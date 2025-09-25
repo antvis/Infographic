@@ -12,7 +12,7 @@ export class Infographic {
   private parsedOptions: ParsedInfographicOptions;
 
   constructor(private options: InfographicOptions) {
-    this.parsedOptions = parseOptions(options);
+    this.parsedOptions = parseOptions(this.options);
   }
 
   render() {
@@ -26,14 +26,24 @@ export class Infographic {
 
   compose(): SVGSVGElement {
     const { design, data } = this.parsedOptions;
-    const { title, item, structure } = design;
+    const { title, item, items, structure } = design;
     const { component: Structure, props: structureProps } = structure;
     const Title = title.component;
     const Item = item.component;
+    const Items = items.map((it) => it.component);
 
     const svg = renderSVG(
-      <Structure data={data} Title={Title} Item={Item} {...structureProps} />,
+      <Structure
+        data={data}
+        Title={Title}
+        Item={Item}
+        Items={Items}
+        options={this.parsedOptions}
+        {...structureProps}
+      />,
     );
+
+    Object.assign(globalThis, { __svg__: svg });
 
     const template = parseSVG(svg);
     if (!template) {

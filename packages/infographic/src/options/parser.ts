@@ -8,7 +8,7 @@ import {
 } from '../designs';
 import { getPaletteColor } from '../renderer';
 import { generateThemeColors, getTheme, type ThemeConfig } from '../themes';
-import { isDarkColor, parsePadding } from '../utils';
+import { getItemKeyFromIndexes, isDarkColor, parsePadding } from '../utils';
 import type { InfographicOptions, ParsedInfographicOptions } from './types';
 
 export function parseOptions(
@@ -55,11 +55,15 @@ function parseDesign(
   config: InfographicOptions['design'],
   options: InfographicOptions,
 ): ParsedTemplateOptions {
-  const { structure, title, item } = config || {};
+  const { structure, title, item, items } = config || {};
+  const defaultItem = parseDesignItem(item || items?.[0], options);
   return {
     structure: parseDesignStructure(structure),
     title: parseDesignTitle(title, options),
-    item: parseDesignItem(item, options),
+    item: defaultItem,
+    items: !items
+      ? [defaultItem]
+      : items.map((item) => parseDesignItem(item, options)),
   };
 }
 
@@ -82,7 +86,7 @@ function parseDesignTitle(
   const { type, ...userProps } = normalizeWithType(config);
 
   const { themeConfig } = options;
-  const background = themeConfig?.background || '#fff';
+  const background = themeConfig?.colorBg || '#fff';
   const themeColors = generateColors(background, background);
   // use default title for now
   return {
@@ -104,15 +108,25 @@ function parseDesignItem(
     component: (props) => {
       const { indexes } = props;
       const { data, themeConfig } = options;
-      const background = themeConfig?.background || '#fff';
+      const background = themeConfig?.colorBg || '#fff';
+      const themeColors =
+        'themeColors' in props
+          ? props.themeColors
+          : generateColors(
+              getPaletteColor(
+                themeConfig?.palette,
+                indexes,
+                data?.items?.length,
+              ) || '#1890ff',
+              background,
+            );
 
-      const themeColors = generateColors(
-        getPaletteColor(themeConfig?.palette, indexes, data?.items?.length) ||
-          '#1890ff',
-        background,
-      );
-
-      return component({ ...props, themeColors, ...userProps });
+      return component({
+        ...props,
+        themeColors,
+        ...userProps,
+        id: `item-${getItemKeyFromIndexes(indexes)}`,
+      });
     },
     options: itemOptions,
   };
@@ -123,7 +137,16 @@ function parseTheme(
   themeConfig: ThemeConfig = {},
 ): ThemeConfig {
   const base = theme ? getTheme(theme) || {} : {};
-  return { ...base, ...themeConfig };
+  const parsedThemeConfig = { ...base, ...themeConfig };
+
+  if (!parsedThemeConfig.colorPrimary) {
+    parsedThemeConfig.colorPrimary = '#1677FF';
+  }
+  if (!parsedThemeConfig.palette) {
+    parsedThemeConfig.palette = [parsedThemeConfig.colorPrimary];
+  }
+
+  return parsedThemeConfig;
 }
 
 function generateColors(colorPrimary: string, background: string = '#fff') {

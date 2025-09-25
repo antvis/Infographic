@@ -99,7 +99,7 @@ function renderTemplate(svg: SVGSVGElement, options: ParsedInfographicOptions) {
   fill(svg, options);
 
   const { themeConfig } = options;
-  renderBackground(svg, themeConfig?.background);
+  renderBackground(svg, themeConfig?.colorBg);
 }
 
 function fill(svg: SVGSVGElement, options: ParsedInfographicOptions) {
