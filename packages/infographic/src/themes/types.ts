@@ -50,6 +50,8 @@ export interface ThemeColors {
   colorTextSecondary: string;
   /** 纯白色 */
   colorWhite: string;
-  /** 背景色 */
+  /** 画布背景色 */
   colorBg: string;
+  /** 卡片背景色 */
+  colorBgElevated: string;
 }

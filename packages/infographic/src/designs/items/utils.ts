@@ -25,6 +25,7 @@ export function getItemProps<T extends BaseItemProps>(
     'positionH',
     'positionV',
     'themeColors',
+    'valueFormatter',
     ...extKeys,
   ];
 

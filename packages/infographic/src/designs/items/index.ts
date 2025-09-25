@@ -1,6 +1,13 @@
+export * from './BadgeCard';
+export * from './CandyCardLite';
 export * from './ChartColumn';
+export * from './CircularProgress';
+export * from './CompactCard';
 export * from './DoneList';
+export * from './IconBadge';
+export * from './ProgressCard';
 export * from './Pyramid';
 export * from './registry';
+export * from './RibbonCard';
 export * from './SimpleItem';
 export type * from './types';

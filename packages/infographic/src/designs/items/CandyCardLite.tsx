@@ -1,0 +1,78 @@
+/** @jsxImportSource @antv/infographic-jsx */
+import type { ComponentType } from '@antv/infographic-jsx';
+import { Group, Path } from '@antv/infographic-jsx';
+import { ItemDesc, ItemIcon, ItemLabel } from '../components';
+import { registerItem } from './registry';
+import type { BaseItemProps } from './types';
+import { getItemId, getItemProps } from './utils';
+
+export interface CandyCardLiteProps extends BaseItemProps {
+  width?: number;
+  height?: number;
+}
+
+export const CandyCardLite: ComponentType<CandyCardLiteProps> = (props) => {
+  const [
+    { indexes, datum, width = 280, height = 140, themeColors },
+    restProps,
+  ] = getItemProps(props, ['width', 'height']);
+
+  return (
+    <Group {...restProps}>
+      {/* 主背景卡片 */}
+      <rect
+        x={0}
+        y={0}
+        width={width}
+        height={height}
+        rx={24}
+        ry={24}
+        fill={themeColors.colorPrimaryBg}
+        stroke={themeColors.colorPrimary}
+      />
+
+      {/* 右上角白色装饰区域 */}
+      <Path
+        x={width - 85}
+        y={0.5}
+        width={85}
+        height={65}
+        id={getItemId(indexes, 'static-decoration')}
+        d="M0.496704 0H61.7558C74.0725 0 84.0571 9.99394 84.0571 22.3221V60.1302L78.4401 62.9458C64.9296 68.1198 49.0492 65.0802 38.3968 53.9843L10.7444 25.1801C5.41799 19.6306 2.15489 12.855 0.935998 5.80383L0.496704 0Z"
+        fill="white"
+      />
+
+      {/* 主标题 */}
+      <ItemLabel
+        indexes={indexes}
+        x={20}
+        y={30}
+        width={200}
+        alignHorizontal="left"
+        alignVertical="center"
+        fill={themeColors.colorText}
+      >
+        {datum.label}
+      </ItemLabel>
+
+      {/* 副标题 */}
+      <ItemDesc
+        indexes={indexes}
+        x={20}
+        y={60}
+        width={220}
+        height={70}
+        fill={themeColors.colorTextSecondary}
+        alignHorizontal="left"
+        alignVertical="top"
+      >
+        {datum.desc}
+      </ItemDesc>
+
+      {/* 右上角插图区域 */}
+      <ItemIcon indexes={indexes} x={width - 50} y={5} width={44} height={44} />
+    </Group>
+  );
+};
+
+registerItem('candy-card-lite', { component: CandyCardLite });

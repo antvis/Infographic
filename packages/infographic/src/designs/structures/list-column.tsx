@@ -7,25 +7,22 @@ import { registerStructure } from './registry';
 import type { BaseStructureProps } from './types';
 
 export interface ListColumnProps extends BaseStructureProps {
+  width?: number;
   gap?: number;
 }
 
 export const ListColumn: ComponentType<ListColumnProps> = (props) => {
-  const { Title, Item, data, gap = 20 } = props;
+  const { Title, Item, data, gap = 20, width: contentWidth } = props;
   const { title, desc, items = [] } = data;
-
-  let width = 720;
-
-  const titleContent = Title ? <Title title={title} desc={desc} /> : null;
-  if (Title) {
-    const titleBounds = getElementBounds(titleContent);
-    width = titleBounds.width * 0.8;
-  }
 
   const btnBounds = getElementBounds(<BtnAdd indexes={[0]} />);
   const itemBounds = getElementBounds(
     <Item indexes={[0]} data={data} datum={items[0]} />,
   );
+
+  const width: number = contentWidth || itemBounds.width;
+
+  const titleContent = Title ? <Title title={title} desc={desc} /> : null;
 
   const btnElements: JSXElement[] = [];
   const itemElements: JSXElement[] = [];

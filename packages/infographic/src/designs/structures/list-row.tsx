@@ -24,7 +24,8 @@ export const ListRow: ComponentType<ListRowProps> = (props) => {
   const btnElements: JSXElement[] = [];
   const itemElements: JSXElement[] = [];
 
-  const btnY = itemBounds.height;
+  const btnAddY = (itemBounds.height - btnBounds.height) / 2;
+  const btnRemoveY = itemBounds.height;
 
   items.forEach((item, index) => {
     const itemX = (itemBounds.width + gap) * index;
@@ -43,7 +44,7 @@ export const ListRow: ComponentType<ListRowProps> = (props) => {
       <BtnRemove
         indexes={indexes}
         x={itemX + (itemBounds.width - btnBounds.width) / 2}
-        y={btnY}
+        y={btnRemoveY}
       />,
     );
 
@@ -52,7 +53,7 @@ export const ListRow: ComponentType<ListRowProps> = (props) => {
         ? -(gap + btnBounds.width) / 2
         : itemX - (gap + btnBounds.width) / 2;
 
-    btnElements.push(<BtnAdd indexes={indexes} x={btnAddX} y={btnY} />);
+    btnElements.push(<BtnAdd indexes={indexes} x={btnAddX} y={btnAddY} />);
   });
 
   if (items.length > 0) {
@@ -61,7 +62,7 @@ export const ListRow: ComponentType<ListRowProps> = (props) => {
       lastItemX + itemBounds.width + (gap - btnBounds.width) / 2;
 
     btnElements.push(
-      <BtnAdd indexes={[items.length]} x={extraAddBtnX} y={btnY} />,
+      <BtnAdd indexes={[items.length]} x={extraAddBtnX} y={btnAddY} />,
     );
   }
 

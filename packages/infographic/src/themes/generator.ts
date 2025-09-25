@@ -78,6 +78,22 @@ const generatePrimaryTextColor = (
   isDarkMode: boolean,
 ): string => selectBestTextColor(colorPrimaryBg, isDarkMode);
 
+const generateElevatedBg = (bgColor: Color, isDarkMode: boolean): string => {
+  const parsed = oklch(bgColor);
+
+  if (isDarkMode) {
+    const lightened = { ...parsed, l: Math.min(1, parsed.l + 0.1) };
+    return safeFormatHex(lightened, '#1f1f1f');
+  } else {
+    if (parsed.l > 0.95) {
+      return '#ffffff';
+    } else {
+      const lightened = { ...parsed, l: Math.min(1, parsed.l + 0.05) };
+      return safeFormatHex(lightened, '#ffffff');
+    }
+  }
+};
+
 const createBaseTheme = ({
   primaryColor,
   bgColor,
@@ -109,6 +125,7 @@ const addDerivedColors = (
       generatePrimaryBg(primaryColor, isDarkMode),
       isDarkMode,
     ),
+    colorBgElevated: generateElevatedBg(bgColor, isDarkMode),
   };
 };
 

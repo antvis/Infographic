@@ -78,7 +78,7 @@ function parseDesignTitle(
   config: TemplateOptions['title'],
   options: InfographicOptions,
 ): ParsedTemplateOptions['title'] {
-  if (!config) throw new Error('Title is required in design or template');
+  if (!config) return { component: null };
   const { type, ...userProps } = normalizeWithType(config);
 
   const { themeConfig } = options;

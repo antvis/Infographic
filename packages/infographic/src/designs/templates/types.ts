@@ -19,7 +19,7 @@ export interface TemplateOptions {
 export interface ParsedTemplateOptions {
   structure: WithProps<Structure>;
   title: {
-    component: ComponentType<any>;
+    component: ComponentType<any> | null;
   };
   item: WithProps<Item>;
 }
