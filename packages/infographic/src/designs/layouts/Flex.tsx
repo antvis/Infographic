@@ -82,7 +82,7 @@ export const FlexLayout = createLayout<FlexLayoutProps>(
       lines.push({ children, bounds: childBounds });
     }
 
-    const layoutedChildren: JSXElement[] = [];
+    const layoutChildren: JSXElement[] = [];
     let currentCrossPos = 0;
     const crossSizes: number[] = [];
 
@@ -166,7 +166,7 @@ export const FlexLayout = createLayout<FlexLayoutProps>(
         }
 
         const clonedChild = cloneElement(child, { x, y });
-        layoutedChildren.push(clonedChild);
+        layoutChildren.push(clonedChild);
 
         currentMainPos += childMainSize + itemSpacing;
       });
@@ -201,14 +201,14 @@ export const FlexLayout = createLayout<FlexLayoutProps>(
               const lineEndIndex = lineStartIndex + line.children.length;
 
               for (let i = lineStartIndex; i < lineEndIndex; i++) {
-                const child = layoutedChildren[i];
+                const child = layoutChildren[i];
                 const newProps = { ...child.props };
                 if (isRow) {
                   newProps.y = (newProps.y || 0) + currentOffset;
                 } else {
                   newProps.x = (newProps.x || 0) + currentOffset;
                 }
-                layoutedChildren[i] = cloneElement(child, newProps);
+                layoutChildren[i] = cloneElement(child, newProps);
               }
 
               currentOffset +=
@@ -225,14 +225,14 @@ export const FlexLayout = createLayout<FlexLayoutProps>(
       }
 
       if (crossOffset !== 0 && alignContent !== 'space-between') {
-        layoutedChildren.forEach((child, index) => {
+        layoutChildren.forEach((child, index) => {
           const newProps = { ...child.props };
           if (isRow) {
             newProps.y = (newProps.y || 0) + crossOffset;
           } else {
             newProps.x = (newProps.x || 0) + crossOffset;
           }
-          layoutedChildren[index] = cloneElement(child, newProps);
+          layoutChildren[index] = cloneElement(child, newProps);
         });
       }
     }
@@ -241,34 +241,34 @@ export const FlexLayout = createLayout<FlexLayoutProps>(
       if (alignItems === 'center' && !isRow) {
         // For column layout, center items horizontally
         const maxWidth = Math.max(...childBounds.map((bounds) => bounds.width));
-        layoutedChildren.forEach((child, index) => {
+        layoutChildren.forEach((child, index) => {
           const bounds = childBounds[index];
           const centerOffset = (maxWidth - bounds.width) / 2;
           const newProps = { ...child.props };
           newProps.x = (newProps.x || 0) + centerOffset;
-          layoutedChildren[index] = cloneElement(child, newProps);
+          layoutChildren[index] = cloneElement(child, newProps);
         });
       } else if (alignItems === 'center' && isRow) {
         // For row layout, center items vertically
         const maxHeight = Math.max(
           ...childBounds.map((bounds) => bounds.height),
         );
-        layoutedChildren.forEach((child, index) => {
+        layoutChildren.forEach((child, index) => {
           const bounds = childBounds[index];
           const centerOffset = (maxHeight - bounds.height) / 2;
           const newProps = { ...child.props };
           newProps.y = (newProps.y || 0) + centerOffset;
-          layoutedChildren[index] = cloneElement(child, newProps);
+          layoutChildren[index] = cloneElement(child, newProps);
         });
       }
 
-      const finalBounds = getElementsBounds(layoutedChildren);
-      props.x ??= finalBounds.x;
-      props.y ??= finalBounds.y;
+      const finalBounds = getElementsBounds(layoutChildren);
+      // props.x ??= finalBounds.x;
+      // props.y ??= finalBounds.y;
       props.width ??= finalBounds.width;
       props.height ??= finalBounds.height;
     }
 
-    return <Group {...props}>{layoutedChildren}</Group>;
+    return <Group {...props}>{layoutChildren}</Group>;
   },
 );
