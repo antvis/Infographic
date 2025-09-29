@@ -25,6 +25,7 @@ export const RibbonCard: ComponentType<RibbonCardProps> = (props) => {
       gap = 12,
       ribbonHeight = 32,
       themeColors,
+      valueFormatter,
     },
     restProps,
   ] = getItemProps(props, [
@@ -115,6 +116,7 @@ export const RibbonCard: ComponentType<RibbonCardProps> = (props) => {
         fontWeight="bold"
         fill={themeColors.colorText}
         value={value}
+        formatter={valueFormatter}
       />
 
       {/* 标签 */}

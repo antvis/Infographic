@@ -65,7 +65,7 @@ export const RoundedRectNode: ComponentType<RoundedRectNodeProps> = (props) => {
         alignVertical="center"
         fontSize={14}
         fontWeight="500"
-        fill={themeColors.colorPrimaryText}
+        fill={themeColors.colorText}
       >
         {datum.label}
       </ItemLabel>

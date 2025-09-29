@@ -13,6 +13,7 @@ export interface BaseItemProps {
   themeColors: ThemeColors;
   positionH?: 'normal' | 'center' | 'flipped';
   positionV?: 'normal' | 'center' | 'flipped';
+  valueFormatter?: (value: number) => string | number;
   [key: string]: any;
 }
 

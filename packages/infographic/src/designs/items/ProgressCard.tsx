@@ -37,6 +37,7 @@ export const ProgressCard: ComponentType<ProgressCardProps> = (props) => {
       positionH = 'normal',
       positionV = 'normal',
       themeColors,
+      valueFormatter = (v: any) => `${v}%`,
     },
     restProps,
   ] = getItemProps(props, [
@@ -149,7 +150,7 @@ export const ProgressCard: ComponentType<ProgressCardProps> = (props) => {
           fontWeight="bold"
           fill={themeColors.colorPrimary}
           value={displayValue}
-          formatter={(v) => `${v}%`}
+          formatter={valueFormatter}
         />
       )}
 

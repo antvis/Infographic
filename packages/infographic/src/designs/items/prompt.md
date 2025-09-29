@@ -45,6 +45,7 @@ export interface BaseItemProps {
   themeColors: ThemeColors;
   positionH?: 'normal' | 'center' | 'flipped';
   positionV?: 'normal' | 'center' | 'flipped';
+  valueFormatter?: (value: number) => string | number;
   [key: string]: any;
 }
 
@@ -162,7 +163,7 @@ export interface ThemeColors {
     x={0}
     y={0}
     value={datum.value}
-    formatter={(value) => `${value}%`}  // 可选的格式化函数
+    formatter={extractedProps.valueFormatter}  // 可选的格式化函数
     // 除非需要特殊样式，否则不建议设置以下属性
     // fontSize={16}
     // fontWeight="bold"
@@ -311,7 +312,7 @@ export const [ItemName]: ComponentType<[ItemName]Props> = (props) => {
 
       {/* 数值 - 条件渲染 */}
       {value !== undefined && (
-        <ItemValue indexes={indexes} value={displayValue} {...valueProps} />
+        <ItemValue indexes={indexes} value={displayValue} formatter={valueFormatter} {...valueProps} />
       )}
 
       {/* 描述 - 动态布局 */}

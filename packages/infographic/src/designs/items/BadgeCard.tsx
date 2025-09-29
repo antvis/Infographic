@@ -32,6 +32,7 @@ export const BadgeCard: ComponentType<BadgeCardProps> = (props) => {
       gap = 8,
       positionH = 'normal',
       themeColors,
+      valueFormatter,
     },
     restProps,
   ] = getItemProps(props, ['width', 'height', 'iconSize', 'badgeSize', 'gap']);
@@ -113,6 +114,7 @@ export const BadgeCard: ComponentType<BadgeCardProps> = (props) => {
           fontWeight="bold"
           fill={themeColors.colorPrimary}
           value={value}
+          formatter={valueFormatter}
         />
       )}
 

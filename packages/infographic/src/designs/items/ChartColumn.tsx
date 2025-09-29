@@ -20,7 +20,6 @@ export interface ChartColumnProps extends BaseItemProps {
   width?: number;
   height?: number;
   gap?: number;
-  valueFormatter?: (value: number) => string | number;
 }
 
 export const ChartColumn: ComponentType<ChartColumnProps> = (props) => {
@@ -34,16 +33,10 @@ export const ChartColumn: ComponentType<ChartColumnProps> = (props) => {
       width = 80,
       height = 200,
       themeColors,
-      valueFormatter = (value: any) => String(value),
+      valueFormatter,
     },
     restProps,
-  ] = getItemProps(props, [
-    'padding',
-    'width',
-    'height',
-    'gap',
-    'valueFormatter',
-  ]);
+  ] = getItemProps(props, ['padding', 'width', 'height', 'gap']);
 
   const values = data.items.map((item) => item.value ?? 0);
   const value = datum.value ?? 0;
@@ -52,7 +45,7 @@ export const ChartColumn: ComponentType<ChartColumnProps> = (props) => {
   const columnWidth = width - left - right;
   const labelBounds = getElementBounds(<ItemLabel indexes={indexes} />);
   const valueBounds = getElementBounds(
-    <ItemValue indexes={indexes} value={value} formatter={valueFormatter} />,
+    <ItemValue indexes={indexes} value={value} />,
   );
 
   const sortedValues = [...values, 0].sort((a, b) => a - b);

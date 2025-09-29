@@ -23,6 +23,7 @@ export const CompactCard: ComponentType<CompactCardProps> = (props) => {
       gap = 8,
       positionH = 'normal',
       themeColors,
+      valueFormatter,
     },
     restProps,
   ] = getItemProps(props, ['width', 'height', 'iconSize', 'gap']);
@@ -101,6 +102,7 @@ export const CompactCard: ComponentType<CompactCardProps> = (props) => {
           fontWeight="bold"
           fill={themeColors.colorPrimary}
           value={value}
+          formatter={valueFormatter}
         />
       )}
 

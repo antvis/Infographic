@@ -1,6 +1,6 @@
 /** @jsxImportSource @antv/infographic-jsx */
-import { ComponentType, Ellipse, Group, Text } from '@antv/infographic-jsx';
-import { ItemLabel } from '../components';
+import { ComponentType, Ellipse, Group } from '@antv/infographic-jsx';
+import { ItemLabel, ItemValue } from '../components';
 import { getItemProps } from '../utils';
 import { registerItem } from './registry';
 import type { BaseItemProps } from './types';
@@ -15,7 +15,15 @@ export const CircularProgress: ComponentType<CircularProgressProps> = (
   props,
 ) => {
   const [
-    { datum, indexes, size = 120, strokeWidth = 12, gap = 8, themeColors },
+    {
+      datum,
+      indexes,
+      size = 120,
+      strokeWidth = 12,
+      gap = 8,
+      themeColors,
+      valueFormatter = (value: any) => `${Math.round(value)}%`,
+    },
     restProps,
   ] = getItemProps(props, ['size', 'strokeWidth', 'gap']);
 
@@ -61,7 +69,8 @@ export const CircularProgress: ComponentType<CircularProgressProps> = (
       />
 
       {/* 中心数值 */}
-      <Text
+      <ItemValue
+        indexes={indexes}
         x={start}
         y={start}
         width={d}
@@ -71,9 +80,9 @@ export const CircularProgress: ComponentType<CircularProgressProps> = (
         fill={themeColors.colorPrimary}
         alignHorizontal="center"
         alignVertical="center"
-      >
-        {`${Math.round(value)}%`}
-      </Text>
+        value={value}
+        formatter={valueFormatter}
+      />
 
       {/* 底部标签 */}
       <ItemLabel
