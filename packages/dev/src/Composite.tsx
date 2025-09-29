@@ -15,6 +15,8 @@ const DATA: { label: string; key: string; value: Data }[] = [
   { label: '对比数据', key: 'compare', value: COMPARE_DATA },
 ];
 
+const items = getItems();
+
 const STORAGE_KEY = 'composite-form-values';
 
 const getStoredValues = () => {
@@ -49,6 +51,7 @@ export const Composite = () => {
   const [form] = Form.useForm<{
     structure: string;
     item: string;
+    item2: string;
     data: string;
     theme: 'light' | 'dark';
     colorPrimary: string;
@@ -58,7 +61,8 @@ export const Composite = () => {
 
   const options = useMemo<InfographicOptions | null>(() => {
     if (!watch) return null;
-    const { structure, item, data, theme, colorPrimary, enablePalette } = watch;
+    const { structure, item, item2, data, theme, colorPrimary, enablePalette } =
+      watch;
     if (!structure || !item || !data) return null;
 
     setStoredValues(form.getFieldsValue());
@@ -70,7 +74,7 @@ export const Composite = () => {
         structure: {
           type: structure,
         },
-        items: [{ type: item }, 'pill-badge'],
+        items: item2 ? [{ type: item }, { type: item2 }] : [{ type: item }],
       },
       data: DATA.find((it) => it.key === data)?.value,
       themeConfig: {
@@ -101,11 +105,8 @@ export const Composite = () => {
   }, [watch]);
 
   const exportOptions = useCallback(() => {
-    const { design, themeConfig } = options;
-    return {
-      design,
-      themeConfig,
-    };
+    const { design } = options;
+    return { design };
   }, [options]);
 
   return (
@@ -125,7 +126,13 @@ export const Composite = () => {
         <Form.Item label="数据项" name="item">
           <Select
             style={{ width: 200 }}
-            options={getItems().map((value) => ({ label: value, value }))}
+            options={items.map((value) => ({ label: value, value }))}
+          />
+        </Form.Item>
+        <Form.Item label="二级数据项" name="item2">
+          <Select
+            style={{ width: 200 }}
+            options={['', ...items].map((value) => ({ label: value, value }))}
           />
         </Form.Item>
         <Form.Item label="数据" name="data">
@@ -157,7 +164,17 @@ export const Composite = () => {
           <Button
             type="primary"
             onClick={() => {
-              console.log(JSON.stringify(exportOptions(), null, 2));
+              const {
+                design: { structure, items },
+              } = options;
+              const getType = (_: any) => (typeof _ === 'string' ? _ : _?.type);
+              const name = `${getType(structure)}-${items
+                .map(getType)
+                .join('-')}`;
+              const config = JSON.stringify(exportOptions());
+              const output = `'${name}': ${config}`;
+              // navigator.clipboard.writeText(output);
+              console.log(output);
             }}
           >
             导出配置

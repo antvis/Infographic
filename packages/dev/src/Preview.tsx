@@ -3,7 +3,6 @@ import { Flex, Form, Select } from 'antd';
 import { useEffect, useState } from 'react';
 import { Infographic } from './Infographic';
 import { COMPARE_DATA, HIERARCHY_DATA, LIST_DATA } from './data';
-import './template';
 
 const templates = getTemplates();
 
