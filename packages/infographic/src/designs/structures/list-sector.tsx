@@ -47,7 +47,10 @@ export const ListSector: ComponentType<ListSectorProps> = (props) => {
   const totalAngle = endAngle - startAngle;
   const isFullCircle = Math.abs(totalAngle - 360) < 0.01;
   // 非圆形时，最后一个扇形后面不需要间隔角度
-  const totalGapAngle = items.length > 0 ? gapAngle * (isFullCircle ? items.length : items.length - 1) : 0;
+  const totalGapAngle =
+    items.length > 0
+      ? gapAngle * (isFullCircle ? items.length : items.length - 1)
+      : 0;
   const totalUsableAngle = totalAngle - totalGapAngle;
   const anglePerSector = items.length > 0 ? totalUsableAngle / items.length : 0;
 
@@ -63,12 +66,16 @@ export const ListSector: ComponentType<ListSectorProps> = (props) => {
     const outerGapAngle = gapAngle;
 
     // 外圆：使用原始的间隙角度
-    const outerStartAngleRad = ((currentStartAngle + outerGapAngle / 2) * Math.PI) / 180;
-    const outerEndAngleRad = ((currentEndAngle - outerGapAngle / 2) * Math.PI) / 180;
+    const outerStartAngleRad =
+      ((currentStartAngle + outerGapAngle / 2) * Math.PI) / 180;
+    const outerEndAngleRad =
+      ((currentEndAngle - outerGapAngle / 2) * Math.PI) / 180;
 
     // 内圆：使用调整后的间隙角度，使弧长间隙与外圆相等
-    const innerStartAngleRad = ((currentStartAngle + innerGapAngle / 2) * Math.PI) / 180;
-    const innerEndAngleRad = ((currentEndAngle - innerGapAngle / 2) * Math.PI) / 180;
+    const innerStartAngleRad =
+      ((currentStartAngle + innerGapAngle / 2) * Math.PI) / 180;
+    const innerEndAngleRad =
+      ((currentEndAngle - innerGapAngle / 2) * Math.PI) / 180;
 
     const outerStartX = centerX + outerRadius * Math.cos(outerStartAngleRad);
     const outerStartY = centerY + outerRadius * Math.sin(outerStartAngleRad);
@@ -166,9 +173,13 @@ export const ListSector: ComponentType<ListSectorProps> = (props) => {
       const btnAddX =
         centerX + btnAddRadius * Math.cos(gapMidAngleRad) - btnBounds.width / 2;
       const btnAddY =
-        centerY + btnAddRadius * Math.sin(gapMidAngleRad) - btnBounds.height / 2;
+        centerY +
+        btnAddRadius * Math.sin(gapMidAngleRad) -
+        btnBounds.height / 2;
 
-      btnElements.push(<BtnAdd indexes={[index + 1]} x={btnAddX} y={btnAddY} />);
+      btnElements.push(
+        <BtnAdd indexes={[index + 1]} x={btnAddX} y={btnAddY} />,
+      );
     }
   });
 

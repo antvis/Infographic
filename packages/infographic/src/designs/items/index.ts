@@ -15,6 +15,8 @@ export * from './PillBadge';
 export * from './PlainText';
 export * from './ProgressCard';
 export * from './Pyramid';
+export * from './QuarterCircular';
+export * from './QuarterSimpleCard';
 export * from './registry';
 export * from './RibbonCard';
 export * from './RoundedRectNode';

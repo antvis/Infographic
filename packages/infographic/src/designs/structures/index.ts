@@ -9,6 +9,7 @@ export * from './list-grid';
 export * from './list-row';
 export * from './list-sector';
 export * from './list-waterfall';
+export * from './quadrant';
 export * from './registry';
 export * from './relation-circle';
 export * from './relation-network';

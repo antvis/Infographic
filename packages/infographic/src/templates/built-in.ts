@@ -381,6 +381,20 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
       items: [{ type: 'plain-text' }],
     },
   },
+  'quadrant-quarter-simple-card': {
+    design: {
+      title: 'default',
+      structure: { type: 'quadrant' },
+      items: [{ type: 'quarter-simple-card' }],
+    },
+  },
+  'quadrant-quarter-circular': {
+    design: {
+      title: 'default',
+      structure: { type: 'quadrant' },
+      items: [{ type: 'quarter-circular' }],
+    },
+  },
 };
 
 Object.entries(BUILT_IN_TEMPLATES).forEach(([name, options]) => {
