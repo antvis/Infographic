@@ -36,6 +36,15 @@ export default defineConfig({
             { text: '高级用法', link: '/guide/advanced' },
           ],
         },
+        {
+          text: '开发者指南',
+          items: [
+            { text: '项目概览', link: '/guide/dev/overview' },
+            { text: 'JSX 引擎', link: '/guide/dev/jsx-engine' },
+            { text: 'AI 辅助开发', link: '/guide/dev/ai-assisted-development' },
+            { text: 'Dev 环境', link: '/guide/dev/dev-environment' },
+          ],
+        },
       ],
       '/api/': [
         {
