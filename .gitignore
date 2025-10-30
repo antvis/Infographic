@@ -8,3 +8,5 @@ pnpm-lock.yaml
 coverage
 
 .claude
+.docusaurus
+build
