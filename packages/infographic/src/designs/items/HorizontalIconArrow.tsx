@@ -218,4 +218,7 @@ const DotLine = (props: {
   );
 };
 
-registerItem('horizontal-icon-arrow', { component: HorizontalIconArrow });
+registerItem('horizontal-icon-arrow', {
+  component: HorizontalIconArrow,
+  values: ['icon', 'label', 'desc'],
+});

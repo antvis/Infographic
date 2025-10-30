@@ -140,4 +140,7 @@ const VerticalArrow = (
   );
 };
 
-registerItem('simple-vertical-arrow', { component: SimpleVerticalArrow });
+registerItem('simple-vertical-arrow', {
+  component: SimpleVerticalArrow,
+  values: ['label', 'desc'],
+});

@@ -82,4 +82,7 @@ export const CandyCardLite: ComponentType<CandyCardLiteProps> = (props) => {
   );
 };
 
-registerItem('candy-card-lite', { component: CandyCardLite });
+registerItem('candy-card-lite', {
+  component: CandyCardLite,
+  values: ['icon', 'label', 'desc'],
+});

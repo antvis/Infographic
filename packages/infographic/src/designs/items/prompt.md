@@ -396,7 +396,39 @@ import { getItemProps, getItemId } from './utils';
 // import roundPolygon, { xxx } from 'round-polygon';
 ```
 
-### 6. 组件结构模板
+### 6. values 字段规则
+
+在 `registerItem` 时，需要传入 `values` 字段，表示当前组件使用了哪些封装组件。`values` 的值基于代码实现中使用的组件来确定：
+
+- **ItemLabel** → `"label"`
+- **ItemDesc** → `"desc"`
+- **ItemValue** → `"value"`
+- **ItemIcon** 或 **ItemIconCircle** → `"icon"`
+- **Illus** → `"illus"`
+
+**示例**：
+
+```typescript
+// 如果组件使用了 ItemLabel 和 ItemDesc
+registerItem('simple-text', {
+  component: SimpleText,
+  values: ['label', 'desc']
+});
+
+// 如果组件使用了 ItemIcon, ItemLabel, ItemValue 和 ItemDesc
+registerItem('full-card', {
+  component: FullCard,
+  values: ['icon', 'label', 'value', 'desc']
+});
+
+// 如果组件使用了 Illus, ItemLabel 和 ItemDesc
+registerItem('illus-item', {
+  component: IllusItem,
+  values: ['illus', 'label', 'desc']
+});
+```
+
+### 7. 组件结构模板
 
 ```typescript
 export interface [ItemName]Props extends BaseItemProps {
@@ -481,10 +513,13 @@ export const [ItemName]: ComponentType<[ItemName]Props> = (props) => {
   );
 };
 
-registerItem('[item-name]', { component: [ItemName] });
+registerItem('[item-name]', {
+  component: [ItemName],
+  values: ['label', 'desc', 'icon', 'value', 'illus'] // 根据组件实际使用的组件来确定
+});
 ```
 
-### 7. indexes 索引系统
+### 8. indexes 索引系统
 
 **indexes** 是数据项在信息图中的位置标识，用数组表示层级关系：
 
@@ -507,7 +542,7 @@ const indexStr = String(indexes[0] + 1).padStart(2, '0'); // "01", "02", ...
 const isEven = indexes[0] % 2 === 0;
 ```
 
-### 8. 关键设计原则
+### 9. 关键设计原则
 
 #### positionH/positionV 处理
 
@@ -687,7 +722,7 @@ const quarterCirclePath = isFlipped
 - `A rx ry x-axis-rotation large-arc-flag sweep-flag x y` - 弧线
 - `Z` - 闭合路径
 
-### 9. 约束规则
+### 10. 约束规则
 
 **严格遵守：**
 
@@ -702,8 +737,9 @@ const quarterCirclePath = isFlipped
 7. **支持 positionH/V 对齐方式**（根据设计需求）
 8. **避免出现元素坐标为负值的情况**
 9. **条件渲染可选元素**（icon、label、desc、value）
+10. **注册组件时必须提供 values 字段**，根据实际使用的封装组件确定值
 
-### 10. 命名规范
+### 11. 命名规范
 
 - 组件名：大驼峰，如 `DoneList`, `ChartColumn`
 - 注册名：小写连字符，如 `done-list`, `chart-column`

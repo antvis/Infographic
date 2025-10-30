@@ -93,7 +93,10 @@ export const CircleNode: ComponentType<CircleNodeProps> = (props) => {
   );
 };
 
-registerItem('circle-node', { component: CircleNode });
+registerItem('circle-node', {
+  component: CircleNode,
+  values: ['label'],
+});
 
 function fadeWithWhite(
   color: tinycolor.Instance,

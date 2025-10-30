@@ -160,4 +160,7 @@ export const RibbonCard: ComponentType<RibbonCardProps> = (props) => {
   );
 };
 
-registerItem('ribbon-card', { component: RibbonCard });
+registerItem('ribbon-card', {
+  component: RibbonCard,
+  values: ['icon', 'label', 'value', 'desc'],
+});

@@ -132,4 +132,7 @@ export const PillBadge: ComponentType<PillBadgeProps> = (props) => {
   );
 };
 
-registerItem('pill-badge', { component: PillBadge });
+registerItem('pill-badge', {
+  component: PillBadge,
+  values: ['label', 'desc'],
+});

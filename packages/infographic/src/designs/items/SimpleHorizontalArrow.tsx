@@ -147,4 +147,7 @@ const HorizontalArrow = (
   );
 };
 
-registerItem('simple-horizontal-arrow', { component: SimpleHorizontalArrow });
+registerItem('simple-horizontal-arrow', {
+  component: SimpleHorizontalArrow,
+  values: ['label', 'desc'],
+});

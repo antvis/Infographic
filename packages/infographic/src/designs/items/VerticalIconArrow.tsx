@@ -219,4 +219,7 @@ const DotLine = (props: {
   );
 };
 
-registerItem('vertical-icon-arrow', { component: VerticalIconArrow });
+registerItem('vertical-icon-arrow', {
+  component: VerticalIconArrow,
+  values: ['icon', 'label', 'desc'],
+});

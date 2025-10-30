@@ -190,4 +190,7 @@ export const QuarterSimpleCard: ComponentType<QuarterSimpleCardProps> = (
   );
 };
 
-registerItem('quarter-simple-card', { component: QuarterSimpleCard });
+registerItem('quarter-simple-card', {
+  component: QuarterSimpleCard,
+  values: ['icon', 'label', 'desc'],
+});

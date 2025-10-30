@@ -100,4 +100,7 @@ export const CircularProgress: ComponentType<CircularProgressProps> = (
   );
 };
 
-registerItem('circular-progress', { component: CircularProgress });
+registerItem('circular-progress', {
+  component: CircularProgress,
+  values: ['label', 'value'],
+});

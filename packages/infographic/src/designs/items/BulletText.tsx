@@ -75,4 +75,7 @@ export const BulletText: ComponentType<BulletTextProps> = (props) => {
   );
 };
 
-registerItem('bullet-text', { component: BulletText });
+registerItem('bullet-text', {
+  component: BulletText,
+  values: ['label'],
+});

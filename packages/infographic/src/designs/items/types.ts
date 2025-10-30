@@ -23,5 +23,6 @@ export interface ItemOptions extends Partial<BaseItemProps> {
 
 export interface Item<T extends BaseItemProps = BaseItemProps> {
   component: ComponentType<T>;
+  values?: string[];
   options?: ItemOptions;
 }

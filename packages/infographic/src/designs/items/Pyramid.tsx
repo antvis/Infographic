@@ -183,4 +183,7 @@ function calculateTriangleSegment(
   return { points, topWidth, bottomWidth };
 }
 
-registerItem('pyramid', { component: Pyramid });
+registerItem('pyramid', {
+  component: Pyramid,
+  values: ['icon', 'label', 'desc'],
+});
