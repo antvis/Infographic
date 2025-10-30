@@ -10,7 +10,7 @@ Infographic 是一个强大的信息图生成与渲染框架，基于 JSX 和 SV
 infographic/
 ├── packages/
 │   ├── jsx/                    # @antv/infographic-jsx
-│   ├── infographic/            # @alipay/infographic-dev
+│   ├── infographic/            # @antv/infographic
 │   ├── dev/                    # 开发预览环境
 │   └── site/                   # @antv/infographic-site
 ```
@@ -48,7 +48,7 @@ const MyGraphic = () => (
 const svg = renderSVG(<MyGraphic />);
 ```
 
-### @alipay/infographic-dev
+### @antv/infographic
 
 **核心信息图框架**，基于 jsx 引擎构建的完整信息图解决方案。
 
@@ -129,7 +129,7 @@ new Infographic({
 ```
 @antv/infographic-jsx (底层)
     ↓
-    ├── @alipay/infographic-dev (核心库)
+    ├── @antv/infographic (核心库)
     │   ↓
     │   ├── packages/dev (开发工具，依赖核心库)
     │   └── @antv/infographic-site (文档，依赖核心库)
@@ -216,7 +216,7 @@ pnpm build
 
 # 构建特定包
 pnpm --filter @antv/infographic-jsx build
-pnpm --filter @alipay/infographic-dev build
+pnpm --filter @antv/infographic build
 ```
 
 ### 5. 测试

@@ -22,7 +22,7 @@
     "prism-react-renderer": "^2.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "@alipay/infographic-dev": "workspace:^"
+    "@antv/infographic": "workspace:^"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "3.9.2",

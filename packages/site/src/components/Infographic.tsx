@@ -1,4 +1,4 @@
-import { Data, Infographic, InfographicOptions } from '@alipay/infographic-dev';
+import { Data, Infographic, InfographicOptions } from '@antv/infographic';
 import { useEffect, useRef } from 'react';
 
 export default ({

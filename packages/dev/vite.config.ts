@@ -7,6 +7,6 @@ export default defineConfig({
   },
   plugins: [tsconfigPaths()],
   optimizeDeps: {
-    include: ['@alipay/infographic-dev', '@antv/infographic-jsx'],
+    include: ['@antv/infographic', '@antv/infographic-jsx'],
   },
 });

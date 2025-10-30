@@ -1,5 +1,5 @@
 {
-  "name": "@alipay/infographic-dev",
+  "name": "@antv/infographic",
   "version": "0.0.1-beta.7",
   "description": "AntV Infographic generator and visualization library",
   "keywords": [
@@ -63,7 +63,7 @@
   },
   "publishConfig": {
     "access": "public",
-    "registry": "https://registry.antgroup-inc.cn",
+    "registry": "https://registry.npmjs.org/",
     "tag": "latest"
   }
 }
