@@ -162,5 +162,5 @@ export const RibbonCard: ComponentType<RibbonCardProps> = (props) => {
 
 registerItem('ribbon-card', {
   component: RibbonCard,
-  values: ['icon', 'label', 'value', 'desc'],
+  composites: ['icon', 'label', 'value', 'desc'],
 });

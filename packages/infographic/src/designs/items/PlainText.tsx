@@ -39,5 +39,5 @@ export const LabelText: ComponentType<LabelTextProps> = (props) => {
 
 registerItem('plain-text', {
   component: LabelText,
-  values: ['label'],
+  composites: ['label'],
 });

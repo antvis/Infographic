@@ -65,5 +65,5 @@ export const DoneList: ComponentType<DoneListProps> = (props) => {
 
 registerItem('done-list', {
   component: DoneList,
-  values: ['desc'],
+  composites: ['desc'],
 });

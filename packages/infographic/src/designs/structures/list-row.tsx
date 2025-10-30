@@ -8,10 +8,11 @@ import type { BaseStructureProps } from './types';
 
 export interface ListRowProps extends BaseStructureProps {
   gap?: number;
+  zigzag?: boolean;
 }
 
 export const ListRow: ComponentType<ListRowProps> = (props) => {
-  const { Title, Item, data, gap = 20 } = props;
+  const { Title, Item, data, gap = 20, zigzag } = props;
   const { title, desc, items = [] } = data;
 
   const titleContent = Title ? <Title title={title} desc={desc} /> : null;
@@ -37,6 +38,7 @@ export const ListRow: ComponentType<ListRowProps> = (props) => {
         data={data}
         x={itemX}
         positionH="center"
+        positionV={zigzag && index % 2 === 0 ? 'normal' : 'flipped'}
       />,
     );
 

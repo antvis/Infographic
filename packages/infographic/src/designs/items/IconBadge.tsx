@@ -121,5 +121,5 @@ export const IconBadge: ComponentType<IconBadgeProps> = (props) => {
 
 registerItem('icon-badge', {
   component: IconBadge,
-  values: ['icon', 'label'],
+  composites: ['icon', 'label'],
 });

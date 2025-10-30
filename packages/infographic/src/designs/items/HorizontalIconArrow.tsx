@@ -18,17 +18,15 @@ import type { BaseItemProps } from './types';
 
 export interface HorizontalIconArrowProps extends BaseItemProps {
   width?: number;
-  /** 翻转方向 */
-  flipped?: boolean;
 }
 
 export const HorizontalIconArrow: ComponentType<HorizontalIconArrowProps> = (
   props,
 ) => {
-  const [{ indexes, datum, width = 140, themeColors, flipped }, restProps] =
-    getItemProps(props, ['width', 'flipped']);
-
-  const positionV = indexes[0] % 2 === (flipped ? 0 : 1) ? 'normal' : 'flipped';
+  const [
+    { indexes, datum, width = 140, themeColors, positionV = 'normal' },
+    restProps,
+  ] = getItemProps(props, ['width']);
 
   const textAlignVertical = positionV === 'normal' ? 'bottom' : 'top';
   const label = (
@@ -183,7 +181,7 @@ const DotLine = (props: {
   width?: number;
   height?: number;
   fill: string;
-  positionV?: 'normal' | 'flipped';
+  positionV?: 'normal' | 'center' | 'flipped';
 }) => {
   const {
     x = 0,
@@ -220,5 +218,5 @@ const DotLine = (props: {
 
 registerItem('horizontal-icon-arrow', {
   component: HorizontalIconArrow,
-  values: ['icon', 'label', 'desc'],
+  composites: ['icon', 'label', 'desc'],
 });

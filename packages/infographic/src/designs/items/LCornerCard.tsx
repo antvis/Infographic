@@ -105,5 +105,5 @@ export const LCornerCard: ComponentType<LCornerCardProps> = (props) => {
 
 registerItem('l-corner-card', {
   component: LCornerCard,
-  values: ['icon', 'label', 'desc'],
+  composites: ['icon', 'label', 'desc'],
 });

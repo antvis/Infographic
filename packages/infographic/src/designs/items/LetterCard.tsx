@@ -165,5 +165,5 @@ export const LetterCard: ComponentType<LetterCardProps> = (props) => {
 
 registerItem('letter-card', {
   component: LetterCard,
-  values: ['label'],
+  composites: ['label'],
 });

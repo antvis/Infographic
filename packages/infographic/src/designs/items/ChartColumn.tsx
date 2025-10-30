@@ -127,5 +127,5 @@ export const ChartColumn: ComponentType<ChartColumnProps> = (props) => {
 
 registerItem('chart-column', {
   component: ChartColumn,
-  values: ['label', 'value'],
+  composites: ['label', 'value'],
 });

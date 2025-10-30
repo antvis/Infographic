@@ -75,5 +75,5 @@ export const RoundedRectNode: ComponentType<RoundedRectNodeProps> = (props) => {
 
 registerItem('rounded-rect-node', {
   component: RoundedRectNode,
-  values: ['label'],
+  composites: ['label'],
 });

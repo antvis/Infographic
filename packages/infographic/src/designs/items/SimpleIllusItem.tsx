@@ -73,5 +73,5 @@ export const SimpleIllusItem: ComponentType<SimpleIllusItemProps> = (props) => {
 
 registerItem('simple-illus', {
   component: SimpleIllusItem,
-  values: ['illus', 'label', 'desc'],
+  composites: ['illus', 'label', 'desc'],
 });

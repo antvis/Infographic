@@ -278,5 +278,5 @@ export const QuarterCircular: ComponentType<QuarterCircularProps> = (props) => {
 
 registerItem('quarter-circular', {
   component: QuarterCircular,
-  values: ['icon', 'label', 'desc'],
+  composites: ['icon', 'label', 'desc'],
 });

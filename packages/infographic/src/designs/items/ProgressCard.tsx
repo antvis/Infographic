@@ -197,5 +197,5 @@ export const ProgressCard: ComponentType<ProgressCardProps> = (props) => {
 
 registerItem('progress-card', {
   component: ProgressCard,
-  values: ['icon', 'label', 'value', 'desc'],
+  composites: ['icon', 'label', 'value', 'desc'],
 });

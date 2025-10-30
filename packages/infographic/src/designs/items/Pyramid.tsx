@@ -185,5 +185,5 @@ function calculateTriangleSegment(
 
 registerItem('pyramid', {
   component: Pyramid,
-  values: ['icon', 'label', 'desc'],
+  composites: ['icon', 'label', 'desc'],
 });

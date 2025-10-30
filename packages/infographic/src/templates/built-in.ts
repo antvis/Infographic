@@ -116,7 +116,7 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
   'list-column-vertical-icon-arrow': {
     design: {
       title: 'default',
-      structure: { type: 'list-column', gap: -5 },
+      structure: { type: 'list-column', gap: -5, zigzag: true },
       items: [{ type: 'vertical-icon-arrow' }],
     },
   },
@@ -173,7 +173,7 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
   'list-grid-horizontal-icon-arrow': {
     design: {
       title: 'default',
-      structure: { type: 'list-grid', gap: 0 },
+      structure: { type: 'list-grid', gap: 0, zigzag: true },
       items: [{ type: 'horizontal-icon-arrow' }],
     },
   },
@@ -215,7 +215,7 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
   'list-row-horizontal-icon-arrow': {
     design: {
       title: 'default',
-      structure: { type: 'list-row', gap: 0 },
+      structure: { type: 'list-row', gap: 0, zigzag: true },
       items: [{ type: 'horizontal-icon-arrow' }],
     },
   },
@@ -285,14 +285,14 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
   'list-column-simple-vertical-arrow': {
     design: {
       title: 'default',
-      structure: { type: 'list-column', gap: 0 },
+      structure: { type: 'list-column', gap: 0, zigzag: true },
       items: [{ type: 'simple-vertical-arrow' }],
     },
   },
   'list-row-simple-horizontal-arrow': {
     design: {
       title: 'default',
-      structure: { type: 'list-row', gap: 0 },
+      structure: { type: 'list-row', gap: 0, zigzag: true },
       items: [{ type: 'simple-horizontal-arrow' }],
     },
   },
@@ -356,7 +356,7 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
   'list-row-horizontal-icon-line': {
     design: {
       title: 'default',
-      structure: { type: 'list-row', gap: 0 },
+      structure: { type: 'list-row', gap: 0, zigzag: true },
       items: [{ type: 'horizontal-icon-line' }],
     },
   },

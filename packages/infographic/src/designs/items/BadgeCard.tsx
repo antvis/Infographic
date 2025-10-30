@@ -138,5 +138,5 @@ export const BadgeCard: ComponentType<BadgeCardProps> = (props) => {
 
 registerItem('badge-card', {
   component: BadgeCard,
-  values: ['icon', 'label', 'value', 'desc'],
+  composites: ['icon', 'label', 'value', 'desc'],
 });

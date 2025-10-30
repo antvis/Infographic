@@ -9,10 +9,11 @@ import type { BaseStructureProps } from './types';
 export interface ListColumnProps extends BaseStructureProps {
   width?: number;
   gap?: number;
+  zigzag?: boolean;
 }
 
 export const ListColumn: ComponentType<ListColumnProps> = (props) => {
-  const { Title, Item, data, gap = 20, width: contentWidth } = props;
+  const { Title, Item, data, gap = 20, width: contentWidth, zigzag } = props;
   const { title, desc, items = [] } = data;
 
   const btnBounds = getElementBounds(<BtnAdd indexes={[0]} />);
@@ -39,6 +40,7 @@ export const ListColumn: ComponentType<ListColumnProps> = (props) => {
         y={itemY}
         width={width}
         positionV="center"
+        positionH={zigzag && index % 2 === 0 ? 'normal' : 'flipped'}
       />,
     );
 

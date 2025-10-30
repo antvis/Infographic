@@ -224,5 +224,5 @@ export const IndexedCard: ComponentType<IndexedCardProps> = (props) => {
 
 registerItem('indexed-card', {
   component: IndexedCard,
-  values: ['label', 'desc'],
+  composites: ['label', 'desc'],
 });

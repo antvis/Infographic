@@ -95,7 +95,7 @@ export const CircleNode: ComponentType<CircleNodeProps> = (props) => {
 
 registerItem('circle-node', {
   component: CircleNode,
-  values: ['label'],
+  composites: ['label'],
 });
 
 function fadeWithWhite(

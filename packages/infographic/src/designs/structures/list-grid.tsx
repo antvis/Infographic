@@ -9,10 +9,11 @@ import type { BaseStructureProps } from './types';
 export interface ListGridProps extends BaseStructureProps {
   columns?: number;
   gap?: number;
+  zigzag?: boolean;
 }
 
 export const ListGrid: ComponentType<ListGridProps> = (props) => {
-  const { Title, Item, data, columns = 3, gap = 24 } = props;
+  const { Title, Item, data, columns = 3, gap = 24, zigzag } = props;
   const { title, desc, items = [] } = data;
 
   const titleContent = Title ? <Title title={title} desc={desc} /> : null;
@@ -46,6 +47,7 @@ export const ListGrid: ComponentType<ListGridProps> = (props) => {
         x={itemX}
         y={itemY}
         positionH="center"
+        positionV={zigzag && index % 2 === 0 ? 'normal' : 'flipped'}
       />,
     );
 

@@ -126,5 +126,5 @@ export const CompactCard: ComponentType<CompactCardProps> = (props) => {
 
 registerItem('compact-card', {
   component: CompactCard,
-  values: ['icon', 'label', 'value', 'desc'],
+  composites: ['icon', 'label', 'value', 'desc'],
 });

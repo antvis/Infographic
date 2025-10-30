@@ -25,10 +25,10 @@ export interface VerticalIconArrowProps extends BaseItemProps {
 export const VerticalIconArrow: ComponentType<VerticalIconArrowProps> = (
   props,
 ) => {
-  const [{ indexes, datum, height = 140, themeColors, flipped }, restProps] =
-    getItemProps(props, ['height', 'flipped']);
-
-  const positionH = indexes[0] % 2 === (flipped ? 0 : 1) ? 'normal' : 'flipped';
+  const [
+    { indexes, datum, height = 140, themeColors, positionH = 'normal' },
+    restProps,
+  ] = getItemProps(props, ['height']);
 
   const textAlignHorizontal = positionH === 'normal' ? 'right' : 'left';
   const label = (
@@ -184,7 +184,7 @@ const DotLine = (props: {
   width?: number;
   height?: number;
   fill: string;
-  positionH?: 'normal' | 'flipped';
+  positionH?: 'normal' | 'center' | 'flipped';
 }) => {
   const {
     x = 0,
@@ -221,5 +221,5 @@ const DotLine = (props: {
 
 registerItem('vertical-icon-arrow', {
   component: VerticalIconArrow,
-  values: ['icon', 'label', 'desc'],
+  composites: ['icon', 'label', 'desc'],
 });

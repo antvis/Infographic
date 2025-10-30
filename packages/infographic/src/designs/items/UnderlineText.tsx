@@ -140,5 +140,5 @@ export const UnderlineText: ComponentType<UnderlineTextProps> = (props) => {
 
 registerItem('underline-text', {
   component: UnderlineText,
-  values: ['label', 'desc'],
+  composites: ['label', 'desc'],
 });
