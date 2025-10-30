@@ -17,6 +17,7 @@ export default defineConfig({
       { text: '理论', link: '/theory/' },
       { text: 'API', link: '/api/' },
       { text: '示例', link: '/examples/' },
+      { text: '开发', link: '/dev/overview' },
     ],
 
     sidebar: {
@@ -36,13 +37,15 @@ export default defineConfig({
             { text: '高级用法', link: '/guide/advanced' },
           ],
         },
+      ],
+      '/dev/': [
         {
           text: '开发者指南',
           items: [
-            { text: '项目概览', link: '/guide/dev/overview' },
-            { text: 'JSX 引擎', link: '/guide/dev/jsx-engine' },
-            { text: 'AI 辅助开发', link: '/guide/dev/ai-assisted-development' },
-            { text: 'Dev 环境', link: '/guide/dev/dev-environment' },
+            { text: '项目概览', link: '/dev/overview' },
+            { text: 'JSX 引擎', link: '/dev/jsx-engine' },
+            { text: 'AI 辅助开发', link: '/dev/ai-assisted-development' },
+            { text: 'Dev 环境', link: '/dev/dev-environment' },
           ],
         },
       ],
@@ -63,14 +66,14 @@ export default defineConfig({
           ],
         },
         {
-          text: '其他',
+          text: '扩展',
           items: [{ text: '资源加载', link: '/api/resources' }],
         },
       ],
       '/examples/': [
         {
           text: '示例',
-          items: [{ text: '示例总览', link: '/examples/' }],
+          items: [{ text: '总览', link: '/examples/' }],
         },
       ],
       '/theory/': [

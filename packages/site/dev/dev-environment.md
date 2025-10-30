@@ -27,7 +27,8 @@ Dev 环境提供两个主要 Tab：
 
 用于**快速测试和组装设计资产**。
 
-![灵活组合界面](./images/composite.png)
+<!-- ![灵活组合界面](./images/composite.png) -->
+<!-- TODO: 添加灵活组合界面截图 -->
 
 **功能模块**：
 
@@ -63,7 +64,8 @@ graph LR
 
 用于**预览和测试内置模板**。
 
-![模板预览界面](./images/preview.png)
+<!-- ![模板预览界面](./images/preview.png) -->
+<!-- TODO: 添加模板预览界面截图 -->
 
 **功能模块**：
 

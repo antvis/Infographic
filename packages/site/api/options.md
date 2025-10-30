@@ -32,12 +32,12 @@ interface InfographicOptions {
 
 ```typescript
 // CSS 选择器
-container: '#my-container'
-container: '.infographic-wrapper'
+container: '#my-container';
+container: '.infographic-wrapper';
 
 // HTMLElement
-container: document.getElementById('my-container')
-container: document.querySelector('.infographic')
+container: document.getElementById('my-container');
+container: document.querySelector('.infographic');
 ```
 
 ### width
@@ -49,8 +49,8 @@ container: document.querySelector('.infographic')
 **示例：**
 
 ```typescript
-width: 800
-width: 1200
+width: 800;
+width: 1200;
 ```
 
 **说明：**
@@ -67,8 +67,8 @@ width: 1200
 **示例：**
 
 ```typescript
-height: 600
-height: 800
+height: 600;
+height: 800;
 ```
 
 **说明：**
@@ -86,29 +86,22 @@ height: 800
 
 ```typescript
 type Padding =
-  | number                                    // 统一内边距
-  | [number, number]                          // [垂直, 水平]
-  | [number, number, number, number]          // [上, 右, 下, 左]
-  | { top?: number; right?: number; bottom?: number; left?: number }
+  | number // 统一内边距
+  | [number, number] // [垂直, 水平]
+  | [number, number, number, number]; // [上, 右, 下, 左]
 ```
 
 **示例：**
 
 ```typescript
 // 所有方向 20px
-padding: 20
+padding: 20;
 
 // 上下 10px, 左右 20px
-padding: [10, 20]
+padding: [10, 20];
 
 // 上 10px, 右 20px, 下 10px, 左 20px
-padding: [10, 20, 10, 20]
-
-// 对象形式（最灵活）
-padding: { top: 10, right: 20, bottom: 10, left: 20 }
-
-// 只设置部分方向
-padding: { top: 20, bottom: 20 }
+padding: [10, 20, 10, 20];
 ```
 
 ## 设计选项
@@ -122,8 +115,8 @@ padding: { top: 20, bottom: 20 }
 **示例：**
 
 ```typescript
-template: 'process-flow'
-template: 'timeline'
+template: 'process-flow';
+template: 'timeline';
 ```
 
 **说明：**
@@ -160,9 +153,9 @@ template: 'timeline'
 **示例：**
 
 ```typescript
-theme: 'default'
-theme: 'dark'
-theme: 'corporate'
+theme: 'default';
+theme: 'dark';
+theme: 'corporate';
 ```
 
 **说明：**
@@ -203,7 +196,7 @@ interface DesignOptions {
 
 ```typescript
 design: {
-  title: 'default'  // 使用默认标题组件
+  title: 'default'; // 使用默认标题组件
 }
 ```
 
@@ -223,22 +216,13 @@ design: {
 
 - **类型：** `string | StructureConfig`
 - **可选**
-- **描述：** 结构组件配置
-
-**内置结构：**
-
-- **列表结构：** `list-column`, `list-row`, `list-grid`, `list-waterfall`, `list-sector`
-- **对比结构：** `compare-left-right`, `compare-mirror`, `compare-hierarchy-row`, `compare-hierarchy-left-right`
-- **顺序结构：** `sequence-timeline`, `sequence-steps`, `sequence-ascending-steps`, `sequence-snake-steps`, `sequence-roadmap-vertical`, `sequence-horizontal-zigzag`
-- **层级结构：** `hierarchy-tree`, `hierarchy-pyramid`
-- **关系结构：** `relation-circle`, `relation-network`
-- **统计图：** `quadrant`
+- **描述：** 结构组件配置，现阶段请查阅 TS 类型。
 
 **字符串形式：**
 
 ```typescript
 design: {
-  structure: 'list-column'
+  structure: 'list-column';
 }
 ```
 
@@ -260,23 +244,13 @@ design: {
 
 - **类型：** `string | ItemConfig`
 - **可选**
-- **描述：** 数据项组件配置
-
-**内置数据项：**
-
-- **卡片类：** `badge-card`, `compact-card`, `progress-card`, `ribbon-card`, `rounded-rect-node`, `candy-card-lite`, `l-corner-card`, `letter-card`, `quarter-simple-card`
-- **徽章类：** `icon-badge`, `pill-badge`
-- **图表类：** `chart-column`, `circular-progress`, `quarter-circular`
-- **箭头类：** `horizontal-icon-arrow`, `vertical-icon-arrow`, `simple-horizontal-arrow`, `simple-vertical-arrow`, `horizontal-icon-line`
-- **形状类：** `circle-node`, `pyramid`
-- **文本类：** `plain-text`, `bullet-text`, `done-list`
-- **其他：** `simple-item`, `simple-illus-item`
+- **描述：** 数据项组件配置，现阶段请查阅 TS 类型
 
 **字符串形式：**
 
 ```typescript
 design: {
-  item: 'badge-card'
+  item: 'badge-card';
 }
 ```
 
@@ -307,13 +281,14 @@ design: {
 ```typescript
 design: {
   items: [
-    'badge-card',  // 第一个数据项使用 badge-card
-    {              // 第二个数据项使用自定义配置的 progress-card
+    'badge-card', // 第一个数据项使用 badge-card
+    {
+      // 第二个数据项使用自定义配置的 progress-card
       type: 'progress-card',
-      width: 250
+      width: 250,
     },
-    'icon-badge'   // 第三个数据项使用 icon-badge
-  ]
+    'icon-badge', // 第三个数据项使用 icon-badge
+  ];
 }
 ```
 
@@ -328,11 +303,7 @@ const infographic = new Infographic({
   height: 600,
   data: {
     title: '产品特性',
-    items: [
-      { label: '特性 1' },
-      { label: '特性 2' },
-      { label: '特性 3' },
-    ],
+    items: [{ label: '特性 1' }, { label: '特性 2' }, { label: '特性 3' }],
   },
 });
 ```
@@ -411,7 +382,7 @@ infographic.render();
 ```typescript
 const infographic = new Infographic({
   container: '#container',
-  template: 'process-flow',  // 使用模板
+  template: 'process-flow', // 使用模板
   data: {
     title: '用户注册流程',
     items: [

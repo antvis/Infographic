@@ -12,7 +12,7 @@ Infographic 支持加载图标、插图等资源。框架不提供资源服务�
 import {
   registerResourceLoader,
   loadSVGResource,
-  Infographic
+  Infographic,
 } from '@antv/infographic';
 
 // 注册资源加载器
@@ -33,12 +33,12 @@ const infographic = new Infographic({
   data: {
     items: [
       {
-        icon: 'star',           // 资源标识符
+        icon: 'star', // 资源标识符
         label: '功能 1',
-        illus: 'chart-growth'   // 插图标识符
-      }
-    ]
-  }
+        illus: 'chart-growth', // 插图标识符
+      },
+    ],
+  },
 });
 
 infographic.render();
@@ -50,13 +50,13 @@ infographic.render();
 
 ```typescript
 // SVG 资源
-icon: 'data:image/svg+xml,<svg>...</svg>'
+icon: 'data:image/svg+xml,<svg>...</svg>';
 
 // 远程 URL
-icon: 'data:text/url,https://example.com/icon.svg'
+icon: 'data:text/url,https://example.com/icon.svg';
 
 // Base64 图片
-icon: 'data:image/png;base64,iVBORw0KG...'
+icon: 'data:image/png;base64,iVBORw0KG...';
 ```
 
 ### 详细说明
@@ -102,8 +102,7 @@ const currencyFormatter = (value: number) =>
   `¥${value.toLocaleString('zh-CN')}`;
 
 // 千位分隔符
-const thousandFormatter = (value: number) =>
-  value.toLocaleString('zh-CN');
+const thousandFormatter = (value: number) => value.toLocaleString('zh-CN');
 
 // 缩写
 const abbreviateFormatter = (value: number) => {
@@ -126,12 +125,7 @@ const infographic = new Infographic({
   container: '#container',
   width: 1200,   // 指定宽度
   height: 800,   // 指定高度
-  padding: {     // 内边距
-    top: 20,
-    right: 40,
-    bottom: 20,
-    left: 40,
-  },
+  padding: 20,     // 内边距
   data: { /* ... */ },
 });
 ```
@@ -192,7 +186,9 @@ import { Infographic, parseSVG } from '@antv/infographic';
 
 const infographic = new Infographic({
   container: '#container',
-  data: { /* ... */ },
+  data: {
+    /* ... */
+  },
 });
 
 infographic.render();
@@ -236,17 +232,11 @@ const data = {
         },
         {
           label: 'CMO',
-          children: [
-            { label: '市场部' },
-            { label: '销售部' },
-          ],
+          children: [{ label: '市场部' }, { label: '销售部' }],
         },
         {
           label: 'CFO',
-          children: [
-            { label: '财务部' },
-            { label: '审计部' },
-          ],
+          children: [{ label: '财务部' }, { label: '审计部' }],
         },
       ],
     },
@@ -271,18 +261,14 @@ const infographic = new Infographic({
 const infographic = new Infographic({
   container: '#container',
   data: {
-    items: [
-      { label: '项目 1' },
-      { label: '项目 2' },
-      { label: '项目 3' },
-    ],
+    items: [{ label: '项目 1' }, { label: '项目 2' }, { label: '项目 3' }],
   },
   design: {
     structure: 'list-column',
     items: [
-      'badge-card',                    // 一级节点使用的数据项
+      'badge-card', // 一级节点使用的数据项
       { type: 'progress-card', width: 250 }, // 二级节点使用的数据项
-      'icon-badge',                    // 三级节点使用的数据项
+      'icon-badge', // 三级节点使用的数据项
     ],
   },
 });
@@ -301,7 +287,9 @@ function createResponsiveInfographic() {
     container,
     width,
     height: width * 0.6, // 保持宽高比
-    data: { /* ... */ },
+    data: {
+      /* ... */
+    },
   });
 }
 
@@ -344,7 +332,9 @@ function getDesignForViewport() {
 const infographic = new Infographic({
   container: '#container',
   design: getDesignForViewport(),
-  data: { /* ... */ },
+  data: {
+    /* ... */
+  },
 });
 ```
 
@@ -356,7 +346,7 @@ const infographic = new Infographic({
 
 ```typescript
 // 预计算百分比
-const items = rawData.map(item => ({
+const items = rawData.map((item) => ({
   ...item,
   percentage: (item.value / total) * 100,
 }));
@@ -370,8 +360,8 @@ const items = rawData.map(item => ({
 import { loadSVGResource } from '@antv/infographic';
 
 // 预加载所有图标
-const iconUrls = data.items.map(item => item.icon);
-await Promise.all(iconUrls.map(url => loadSVGResource(url)));
+const iconUrls = data.items.map((item) => item.icon);
+await Promise.all(iconUrls.map((url) => loadSVGResource(url)));
 
 // 然后创建信息图
 const infographic = new Infographic({

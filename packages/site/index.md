@@ -19,37 +19,37 @@ import CTASection from './.vitepress/theme/components/CTASection.vue'
       <FeatureCard
         icon="🚀"
         title="开箱即用"
-        details="30+ 内置组件，15+ 结构布局，开箱即用的模板库，让你在几分钟内创建专业级信息图"
+        details="30+ 内置组件，15+ 结构布局，几分钟即可创建信息图"
         :tags="['30+ 组件', '15+ 布局']"
       />
       <FeatureCard
         icon="🎨"
-        title="强大主题系统"
-        details="多套精心设计的主题风格，支持手绘风、扁平化、渐变等多种视觉效果，一键切换"
+        title="主题系统"
+        details="支持手绘风（rough）、渐变（gradient）、图案（pattern）等风格，一键切换"
         :tags="['多主题', '可定制']"
       />
       <FeatureCard
         icon="🧩"
-        title="极致灵活"
-        details="组件化架构设计，数据、结构、样式完全解耦，支持自定义扩展，满足个性化需求"
+        title="组件化架构"
+        details="数据、结构、样式完全解耦，支持自定义扩展"
         :tags="['组件化', '可扩展']"
       />
       <FeatureCard
         icon="💎"
-        title="TypeScript 优先"
-        details="完整的类型定义和智能提示，让开发过程更加高效、安全，减少运行时错误"
+        title="TypeScript"
+        details="完整的类型定义和智能提示"
         :tags="['类型安全', '智能提示']"
       />
       <FeatureCard
         icon="⚡"
-        title="高性能渲染"
-        details="基于 SVG 的矢量渲染引擎，无损缩放，完美适配各种分辨率，支持多种导出格式"
-        :tags="['SVG', '高性能']"
+        title="SVG 渲染"
+        details="矢量渲染，无损缩放，支持导出多种格式"
+        :tags="['SVG', '矢量']"
       />
       <FeatureCard
         icon="📖"
         title="声明式 API"
-        details="简洁直观的配置语法，用数据驱动视图，专注于内容创作而非实现细节"
+        details="配置即视图，用数据驱动而非命令式操作"
         :tags="['声明式', '易用']"
       />
     </div>
@@ -61,25 +61,25 @@ import CTASection from './.vitepress/theme/components/CTASection.vue'
 <div class="why-grid">
   <div class="why-card">
     <div class="why-icon">🎯</div>
-    <h3 class="why-title">专注信息图表达</h3>
-    <p class="why-desc">与通用图表库不同，Infographic 专为信息图设计，提供了更贴合实际业务场景的组件和布局，让你的数据故事更具表现力。</p>
+    <h3 class="why-title">专为信息图设计</h3>
+    <p class="why-desc">不是通用图表库，而是专门用于信息图渲染的框架。提供了 Title、Item、Structure 等信息图特有的设计元素。</p>
   </div>
 
   <div class="why-card">
     <div class="why-icon">⚡</div>
-    <h3 class="why-title">开发效率提升 10 倍</h3>
+    <h3 class="why-title">快速开发</h3>
     <ul class="why-list">
-      <li>3 分钟创建第一个信息图</li>
-      <li>30+ 模板覆盖常见场景</li>
-      <li>零配置开箱即用</li>
-      <li>TypeScript 全面支持</li>
+      <li>声明式配置，无需手动布局</li>
+      <li>15+ 内置结构布局</li>
+      <li>TypeScript 类型支持</li>
+      <li>可自定义扩展</li>
     </ul>
   </div>
 
   <div class="why-card">
     <div class="why-icon">🎨</div>
-    <h3 class="why-title">视觉效果专业</h3>
-    <p class="why-desc">精心打磨的视觉效果，内置多种主题风格，无需设计师也能产出专业级作品。</p>
+    <h3 class="why-title">主题和样式</h3>
+    <p class="why-desc">内置主题系统，支持风格化渲染（手绘风、渐变、图案），可通过 themeConfig 自定义样式。</p>
   </div>
 </div>
 
