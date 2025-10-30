@@ -123,10 +123,12 @@ const abbreviateFormatter = (value: number) => {
 ```typescript
 const infographic = new Infographic({
   container: '#container',
-  width: 1200,   // 指定宽度
-  height: 800,   // 指定高度
-  padding: 20,     // 内边距
-  data: { /* ... */ },
+  width: 1200, // 指定宽度
+  height: 800, // 指定高度
+  padding: 20, // 内边距
+  data: {
+    /* ... */
+  },
 });
 ```
 
@@ -393,6 +395,5 @@ function createPagedInfographic(page = 0) {
 
 ## 下一步
 
-- 探索[自定义开发](/guide/custom-development)创建自己的组件
 - 查看完整 [API 文档](/api/)
 - 浏览[示例库](/examples/)获取更多灵感

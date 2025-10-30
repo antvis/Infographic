@@ -662,7 +662,6 @@ registerTheme('default-variant', {
 ## 相关资源
 
 - **[核心概念 - 主题](/guide/concepts#主题)** - 理解主题的设计原理和类型系统
-- **[示例 - 使用主题](/examples/styling/themes)** - 查看主题的实际应用效果
 - **[API 文档](/api/options#theme-config)** - 完整的主题配置 API 参考
 - **[高级用法](/guide/advanced)** - 探索更多主题技巧
 

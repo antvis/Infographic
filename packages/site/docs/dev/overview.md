@@ -298,4 +298,3 @@ infographic/
 - [框架内部原理](./framework-internals.md) - 深入理解框架实现
 - [Dev 环境使用](./dev-environment.md) - 使用开发工具
 - [AI 辅助开发](./ai-assisted-development.md) - 使用 AI 快速开发组件
-- [贡献指南](./contributing.md) - 参与项目贡献

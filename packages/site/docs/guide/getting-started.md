@@ -6,21 +6,26 @@
 
 使用你喜欢的包管理器安装 @antv/infographic：
 
-::: code-group
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-```bash [npm]
+<Tabs>
+  <TabItem value="npm" label="npm">
+```bash
 npm install @antv/infographic
 ```
-
-```bash [pnpm]
+  </TabItem>
+  <TabItem value="pnpm" label="pnpm">
+```bash
 pnpm add @antv/infographic
 ```
-
-```bash [yarn]
+  </TabItem>
+  <TabItem value="yarn" label="yarn">
+```bash
 yarn add @antv/infographic
 ```
-
-:::
+  </TabItem>
+</Tabs>
 
 ## 最简单的示例
 
@@ -124,8 +129,8 @@ const infographic = new Infographic({
     ],
   },
   design: {
-    structure: 'list-column',  // 使用纵向列表结构
-    item: 'badge-card',         // 使用徽章卡片样式
+    structure: 'list-column', // 使用纵向列表结构
+    item: 'badge-card', // 使用徽章卡片样式
   },
   theme: 'default',
   themeConfig: {

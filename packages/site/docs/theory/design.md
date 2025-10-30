@@ -85,13 +85,13 @@
 
 **字号与颜色**:
 
-> <span style="font-size: 24px; font-weight: bold; color: #222">标题</span>
+> <span style={{fontSize: '24px', fontWeight: 'bold', color: '#222'}}>标题</span>
 > <br/>
-> <span style="font-size: 16px; color: #666">标题描述</span>
+> <span style={{fontSize: '16px', color: '#666'}}>标题描述</span>
 > <br/>
-> <span style="font-size: 18px; font-weight: bold; color: #222">数据项标签</span>
+> <span style={{fontSize: '18px', fontWeight: 'bold', color: '#222'}}>数据项标签</span>
 > <br/>
-> <span style="font-size: 14px; color: #666">数据项描述</span>
+> <span style={{fontSize: '14px', color: '#666'}}>数据项描述</span>
 
 - `标题`(title): 24号,粗体,#222
 - `标题描述`(desc): 16号,常规,#666

@@ -4,7 +4,7 @@
 
 信息图（Infographic）是一种视觉化的信息呈现方式，通过图形、图表、图标等视觉元素将复杂的数据和信息转化为易于理解和记忆的内容。一个完整的信息图通常由以下几个核心要素构成。
 
-<img src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*h5VoQreEoK4AAAAAXTAAAAgAemJ7AQ/original" alt="composition">
+<img src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*h5VoQreEoK4AAAAAXTAAAAgAemJ7AQ/original" alt="composition" />
 
 ## 标题（Title）
 

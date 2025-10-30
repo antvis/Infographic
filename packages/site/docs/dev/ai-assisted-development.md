@@ -24,6 +24,7 @@ Infographic 项目为 **结构（Structure）** 和 **数据项（Item）** 的�
 **位置**：`packages/infographic/src/designs/structures/prompt.md`
 
 **内容**：
+
 - 结构分类体系（列表、对比、顺序、层级、关系、地理、统计图）
 - 技术规范（类型定义、可用组件、工具函数）
 - 代码模板（简单结构、层级结构）
@@ -40,6 +41,7 @@ Infographic 项目为 **结构（Structure）** 和 **数据项（Item）** 的�
 **位置**：`packages/infographic/src/designs/items/prompt.md`
 
 **内容**：
+
 - 数据项核心概念
 - 设计要求（完整性、自适应、数值处理）
 - 技术规范（类型定义、可用组件、工具函数）
@@ -69,13 +71,18 @@ cat packages/infographic/src/designs/items/prompt.md
 
 3. **描述你的需求**，例如：
 
-::: code-group
-```text [结构开发示例]
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs>
+  <TabItem value="structure" label="结构开发示例">
+```text
 我想开发一个循环流程结构，数据项围成一个圆形排列，
 相邻项之间有箭头连接，形成闭环。每个数据项可以添加、删除。
 ```
-
-```text [数据项开发示例]
+  </TabItem>
+  <TabItem value="dataitem" label="数据项开发示例">
+```text
 我想开发一个进度卡片数据项，显示：
 - 左侧：圆形图标
 - 中间：标题和描述文本
@@ -83,7 +90,8 @@ cat packages/infographic/src/designs/items/prompt.md
 - 底部：进度条（渐变色）
 支持主题色和水平翻转布局。
 ```
-:::
+  </TabItem>
+</Tabs>
 
 4. **AI 生成代码**，包括：
    - 完整的 TypeScript 类型定义
@@ -103,15 +111,18 @@ packages/infographic/src/designs/items/MyItem.tsx
 
 6. **添加到导出**：
 
-::: code-group
-```typescript [structures/index.ts]
+<Tabs>
+  <TabItem value="structures" label="structures/index.ts">
+```typescript
 export * from './MyStructure';
 ```
-
-```typescript [items/index.ts]
+  </TabItem>
+  <TabItem value="items" label="items/index.ts">
+```typescript
 export * from './MyItem';
 ```
-:::
+  </TabItem>
+</Tabs>
 
 7. **在 Dev 环境测试**
 
@@ -179,13 +190,15 @@ export interface RelationCircleFlowProps extends BaseStructureProps {
   radius?: number;
 }
 
-export const RelationCircleFlow: ComponentType<RelationCircleFlowProps> = (props) => {
+export const RelationCircleFlow: ComponentType<RelationCircleFlowProps> = (
+  props,
+) => {
   const { Title, Item, data, radius = 200, options } = props;
   const { title, desc, items = [] } = data;
 
   const titleContent = Title ? <Title title={title} desc={desc} /> : null;
   const itemBounds = getElementBounds(
-    <Item indexes={[0]} data={data} datum={items[0] || {}} />
+    <Item indexes={[0]} data={data} datum={items[0] || {}} />,
   );
 
   const centerX = radius;
@@ -202,25 +215,21 @@ export const RelationCircleFlow: ComponentType<RelationCircleFlowProps> = (props
     const itemY = centerY + radius * Math.sin(angle) - itemBounds.height / 2;
 
     itemElements.push(
-      <Item
-        indexes={[index]}
-        datum={item}
-        data={data}
-        x={itemX}
-        y={itemY}
-      />
+      <Item indexes={[index]} datum={item} data={data} x={itemX} y={itemY} />,
     );
 
     btnElements.push(
-      <BtnRemove indexes={[index]} x={itemX + itemBounds.width} y={itemY} />
+      <BtnRemove indexes={[index]} x={itemX + itemBounds.width} y={itemY} />,
     );
 
     // 箭头连接
     if (index < items.length - 1 || items.length > 0) {
       const nextIndex = (index + 1) % items.length;
       const nextAngle = (nextIndex * 2 * Math.PI) / items.length - Math.PI / 2;
-      const arrowX = centerX + (radius * 0.7) * Math.cos(angle + Math.PI / items.length);
-      const arrowY = centerY + (radius * 0.7) * Math.sin(angle + Math.PI / items.length);
+      const arrowX =
+        centerX + radius * 0.7 * Math.cos(angle + Math.PI / items.length);
+      const arrowY =
+        centerY + radius * 0.7 * Math.sin(angle + Math.PI / items.length);
 
       decorElements.push(
         <SimpleArrow
@@ -229,8 +238,8 @@ export const RelationCircleFlow: ComponentType<RelationCircleFlowProps> = (props
           width={25}
           height={25}
           colorPrimary={colorPrimary}
-          rotation={(angle + Math.PI / items.length) * 180 / Math.PI + 90}
-        />
+          rotation={((angle + Math.PI / items.length) * 180) / Math.PI + 90}
+        />,
       );
     }
   });
@@ -306,6 +315,7 @@ npm run dev
 **Step 4：测试优化**
 
 在 Dev 环境中：
+
 - 测试不同数据（有/无图标、有/无数值）
 - 测试主题色适配
 - 测试 positionH 翻转
@@ -316,12 +326,12 @@ npm run dev
 
 传统方式可能需要几小时，AI 辅助只需几分钟：
 
-| 任务 | 传统开发 | AI 辅助 |
-|------|----------|---------|
-| 理解规范 | 30 分钟 | 0 分钟（AI 已理解） |
-| 编写代码 | 2-3 小时 | 2-5 分钟 |
-| 调试测试 | 1 小时 | 10-20 分钟 |
-| **总计** | **3-4.5 小时** | **15-25 分钟** |
+| 任务     | 传统开发       | AI 辅助             |
+| -------- | -------------- | ------------------- |
+| 理解规范 | 30 分钟        | 0 分钟（AI 已理解） |
+| 编写代码 | 2-3 小时       | 2-5 分钟            |
+| 调试测试 | 1 小时         | 10-20 分钟          |
+| **总计** | **3-4.5 小时** | **15-25 分钟**      |
 
 ### 2. 高质量代码
 
@@ -363,12 +373,14 @@ npm run dev
 
 提供清晰、具体的需求描述：
 
-::: code-group
-```text [❌ 不够明确]
+<Tabs>
+  <TabItem value="bad" label="不够明确">
+```text
 帮我做一个卡片
 ```
-
-```text [✅ 清晰具体]
+  </TabItem>
+  <TabItem value="good" label="清晰具体">
+```text
 帮我开发一个统计卡片数据项，要求：
 - 左上角：图标（40x40）
 - 右上角：标签文本
@@ -377,7 +389,8 @@ npm run dev
 - 卡片有圆角和阴影
 - 支持水平翻转布局
 ```
-:::
+  </TabItem>
+</Tabs>
 
 ### 2. 参考现有组件
 
@@ -423,6 +436,7 @@ npm run dev
 ### Q: AI 生成的代码有错误怎么办？
 
 A:
+
 1. 检查是否提供了完整的提示词
 2. 描述具体的错误信息，让 AI 修正
 3. 参考现有组件的实现
@@ -431,6 +445,7 @@ A:
 ### Q: 如何让生成的代码更符合项目风格？
 
 A:
+
 1. 在提示词中引用现有组件："参考 BadgeCard 的实现"
 2. 明确指定使用的组件和工具函数
 3. 要求遵循命名规范
@@ -438,6 +453,7 @@ A:
 ### Q: AI 能生成复杂的布局吗？
 
 A: 可以，但建议：
+
 1. 先生成基础版本
 2. 测试效果
 3. 逐步添加复杂特性
@@ -446,6 +462,7 @@ A: 可以，但建议：
 ### Q: 生成的组件性能如何？
 
 A: 按照提示词生成的代码已经遵循最佳实践：
+
 - 使用 `getElementBounds` 缓存
 - 使用 `forEach` 而非 `map`
 - 避免不必要的计算
@@ -453,10 +470,12 @@ A: 按照提示词生成的代码已经遵循最佳实践：
 ### Q: 可以用 AI 生成其他类型的组件吗？
 
 A: 目前提供的提示词专注于：
+
 - 数据项（Items）
 - 结构（Structures）
 
 其他类型（如布局、装饰元素）也可以让 AI 帮助，但需要：
+
 1. 提供相关的技术规范
 2. 参考现有实现
 3. 更多手动调整

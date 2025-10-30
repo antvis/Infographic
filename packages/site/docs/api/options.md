@@ -139,7 +139,7 @@ template: 'timeline';
 - **必需**
 - **描述：** 信息图数据
 
-详见[数据结构 API](/api/data)
+详见[数据](/guide/concepts#数据)
 
 ## 主题选项
 
@@ -169,7 +169,7 @@ theme: 'corporate';
 - **可选**
 - **描述：** 主题配置，用于自定义或覆盖主题
 
-详见[主题 API](/api/theme)
+详见[主题](/guide/concepts#主题)
 
 ## DesignOptions
 
@@ -401,7 +401,7 @@ const infographic = new Infographic({
 ## 相关链接
 
 - [Infographic API](/api/infographic) - 主类 API
-- [数据结构](/api/data) - 数据格式定义
+- [数据](/guide/concepts#数据) - 数据格式定义
 - [结构组件](/api/structures) - 结构组件列表
 - [数据项组件](/api/items) - 数据项组件列表
-- [主题 API](/api/theme) - 主题配置
+- [主题](/guide/concepts#主题) - 主题配置

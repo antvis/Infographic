@@ -294,4 +294,4 @@ function parseResourceConfig(
 - [核心概念 - 资源](/guide/concepts#资源) - 理解资源的设计原理和工作机制
 - [资源加载器指南](/guide/resource-loader) - 详细的实践指南和使用示例
 - [配置选项](/api/options) - 了解如何配置资源
-- [数据结构](/api/data) - 数据格式说明
+- [数据](/guide/concepts#数据) - 数据格式说明
