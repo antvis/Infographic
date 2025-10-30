@@ -24,11 +24,7 @@ export default ({
     instanceRef.current = instance;
   }, [options]);
 
-  return (
-    <div ref={ref} style={{ width: '100%', height: '100%' }}>
-      AAA
-    </div>
-  );
+  return <div ref={ref} style={{ width: '100%', height: '100%' }} />;
 };
 
 const DATA: Record<string, Data> = {
