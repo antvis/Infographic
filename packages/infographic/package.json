@@ -11,19 +11,19 @@
   "author": "Aarebecca",
   "exports": {
     ".": {
+      "types": "./esm/index.d.ts",
       "import": "./esm/index.js",
-      "require": "./lib/index.js",
-      "types": "./esm/index.d.ts"
+      "require": "./lib/index.js"
     },
     "./jsx-runtime": {
+      "types": "./esm/jsx-runtime.d.ts",
       "import": "./esm/jsx-runtime.js",
-      "require": "./lib/jsx-runtime.js",
-      "types": "./esm/jsx-runtime.d.ts"
+      "require": "./lib/jsx-runtime.js"
     },
     "./jsx-dev-runtime": {
+      "types": "./esm/jsx-runtime.d.ts",
       "import": "./esm/jsx-runtime.js",
-      "require": "./lib/jsx-runtime.js",
-      "types": "./esm/jsx-runtime.d.ts"
+      "require": "./lib/jsx-runtime.js"
     }
   },
   "main": "./lib/index.js",
