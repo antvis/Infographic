@@ -50,7 +50,7 @@ describe('jsx layout components', () => {
     expect(renderSVG(<Node />)).toBe(
       minifySvg(
         `
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 10 90 50">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 10 90 50">
   <g y="10" x="0" width="90" height="50" transform="translate(0, 10)">
     <rect width="30" height="40" fill="red" stroke-width="10" x="0" />
     <ellipse width="50" height="50" fill="blue" x="40" cx="65" cy="25" rx="25" ry="25" />
@@ -74,7 +74,7 @@ describe('jsx layout components', () => {
     expect(renderSVG(<Node />)).toBe(
       minifySvg(
         `
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 150 60">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 60">
   <g x="0" y="0" width="150" height="60">
     <g y="10" x="0" width="90" height="50" transform="translate(0, 10)">
       <rect width="30" height="40" fill="red" stroke-width="10" x="0" />
@@ -100,7 +100,7 @@ describe('jsx layout components', () => {
     expect(renderSVG(<Node />)).toBe(
       minifySvg(
         `
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 135 50">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 135 50">
   <g x="0" y="0" width="135" height="50">
     <rect width="30" height="40" fill="red" stroke-width="10" x="0" />
     <g x="40" y="20" width="35">
@@ -151,7 +151,7 @@ describe('jsx layout components', () => {
     expect(renderSVG(<Node />)).toBe(
       minifySvg(
         `
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="10 0 60 95">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 0 60 95">
   <g x="10" y="0" width="60" height="95" transform="translate(10, 0)">
     <rect width="40" height="20" fill="red" stroke-width="5" y="0" />
     <ellipse width="60" height="30" fill="blue" y="30" cx="30" cy="45" rx="30" ry="15" />
@@ -173,7 +173,7 @@ describe('jsx layout components', () => {
     expect(renderSVG(<Node />)).toBe(
       minifySvg(
         `
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 200 100">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100">
   <g width="200" height="100" x="0" y="0">
     <rect width="30" height="40" fill="red" x="0" />
     <ellipse width="50" height="50" fill="blue" x="40" cx="65" cy="25" rx="25" ry="25" />
@@ -195,7 +195,7 @@ describe('jsx layout components', () => {
     expect(renderSVG(<Node />)).toBe(
       minifySvg(
         `
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 130 30">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 30">
   <g x="0" y="0" width="130" height="30">
     <rect width="30" height="30" fill="red" x="0" />
     <rect width="30" height="30" fill="blue" x="50" />
@@ -212,7 +212,7 @@ describe('jsx layout components', () => {
     expect(renderSVG(<Node />)).toBe(
       minifySvg(
         `
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 0 0">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0">
   <g x="0" y="0" width="0" height="0" />
 </svg>`,
       ),
@@ -229,7 +229,7 @@ describe('jsx layout components', () => {
     expect(renderSVG(<Node />)).toBe(
       minifySvg(
         `
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 50 50">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
   <g x="0" y="0" width="50" height="50">
     <rect width="50" height="50" fill="purple" y="0" />
   </g>
@@ -291,7 +291,7 @@ describe('jsx layout components', () => {
     expect(renderSVG(<Node />)).toBe(
       minifySvg(
         `
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 45 70">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 70">
   <g x="0" y="0" width="45" height="70">
     <rect width="20" height="20" fill="red" x="0" y="0" />
     <rect width="20" height="20" fill="blue" x="25" y="0" />

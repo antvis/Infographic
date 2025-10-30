@@ -21,7 +21,7 @@ describe('defs element', () => {
 
     expect(renderSVG(<Element />)).toBe(
       minifySvg(`
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 100">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
   <defs>
     <linearGradient id="linear-color" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#ff0000" />
@@ -55,7 +55,7 @@ describe('defs element', () => {
 
     expect(renderSVG(<Element />)).toBe(
       minifySvg(`
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 110 50">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 50">
   <defs>
     <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#ff0000" />
@@ -77,7 +77,14 @@ describe('defs element', () => {
       return (
         <>
           <Defs>
-            <pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+            <pattern
+              id="dots"
+              x="0"
+              y="0"
+              width="20"
+              height="20"
+              patternUnits="userSpaceOnUse"
+            >
               <circle cx="10" cy="10" r="3" fill="#000" />
             </pattern>
           </Defs>
@@ -88,7 +95,7 @@ describe('defs element', () => {
 
     expect(renderSVG(<Element />)).toBe(
       minifySvg(`
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 60">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60">
   <defs>
     <pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
       <circle cx="10" cy="10" r="3" fill="#000" />
@@ -115,7 +122,7 @@ describe('defs element', () => {
 
     expect(renderSVG(<Element />)).toBe(
       minifySvg(`
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 80 80">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
   <defs>
     <filter id="blur">
       <feGaussianBlur in="SourceGraphic" stdDeviation="3" />
@@ -142,7 +149,7 @@ describe('defs element', () => {
 
     expect(renderSVG(<Element />)).toBe(
       minifySvg(`
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 100">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
   <defs>
     <clipPath id="clip">
       <circle cx="50" cy="50" r="40" />
@@ -165,7 +172,7 @@ describe('defs element', () => {
 
     expect(renderSVG(<Element />)).toBe(
       minifySvg(`
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 50 50">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
   <rect fill="green" width="50" height="50" />
 </svg>`),
     );
@@ -182,7 +189,14 @@ describe('defs element', () => {
             </linearGradient>
           </Defs>
           <Defs>
-            <pattern id="pattern1" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+            <pattern
+              id="pattern1"
+              x="0"
+              y="0"
+              width="10"
+              height="10"
+              patternUnits="userSpaceOnUse"
+            >
               <rect width="5" height="5" fill="#000" />
             </pattern>
           </Defs>
@@ -194,7 +208,7 @@ describe('defs element', () => {
 
     expect(renderSVG(<Element />)).toBe(
       minifySvg(`
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 110 30">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 30">
   <defs>
     <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#ff0000" />
