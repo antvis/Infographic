@@ -193,7 +193,7 @@ export const SequenceCircleArrows: ComponentType<SequenceCircleArrowsProps> = (
     const CIRCLE_SMALL_W = Math.max(CIRCLE_BIG_W - 20, 20);
     const ICON_SIZE = Math.max(CIRCLE_SMALL_W * 0.4, 16);
 
-    const color = getPaletteColor(options, indexes);
+    const color = getPaletteColor(options, indexes) || colorPrimary;
 
     const dx = endPos.x - startPos.x;
     const dy = endPos.y - startPos.y;

@@ -42,7 +42,7 @@ export const QuarterSimpleCard: ComponentType<QuarterSimpleCardProps> = (
     'padding',
     'borderRadius',
   ]);
-  console.log(themeColors);
+
   // 计算内容区域
   const contentWidth = width - padding * 2;
   const contentX = padding;
