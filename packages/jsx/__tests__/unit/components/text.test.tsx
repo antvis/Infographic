@@ -13,7 +13,7 @@ describe('Text', () => {
 
     expect(renderSVG(text)).toBe(
       minifySvg(`
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 50">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
   <g width="100" height="50">
     <rect width="100" height="50" fill="none" />
     <text fill="black" font-size="14" text-anchor="start" dominant-baseline="hanging" data-text-alignment="LEFT TOP" width="100" height="50">Hello World</text>
@@ -46,7 +46,7 @@ describe('Text', () => {
 
     expect(renderSVG(text)).toBe(
       minifySvg(`
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 50">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
   <g width="100" height="50">
     <rect width="100" height="50" fill="none" />
     <text fill="red" font-size="12" text-anchor="start" dominant-baseline="hanging" data-text-alignment="LEFT TOP" line-height="1.2" data-word-wrap="true" width="100" height="50" font-family="Arial" font-style="italic" font-weight="bold" text-decoration="underline" letter-spacing="2" word-spacing="4" opacity="0.8">Hello World</text>
@@ -70,7 +70,7 @@ describe('Text', () => {
 
     expect(renderSVG(text)).toBe(
       minifySvg(`
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 50">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
   <g width="100" height="50">
     <rect width="100" height="50" fill="none" />
     <text x="50" y="25" fill="black" font-size="14" text-anchor="middle" dominant-baseline="central" data-text-alignment="CENTER CENTER" width="100" height="50">Hello World</text>
@@ -94,7 +94,7 @@ describe('Text', () => {
 
     expect(renderSVG(text)).toBe(
       minifySvg(`
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 50">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
   <g width="100" height="50">
     <rect width="100" height="50" fill="none" />
     <text x="100" y="50" fill="black" font-size="14" text-anchor="end" dominant-baseline="text-after-edge" data-text-alignment="RIGHT BOTTOM" width="100" height="50">Hello World</text>
@@ -113,7 +113,7 @@ describe('Text', () => {
 
     expect(renderSVG(text)).toBe(
       minifySvg(`
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 50">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
   <g width="100" height="50">
     <rect width="100" height="50" fill="red" />
     <text fill="black" font-size="14" text-anchor="start" dominant-baseline="hanging" data-text-alignment="LEFT TOP" width="100" height="50">Hello World</text>

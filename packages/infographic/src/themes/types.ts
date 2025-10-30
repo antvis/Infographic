@@ -11,10 +11,15 @@ export type DynamicItemAttribute<T extends object> = DynamicAttributes<
 >;
 
 export interface ThemeConfig {
+  /** 背景色 */
   colorBg?: string;
+  /** 整体主色 */
   colorPrimary?: string;
+  /** 全局基础样式 */
   base?: {
+    /** 全局图形配置 */
     shape?: ShapeAttributes;
+    /** 全局文本配置 */
     text?: TextAttributes;
   };
   palette?: Palette;
@@ -28,6 +33,7 @@ export interface ThemeConfig {
     value?: DynamicItemAttribute<TextAttributes>;
     shape?: DynamicItemAttribute<ShapeAttributes>;
   };
+  /** 风格化 */
   stylize?: StylizeConfig | null;
   elements?: Record<string, ShapeAttributes | TextAttributes>;
 }

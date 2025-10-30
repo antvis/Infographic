@@ -75,7 +75,7 @@ describe('render jsx svg', () => {
       renderSVG(element, { x: -50, y: -50, width: 200, height: 200 }),
     ).toBe(
       minifySvg(`
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="-50 -50 200 200">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-50 -50 200 200">
   <rect width="100" height="100" fill="red" />
 </svg>`),
     );
@@ -91,7 +91,7 @@ describe('render jsx svg', () => {
 
     expect(renderSVG(element)).toBe(
       minifySvg(`
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 110 50">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 50">
   <rect width="50" height="50" fill="red" />
   <ellipse x="60" width="50" height="50" fill="blue" cx="85" cy="25" rx="25" ry="25" />
 </svg>`),
@@ -110,7 +110,7 @@ describe('render jsx svg', () => {
 
     expect(renderSVG(element)).toBe(
       minifySvg(`
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="15 10 55 35">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="15 10 55 35">
   <g x="10" y="10" transform="translate(10, 10)">
     <g x="5" y="5" transform="translate(5, 5)">
       <rect width="30" height="30" fill="red" />

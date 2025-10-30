@@ -1,5 +1,5 @@
 {
-  "name": "@alipay/infographic-dev",
+  "name": "@antv/infographic",
   "version": "0.0.1-beta.7",
   "description": "AntV Infographic generator and visualization library",
   "keywords": [
@@ -11,19 +11,19 @@
   "author": "Aarebecca",
   "exports": {
     ".": {
+      "types": "./esm/index.d.ts",
       "import": "./esm/index.js",
-      "require": "./lib/index.js",
-      "types": "./esm/index.d.ts"
+      "require": "./lib/index.js"
     },
     "./jsx-runtime": {
+      "types": "./esm/jsx-runtime.d.ts",
       "import": "./esm/jsx-runtime.js",
-      "require": "./lib/jsx-runtime.js",
-      "types": "./esm/jsx-runtime.d.ts"
+      "require": "./lib/jsx-runtime.js"
     },
     "./jsx-dev-runtime": {
+      "types": "./esm/jsx-runtime.d.ts",
       "import": "./esm/jsx-runtime.js",
-      "require": "./lib/jsx-runtime.js",
-      "types": "./esm/jsx-runtime.d.ts"
+      "require": "./lib/jsx-runtime.js"
     }
   },
   "main": "./lib/index.js",
@@ -63,7 +63,7 @@
   },
   "publishConfig": {
     "access": "public",
-    "registry": "https://registry.antgroup-inc.cn",
+    "registry": "https://registry.npmjs.org/",
     "tag": "latest"
   }
 }

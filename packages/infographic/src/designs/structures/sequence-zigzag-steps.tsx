@@ -267,11 +267,7 @@ export const SequenceZigzagSteps: ComponentType<SequenceZigzagStepsProps> = (
       <Defs>{GlowFilter}</Defs>
       {titleContent}
       <Group x={0} y={0}>
-        <Group>
-          {pathElements}
-          {decoElements}
-          {iconElements}
-        </Group>
+        <Group>{[...pathElements, ...decoElements, ...iconElements]}</Group>
         <ItemsGroup>{itemElements}</ItemsGroup>
         <BtnsGroup>{btnElements}</BtnsGroup>
       </Group>
