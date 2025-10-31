@@ -78,7 +78,10 @@ function parseDesignStructure(
   const structure = getStructure(type);
   if (!structure) throw new Error(`Structure ${type} not found`);
   const { component } = structure;
-  return { component: (props) => component({ ...props, ...userProps }) };
+  return {
+    ...structure,
+    component: (props) => component({ ...props, ...userProps }),
+  };
 }
 
 function parseDesignTitle(
@@ -108,6 +111,7 @@ function parseDesignItem(
   if (!item) throw new Error(`Item ${type} not found`);
   const { component, options: itemOptions } = item;
   return {
+    ...item,
     component: (props) => {
       const { indexes } = props;
       const { data, themeConfig } = options;

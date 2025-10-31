@@ -6,7 +6,7 @@ import {
   parseOptions,
 } from '../options';
 import { Renderer } from '../renderer';
-import { parseSVG } from '../utils';
+import { getTypes, parseSVG } from '../utils';
 
 export class Infographic {
   private parsedOptions: ParsedInfographicOptions;
@@ -55,6 +55,13 @@ export class Infographic {
       throw new Error('Failed to parse SVG template');
     }
     return template;
+  }
+
+  getTypes() {
+    const design = this.parsedOptions.design;
+    const structure = design.structure.composites || [];
+    const items = design.items.map((it) => it.composites || []);
+    return getTypes({ structure, items });
   }
 
   private setView() {
