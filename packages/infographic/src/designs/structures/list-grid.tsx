@@ -112,4 +112,7 @@ export const ListGrid: ComponentType<ListGridProps> = (props) => {
   );
 };
 
-registerStructure('list-grid', { component: ListGrid });
+registerStructure('list-grid', {
+  component: ListGrid,
+  composites: ['title', 'item'],
+});

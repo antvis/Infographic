@@ -185,4 +185,7 @@ export const SequenceSnakeSteps: ComponentType<SequenceSnakeStepsProps> = (
   );
 };
 
-registerStructure('sequence-snake-steps', { component: SequenceSnakeSteps });
+registerStructure('sequence-snake-steps', {
+  component: SequenceSnakeSteps,
+  composites: ['title', 'item'],
+});

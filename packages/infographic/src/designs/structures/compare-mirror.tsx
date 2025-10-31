@@ -181,4 +181,7 @@ export const CompareMirror: ComponentType<CompareMirrorProps> = (props) => {
   );
 };
 
-registerStructure('compare-mirror', { component: CompareMirror });
+registerStructure('compare-mirror', {
+  component: CompareMirror,
+  composites: ['title', 'item'],
+});

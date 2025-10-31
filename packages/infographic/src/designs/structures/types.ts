@@ -17,6 +17,7 @@ export interface BaseStructureProps {
 
 export interface Structure {
   component: ComponentType<BaseStructureProps>;
+  composites: string[];
 }
 
 export interface StructureOptions {

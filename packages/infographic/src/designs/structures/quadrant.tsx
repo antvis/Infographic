@@ -248,4 +248,7 @@ function calculateQuadrantPositions(
   ];
 }
 
-registerStructure('quadrant', { component: Quadrant });
+registerStructure('quadrant', {
+  component: Quadrant,
+  composites: ['title', 'item'],
+});

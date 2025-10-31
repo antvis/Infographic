@@ -150,4 +150,7 @@ export const CompareLeftRight: ComponentType<CompareLeftRightProps> = (
   );
 };
 
-registerStructure('compare-left-right', { component: CompareLeftRight });
+registerStructure('compare-left-right', {
+  component: CompareLeftRight,
+  composites: ['title', 'item'],
+});

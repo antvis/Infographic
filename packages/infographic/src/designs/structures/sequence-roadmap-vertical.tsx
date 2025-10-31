@@ -313,4 +313,5 @@ export const SequenceRoadmapVertical: ComponentType<
 
 registerStructure('sequence-roadmap-vertical', {
   component: SequenceRoadmapVertical,
+  composites: ['title', 'item'],
 });

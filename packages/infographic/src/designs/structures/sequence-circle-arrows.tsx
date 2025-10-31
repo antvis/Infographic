@@ -396,4 +396,5 @@ export const SequenceCircleArrows: ComponentType<SequenceCircleArrowsProps> = (
 
 registerStructure('sequence-circle-arrows', {
   component: SequenceCircleArrows,
+  composites: ['title', 'item'],
 });

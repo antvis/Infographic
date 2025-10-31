@@ -185,4 +185,7 @@ export const RelationNetwork: ComponentType<RelationNetworkProps> = (props) => {
   );
 };
 
-registerStructure('relation-network', { component: RelationNetwork });
+registerStructure('relation-network', {
+  component: RelationNetwork,
+  composites: ['title', 'item'],
+});

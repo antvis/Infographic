@@ -275,4 +275,7 @@ export const SequenceZigzagSteps: ComponentType<SequenceZigzagStepsProps> = (
   );
 };
 
-registerStructure('sequence-zigzag-steps', { component: SequenceZigzagSteps });
+registerStructure('sequence-zigzag-steps', {
+  component: SequenceZigzagSteps,
+  composites: ['title', 'item'],
+});

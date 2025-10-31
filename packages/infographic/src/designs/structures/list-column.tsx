@@ -83,4 +83,7 @@ export const ListColumn: ComponentType<ListColumnProps> = (props) => {
   );
 };
 
-registerStructure('list-column', { component: ListColumn });
+registerStructure('list-column', {
+  component: ListColumn,
+  composites: ['title', 'item'],
+});

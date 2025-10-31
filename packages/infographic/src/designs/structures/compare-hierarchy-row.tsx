@@ -214,4 +214,7 @@ export const CompareHierarchyRow: ComponentType<CompareHierarchyRowProps> = (
   );
 };
 
-registerStructure('compare-hierarchy-row', { component: CompareHierarchyRow });
+registerStructure('compare-hierarchy-row', {
+  component: CompareHierarchyRow,
+  composites: ['title', 'item'],
+});

@@ -77,4 +77,5 @@ export const SequenceAscendingSteps: ComponentType<
 
 registerStructure('sequence-ascending-steps', {
   component: SequenceAscendingSteps,
+  composites: ['title', 'item'],
 });

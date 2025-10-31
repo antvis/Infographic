@@ -309,4 +309,5 @@ export const SequenceHorizontalZigzag: ComponentType<
 
 registerStructure('sequence-horizontal-zigzag', {
   component: SequenceHorizontalZigzag,
+  composites: ['title', 'item'],
 });

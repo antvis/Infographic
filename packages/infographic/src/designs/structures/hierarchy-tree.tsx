@@ -285,4 +285,7 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
   );
 };
 
-registerStructure('hierarchy-tree', { component: HierarchyTree });
+registerStructure('hierarchy-tree', {
+  component: HierarchyTree,
+  composites: ['title', 'item'],
+});

@@ -134,4 +134,7 @@ export const ListWaterfall: ComponentType<ListWaterfallProps> = (props) => {
   );
 };
 
-registerStructure('list-waterfall', { component: ListWaterfall });
+registerStructure('list-waterfall', {
+  component: ListWaterfall,
+  composites: ['title', 'item'],
+});

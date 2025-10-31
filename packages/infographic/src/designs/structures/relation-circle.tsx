@@ -144,4 +144,7 @@ export const RelationCircle: ComponentType<RelationCircleProps> = (props) => {
   );
 };
 
-registerStructure('relation-circle', { component: RelationCircle });
+registerStructure('relation-circle', {
+  component: RelationCircle,
+  composites: ['title', 'item'],
+});

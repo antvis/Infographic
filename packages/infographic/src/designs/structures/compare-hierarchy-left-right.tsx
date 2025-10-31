@@ -358,4 +358,5 @@ const DotLine = (props: DecorationProps) => {
 
 registerStructure('compare-hierarchy-left-right', {
   component: CompareHierarchyLeftRight,
+  composites: ['title', 'item'],
 });

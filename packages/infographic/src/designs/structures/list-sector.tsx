@@ -287,4 +287,7 @@ export const ListSector: ComponentType<ListSectorProps> = (props) => {
   );
 };
 
-registerStructure('list-sector', { component: ListSector });
+registerStructure('list-sector', {
+  component: ListSector,
+  composites: ['title', 'item'],
+});

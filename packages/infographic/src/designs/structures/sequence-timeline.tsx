@@ -183,4 +183,7 @@ export const SequenceTimeline: ComponentType<SequenceTimelineProps> = (
   );
 };
 
-registerStructure('sequence-timeline', { component: SequenceTimeline });
+registerStructure('sequence-timeline', {
+  component: SequenceTimeline,
+  composites: ['title', 'item'],
+});

@@ -505,7 +505,10 @@ export const [StructureName]: ComponentType<[StructureName]Props> = (props) => {
   );
 };
 
-registerStructure('[structure-name]', { component: [StructureName] });
+registerStructure('[structure-name]', {
+  component: [StructureName],
+  composites: ['title', 'item'], // 根据实际使用的组件填写
+});
 ```
 
 **层级结构模板** (使用 Items 数组):
@@ -579,10 +582,72 @@ export const [StructureName]: ComponentType<[StructureName]Props> = (props) => {
   );
 };
 
-registerStructure('[structure-name]', { component: [StructureName] });
+registerStructure('[structure-name]', {
+  component: [StructureName],
+  composites: ['title', 'item'], // 根据实际使用的组件填写
+});
 ```
 
-### 5. 关键约束
+### 5. 组件声明 (composites)
+
+**composites 字段说明**：
+
+在调用 `registerStructure` 时，必须提供 `composites` 数组，用于声明该结构使用了哪些核心组件。这有助于系统了解结构的组成和依赖关系。
+
+**composites 的取值规则**：
+
+composites 数组中的值应该是小写字符串，包括以下几种：
+
+1. **'title'** - 当满足以下任一条件时包含：
+   - 使用了 `Title` prop 组件（来自 `props.Title`）
+   - 直接访问并渲染了 `data.title`（例如使用 `<Text>{title}</Text>` 或 `<Text>{data.title}</Text>`）
+   - 在代码中以任何方式将 title 数据渲染为 UI 元素
+
+2. **'item'** - 当满足以下任一条件时包含：
+   - 使用了 `Item` prop 组件（来自 `props.Item`）
+   - 使用了 `Items` prop 组件数组（来自 `props.Items`）
+   - 注意：即使使用的是 `Items`（复数），在 composites 中也应该填写 `'item'`（单数）
+
+3. **'illus'** - 当满足以下任一条件时包含：
+   - 使用了 `Illus` 组件（从 `../components` 导入）
+   - 直接访问并渲染了 `data.illus`（例如通过图片或 SVG 元素）
+   - 访问了 `data.illus.xxx` 并渲染为 UI
+
+**示例**：
+
+```typescript
+// 示例 1: 使用了 Title 和 Item props
+registerStructure('list-row', {
+  component: ListRow,
+  composites: ['title', 'item'],
+});
+
+// 示例 2: 直接在代码中渲染 title，使用 Item prop
+registerStructure('list-sector', {
+  component: ListSector,
+  composites: ['title', 'item'], // 虽然没有使用 Title prop，但渲染了 data.title
+});
+
+// 示例 3: 使用了 Items 数组（层级结构）
+registerStructure('hierarchy-tree', {
+  component: HierarchyTree,
+  composites: ['title', 'item'], // 注意是 'item' 不是 'items'
+});
+
+// 示例 4: 使用了 Title, Item 和 Illus
+registerStructure('some-structure', {
+  component: SomeStructure,
+  composites: ['title', 'item', 'illus'],
+});
+```
+
+**重要提示**：
+- composites 数组中的值必须是小写
+- 即使使用 `Items`（复数），也要填写 `'item'`（单数）
+- 如果结构直接渲染了某个数据字段（如 `data.title`），即使没有使用对应的 prop 组件，也应该在 composites 中声明
+- composites 数组不能为空，至少要包含 `['item']`
+
+### 6. 关键约束
 
 **严格遵守以下规则:**
 
@@ -678,6 +743,7 @@ registerStructure('[structure-name]', { component: [StructureName] });
    - 生成完整可运行的代码，包含所有必需的导入、类型定义和注册语句
    - JSX 导入指令必须在文件首行：`/** @jsxImportSource @antv/infographic-jsx */`
    - 只导入实际使用的组件和函数
+   - **必须在 registerStructure 调用中包含 composites 数组**，正确声明使用的组件
 
 2. **正确性**:
    - 确保 indexes 数组正确传递给所有需要的组件
@@ -685,6 +751,7 @@ registerStructure('[structure-name]', { component: [StructureName] });
    - 边界情况处理（如 items 为空数组时提供友好的空状态）
    - 使用 `getElementBounds` 获取准确的元素尺寸
    - Text 组件的文本通过 children 传递，不是 text 属性
+   - **composites 数组必须准确反映实际使用的组件**（参见"组件声明 (composites)"部分）
 
 3. **简洁性**:
    - 使用有意义但简洁的变量名
@@ -735,13 +802,14 @@ registerStructure('[structure-name]', { component: [StructureName] });
    - 导入所需的组件和函数
    - 定义 Props 接口
    - 实现组件逻辑
-   - 注册结构
+   - **注册结构（包含 composites 数组）**
 
 5. **验证输出**:
    - 检查代码完整性和正确性
    - 确认所有导入都正确
    - 确认 indexes 正确传递
    - 确认坐标计算无误
+   - **确认 composites 数组准确反映使用的组件**
 
 ## 参考示例
 
@@ -893,7 +961,10 @@ export const Example: ComponentType<ExampleProps> = (props) => {
   // 组件实现
 };
 
-registerStructure('example', { component: Example });
+registerStructure('example', {
+  component: Example,
+  composites: ['title', 'item'], // 根据实际使用的组件填写
+});
 ```
 
 ---

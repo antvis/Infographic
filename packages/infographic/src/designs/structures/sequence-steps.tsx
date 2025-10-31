@@ -116,4 +116,7 @@ export const SequenceSteps: ComponentType<SequenceStepsProps> = (props) => {
   );
 };
 
-registerStructure('sequence-steps', { component: SequenceSteps });
+registerStructure('sequence-steps', {
+  component: SequenceSteps,
+  composites: ['title', 'item'],
+});

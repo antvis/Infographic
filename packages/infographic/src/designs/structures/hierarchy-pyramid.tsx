@@ -128,4 +128,7 @@ export const HierarchyPyramid: ComponentType<HierarchyPyramidProps> = (
   );
 };
 
-registerStructure('hierarchy-pyramid', { component: HierarchyPyramid });
+registerStructure('hierarchy-pyramid', {
+  component: HierarchyPyramid,
+  composites: ['title', 'item'],
+});

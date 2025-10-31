@@ -84,4 +84,7 @@ export const ListRow: ComponentType<ListRowProps> = (props) => {
   );
 };
 
-registerStructure('list-row', { component: ListRow });
+registerStructure('list-row', {
+  component: ListRow,
+  composites: ['title', 'item'],
+});

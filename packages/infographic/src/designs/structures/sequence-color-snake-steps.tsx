@@ -219,4 +219,5 @@ export const SequenceColorSnakeSteps: ComponentType<
 
 registerStructure('sequence-color-snake-steps', {
   component: SequenceColorSnakeSteps,
+  composites: ['title', 'item'],
 });
