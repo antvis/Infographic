@@ -24,7 +24,32 @@ export default ({
     instanceRef.current = instance;
   }, [options]);
 
-  return <div ref={ref} style={{ width: '100%', height: '100%' }} />;
+  return (
+    <>
+      <style>
+        {`
+          .infographic-container svg {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+          }
+        `}
+      </style>
+      <div
+        ref={ref}
+        className="infographic-container"
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      />
+    </>
+  );
 };
 
 const DATA: Record<string, Data> = {
@@ -33,60 +58,60 @@ const DATA: Record<string, Data> = {
     desc: '整合数据资产，构建标签画像体系，赋能数字化运营之路',
     items: [
       {
-        icon: 'company-021_v1_lineal',
+        icon: 'icon:mingcute/apple-fill',
         label: '企业形象优势',
         desc: '产品优势详细说明产品优势详细说明',
         value: 80,
         time: '2018',
-        illus: 'illus:english-teacher-bro-8693',
+        illus: 'illus:beer',
       },
       {
-        icon: 'antenna-bars-5_v1_lineal',
+        icon: 'icon:mingcute/bear-fill',
         label: '综合实力优势',
         desc: '产品优势详细说明产品优势详细说明',
         value: 70,
         time: '2019',
-        illus: 'illus:teacher-student-rafiki-9049',
+        illus: 'illus:best-place',
       },
       {
-        icon: 'achievment-050_v1_lineal',
+        icon: 'icon:mingcute/bell-ringing-fill',
         label: '企业营销优势',
         desc: '产品优势详细说明产品优势详细说明',
         value: 90,
         time: '2020',
-        illus: 'illus:mathematics-cuate-7503',
+        illus: 'illus:blank-canvas',
       },
       {
-        icon: '3d-file-015_v1_lineal',
+        icon: 'icon:mingcute/bowknot-fill',
         label: '产品定位优势',
         desc: '产品优势详细说明产品优势详细说明',
         value: 60,
         time: '2021',
-        illus: 'illus:teacher-student-rafiki-9049',
+        illus: 'illus:breakfast',
       },
       {
-        icon: 'activities-037_v1_lineal',
+        icon: 'icon:mingcute/camera-2-ai-fill',
         label: '产品体验优势',
         desc: '产品优势详细说明产品优势详细说明',
         value: 80,
         time: '2022',
-        illus: 'illus:english-teacher-bro-8693',
+        illus: 'illus:building-websites',
       },
       {
-        icon: 'account-book-025_v1_lineal',
+        icon: 'icon:mingcute/car-fill',
         label: '制造成本优势',
         desc: '产品优势详细说明产品优势详细说明',
         value: 90,
         time: '2023',
-        illus: 'illus:mathematics-cuate-7503',
+        illus: 'illus:bus-stop',
       },
       {
-        icon: 'account-book-025_v1_lineal',
+        icon: 'icon:mingcute/compass-fill',
         label: '制造成本优势',
         desc: '产品优势详细说明产品优势详细说明',
         value: 97,
         time: '2024',
-        illus: 'illus:english-teacher-bro-8693',
+        illus: 'illus:by-the-road',
       },
     ],
   },
@@ -97,50 +122,50 @@ const DATA: Record<string, Data> = {
       {
         label: '用户调研',
         // desc: '通过用户调研，了解用户需求和痛点，指导产品设计和优化',
-        icon: '3d-file-015_v1_lineal',
+        icon: 'icon:mingcute/diamond-2-fill',
         children: [
           {
             label: '用户为什么要使用某个音乐平台',
             desc: '用户为什么要使用某个音乐平台',
-            icon: 'company-021_v1_lineal',
+            icon: 'icon:mingcute/apple-fill',
             children: [
               {
                 label: '用户从哪些渠道了解到这个平台',
-                icon: 'activities-037_v1_lineal',
+                icon: 'icon:mingcute/camera-2-ai-fill',
               },
               {
                 label: '这个平台是哪些方面吸引了用户',
-                icon: 'activities-037_v1_lineal',
+                icon: 'icon:mingcute/camera-2-ai-fill',
               },
             ],
           },
           {
             label: '用户在什么场景下使用这个平台',
             desc: '用户在什么场景下使用这个平台',
-            icon: 'antenna-bars-5_v1_lineal',
+            icon: 'icon:mingcute/bear-fill',
             children: [
               {
                 label: '用户从什么事件什么场景下使用',
-                icon: 'account-book-025_v1_lineal',
+                icon: 'icon:mingcute/car-fill',
               },
               {
                 label: '用户在某个场景下用到哪些功能',
-                icon: 'account-book-025_v1_lineal',
+                icon: 'icon:mingcute/car-fill',
               },
             ],
           },
           {
             label: '用户什么原因下会离开这个平台',
             desc: '用户什么原因下会离开这个平台',
-            icon: 'achievment-050_v1_lineal',
+            icon: 'icon:mingcute/bell-ringing-fill',
             children: [
               {
                 label: '用户无法接受这个平台的原因',
-                icon: 'account-book-025_v1_lineal',
+                icon: 'icon:mingcute/car-fill',
               },
               {
                 label: '用户觉得这个平台有哪些不足',
-                icon: 'account-book-025_v1_lineal',
+                icon: 'icon:mingcute/car-fill',
               },
             ],
           },

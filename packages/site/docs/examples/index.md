@@ -2,10 +2,6 @@
 
 > Coming soon...
 
-import Infographic from '@site/src/components/Infographic';
+import Gallery from '@site/src/components/Gallery';
 
-<Infographic options={{
-    template: 'sequence-horizontal-zigzag-simple'
-  }}
-data="list"
-/>
+<Gallery />
