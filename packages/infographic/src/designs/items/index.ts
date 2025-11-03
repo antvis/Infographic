@@ -1,3 +1,4 @@
+export * from './AlternatingItem';
 export * from './BadgeCard';
 export * from './BulletText';
 export * from './CandyCardLite';
