@@ -697,7 +697,7 @@ export const sequenceCylinders3d: ComponentType<sequenceCylinders3dProps> = (
         data={data}
         x={itemPos.x}
         y={itemPos.y}
-        positionH="center"
+        positionH={index % 2 === 0 ? 'flipped' : 'normal'}
       />
     );
 
@@ -800,4 +800,5 @@ export const sequenceCylinders3d: ComponentType<sequenceCylinders3dProps> = (
 
 registerStructure('sequence-cylinders-3d', {
   component: sequenceCylinders3d,
+  composites: ['title', 'item'],
 });

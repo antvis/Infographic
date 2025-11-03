@@ -286,14 +286,7 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
     design: {
       title: 'default',
       structure: { type: 'sequence-cylinders-3d', gapY: 20 },
-      items: [
-        {
-          type: 'alternating',
-          showIcon: false,
-          usePaletteColor: true,
-          positionV: 'normal',
-        },
-      ],
+      items: [{ type: 'simple', showIcon: false, usePaletteColor: true }],
     },
   },
   'list-column-simple-vertical-arrow': {
