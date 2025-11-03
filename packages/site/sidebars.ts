@@ -49,7 +49,7 @@ const sidebars: SidebarsConfig = {
       items: ['api/resources'],
     },
   ],
-  examplesSidebar: ['examples/index'],
+  examplesSidebar: ['examples/index', 'examples/ai-demo'],
   devSidebar: [
     'dev/overview',
     'dev/jsx-engine',

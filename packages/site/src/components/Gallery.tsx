@@ -148,7 +148,10 @@ const TemplateCard: FC<{
             </Space>
           </div>
 
-          <div className={`infographic-wrapper ${isHovered ? 'hovered' : ''}`}>
+          <div
+            className={`infographic-wrapper ${isHovered ? 'hovered' : ''}`}
+            onClick={() => onExpand(templateKey)}
+          >
             <Infographic
               options={{
                 ...baseOptions,
@@ -184,6 +187,10 @@ const InfographicGallery: FC = () => {
     {
       rule: '^quadrant-',
       data: 'list',
+    },
+    {
+      rule: 'swot',
+      data: 'swot',
     },
     {
       rule: '^compare-',
@@ -345,6 +352,7 @@ const InfographicGallery: FC = () => {
         transition: all 0.3s ease;
         border-color: ${isDark ? 'rgba(255, 255, 255, 0.12)' : 'var(--ifm-color-emphasis-200)'};
         background: ${isDark ? '#1f1f1f' : '#fff'};
+        overflow: hidden;
       }
 
       .gallery-card:hover {
@@ -467,7 +475,7 @@ const InfographicGallery: FC = () => {
           <Space
             direction="vertical"
             size="middle"
-            style={{ width: '100%', maxWidth: 600, margin: '0 auto' }}
+            style={{ width: '100%', padding: '0 1em', margin: '0 auto' }}
           >
             <Input
               prefix={<SearchOutlined />}

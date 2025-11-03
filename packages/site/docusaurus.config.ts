@@ -70,7 +70,7 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: '@antv/infographic',
+      title: 'AntV Infographic',
       logo: {
         alt: 'Infographic Logo',
         src: 'img/logo.svg',
