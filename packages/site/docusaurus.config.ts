@@ -7,7 +7,7 @@ import { themes as prismThemes } from 'prism-react-renderer';
 const config: Config = {
   title: '@antv/infographic',
   tagline: '新一代信息图可视化引擎 - 让数据叙事更简单、更优雅、更高效',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/logo.svg',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {

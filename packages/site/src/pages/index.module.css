@@ -118,18 +118,28 @@
   color: white;
   border: none;
   box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+  transition: all 0.3s ease;
 }
 
 .buttonBrand:hover {
-  background: linear-gradient(135deg, #1890ff, #1366d9);
+  background: linear-gradient(135deg, #40a9ff, #1890ff);
   color: white;
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(24, 144, 255, 0.4);
 }
 
+.buttonAlt {
+  border-color: var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+  transition: all 0.3s ease;
+}
+
 .buttonAlt:hover {
+  background-color: transparent;
+  border-color: var(--ifm-color-primary-dark);
+  color: var(--ifm-color-primary-dark);
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 20px rgba(24, 144, 255, 0.15);
 }
 
 .heroStats {
