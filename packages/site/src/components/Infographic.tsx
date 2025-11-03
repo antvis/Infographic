@@ -28,12 +28,27 @@ export default ({
     <>
       <style>
         {`
+          .infographic-container {
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.03));
+            transition: filter 0.3s ease;
+          }
+
+          .infographic-container:hover {
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.06));
+          }
+
           .infographic-container svg {
             max-width: 100%;
             max-height: 100%;
             width: auto;
             height: auto;
             object-fit: contain;
+            transform-origin: center;
+            transition: transform 0.3s ease;
+          }
+
+          .infographic-container:hover svg {
+            transform: scale(1.02);
           }
         `}
       </style>

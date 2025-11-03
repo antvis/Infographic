@@ -15,14 +15,17 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@ant-design/icons": "^6.1.0",
+    "@antv/infographic": "workspace:^",
     "@docusaurus/core": "3.9.2",
     "@docusaurus/preset-classic": "3.9.2",
     "@mdx-js/react": "^3.0.0",
+    "antd": "^5.27.4",
     "clsx": "^2.0.0",
+    "framer-motion": "^12.23.24",
     "prism-react-renderer": "^2.3.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "@antv/infographic": "workspace:^"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "3.9.2",
