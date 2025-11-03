@@ -27,26 +27,26 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
       items: [{ type: 'circle-node', width: 180 }, { type: 'plain-text' }],
     },
   },
-  'hierarchy-pyramid-rounded-rect-node': {
+  'list-pyramid-rounded-rect-node': {
     design: {
       title: 'default',
       structure: {
-        type: 'hierarchy-pyramid',
+        type: 'list-pyramid',
       },
       items: [{ type: 'rounded-rect-node' }],
     },
   },
-  'hierarchy-pyramid-badge-card': {
+  'list-pyramid-badge-card': {
     design: {
       title: 'default',
-      structure: { type: 'hierarchy-pyramid' },
+      structure: { type: 'list-pyramid' },
       items: [{ type: 'badge-card' }],
     },
   },
-  'hierarchy-pyramid-compact-card': {
+  'list-pyramid-compact-card': {
     design: {
       title: 'default',
-      structure: { type: 'hierarchy-pyramid' },
+      structure: { type: 'list-pyramid' },
       items: [{ type: 'compact-card' }],
     },
   },
