@@ -166,11 +166,12 @@ async function callGoogle(
 
   const endpoint = stream ? 'streamGenerateContent' : 'generateContent';
   const response = await fetch(
-    `${baseURL}/models/${model}:${endpoint}?key=${apiKey}`,
+    `${baseURL}/models/${model}:${endpoint}`,
     {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'x-goog-api-key': apiKey,
       },
       body: JSON.stringify({
         contents,
