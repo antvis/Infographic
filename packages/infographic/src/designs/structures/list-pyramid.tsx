@@ -6,12 +6,12 @@ import { FlexLayout } from '../layouts';
 import { registerStructure } from './registry';
 import type { BaseStructureProps } from './types';
 
-export interface HierarchyPyramidProps extends BaseStructureProps {
+export interface ListPyramidProps extends BaseStructureProps {
   gap?: number;
   levelGap?: number;
 }
 
-export const ListPyramid: ComponentType<HierarchyPyramidProps> = (props) => {
+export const ListPyramid: ComponentType<ListPyramidProps> = (props) => {
   const { Title, Item, data, gap = 20, levelGap = 20 } = props;
   const { title, desc, items = [] } = data;
 
