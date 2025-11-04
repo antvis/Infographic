@@ -577,6 +577,20 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
       items: [{ type: 'indexed-card' }],
     },
   },
+  'sequence-ascending-stairs-3d-simple': {
+    design: {
+      title: 'default',
+      structure: { type: 'sequence-ascending-stairs-3d' },
+      items: [{ type: 'simple', showIcon: false, usePaletteColor: true }],
+    },
+  },
+  'sequence-ascending-stairs-3d-underline-text': {
+    design: {
+      title: 'default',
+      structure: { type: 'sequence-ascending-stairs-3d' },
+      items: [{ type: 'underline-text' }],
+    },
+  },
 };
 
 Object.entries(BUILT_IN_TEMPLATES).forEach(([name, options]) => {
