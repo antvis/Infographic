@@ -11,6 +11,7 @@ export interface SimpleItemProps extends BaseItemProps {
   gap?: number;
   showIcon?: boolean;
   iconSize?: number;
+  usePaletteColor?: boolean;
 }
 
 export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
@@ -24,10 +25,17 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
       iconSize = 30,
       positionH = 'normal',
       positionV = 'normal',
+      usePaletteColor = false,
       themeColors,
     },
     restProps,
-  ] = getItemProps(props, ['width', 'gap', 'showIcon', 'iconSize']);
+  ] = getItemProps(props, [
+    'width',
+    'gap',
+    'showIcon',
+    'iconSize',
+    'usePaletteColor',
+  ]);
 
   const { label, desc, icon } = datum;
 
@@ -40,6 +48,9 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
   };
 
   const textAlign = getTextAlign(positionH);
+  const labelColor = usePaletteColor
+    ? themeColors.colorPrimary
+    : themeColors.colorText;
 
   const labelContent = (
     <ItemLabel
@@ -47,7 +58,7 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
       width={width}
       alignHorizontal="center"
       alignVertical="center"
-      fill={themeColors.colorText}
+      fill={labelColor}
     >
       {label}
     </ItemLabel>
@@ -69,7 +80,7 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
           width={width}
           alignHorizontal={textAlign}
           alignVertical="center"
-          fill={themeColors.colorText}
+          fill={labelColor}
         >
           {label}
         </ItemLabel>
@@ -152,7 +163,7 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
               width={textWidth}
               alignHorizontal="right"
               alignVertical="center"
-              fill={themeColors.colorText}
+              fill={labelColor}
             >
               {label}
             </ItemLabel>
@@ -178,7 +189,7 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
               width={textWidth}
               alignHorizontal="left"
               alignVertical="center"
-              fill={themeColors.colorText}
+              fill={labelColor}
             >
               {label}
             </ItemLabel>
