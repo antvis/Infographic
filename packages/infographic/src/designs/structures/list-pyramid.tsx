@@ -11,9 +11,7 @@ export interface HierarchyPyramidProps extends BaseStructureProps {
   levelGap?: number;
 }
 
-export const HierarchyPyramid: ComponentType<HierarchyPyramidProps> = (
-  props,
-) => {
+export const ListPyramid: ComponentType<HierarchyPyramidProps> = (props) => {
   const { Title, Item, data, gap = 20, levelGap = 20 } = props;
   const { title, desc, items = [] } = data;
 
@@ -128,7 +126,7 @@ export const HierarchyPyramid: ComponentType<HierarchyPyramidProps> = (
   );
 };
 
-registerStructure('hierarchy-pyramid', {
-  component: HierarchyPyramid,
+registerStructure('list-pyramid', {
+  component: ListPyramid,
   composites: ['title', 'item'],
 });
