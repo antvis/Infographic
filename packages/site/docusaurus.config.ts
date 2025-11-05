@@ -45,6 +45,8 @@ const config: Config = {
     },
   ],
 
+  plugins: ['./docusaurus.plugin.js'],
+
   presets: [
     [
       'classic',
@@ -108,14 +110,11 @@ const config: Config = {
         },
         {
           href: 'https://github.com/antvis/infographic',
-          label: 'GitHub',
           position: 'right',
+          className: 'header-github-link',
+          'aria-label': 'GitHub repository',
         },
       ],
-    },
-    footer: {
-      style: 'dark',
-      copyright: `基于 MIT 许可证发布 | Copyright © ${new Date().getFullYear()} AntV`,
     },
     prism: {
       theme: prismThemes.github,
