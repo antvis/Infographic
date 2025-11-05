@@ -120,14 +120,6 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
       items: [{ type: 'vertical-icon-arrow' }],
     },
   },
-  'list-column-pyramid': {
-    design: {
-      title: 'default',
-      structure: { type: 'list-column', gap: 5 },
-      items: [{ type: 'pyramid', width: 700, gap: 5 }],
-    },
-    themeConfig: {},
-  },
   'list-grid-badge-card': {
     design: {
       title: 'default',
@@ -142,11 +134,11 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
       items: [{ type: 'candy-card-lite' }],
     },
   },
-  'list-grid-chart-column': {
+  'chart-column-simple': {
     design: {
       title: 'default',
-      structure: { type: 'list-grid' },
-      items: [{ type: 'chart-column' }],
+      structure: { type: 'chart-column' },
+      items: [{ type: 'simple', showIcon: false, usePaletteColor: true }],
     },
   },
   'list-grid-circular-progress': {
@@ -196,13 +188,6 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
       title: 'default',
       structure: { type: 'list-grid' },
       items: [{ type: 'simple' }],
-    },
-  },
-  'list-row-chart-column': {
-    design: {
-      title: 'default',
-      structure: { type: 'list-row' },
-      items: [{ type: 'chart-column' }],
     },
   },
   'list-row-circular-progress': {
@@ -358,6 +343,13 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
       title: 'default',
       structure: { type: 'sequence-color-snake-steps' },
       items: [{ type: 'horizontal-icon-line' }],
+    },
+  },
+  'sequence-pyramid-simple': {
+    design: {
+      title: 'default',
+      structure: { type: 'sequence-pyramid' },
+      items: [{ type: 'simple', showIcon: false, usePaletteColor: true }],
     },
   },
   'list-row-horizontal-icon-line': {

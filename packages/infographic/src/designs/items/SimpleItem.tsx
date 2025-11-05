@@ -8,6 +8,7 @@ import type { BaseItemProps } from './types';
 
 export interface SimpleItemProps extends BaseItemProps {
   width?: number;
+  height?: number;
   gap?: number;
   showIcon?: boolean;
   iconSize?: number;
@@ -20,6 +21,7 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
       indexes,
       datum,
       width = 200,
+      height,
       gap = 4,
       showIcon = true,
       iconSize = 30,
@@ -31,6 +33,7 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
     restProps,
   ] = getItemProps(props, [
     'width',
+    'height',
     'gap',
     'showIcon',
     'iconSize',
@@ -51,6 +54,10 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
   const labelColor = usePaletteColor
     ? themeColors.colorPrimary
     : themeColors.colorText;
+
+  // ItemDesc 的默认参数（用于计算行数）
+  const descFontSize = 14;
+  const descLineHeight = 1.4;
 
   const labelContent = (
     <ItemLabel
@@ -73,11 +80,30 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
   ) : null;
 
   if (!showIcon || !icon) {
+    // 计算 desc 的可用高度和行数
+    const descHeight = height
+      ? Math.max(0, height - labelBounds.height - gap)
+      : undefined;
+    const descLineNumber = descHeight
+      ? descHeight <= 60
+        ? 1
+        : Math.floor(descHeight / (descLineHeight * descFontSize))
+      : 2;
+
+    const labelY = height
+      ? positionV === 'center'
+        ? (height - labelBounds.height - (descHeight || 0) - gap) / 2
+        : positionV === 'flipped'
+          ? height - labelBounds.height - (descHeight || 0) - gap
+          : 0
+      : 0;
+
     return (
       <Group {...restProps}>
         <ItemLabel
           indexes={indexes}
           width={width}
+          y={labelY}
           alignHorizontal={textAlign}
           alignVertical="center"
           fill={labelColor}
@@ -87,9 +113,11 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
         <ItemDesc
           indexes={indexes}
           width={width}
-          y={labelBounds.height + gap}
+          height={descHeight}
+          y={labelY + labelBounds.height + gap}
           alignHorizontal={textAlign}
           alignVertical={getDescVerticalAlign(positionV, false)}
+          lineNumber={descLineNumber}
           fill={themeColors.colorTextSecondary}
         >
           {desc}
@@ -99,6 +127,26 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
   }
 
   if (positionH === 'center') {
+    // 计算 desc 的可用高度和行数
+    const iconHeight = showIcon && icon ? iconSize : 0;
+    const descHeight = height
+      ? Math.max(0, height - labelBounds.height - iconHeight - gap * 2)
+      : undefined;
+    const descLineNumber = descHeight
+      ? descHeight <= 60
+        ? 1
+        : Math.floor(descHeight / (descLineHeight * descFontSize))
+      : 2;
+
+    const contentHeight = labelBounds.height + (descHeight || 0) + gap;
+    const labelY = height
+      ? positionV === 'center'
+        ? (height - contentHeight - iconHeight - gap) / 2
+        : positionV === 'flipped'
+          ? height - contentHeight - iconHeight - gap
+          : 0
+      : 0;
+
     return (
       <FlexLayout
         {...restProps}
@@ -109,13 +157,24 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
         {positionV === 'flipped' ? (
           <>
             <Group>
-              {labelContent}
+              <ItemLabel
+                indexes={indexes}
+                width={width}
+                y={labelY}
+                alignHorizontal="center"
+                alignVertical="center"
+                fill={labelColor}
+              >
+                {label}
+              </ItemLabel>
               <ItemDesc
                 indexes={indexes}
                 width={width}
-                y={labelBounds.height + gap}
+                height={descHeight}
+                y={labelY + labelBounds.height + gap}
                 alignHorizontal="center"
                 alignVertical="bottom"
+                lineNumber={descLineNumber}
                 fill={themeColors.colorTextSecondary}
               >
                 {desc}
@@ -127,13 +186,24 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
           <>
             {iconContent}
             <Group>
-              {labelContent}
+              <ItemLabel
+                indexes={indexes}
+                width={width}
+                y={labelY}
+                alignHorizontal="center"
+                alignVertical="center"
+                fill={labelColor}
+              >
+                {label}
+              </ItemLabel>
               <ItemDesc
                 indexes={indexes}
                 width={width}
-                y={labelBounds.height + gap}
+                height={descHeight}
+                y={labelY + labelBounds.height + gap}
                 alignHorizontal="center"
                 alignVertical="top"
+                lineNumber={descLineNumber}
                 fill={themeColors.colorTextSecondary}
               >
                 {desc}
@@ -148,6 +218,24 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
   const iconBounds = getElementBounds(iconContent);
   const textWidth = Math.max(width - iconBounds.width - gap, 0);
 
+  // 计算 desc 的可用高度和行数
+  const descHeight = height
+    ? Math.max(0, height - labelBounds.height - gap)
+    : undefined;
+  const descLineNumber = descHeight
+    ? descHeight <= 60
+      ? 1
+      : Math.floor(descHeight / (descLineHeight * descFontSize))
+    : 2;
+
+  const labelY = height
+    ? positionV === 'center'
+      ? (height - labelBounds.height - (descHeight || 0) - gap) / 2
+      : positionV === 'flipped'
+        ? height - labelBounds.height - (descHeight || 0) - gap
+        : 0
+    : 0;
+
   return (
     <FlexLayout
       {...restProps}
@@ -161,6 +249,7 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
             <ItemLabel
               indexes={indexes}
               width={textWidth}
+              y={labelY}
               alignHorizontal="right"
               alignVertical="center"
               fill={labelColor}
@@ -170,9 +259,11 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
             <ItemDesc
               indexes={indexes}
               width={textWidth}
-              y={labelBounds.height + gap}
+              height={descHeight}
+              y={labelY + labelBounds.height + gap}
               alignHorizontal="right"
               alignVertical={getDescVerticalAlign(positionV, true)}
+              lineNumber={descLineNumber}
               fill={themeColors.colorTextSecondary}
             >
               {desc}
@@ -187,6 +278,7 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
             <ItemLabel
               indexes={indexes}
               width={textWidth}
+              y={labelY}
               alignHorizontal="left"
               alignVertical="center"
               fill={labelColor}
@@ -196,9 +288,11 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
             <ItemDesc
               indexes={indexes}
               width={textWidth}
-              y={labelBounds.height + gap}
+              height={descHeight}
+              y={labelY + labelBounds.height + gap}
               alignHorizontal="left"
               alignVertical={getDescVerticalAlign(positionV, true)}
+              lineNumber={descLineNumber}
               fill={themeColors.colorTextSecondary}
             >
               {desc}

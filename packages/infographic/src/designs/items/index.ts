@@ -1,7 +1,6 @@
 export * from './BadgeCard';
 export * from './BulletText';
 export * from './CandyCardLite';
-export * from './ChartColumn';
 export * from './CircleNode';
 export * from './CircularProgress';
 export * from './CompactCard';
@@ -15,7 +14,6 @@ export * from './LetterCard';
 export * from './PillBadge';
 export * from './PlainText';
 export * from './ProgressCard';
-export * from './Pyramid';
 export * from './QuarterCircular';
 export * from './QuarterSimpleCard';
 export * from './registry';
