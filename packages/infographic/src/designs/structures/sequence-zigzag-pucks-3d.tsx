@@ -7,7 +7,6 @@ import { getColorPrimary, getPaletteColor } from '../utils';
 import { registerStructure } from './registry';
 import type { BaseStructureProps } from './types';
 
-const PUCK_GAP = 80;
 const PUCK_WIDTH = 120;
 const PUCK_HEIGHT = 110;
 const ITEM_TO_PUCK_GAP = 30;
@@ -61,23 +60,14 @@ const DropShadowFilter = (
 
 export interface SequenceZigzagPucks3dProps extends BaseStructureProps {
   gap?: number;
-  puckWidth?: number;
-  puckHeight?: number;
-  verticalOffset?: number;
 }
 
 export const SequenceZigzagPucks3d: ComponentType<
   SequenceZigzagPucks3dProps
 > = (props) => {
-  const {
-    Title,
-    Item,
-    data,
-    options,
-    gap = PUCK_GAP,
-    puckWidth = PUCK_WIDTH,
-    puckHeight = PUCK_HEIGHT,
-  } = props;
+  const { Title, Item, data, options, gap = 80 } = props;
+  const puckWidth = PUCK_WIDTH;
+  const puckHeight = PUCK_HEIGHT;
   const { title, desc, items = [] } = data;
   const titleContent = Title ? <Title title={title} desc={desc} /> : null;
   const colorPrimary = getColorPrimary(options);
