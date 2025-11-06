@@ -15,8 +15,6 @@ export interface QuadrantProps extends BaseStructureProps {
   showAxis?: boolean;
   /** 是否使用虚线样式，默认为true */
   dashedAxis?: boolean;
-  /** 象限项间距 */
-  itemSpacing?: number;
 }
 
 // 配置常量
@@ -37,7 +35,6 @@ export const Quadrant: ComponentType<QuadrantProps> = (props) => {
     quadrantHeight: userQuadrantHeight,
     showAxis = true,
     dashedAxis = true,
-    itemSpacing = 8,
   } = props;
 
   const { title, desc, items = [] } = data;
@@ -61,12 +58,11 @@ export const Quadrant: ComponentType<QuadrantProps> = (props) => {
     userQuadrantHeight ??
     itemBounds.height + QUADRANT_CONFIG.defaultExtraSpacing;
 
-  // 计算象限位置
+  // 计算象限位置 - 默认使用居中对齐
   const quadrantPositions = calculateQuadrantPositions(
     quadrantWidth,
     quadrantHeight,
     itemBounds,
-    itemSpacing,
   );
 
   // itemElements
@@ -209,42 +205,33 @@ function createAxisElements(
   ];
 }
 
-// 象限位置计算函数
+// 象限位置计算函数 - 默认居中对齐
 function calculateQuadrantPositions(
   quadrantWidth: number,
   quadrantHeight: number,
   itemBounds: { width: number; height: number },
-  itemSpacing: number,
-  isCenter = false,
 ): Array<{ x: number; y: number }> {
-  if (!isCenter) {
-    return [
-      {
-        x: quadrantWidth - itemBounds.width - itemSpacing,
-        y: quadrantHeight - itemBounds.height - itemSpacing,
-      }, // 第一象限 (左上)
-      {
-        x: quadrantWidth + itemSpacing,
-        y: quadrantHeight - itemBounds.height - itemSpacing,
-      }, // 第二象限 (右上)
-      {
-        x: quadrantWidth - itemBounds.width - itemSpacing,
-        y: quadrantHeight + itemSpacing,
-      }, // 第三象限 (左下)
-      { x: quadrantWidth + itemSpacing, y: quadrantHeight + itemSpacing }, // 第四象限 (右下)
-    ];
-  }
-
-  const halfWidth = quadrantWidth / 2;
-  const halfHeight = quadrantHeight / 2;
-  const offsetX = halfWidth - itemBounds.width / 2;
-  const offsetY = halfHeight - itemBounds.height / 2;
+  // 计算每个象限的中心点，然后将 item 居中放置
+  const centerX = quadrantWidth / 2;
+  const centerY = quadrantHeight / 2;
 
   return [
-    { x: offsetX, y: offsetY }, // 第一象限 (左上)
-    { x: quadrantWidth + offsetX, y: offsetY }, // 第二象限 (右上)
-    { x: offsetX, y: quadrantHeight + offsetY }, // 第三象限 (左下)
-    { x: quadrantWidth + offsetX, y: quadrantHeight + offsetY }, // 第四象限 (右下)
+    {
+      x: centerX - itemBounds.width / 2,
+      y: centerY - itemBounds.height / 2,
+    }, // 第一象限 (左上)
+    {
+      x: quadrantWidth + centerX - itemBounds.width / 2,
+      y: centerY - itemBounds.height / 2,
+    }, // 第二象限 (右上)
+    {
+      x: centerX - itemBounds.width / 2,
+      y: quadrantHeight + centerY - itemBounds.height / 2,
+    }, // 第三象限 (左下)
+    {
+      x: quadrantWidth + centerX - itemBounds.width / 2,
+      y: quadrantHeight + centerY - itemBounds.height / 2,
+    }, // 第四象限 (右下)
   ];
 }
 

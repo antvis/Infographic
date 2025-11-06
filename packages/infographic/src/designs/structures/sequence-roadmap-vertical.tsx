@@ -110,6 +110,7 @@ function buildDecorations({ direction, x, y, color, elements }: any) {
   const isLeft = direction === 'left';
   elements.push(
     <Triangle
+      id="shape-triangle"
       x={isLeft ? x.x6 + 10 : x.x1 - 20}
       y={y.y3 - 5}
       width={10}
@@ -282,6 +283,7 @@ export const SequenceRoadmapVertical: ComponentType<
         }
       >
         <Path
+          id="shape-road"
           width={rowWidth}
           height={roadmapHeight}
           d={pathArr.join(' ')}

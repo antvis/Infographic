@@ -5,8 +5,9 @@ import {
   getElementBounds,
   Group,
   Path,
+  Text,
 } from '@antv/infographic-jsx';
-import { ItemDesc, ItemIcon, ItemLabel, ItemValue } from '../components';
+import { ItemDesc, ItemIcon, ItemLabel } from '../components';
 import { getItemProps } from '../utils';
 import { registerItem } from './registry';
 import type { BaseItemProps } from './types';
@@ -221,15 +222,16 @@ export const QuarterCircular: ComponentType<QuarterCircularProps> = (props) => {
       {/* 内容组 */}
       <Group>
         {/* 序号 */}
-        <ItemValue
-          indexes={indexes}
+        <Text
           x={contentCoords.valueX}
           y={CARD_CONTENT_Y}
-          value={indexStr as any}
           fontSize={VALUE_SIZE}
           fontWeight="bold"
           fill={themeColors.colorPrimary}
-        />
+          width={40}
+        >
+          {indexStr}
+        </Text>
 
         {/* 1/4 圆背景 */}
         <Path d={getQuarterCirclePath()} fill={themeColors.colorPrimary} />

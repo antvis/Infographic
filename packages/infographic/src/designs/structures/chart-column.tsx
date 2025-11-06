@@ -3,7 +3,7 @@ import type { ComponentType, JSXElement } from '@antv/infographic-jsx';
 import { Defs, Group, Rect, Text } from '@antv/infographic-jsx';
 import { scaleLinear } from 'd3';
 import tinycolor from 'tinycolor2';
-import { Padding } from '../../types';
+import { ItemDatum, Padding } from '../../types';
 import { parsePadding } from '../../utils';
 import { ItemsGroup } from '../components';
 import { FlexLayout } from '../layouts';
@@ -16,7 +16,7 @@ export interface ChartColumnProps extends BaseStructureProps {
   columnWidth?: number;
   padding?: Padding;
   showValue?: boolean;
-  valueFormat?: (value: number) => string;
+  valueFormatter?: (value: number, datum: ItemDatum) => string;
 }
 
 export const ChartColumn: ComponentType<ChartColumnProps> = (props) => {
@@ -29,7 +29,7 @@ export const ChartColumn: ComponentType<ChartColumnProps> = (props) => {
     padding = 20,
     showValue = true,
     options,
-    valueFormat = (value) => value.toString(),
+    valueFormatter = (value) => value.toString(),
   } = props;
 
   const { title, desc, items = [] } = data;
@@ -141,7 +141,7 @@ export const ChartColumn: ComponentType<ChartColumnProps> = (props) => {
           alignVertical={value >= 0 ? 'bottom' : 'top'}
           fill={color}
         >
-          {valueFormat(value)}
+          {valueFormatter(value, item)}
         </Text>,
       );
     }
