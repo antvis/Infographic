@@ -24,6 +24,7 @@ import {
   isText,
   isTitle,
   parsePadding,
+  setAttributes,
 } from '../utils';
 import {
   renderBackground,
@@ -99,6 +100,8 @@ export class Renderer implements IRenderer {
 
 function renderTemplate(svg: SVGSVGElement, options: ParsedInfographicOptions) {
   fill(svg, options);
+
+  setSVG(svg, options);
 
   const { themeConfig } = options;
   renderBackground(svg, themeConfig?.colorBg);
@@ -224,6 +227,14 @@ function fill(svg: SVGSVGElement, options: ParsedInfographicOptions) {
   };
 
   traverse(svg);
+}
+
+function setSVG(svg: SVGSVGElement, options: ParsedInfographicOptions) {
+  const { style = {}, attributes = {}, id, className } = options.svg || {};
+  if (id) svg.id = id;
+  if (className) svg.classList.add(className);
+  Object.assign(svg.style, style);
+  setAttributes(svg, attributes);
 }
 
 function setView(svg: SVGSVGElement, options: ParsedInfographicOptions) {

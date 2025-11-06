@@ -21,6 +21,8 @@ export interface InfographicOptions {
   theme?: string;
   /** 额外主题配置 */
   themeConfig?: ThemeConfig;
+  /** svg 容器上的配置 */
+  svg?: SVGOptions;
 }
 
 export interface ParsedInfographicOptions {
@@ -34,4 +36,12 @@ export interface ParsedInfographicOptions {
   data: Data;
   theme?: string;
   themeConfig: ThemeConfig;
+  svg?: SVGOptions;
+}
+
+interface SVGOptions {
+  style?: Record<string, string | number>;
+  attributes?: Record<string, string | number | boolean>;
+  id?: string;
+  className?: string;
 }
