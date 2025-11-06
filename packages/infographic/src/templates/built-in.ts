@@ -583,6 +583,20 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
       items: [{ type: 'underline-text' }],
     },
   },
+  'sequence-circular-underline-text': {
+    design: {
+      title: 'default',
+      structure: { type: 'sequence-circular' },
+      items: [{ type: 'underline-text' }],
+    },
+  },
+  'sequence-circular-simple': {
+    design: {
+      title: 'default',
+      structure: { type: 'sequence-circular' },
+      items: [{ type: 'simple', showIcon: false, usePaletteColor: true }],
+    },
+  },
 };
 
 Object.entries(BUILT_IN_TEMPLATES).forEach(([name, options]) => {
