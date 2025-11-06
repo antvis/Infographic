@@ -16,6 +16,7 @@ export * from './relation-network';
 export * from './sequence-ascending-stairs-3d';
 export * from './sequence-ascending-steps';
 export * from './sequence-circle-arrows';
+export * from './sequence-circular';
 export * from './sequence-color-snake-steps';
 export * from './sequence-cylinders-3d';
 export * from './sequence-horizontal-zigzag';
