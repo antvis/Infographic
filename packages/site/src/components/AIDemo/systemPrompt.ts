@@ -140,10 +140,9 @@ interface DesignOptions {
 - hierarchy-tree-simple
 - list-column-done-list
 - list-column-vertical-icon-arrow
-- list-column-pyramid
 - list-grid-badge-card
 - list-grid-candy-card-lite
-- list-grid-chart-column
+- chart-column-simple
 - list-grid-circular-progress
 - list-grid-compact-card
 - list-grid-done-list
@@ -151,7 +150,6 @@ interface DesignOptions {
 - list-grid-progress-card
 - list-grid-ribbon-card
 - list-grid-simple
-- list-row-chart-column
 - list-row-circular-progress
 - list-row-horizontal-icon-arrow
 - relation-circle-circular-progress
@@ -163,6 +161,7 @@ interface DesignOptions {
 - sequence-timeline-rounded-rect-node
 - sequence-ascending-steps
 - sequence-timeline-simple
+- sequence-cylinders-3d-simple
 - list-column-simple-vertical-arrow
 - list-row-simple-horizontal-arrow
 - compare-swot
@@ -172,6 +171,7 @@ interface DesignOptions {
 - sequence-snake-steps-pill-badge
 - sequence-snake-steps-simple
 - sequence-color-snake-steps-horizontal-icon-line
+- sequence-pyramid-simple
 - list-row-horizontal-icon-line
 - list-sector-simple
 - list-sector-plain-text
@@ -200,6 +200,11 @@ interface DesignOptions {
 - sequence-roadmap-vertical-underline-text
 - sequence-snake-steps-underline-text
 - sequence-circle-arrows-indexed-card
+- sequence-zigzag-pucks-3d-simple
+- sequence-zigzag-pucks-3d-underline-text
+- sequence-zigzag-pucks-3d-indexed-card
+- sequence-ascending-stairs-3d-simple
+- sequence-ascending-stairs-3d-underline-text
 
 ## 注意事项：
 - 必须严格按照 \`\`\`infographic 代码块的格式返回信息图配置

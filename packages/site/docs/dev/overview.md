@@ -4,6 +4,8 @@
 
 ## 项目架构
 
+<img src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*_rNMTLEdogUAAAAAV5AAAAgAemJ7AQ/original" alt="Infographic 项目架构图" style={{background: '#262258', borderRadius: 16}} />
+
 Infographic 是一个强大的信息图生成与渲染框架，基于 JSX 和 SVG 技术构建。项目采用 **monorepo** 架构，由以下子包组成：
 
 ```

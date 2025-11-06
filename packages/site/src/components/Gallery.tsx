@@ -1,29 +1,11 @@
-import {
-  CheckOutlined,
-  CopyOutlined,
-  EyeOutlined,
-  FilterOutlined,
-  SearchOutlined,
-} from '@ant-design/icons';
+import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
 import { getTemplates, InfographicOptions } from '@antv/infographic';
-import {
-  Button,
-  Card,
-  ConfigProvider,
-  Empty,
-  Input,
-  message,
-  Modal,
-  Select,
-  Space,
-  Tag,
-  theme,
-  Tooltip,
-} from 'antd';
+import { Button, Card, Empty, Input, Select, Space, Tag } from 'antd';
 import type { FC } from 'react';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
-import Infographic from './Infographic';
+import InfographicWithDemo from './InfographicWithData';
 import './ResourceLoader';
+import ThemeProvider from './ThemeProvider';
 
 // 类型定义
 interface CategoryConfig {
@@ -49,7 +31,7 @@ const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
   },
   hierarchy: {
     label: '层级型',
-    color: 'purple',
+    color: 'cyan',
     icon: '🏗️',
     description: 'Tree structures',
   },
@@ -73,9 +55,15 @@ const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
   },
   quadrant: {
     label: '四象限图',
-    color: 'orange',
+    color: 'cyan',
     icon: '📊',
     description: 'Quadrant analysis',
+  },
+  chart: {
+    label: '图表型',
+    color: 'purple',
+    icon: '📈',
+    description: 'Chart-based layouts',
   },
 };
 
@@ -97,82 +85,37 @@ const TemplateCard: FC<{
   templateKey: string;
   categoryConfig: CategoryConfig;
   dataType: string;
-  onCopy: (key: string) => void;
-  onExpand: (key: string) => void;
-  isCopied: boolean;
   baseOptions?: Partial<InfographicOptions>;
-}> = memo(
-  ({
-    templateKey,
-    categoryConfig,
-    dataType,
-    onCopy,
-    onExpand,
-    isCopied,
-    baseOptions,
-  }) => {
-    const [isHovered, setIsHovered] = useState(false);
+}> = memo(({ templateKey, categoryConfig, dataType, baseOptions }) => {
+  return (
+    <Card
+      className="gallery-card"
+      hoverable
+      styles={{
+        body: { padding: 0 },
+      }}
+    >
+      <div className="gallery-card-header">
+        <InfographicWithDemo
+          options={{
+            ...baseOptions,
+            template: templateKey,
+          }}
+          data={dataType}
+          showActions={false}
+        />
+      </div>
 
-    return (
-      <Card
-        className="gallery-card"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        hoverable
-        styles={{
-          body: { padding: 0 },
-        }}
-      >
-        <div className="gallery-card-header">
-          <div className={`gallery-card-actions ${isHovered ? 'visible' : ''}`}>
-            <Space size="small">
-              <Tooltip title="预览" placement="bottom">
-                <Button
-                  icon={<EyeOutlined />}
-                  onClick={() => onExpand(templateKey)}
-                />
-              </Tooltip>
-              <Tooltip
-                title={isCopied ? '已复制!' : '复制ID'}
-                placement="bottom"
-              >
-                <Button
-                  type={isCopied ? 'primary' : 'default'}
-                  icon={isCopied ? <CheckOutlined /> : <CopyOutlined />}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onCopy(templateKey);
-                  }}
-                />
-              </Tooltip>
-            </Space>
-          </div>
-
-          <div
-            className={`infographic-wrapper ${isHovered ? 'hovered' : ''}`}
-            onClick={() => onExpand(templateKey)}
-          >
-            <Infographic
-              options={{
-                ...baseOptions,
-                template: templateKey,
-              }}
-              data={dataType}
-            />
-          </div>
-        </div>
-
-        <div className="gallery-card-footer">
-          <Space align="center" size="small" style={{ width: '100%' }}>
-            <span style={{ fontSize: '1.2rem' }}>{categoryConfig.icon}</span>
-            <Tag color={categoryConfig.color}>{categoryConfig.label}</Tag>
-            <span className="template-id">{templateKey}</span>
-          </Space>
-        </div>
-      </Card>
-    );
-  },
-);
+      <div className="gallery-card-footer">
+        <Space align="center" size="small" style={{ width: '100%' }}>
+          <span style={{ fontSize: '1.2rem' }}>{categoryConfig.icon}</span>
+          <Tag color={categoryConfig.color}>{categoryConfig.label}</Tag>
+          <span className="template-id">{templateKey}</span>
+        </Space>
+      </div>
+    </Card>
+  );
+});
 
 // 主组件
 const InfographicGallery: FC = () => {
@@ -210,7 +153,7 @@ const InfographicGallery: FC = () => {
     [isDark],
   );
 
-  // 检测主题变化
+  // 检测主题变化 (用于信息图渲染)
   useEffect(() => {
     const checkTheme = () => {
       const htmlElement = document.documentElement;
@@ -231,10 +174,8 @@ const InfographicGallery: FC = () => {
   }, []);
 
   // 状态管理
-  const [copiedId, setCopiedId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [previewTemplate, setPreviewTemplate] = useState<string | null>(null);
 
   // 准备模板数据
   const templateItems = useMemo((): TemplateItem[] => {
@@ -273,23 +214,6 @@ const InfographicGallery: FC = () => {
       return matchesSearch && matchesCategory;
     });
   }, [templateItems, searchTerm, selectedCategory]);
-
-  // 处理复制
-  const handleCopy = useCallback((key: string) => {
-    navigator.clipboard.writeText(key).then(() => {
-      setCopiedId(key);
-      message.success({
-        content: `模板 ID "${key}" 已复制!`,
-        duration: 2,
-      });
-      setTimeout(() => setCopiedId(null), 2000);
-    });
-  }, []);
-
-  // 处理预览
-  const handlePreview = useCallback((key: string) => {
-    setPreviewTemplate(key);
-  }, []);
 
   // 获取数据类型
   const getDataType = useCallback(
@@ -334,7 +258,7 @@ const InfographicGallery: FC = () => {
       }
 
       .results-info strong {
-        color: #691eff;
+        color: var(--ifm-color-primary);
         font-weight: 600;
       }
 
@@ -457,14 +381,7 @@ const InfographicGallery: FC = () => {
   }, [isDark]);
 
   return (
-    <ConfigProvider
-      theme={{
-        token: {
-          colorPrimary: '#691eff',
-        },
-        algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
-      }}
-    >
+    <ThemeProvider>
       <div className="infographic-gallery-container">
         <style>{dynamicStyles}</style>
 
@@ -512,9 +429,6 @@ const InfographicGallery: FC = () => {
                 templateKey={item.key}
                 categoryConfig={item.config}
                 dataType={getDataType(item.key)}
-                onCopy={handleCopy}
-                onExpand={handlePreview}
-                isCopied={copiedId === item.key}
                 baseOptions={baseOptions}
               />
             ))
@@ -541,42 +455,8 @@ const InfographicGallery: FC = () => {
             </div>
           )}
         </div>
-
-        {/* 预览模态框 */}
-        <Modal
-          open={!!previewTemplate}
-          onCancel={() => setPreviewTemplate(null)}
-          footer={[
-            <Button
-              key="copy"
-              icon={<CopyOutlined />}
-              onClick={() => previewTemplate && handleCopy(previewTemplate)}
-            >
-              复制 ID
-            </Button>,
-            <Button
-              key="close"
-              type="primary"
-              onClick={() => setPreviewTemplate(null)}
-            >
-              关闭
-            </Button>,
-          ]}
-          width={1000}
-          centered
-          title={`预览: ${previewTemplate}`}
-        >
-          {previewTemplate && (
-            <div className="preview-content">
-              <Infographic
-                options={{ ...baseOptions, template: previewTemplate }}
-                data={getDataType(previewTemplate)}
-              />
-            </div>
-          )}
-        </Modal>
       </div>
-    </ConfigProvider>
+    </ThemeProvider>
   );
 };
 

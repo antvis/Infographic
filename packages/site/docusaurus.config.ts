@@ -109,6 +109,11 @@ const config: Config = {
           label: '开发',
         },
         {
+          label: '企业版',
+          href: 'https://www.tbox.cn/infographic',
+          position: 'right',
+        },
+        {
           href: 'https://github.com/antvis/infographic',
           position: 'right',
           className: 'header-github-link',

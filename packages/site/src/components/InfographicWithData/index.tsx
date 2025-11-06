@@ -1,62 +1,34 @@
-import { Data, Infographic, InfographicOptions } from '@antv/infographic';
-import { useEffect, useRef } from 'react';
+import { Data, InfographicOptions } from '@antv/infographic';
+import Infographic from '../Infographic';
 
-export default ({
+interface InfographicWithDemoProps {
+  /** 信息图配置选项 */
+  options: Partial<InfographicOptions>;
+  /** demo 数据类型 */
+  data?: string;
+  /** 是否显示操作按钮 */
+  showActions?: boolean;
+}
+
+/**
+ * 带 Demo 数据的信息图组件
+ * 基于 Infographic 组件封装，提供 data 字段来使用 demo 数据
+ */
+export default function InfographicWithDemo({
   options,
   data,
-}: {
-  options: Partial<InfographicOptions>;
-  data?: string;
-}) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const instanceRef = useRef<Infographic>(null);
-  useEffect(() => {
-    if (!options) return;
-    if (!ref.current) return;
-    const instance = new Infographic({
-      container: ref.current,
-      data: DATA[data],
-      ...options,
-    });
-
-    instance.render();
-    instanceRef.current = instance;
-  }, [options]);
+}: InfographicWithDemoProps) {
+  const demoData = data ? DATA[data] : undefined;
 
   return (
-    <>
-      <style>
-        {`
-          .infographic-container {
-            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.03));
-            transition: filter 0.3s ease;
-          }
-
-          .infographic-container svg {
-            max-width: 100%;
-            max-height: 100%;
-            width: auto;
-            height: auto;
-            object-fit: contain;
-            transform-origin: center;
-            transition: transform 0.3s ease;
-          }
-        `}
-      </style>
-      <div
-        ref={ref}
-        className="infographic-container"
-        style={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      />
-    </>
+    <Infographic
+      options={{
+        ...options,
+        data: demoData,
+      }}
+    />
   );
-};
+}
 
 const DATA: Record<string, Data> = {
   list: {

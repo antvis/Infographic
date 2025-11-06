@@ -23,6 +23,7 @@
     "@docusaurus/core": "3.9.2",
     "@docusaurus/preset-classic": "3.9.2",
     "@mdx-js/react": "^3.0.0",
+    "@monaco-editor/react": "^4.7.0",
     "ai": "^5.0.86",
     "antd": "^5.27.4",
     "clsx": "^2.0.0",

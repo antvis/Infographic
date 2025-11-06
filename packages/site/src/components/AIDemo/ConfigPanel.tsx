@@ -2,6 +2,7 @@ import {
   ClockCircleOutlined,
   DeleteOutlined,
   EditOutlined,
+  GiftOutlined,
   LockOutlined,
   PlusOutlined,
   SettingOutlined,
@@ -20,6 +21,7 @@ import {
   Select,
   Space,
   Tabs,
+  Tag,
   Typography,
 } from 'antd';
 import { useEffect, useState } from 'react';
@@ -27,6 +29,16 @@ import { ConfigWithStats, getStorage } from './storage';
 import { AIProvider, PROVIDER_CONFIGS } from './types';
 
 const { Text } = Typography;
+
+// 提供商图标映射
+const PROVIDER_LOGOS: Record<AIProvider, string> = {
+  openai: '/img/openai.svg',
+  anthropic: '/img/claude.svg',
+  google: '/img/gemini.svg',
+  xai: '/img/xai.svg',
+  deepseek: '/img/deepseek.svg',
+  qwen: '/img/qwen.svg',
+};
 
 interface ConfigPanelProps {
   open: boolean;
@@ -98,20 +110,60 @@ export default function ConfigPanel({
       footer={null}
       width={700}
     >
-      <Alert
-        message={
-          <Space>
-            <LockOutlined />
-            <span>
-              <strong>隐私保护：</strong>您的 API Key 仅存储在浏览器本地，
-              我们不会收集、存储或传输您的任何数据和密钥。
+      <Space
+        direction="vertical"
+        size="middle"
+        style={{ width: '100%', marginBottom: 24 }}
+      >
+        <Alert
+          message={
+            <Space>
+              <LockOutlined />
+              <span>
+                <strong>隐私保护：</strong>您的 API Key 仅存储在浏览器本地，
+                我们不会收集、存储或传输您的任何数据和密钥。
+              </span>
+            </Space>
+          }
+          type="info"
+          showIcon={false}
+        />
+        <Alert
+          message={
+            <span style={{ display: 'flex' }}>
+              💡 还没有 API Key？推荐在
+              <a
+                href="https://zenmux.ai/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  fontWeight: 600,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 4,
+                }}
+              >
+                <img
+                  src="/img/zenmux.svg"
+                  alt="ZenMux"
+                  style={{ width: 16, height: 16, verticalAlign: 'middle' }}
+                />
+                ZenMux.ai
+              </a>
+              平台快速创建，
+              <Tag
+                color="gold"
+                icon={<GiftOutlined />}
+                style={{ marginLeft: 4 }}
+              >
+                限时优惠
+              </Tag>
             </span>
-          </Space>
-        }
-        type="info"
-        showIcon={false}
-        style={{ marginBottom: 24 }}
-      />
+          }
+          type="success"
+          showIcon={false}
+        />
+      </Space>
 
       <Tabs
         activeKey={activeTab}
@@ -204,10 +256,14 @@ function ConfigList({
             bodyStyle={{ padding: 16 }}
             title={
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <Badge
-                  count={PROVIDER_CONFIGS[config.provider].name}
+                <img
+                  src={PROVIDER_LOGOS[config.provider]}
+                  alt={PROVIDER_CONFIGS[config.provider].name}
                   style={{
-                    backgroundColor: '#1890ff',
+                    width: 32,
+                    height: 32,
+                    objectFit: 'contain',
+                    filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))',
                   }}
                 />
                 <div style={{ flex: 1 }}>
@@ -269,7 +325,7 @@ function ConfigList({
               </Space>
               <Badge
                 count={`${config.totalUsage.requests} 次请求`}
-                style={{ backgroundColor: '#52c41a' }}
+                style={{ backgroundColor: 'var(--ifm-color-primary)' }}
               />
               <Badge
                 count={`${config.totalUsage.totalTokens.toLocaleString()} Token`}
@@ -423,7 +479,18 @@ function ConfigForm({
         <Select onChange={handleProviderChange} size="large">
           {Object.entries(PROVIDER_CONFIGS).map(([key, config]) => (
             <Select.Option key={key} value={key}>
-              {config.name}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <img
+                  src={PROVIDER_LOGOS[key as AIProvider]}
+                  alt={config.name}
+                  style={{
+                    width: 20,
+                    height: 20,
+                    objectFit: 'contain',
+                  }}
+                />
+                <span>{config.name}</span>
+              </div>
             </Select.Option>
           ))}
         </Select>

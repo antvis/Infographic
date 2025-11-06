@@ -1,18 +1,32 @@
 import {
+  ApiOutlined,
   DeleteOutlined,
-  RobotOutlined,
+  GiftOutlined,
   SettingOutlined,
+  ThunderboltOutlined,
 } from '@ant-design/icons';
-import { Button, Card, Empty, Select, Space, Tag, Typography } from 'antd';
+import { Button, Card, Select, Tag, Typography } from 'antd';
 import { useEffect, useState } from 'react';
+import ThemeProvider from '../ThemeProvider';
 import ChatInterface from './ChatInterface';
 import ConfigPanel from './ConfigPanel';
 import { ConfigWithStats, getStorage } from './storage';
 import './styles.css';
+import styles from './styles.module.css';
 import { EXAMPLE_PROMPTS } from './systemPrompt';
-import { PROVIDER_CONFIGS } from './types';
+import { AIProvider, PROVIDER_CONFIGS } from './types';
 
-const { Title, Text, Paragraph } = Typography;
+const { Text } = Typography;
+
+// 提供商图标映射
+const PROVIDER_LOGOS: Record<AIProvider, string> = {
+  openai: '/img/openai.svg',
+  anthropic: '/img/claude.svg',
+  google: '/img/gemini.svg',
+  xai: '/img/xai.svg',
+  deepseek: '/img/deepseek.svg',
+  qwen: '/img/qwen.svg',
+};
 
 /**
  * AI 信息图生成 Demo 主组件
@@ -85,89 +99,122 @@ export default function AIDemo() {
   };
 
   return (
-    <div style={{ padding: '24px 0' }}>
-      {/* 头部 */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: 24,
-        }}
-      >
-        <Space direction="vertical" size={0}>
-          <Title level={2} style={{ margin: 0 }}>
-            <RobotOutlined /> AI 生成信息图
-          </Title>
-          <Text type="secondary">通过对话生成各种类型的信息图</Text>
-        </Space>
+    <ThemeProvider>
+      <div className={styles.container}>
+        {config && (
+          <div
+            style={{
+              marginBottom: 16,
+              display: 'flex',
+              justifyContent: 'flex-end',
+              gap: 12,
+            }}
+          >
+            <Button
+              icon={<DeleteOutlined />}
+              onClick={handleClearHistory}
+              size="large"
+            >
+              清空对话
+            </Button>
+            <Button
+              type="primary"
+              icon={<SettingOutlined />}
+              onClick={() => setShowConfig(true)}
+              size="large"
+            >
+              配置
+            </Button>
+          </div>
+        )}
 
-        <Space>
-          {config && (
-            <>
-              <Button icon={<DeleteOutlined />} onClick={handleClearHistory}>
-                清空对话
-              </Button>
-              <Button
-                icon={<SettingOutlined />}
-                onClick={() => setShowConfig(true)}
-              >
-                配置
-              </Button>
-            </>
-          )}
-        </Space>
+        {/* 主内容区 */}
+        {config ? (
+          <>
+            {/* 当前配置信息 */}
+            <Card className={styles.configCard} size="small">
+              <div className={styles.configContent}>
+                <div className={styles.providerInfo}>
+                  {allConfigs.length > 1 ? (
+                    <Select
+                      value={config.id}
+                      onChange={handleConfigChange}
+                      style={{ minWidth: 200 }}
+                      size="large"
+                    >
+                      {allConfigs.map((c) => (
+                        <Select.Option key={c.id} value={c.id}>
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 8,
+                            }}
+                          >
+                            <img
+                              src={PROVIDER_LOGOS[c.provider]}
+                              alt={PROVIDER_CONFIGS[c.provider].name}
+                              style={{
+                                width: 20,
+                                height: 20,
+                                objectFit: 'contain',
+                              }}
+                            />
+                            <span>
+                              {c.name} ({PROVIDER_CONFIGS[c.provider].name})
+                            </span>
+                          </div>
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  ) : (
+                    <>
+                      <img
+                        src={PROVIDER_LOGOS[config.provider]}
+                        alt={PROVIDER_CONFIGS[config.provider].name}
+                        className={styles.providerLogo}
+                      />
+                      <div>
+                        <div className={styles.providerName}>
+                          {PROVIDER_CONFIGS[config.provider].name}
+                        </div>
+                        <Text type="secondary" style={{ fontSize: 13 }}>
+                          {config.model}
+                        </Text>
+                      </div>
+                    </>
+                  )}
+                </div>
+                <div className={styles.configStats}>
+                  <div className={styles.statItem}>
+                    <ThunderboltOutlined />
+                    <span>{config.totalUsage.requests} 次请求</span>
+                  </div>
+                  <div className={styles.statItem}>
+                    <ApiOutlined />
+                    <span>
+                      {config.totalUsage.totalTokens.toLocaleString()} Token
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </Card>
+
+            {/* 对话界面 */}
+            <ChatInterface key={chatKey} config={config} />
+          </>
+        ) : (
+          <WelcomeScreen onConfigClick={() => setShowConfig(true)} />
+        )}
+
+        {/* 配置面板 */}
+        <ConfigPanel
+          open={showConfig}
+          onClose={() => setShowConfig(false)}
+          onConfigSelected={handleConfigSelected}
+        />
       </div>
-
-      {/* 主内容区 */}
-      {config ? (
-        <>
-          {/* 当前配置信息 */}
-          <Card size="small" style={{ marginBottom: 16 }}>
-            <Space>
-              <Text strong>当前配置:</Text>
-              {allConfigs.length > 1 ? (
-                <Select
-                  value={config.id}
-                  onChange={handleConfigChange}
-                  style={{ minWidth: 200 }}
-                >
-                  {allConfigs.map((c) => (
-                    <Select.Option key={c.id} value={c.id}>
-                      {c.name} ({PROVIDER_CONFIGS[c.provider].name})
-                    </Select.Option>
-                  ))}
-                </Select>
-              ) : (
-                <>
-                  <Tag color="blue">
-                    {PROVIDER_CONFIGS[config.provider].name}
-                  </Tag>
-                  <Tag>{config.model}</Tag>
-                  <Text type="secondary">{config.name}</Text>
-                </>
-              )}
-              <Text type="secondary" style={{ fontSize: 12 }}>
-                使用 {config.totalUsage.requests} 次 | Token{' '}
-                {config.totalUsage.totalTokens.toLocaleString()}
-              </Text>
-            </Space>
-          </Card>
-
-          {/* 对话界面 */}
-          <ChatInterface key={chatKey} config={config} />
-        </>
-      ) : (
-        <WelcomeScreen onConfigClick={() => setShowConfig(true)} />
-      )}
-
-      {/* 配置面板 */}
-      <ConfigPanel
-        open={showConfig}
-        onClose={() => setShowConfig(false)}
-        onConfigSelected={handleConfigSelected}
-      />
-    </div>
+    </ThemeProvider>
   );
 }
 
@@ -176,43 +223,112 @@ export default function AIDemo() {
  */
 function WelcomeScreen({ onConfigClick }: { onConfigClick: () => void }) {
   return (
-    <Card>
-      <Empty
-        image={<RobotOutlined style={{ fontSize: 80, color: '#1890ff' }} />}
-        imageStyle={{ height: 100 }}
-        description={
-          <Space direction="vertical" size={16} style={{ marginTop: 16 }}>
-            <div>
-              <Title level={4}>欢迎使用 AI 生成信息图</Title>
-              <Paragraph type="secondary">
-                通过对话描述您的需求， AI 会自动生成对应的信息图配置。
-              </Paragraph>
-            </div>
+    <Card className={styles.welcomeCard}>
+      <div className={styles.welcomeContent}>
+        <div className={styles.welcomeIcon}>
+          <img
+            src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*2mTZQakV9LYAAAAAWzAAAAgAemJ7AQ/original"
+            alt="AI Assistant"
+          />
+        </div>
 
-            <div>
-              <Text strong>开始之前，请先配置您的 AI API</Text>
-              <Paragraph type="secondary" style={{ marginTop: 8 }}>
-                支持 OpenAI、Anthropic、Google、xAI、DeepSeek、Qwen 等多种提供商
-              </Paragraph>
-            </div>
+        <div className={styles.welcomeTitle}>欢迎使用 AI 生成信息图</div>
+        <div className={styles.welcomeDescription}>
+          通过自然语言对话，让 AI 帮您快速创建专业的信息图表
+          <br />
+          无需设计经验，即可生成精美的可视化内容
+        </div>
 
-            <Button type="primary" size="large" onClick={onConfigClick}>
-              配置 API Key
-            </Button>
-
-            <div style={{ marginTop: 24 }}>
-              <Text strong>示例问题：</Text>
-              <div style={{ marginTop: 8 }}>
-                {EXAMPLE_PROMPTS.map((prompt, index) => (
-                  <Tag key={index} style={{ marginBottom: 8 }}>
-                    {prompt.label}
-                  </Tag>
-                ))}
-              </div>
+        <div className={styles.welcomeBox}>
+          <div className={styles.welcomeBoxTitle}>
+            <SettingOutlined />
+            开始之前，请先配置您的 AI API
+          </div>
+          <div className={styles.welcomeBoxContent}>
+            我们支持多种主流 AI 提供商，您可以选择最适合您的服务
+            <div style={{ marginTop: 12 }}>
+              <Text type="secondary" style={{ fontSize: 13, display: 'flex' }}>
+                💡 还没有 API Key？推荐在
+                <a
+                  href="https://zenmux.ai/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    fontWeight: 600,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 4,
+                  }}
+                >
+                  <img
+                    src="/img/zenmux.svg"
+                    alt="ZenMux"
+                    style={{ width: 16, height: 16, verticalAlign: 'middle' }}
+                  />
+                  ZenMux.ai
+                </a>
+                平台快速创建
+              </Text>
+              <Tag
+                color="gold"
+                icon={<GiftOutlined />}
+                style={{ marginLeft: 8, fontSize: 12 }}
+              >
+                限时优惠
+              </Tag>
             </div>
-          </Space>
-        }
-      />
+          </div>
+
+          <div className={styles.providerLogos}>
+            <div className={styles.providerLogoItem}>
+              <img src="/img/openai.svg" alt="OpenAI" />
+              <span>OpenAI</span>
+            </div>
+            <div className={styles.providerLogoItem}>
+              <img src="/img/claude.svg" alt="Claude" />
+              <span>Anthropic</span>
+            </div>
+            <div className={styles.providerLogoItem}>
+              <img src="/img/gemini.svg" alt="Gemini" />
+              <span>Google</span>
+            </div>
+            <div className={styles.providerLogoItem}>
+              <img src="/img/xai.svg" alt="xAI" />
+              <span>xAI</span>
+            </div>
+            <div className={styles.providerLogoItem}>
+              <img src="/img/deepseek.svg" alt="DeepSeek" />
+              <span>DeepSeek</span>
+            </div>
+            <div className={styles.providerLogoItem}>
+              <img src="/img/qwen.svg" alt="Qwen" />
+              <span>Qwen</span>
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.ctaButton}>
+          <Button
+            type="primary"
+            size="large"
+            icon={<ApiOutlined />}
+            onClick={onConfigClick}
+          >
+            配置 API Key 开始使用
+          </Button>
+        </div>
+
+        <div className={styles.examplesSection}>
+          <div className={styles.examplesTitle}>💡 示例问题</div>
+          <div className={styles.exampleTags}>
+            {EXAMPLE_PROMPTS.map((prompt, index) => (
+              <Tag key={index} color="blue">
+                {prompt.label}
+              </Tag>
+            ))}
+          </div>
+        </div>
+      </div>
     </Card>
   );
 }

@@ -4,59 +4,21 @@ import Heading from '@theme/Heading';
 import Layout from '@theme/Layout';
 import clsx from 'clsx';
 import type { ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 
+import AnimatedBackground from '@site/src/components/AnimatedBackground';
+import CodePlayground from '@site/src/components/CodePlayground';
+import DesignAssetsSection from '@site/src/components/DesignAssetsSection';
+import FeaturesShowcase from '@site/src/components/FeaturesShowcase';
+import FooterSection from '@site/src/components/FooterSection';
+import GalleryWall from '@site/src/components/GalleryWall';
 import styles from './index.module.css';
-
-const stats = [
-  { number: '30+', label: '数据项设计' },
-  { number: '20+', label: '结构布局' },
-  { number: '70+', label: '内置模版' },
-  { number: '100%', label: '开源免费' },
-];
-
-const features = [
-  {
-    icon: '🚀',
-    title: '开箱即用',
-    details: '30+ 内置组件，20+ 结构布局，几分钟即可创建信息图',
-  },
-  {
-    icon: '🎨',
-    title: '主题系统',
-    details:
-      '支持手绘风（rough）、渐变（gradient）、图案（pattern）等风格，一键切换',
-  },
-  {
-    icon: '🧩',
-    title: '组件化架构',
-    details: '数据、结构、样式完全解耦，支持自定义扩展',
-  },
-  {
-    icon: '✍️',
-    title: '编辑器能力',
-    details: '支持交互式编辑，所见即所得，提升创作效率(后续推出)',
-  },
-  {
-    icon: '⚡',
-    title: 'SVG 渲染',
-    details: '矢量渲染，无损缩放，支持导出多种格式',
-  },
-  {
-    icon: '📖',
-    title: '声明式 API',
-    details: '配置即视图，用数据驱动而非命令式操作',
-  },
-];
 
 function HomepageHeader() {
   const { siteConfig } = useDocusaurusContext();
   return (
     <header className={clsx('hero', styles.heroBanner)}>
-      <div className={styles.heroBackground}>
-        <div className={clsx(styles.gradientOrb, styles.orb1)}></div>
-        <div className={clsx(styles.gradientOrb, styles.orb2)}></div>
-        <div className={clsx(styles.gradientOrb, styles.orb3)}></div>
-      </div>
+      <AnimatedBackground />
       <div className={styles.heroContent}>
         <Heading as="h1" className={styles.heroTitle}>
           <span className={styles.titleGradient}>{siteConfig.title}</span>
@@ -89,46 +51,57 @@ function HomepageHeader() {
             GitHub
           </Link>
         </div>
-        <div className={styles.heroStats}>
-          {stats.map((stat, index) => (
-            <div key={index} className={styles.statItem}>
-              <div className={styles.statNumber}>{stat.number}</div>
-              <div className={styles.statLabel}>{stat.label}</div>
-            </div>
-          ))}
-        </div>
       </div>
     </header>
   );
 }
 
-function HomepageFeatures() {
-  return (
-    <section className={styles.features}>
-      <div className="container">
-        <h2 className={styles.sectionTitle}>核心特性</h2>
-        <div className={styles.featuresGrid}>
-          {features.map((feature, index) => (
-            <div key={index} className={styles.featureCard}>
-              <div className={styles.featureIcon}>{feature.icon}</div>
-              <h3 className={styles.featureTitle}>{feature.title}</h3>
-              <p className={styles.featureDetails}>{feature.details}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 export default function Home(): ReactNode {
   const { siteConfig } = useDocusaurusContext();
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // 当滚动超过 300px 时显示返回顶部按钮
+      setShowBackToTop(window.pageYOffset > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
+
   return (
-    <Layout title={`${siteConfig.title}`} description={siteConfig.tagline}>
+    <Layout
+      title={`${siteConfig.title}`}
+      description={siteConfig.tagline}
+      wrapperClassName={styles.homeLayout}
+    >
       <HomepageHeader />
-      <main>
-        <HomepageFeatures />
-      </main>
+      <FeaturesShowcase />
+      <DesignAssetsSection />
+      <div className={styles.playgroundWrapper}>
+        <div className="container">
+          <CodePlayground />
+        </div>
+      </div>
+      <GalleryWall />
+      <FooterSection />
+
+      {/* 返回顶部按钮 */}
+      <button
+        className={`${styles.backToTop} ${showBackToTop ? styles.visible : ''}`}
+        onClick={scrollToTop}
+        aria-label="返回顶部"
+      >
+        ↑
+      </button>
     </Layout>
   );
 }
