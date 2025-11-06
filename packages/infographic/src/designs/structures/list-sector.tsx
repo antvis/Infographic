@@ -101,6 +101,7 @@ export const ListSector: ComponentType<ListSectorProps> = (props) => {
 
     sectorElements.push(
       <Path
+        id="shape-sector"
         d={arcPath}
         fill={color}
         width={outerRadius * 2 + 200}
@@ -251,6 +252,7 @@ export const ListSector: ComponentType<ListSectorProps> = (props) => {
       <Group>{sectorElements}</Group>
       {isFullCircle ? (
         <Ellipse
+          id="shape-center-circle"
           x={centerX - centerRadius}
           y={centerY - centerRadius}
           width={centerRadius * 2}
@@ -260,6 +262,7 @@ export const ListSector: ComponentType<ListSectorProps> = (props) => {
         />
       ) : (
         <Path
+          id="shape-center-sector"
           d={centerSectorPath}
           fill={themeColors.colorPrimaryBg}
           fillOpacity={0.5}

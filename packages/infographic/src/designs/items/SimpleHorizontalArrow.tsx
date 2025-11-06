@@ -91,9 +91,11 @@ export const SimpleHorizontalArrow: ComponentType<
             fontWeight="bold"
             fontSize={16}
           >
-            {String(indexes[0] + 1)
-              .padStart(2, '0')
-              .slice(-2)}
+            {datum.time
+              ? datum.time
+              : String(indexes[0] + 1)
+                  .padStart(2, '0')
+                  .slice(-2)}
           </Text>
         </AlignLayout>
         {positionV === 'flipped' ? (
@@ -142,5 +144,5 @@ const HorizontalArrow = (
 
 registerItem('simple-horizontal-arrow', {
   component: SimpleHorizontalArrow,
-  composites: ['label', 'desc'],
+  composites: ['label', 'desc', 'time'],
 });

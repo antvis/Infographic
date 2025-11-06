@@ -124,9 +124,11 @@ export const HorizontalIconArrow: ComponentType<HorizontalIconArrowProps> = (
             fontWeight="bold"
             fontSize={16}
           >
-            {String(indexes[0] + 1)
-              .padStart(2, '0')
-              .slice(-2)}
+            {datum.time
+              ? datum.time
+              : String(indexes[0] + 1)
+                  .padStart(2, '0')
+                  .slice(-2)}
           </Text>
         </AlignLayout>
         {positionV === 'flipped' ? (
@@ -218,5 +220,5 @@ const DotLine = (props: {
 
 registerItem('horizontal-icon-arrow', {
   component: HorizontalIconArrow,
-  composites: ['icon', 'label', 'desc'],
+  composites: ['icon', 'label', 'desc', 'time'],
 });
