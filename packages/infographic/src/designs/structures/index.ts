@@ -20,6 +20,7 @@ export * from './sequence-circle-arrows';
 export * from './sequence-circular';
 export * from './sequence-color-snake-steps';
 export * from './sequence-cylinders-3d';
+export * from './sequence-filter-mesh';
 export * from './sequence-horizontal-zigzag';
 export * from './sequence-pyramid';
 export * from './sequence-roadmap-vertical';

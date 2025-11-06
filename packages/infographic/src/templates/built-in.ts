@@ -597,6 +597,20 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
       items: [{ type: 'simple', showIcon: false, usePaletteColor: true }],
     },
   },
+  'sequence-filter-mesh-underline-text': {
+    design: {
+      title: 'default',
+      structure: { type: 'sequence-filter-mesh' },
+      items: [{ type: 'underline-text' }],
+    },
+  },
+  'sequence-filter-mesh-simple': {
+    design: {
+      title: 'default',
+      structure: { type: 'sequence-filter-mesh' },
+      items: [{ type: 'simple', showIcon: false, usePaletteColor: true }],
+    },
+  },
 };
 
 Object.entries(BUILT_IN_TEMPLATES).forEach(([name, options]) => {
