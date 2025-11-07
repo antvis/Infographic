@@ -611,6 +611,13 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
       items: [{ type: 'simple', showIcon: false, usePaletteColor: true }],
     },
   },
+  'sequence-mountain-underline-text': {
+    design: {
+      title: 'default',
+      structure: { type: 'sequence-mountain' },
+      items: [{ type: 'underline-text' }],
+    },
+  },
 };
 
 Object.entries(BUILT_IN_TEMPLATES).forEach(([name, options]) => {
