@@ -93,29 +93,35 @@ export function Text(props: TextProps): JSXElement {
     ...(id && { id }),
   };
 
-  const rectProps: RectProps = {
-    ...bounds,
-    fill: backgroundColor,
-    fillOpacity: backgroundOpacity,
-    rx: backgroundRadius,
-    ry: backgroundRadius,
-    ...(id && { id: `${id}-bounds` }),
-  };
+  const hasBackground = backgroundColor && backgroundColor !== 'none';
+
+  const elements: JSXElement[] = [];
+
+  if (hasBackground) {
+    const rectProps: RectProps = {
+      ...bounds,
+      fill: backgroundColor,
+      fillOpacity: backgroundOpacity,
+      rx: backgroundRadius,
+      ry: backgroundRadius,
+      ...(id && { id: `${id}-bounds` }),
+    };
+    elements.push({
+      type: 'rect',
+      props: rectProps,
+    });
+  }
+
+  elements.push({
+    type: 'text',
+    props: textProps,
+  });
 
   return {
     type: 'g',
     props: {
       ...containerProps,
-      children: [
-        {
-          type: 'rect',
-          props: rectProps,
-        },
-        {
-          type: 'text',
-          props: textProps,
-        },
-      ],
+      children: elements,
     },
   };
 }

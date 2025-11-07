@@ -104,7 +104,6 @@ describe('jsx layout components', () => {
   <g x="0" y="0" width="135" height="50">
     <rect width="30" height="40" fill="red" stroke-width="10" x="0" />
     <g x="40" y="20" width="35">
-      <rect x="40" y="20" width="35" fill="none" />
       <text x="40" y="20" fill="black" font-size="14" text-anchor="start" dominant-baseline="hanging" data-text-alignment="LEFT TOP" width="35" height="0">Hello</text>
     </g>
     <ellipse width="50" height="50" fill="blue" x="85" cx="110" cy="25" rx="25" ry="25" />
