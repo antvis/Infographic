@@ -309,6 +309,7 @@ export const SequenceMountain: ComponentType<SequenceMountainProps> = (
   const mountainXPositions: number[] = [];
   let totalWidth = 0;
 
+  let nextMountainX = 0;
   items.forEach((datum: any, index: number) => {
     const progress = n > 1 ? index / (n - 1) : 0;
     const mountainHeight = minHeight + (maxHeight - minHeight) * progress;
@@ -319,11 +320,9 @@ export const SequenceMountain: ComponentType<SequenceMountainProps> = (
     );
     mountainWidths.push(mountainWidth);
 
-    let mountainX = 0;
-    for (let i = 0; i < index; i++) {
-      mountainX += mountainWidths[i] / 2;
-    }
+    const mountainX = nextMountainX;
     mountainXPositions.push(mountainX);
+    nextMountainX += mountainWidth / 2;
 
     if (index === n - 1) {
       totalWidth = mountainX + mountainWidth;
