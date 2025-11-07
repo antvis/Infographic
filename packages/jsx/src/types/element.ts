@@ -31,6 +31,8 @@ export interface TextProps extends BaseGeometryProps {
   alignHorizontal?: 'left' | 'center' | 'right';
   alignVertical?: 'top' | 'center' | 'bottom';
   backgroundColor?: string;
+  backgroundOpacity?: number;
+  backgroundRadius?: number;
   children?: string | number;
 }
 export interface PathProps extends BaseGeometryProps {}

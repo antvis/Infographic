@@ -34,6 +34,8 @@ export function Text(props: TextProps): JSXElement {
     lineHeight,
     wordWrap,
     backgroundColor = 'none',
+    backgroundOpacity = 1,
+    backgroundRadius = 0,
     ...restProps
   } = props;
 
@@ -94,6 +96,9 @@ export function Text(props: TextProps): JSXElement {
   const rectProps: RectProps = {
     ...bounds,
     fill: backgroundColor,
+    fillOpacity: backgroundOpacity,
+    rx: backgroundRadius,
+    ry: backgroundRadius,
     ...(id && { id: `${id}-bounds` }),
   };
 
