@@ -286,7 +286,7 @@ export const SequenceMountain: ComponentType<SequenceMountainProps> = (
     minWidth = 260,
     maxWidth = 300,
     options,
-  } = props as any;
+  } = props;
   const { title, desc, items = [] } = data;
 
   const titleContent = Title ? <Title title={title} desc={desc} /> : null;
@@ -310,7 +310,7 @@ export const SequenceMountain: ComponentType<SequenceMountainProps> = (
   let totalWidth = 0;
 
   let nextMountainX = 0;
-  items.forEach((datum: any, index: number) => {
+  items.forEach((datum, index) => {
     const progress = n > 1 ? index / (n - 1) : 0;
     const mountainHeight = minHeight + (maxHeight - minHeight) * progress;
     const calculatedWidth = mountainHeight * 1.6;
@@ -342,7 +342,7 @@ export const SequenceMountain: ComponentType<SequenceMountainProps> = (
   const labelYPos = maxHeight + gap;
   const itemYPos = labelYPos + labelHeight + 10;
 
-  items.forEach((datum: any, index: number) => {
+  items.forEach((datum, index) => {
     const indexes = [index];
     const mountainHeight =
       minHeight + (maxHeight - minHeight) * (n > 1 ? index / (n - 1) : 0);
@@ -398,7 +398,7 @@ export const SequenceMountain: ComponentType<SequenceMountainProps> = (
   const btnBounds = getElementBounds(<BtnAdd indexes={[0]} />);
   const btnY = itemYPos + itemBounds.height + 10;
 
-  items.forEach((datum: any, index: number) => {
+  items.forEach((datum, index) => {
     const indexes = [index];
     const itemX = firstMountainLeft + index * (itemWidth + gap);
 
@@ -478,7 +478,7 @@ export const SequenceMountain: ComponentType<SequenceMountainProps> = (
       });
     };
 
-    items.forEach((datum: any, index: number) => {
+    items.forEach((datum, index) => {
       const mountainX = mountainXPositions[index];
       const mountainWidth = mountainWidths[index];
       const isLastMountain = index === n - 1;
