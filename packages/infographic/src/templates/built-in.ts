@@ -618,6 +618,126 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
       items: [{ type: 'underline-text' }],
     },
   },
+  'compare-binary-horizontal-simple-fold': {
+    design: {
+      title: 'default',
+      structure: {
+        type: 'compare-binary-horizontal',
+        dividerType: 'pros-cons-fold',
+      },
+      items: [{ type: 'simple', iconType: 'circle', iconSize: 40 }],
+    },
+  },
+  'compare-binary-horizontal-underline-text-fold': {
+    design: {
+      title: 'default',
+      structure: {
+        type: 'compare-binary-horizontal',
+        dividerType: 'pros-cons-fold',
+      },
+      items: [{ type: 'underline-text' }],
+    },
+  },
+  'compare-binary-horizontal-badge-card-fold': {
+    design: {
+      title: 'default',
+      structure: {
+        type: 'compare-binary-horizontal',
+        dividerType: 'pros-cons-fold',
+      },
+      items: [{ type: 'badge-card' }],
+    },
+  },
+  'compare-binary-horizontal-compact-card-fold': {
+    design: {
+      title: 'default',
+      structure: {
+        type: 'compare-binary-horizontal',
+        dividerType: 'pros-cons-fold',
+      },
+      items: [{ type: 'compact-card' }],
+    },
+  },
+  'compare-binary-horizontal-simple-arrow': {
+    design: {
+      title: 'default',
+      structure: {
+        type: 'compare-binary-horizontal',
+        dividerType: 'pros-cons-arrow',
+      },
+      items: [{ type: 'simple', iconType: 'circle', iconSize: 40 }],
+    },
+  },
+  'compare-binary-horizontal-underline-text-arrow': {
+    design: {
+      title: 'default',
+      structure: {
+        type: 'compare-binary-horizontal',
+        dividerType: 'pros-cons-arrow',
+      },
+      items: [{ type: 'underline-text' }],
+    },
+  },
+  'compare-binary-horizontal-badge-card-arrow': {
+    design: {
+      title: 'default',
+      structure: {
+        type: 'compare-binary-horizontal',
+        dividerType: 'pros-cons-arrow',
+      },
+      items: [{ type: 'badge-card' }],
+    },
+  },
+  'compare-binary-horizontal-compact-card-arrow': {
+    design: {
+      title: 'default',
+      structure: {
+        type: 'compare-binary-horizontal',
+        dividerType: 'pros-cons-arrow',
+      },
+      items: [{ type: 'compact-card' }],
+    },
+  },
+  'compare-binary-horizontal-simple-vs': {
+    design: {
+      title: 'default',
+      structure: {
+        type: 'compare-binary-horizontal',
+        dividerType: 'vs',
+      },
+      items: [{ type: 'simple', iconType: 'circle', iconSize: 40 }],
+    },
+  },
+  'compare-binary-horizontal-underline-text-vs': {
+    design: {
+      title: 'default',
+      structure: {
+        type: 'compare-binary-horizontal',
+        dividerType: 'vs',
+      },
+      items: [{ type: 'underline-text' }],
+    },
+  },
+  'compare-binary-horizontal-badge-card-vs': {
+    design: {
+      title: 'default',
+      structure: {
+        type: 'compare-binary-horizontal',
+        dividerType: 'vs',
+      },
+      items: [{ type: 'badge-card' }],
+    },
+  },
+  'compare-binary-horizontal-compact-card-vs': {
+    design: {
+      title: 'default',
+      structure: {
+        type: 'compare-binary-horizontal',
+        dividerType: 'vs',
+      },
+      items: [{ type: 'compact-card' }],
+    },
+  },
 };
 
 Object.entries(BUILT_IN_TEMPLATES).forEach(([name, options]) => {

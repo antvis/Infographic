@@ -130,14 +130,17 @@ export const COMPARE_DATA: Data = {
       label: '产品分析',
       children: [
         {
+          icon: 'company-021_v1_lineal',
           label: '架构升级',
           desc: '品牌营销策略就是以品牌输出为核心的营销策略',
         },
         {
+          icon: 'company-021_v1_lineal',
           label: '架构升级',
           desc: '品牌营销策略就是以品牌输出为核心的营销策略',
         },
         {
+          icon: 'company-021_v1_lineal',
           label: '架构升级',
           desc: '品牌营销策略就是以品牌输出为核心的营销策略',
         },
@@ -147,14 +150,17 @@ export const COMPARE_DATA: Data = {
       label: '竞品分析',
       children: [
         {
+          icon: 'achievment-050_v1_lineal',
           label: '架构升级',
           desc: '品牌营销策略就是以品牌输出为核心的营销策略',
         },
         {
+          icon: 'achievment-050_v1_lineal',
           label: '架构升级',
           desc: '品牌营销策略就是以品牌输出为核心的营销策略',
         },
         {
+          icon: 'achievment-050_v1_lineal',
           label: '架构升级',
           desc: '品牌营销策略就是以品牌输出为核心的营销策略',
         },

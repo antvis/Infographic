@@ -28,7 +28,7 @@ export const CompareBinaryHorizontal: ComponentType<
     groupGap = 20,
     opposite = true,
     flipped = true,
-    dividerType = 'pros-cons-fold',
+    dividerType = 'vs',
     options,
   } = props;
   const { title, desc, items = [] } = data;
@@ -78,7 +78,6 @@ export const CompareBinaryHorizontal: ComponentType<
         />,
       )
     : { width: 0, height: 0 };
-  console.log(dividerBounds);
 
   const itemElements: JSXElement[] = [];
   const btnElements: JSXElement[] = [];

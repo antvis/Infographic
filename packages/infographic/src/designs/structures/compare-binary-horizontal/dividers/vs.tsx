@@ -2,19 +2,8 @@
 import type { ComponentType } from '@antv/infographic-jsx';
 import { Defs, Ellipse, Group } from '@antv/infographic-jsx';
 import tinycolor from 'tinycolor2';
+import { DropShadow } from '../../../defs';
 import { registerDivider, type DividerProps } from './types';
-
-const GlowFilter = (
-  <filter
-    id="vs-divider-glow-filter"
-    x="-50%"
-    y="-50%"
-    width="200%"
-    height="200%"
-  >
-    <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
-  </filter>
-);
 
 export const VSDivider: ComponentType<DividerProps> = (props) => {
   const { x, y, colorPrimary, colorBg } = props;
@@ -27,7 +16,18 @@ export const VSDivider: ComponentType<DividerProps> = (props) => {
 
   return (
     <Group x={x} y={y} width={width} height={height}>
-      <Defs>{GlowFilter}</Defs>
+      <Defs>
+        <filter
+          id="vs-divider-glow-filter"
+          x="-50%"
+          y="-50%"
+          width="200%"
+          height="200%"
+        >
+          <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
+        </filter>
+        <DropShadow />
+      </Defs>
       <Ellipse
         x={0}
         y={0}
@@ -41,11 +41,12 @@ export const VSDivider: ComponentType<DividerProps> = (props) => {
       <text
         x={width / 2}
         y={height / 2}
-        fontSize={Math.min(width, height) / 2}
+        fontSize={Math.min(width, height) / 1.5}
         fontWeight="bold"
         fill={colorBg}
         textAnchor="middle"
         dominantBaseline="central"
+        filter="url(#drop-shadow)"
       >
         VS
       </text>
@@ -53,5 +54,4 @@ export const VSDivider: ComponentType<DividerProps> = (props) => {
   );
 };
 
-// 自注册
 registerDivider('vs', VSDivider);
