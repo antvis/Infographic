@@ -7,6 +7,9 @@ export default defineConfig({
   },
   plugins: [tsconfigPaths()],
   optimizeDeps: {
-    include: ['@antv/infographic', '@antv/infographic-jsx'],
+    exclude: ['@antv/infographic', '@antv/infographic-jsx'],
+  },
+  resolve: {
+    dedupe: ['@antv/infographic-jsx'],
   },
 });

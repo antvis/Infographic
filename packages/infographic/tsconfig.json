@@ -8,11 +8,11 @@
     "types": ["node"],
     "composite": true,
     "paths": {
-      "@antv/infographic-jsx": ["../jsx/esm"],
-      "@antv/infographic-jsx/*": ["../jsx/esm/*"]
+      "@antv/infographic-jsx": ["../jsx/src"],
+      "@antv/infographic-jsx/*": ["../jsx/src/*"]
     }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "lib", "esm"],
-  "references": []
+  "references": [{ "path": "../jsx" }]
 }
