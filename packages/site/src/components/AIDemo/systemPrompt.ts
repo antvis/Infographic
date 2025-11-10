@@ -1,3 +1,10 @@
+import { getItems, getStructures, getTemplates } from '@antv/infographic';
+
+const listOf = (fn: () => string[]) =>
+  fn()
+    .map((s) => `- ${s}`)
+    .join('\n');
+
 /**
  * 系统提示词 - 用于指导 AI 生成信息图配置
  */
@@ -67,144 +74,16 @@ interface DesignOptions {
 
 ### 结构 (structure)
 
-- compare-hierarchy-left-right
-- compare-hierarchy-row
-- compare-left-right
-- compare-mirror
-- hierarchy-tree
-- list-column
-- list-grid
-- list-pyramid
-- list-row
-- list-sector
-- list-waterfall
-- quadrant
-- relation-circle
-- relation-network
-- sequence-ascending-steps
-- sequence-circle-arrows
-- sequence-color-snake-steps
-- sequence-horizontal-zigzag
-- sequence-roadmap-vertical
-- sequence-snake-steps
-- sequence-steps
-- sequence-timeline
-- sequence-zigzag-steps
+${listOf(getStructures)}
 
 ### 数据项 (item)
 
-- badge-card
-- bullet-text
-- candy-card-lite
-- chart-column
-- circle-node
-- circular-progress
-- compact-card
-- done-list
-- horizontal-icon-arrow
-- horizontal-icon-line
-- icon-badge
-- indexed-card
-- l-corner-card
-- letter-card
-- pill-badge
-- plain-text
-- progress-card
-- pyramid
-- quarter-circular
-- quarter-simple-card
-- ribbon-card
-- rounded-rect-node
-- simple-horizontal-arrow
-- simple-illus
-- simple
-- simple-vertical-arrow
-- underline-text
-- vertical-icon-arrow
+${listOf(getItems)}
 
 ### 模板 (template)
 > 命名规则通常为 structure-item 组合而成。
 
-- compare-hierarchy-left-right-circle-node-pill-badge
-- compare-hierarchy-left-right-circle-node-plain-text
-- list-pyramid-rounded-rect-node
-- list-pyramid-badge-card
-- list-pyramid-compact-card
-- hierarchy-tree-compact-card
-- hierarchy-tree-badge-card
-- hierarchy-tree-icon-badge
-- hierarchy-tree-pill-badge
-- hierarchy-tree-progress-card
-- hierarchy-tree-ribbon-card
-- hierarchy-tree-rounded-rect-node
-- hierarchy-tree-simple
-- list-column-done-list
-- list-column-vertical-icon-arrow
-- list-grid-badge-card
-- list-grid-candy-card-lite
-- chart-column-simple
-- list-grid-circular-progress
-- list-grid-compact-card
-- list-grid-done-list
-- list-grid-horizontal-icon-arrow
-- list-grid-progress-card
-- list-grid-ribbon-card
-- list-grid-simple
-- list-row-circular-progress
-- list-row-horizontal-icon-arrow
-- relation-circle-circular-progress
-- relation-circle-icon-badge
-- sequence-steps-badge-card
-- sequence-steps-simple
-- sequence-timeline-done-list
-- sequence-timeline-plain-text
-- sequence-timeline-rounded-rect-node
-- sequence-ascending-steps
-- sequence-timeline-simple
-- sequence-cylinders-3d-simple
-- list-column-simple-vertical-arrow
-- list-row-simple-horizontal-arrow
-- compare-swot
-- compare-hierarchy-row-letter-card-compact-card
-- compare-hierarchy-row-letter-card-rounded-rect-node
-- sequence-snake-steps-compact-card
-- sequence-snake-steps-pill-badge
-- sequence-snake-steps-simple
-- sequence-color-snake-steps-horizontal-icon-line
-- sequence-pyramid-simple
-- list-row-horizontal-icon-line
-- list-sector-simple
-- list-sector-plain-text
-- list-sector-half-plain-text
-- quadrant-quarter-simple-card
-- quadrant-quarter-circular
-- sequence-roadmap-vertical-plain-text
-- sequence-roadmap-vertical-simple
-- sequence-roadmap-vertical-badge-card
-- sequence-roadmap-vertical-pill-badge
-- sequence-roadmap-vertical-quarter-circular
-- sequence-roadmap-vertical-quarter-simple-card
-- sequence-horizontal-zigzag-simple-illus
-- sequence-horizontal-zigzag-horizontal-icon-line
-- sequence-horizontal-zigzag-plain-text
-- sequence-horizontal-zigzag-simple-horizontal-arrow
-- sequence-horizontal-zigzag-simple
-- list-row-simple-illus
-- quadrant-simple-illus
-- sequence-color-snake-steps-simple-illus
-- sequence-snake-steps-simple-illus
-- sequence-steps-simple-illus
-- sequence-timeline-simple-illus
-- sequence-zigzag-steps-underline-text
-- sequence-horizontal-zigzag-underline-text
-- sequence-roadmap-vertical-underline-text
-- sequence-snake-steps-underline-text
-- sequence-circle-arrows-indexed-card
-- sequence-zigzag-pucks-3d-simple
-- sequence-zigzag-pucks-3d-underline-text
-- sequence-zigzag-pucks-3d-indexed-card
-- sequence-ascending-stairs-3d-simple
-- sequence-ascending-stairs-3d-underline-text
+${listOf(getTemplates)}
 
 ## 注意事项：
 - 必须严格按照 \`\`\`infographic 代码块的格式返回信息图配置

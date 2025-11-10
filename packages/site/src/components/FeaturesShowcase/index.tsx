@@ -1,13 +1,17 @@
+import { getItems, getStructures, getTemplates } from '@antv/infographic';
 import { useEffect, useRef, useState } from 'react';
 import SectionHeader from '../SectionHeader';
 import styles from './styles.module.css';
+
+function roundUpToTen(fn: () => string[]) {
+  return Math.ceil(fn().length / 10) * 10;
+}
 
 const features = [
   {
     icon: '🚀',
     title: '开箱即用',
-    description:
-      '30+ 数据项设计，20+ 结构布局，80+ 内置模板，快速创建专业信息图',
+    description: `${roundUpToTen(getItems)}+ 数据项设计，${roundUpToTen(getStructures)}+ 结构布局，${roundUpToTen(getTemplates)}+ 内置模板，快速创建专业信息图`,
     details: ['丰富的预设组件库', '多种布局算法支持', '零配置快速上手'],
     link: '#design-assets',
     linkType: 'scroll',

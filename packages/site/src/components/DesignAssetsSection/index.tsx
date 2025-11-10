@@ -1,4 +1,10 @@
-import { InfographicOptions, registerPalette } from '@antv/infographic';
+import {
+  getItems,
+  getStructures,
+  getTemplates,
+  InfographicOptions,
+  registerPalette,
+} from '@antv/infographic';
 import { useEffect, useMemo, useState } from 'react';
 import Infographic from '../Infographic';
 import SectionHeader from '../SectionHeader';
@@ -14,6 +20,10 @@ registerPalette('colorful', [
   '#faad14',
   '#2f54eb',
 ]);
+
+function roundUpToTen(num: number) {
+  return Math.ceil(num / 10) * 10;
+}
 
 const themeExamples: {
   name: string;
@@ -195,9 +205,21 @@ export default function DesignAssetsSection() {
       theme: isDark ? 'dark' : 'light',
       data: {
         items: [
-          { label: '数据项设计', desc: '丰富数据项设计', value: 26 },
-          { label: '结构布局', desc: '多样结构布局', value: 28 },
-          { label: '内置模版', desc: '开箱即用的模板', value: 80 },
+          {
+            label: '数据项设计',
+            desc: '丰富数据项设计',
+            value: getItems().length,
+          },
+          {
+            label: '结构布局',
+            desc: '多样结构布局',
+            value: getStructures().length,
+          },
+          {
+            label: '内置模版',
+            desc: '开箱即用的模板',
+            value: getTemplates().length,
+          },
           { label: '开源免费', desc: 'MIT 协议', value: 100 },
         ],
       },
@@ -207,9 +229,7 @@ export default function DesignAssetsSection() {
           valueFormatter: (v, d) => {
             const label = d.label as string;
             if (label === '开源免费') return `${v}%`;
-            if (label === '数据项设计' || label === '结构布局') return '~30';
-            if (label === '内置模版') return '~80';
-            return '';
+            return `~${roundUpToTen(v)}`;
           },
         },
         item: 'simple',
@@ -243,21 +263,25 @@ export default function DesignAssetsSection() {
               <li>
                 <span className={styles.statsIcon}>📊</span>
                 <div>
-                  <strong>30+ 数据项设计</strong>
+                  <strong>{roundUpToTen(getItems().length)}+ 数据项设计</strong>
                   <p>覆盖图表、图标、文本等多种展示形式</p>
                 </div>
               </li>
               <li>
                 <span className={styles.statsIcon}>📐</span>
                 <div>
-                  <strong>20+ 结构布局</strong>
+                  <strong>
+                    {roundUpToTen(getStructures().length)}+ 结构布局
+                  </strong>
                   <p>支持列表、矩阵、时间轴、层级等多种布局</p>
                 </div>
               </li>
               <li>
                 <span className={styles.statsIcon}>🎯</span>
                 <div>
-                  <strong>80+ 内置模板</strong>
+                  <strong>
+                    {roundUpToTen(getTemplates().length)}+ 内置模板
+                  </strong>
                   <p>快速套用，极速产出专业信息图</p>
                 </div>
               </li>
