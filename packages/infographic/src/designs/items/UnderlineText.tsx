@@ -14,7 +14,6 @@ import type { BaseItemProps } from './types';
 
 export interface UnderlineTextProps extends BaseItemProps {
   width?: number;
-  height?: number;
   gap?: number;
 }
 
@@ -23,16 +22,7 @@ const underlineHeight = 3;
 
 export const UnderlineText: ComponentType<UnderlineTextProps> = (props) => {
   const [
-    {
-      datum,
-      indexes,
-      width = 200,
-      height = 200,
-      gap = 4,
-      positionH = 'center',
-      positionV = 'normal',
-      themeColors,
-    },
+    { datum, indexes, width = 200, gap = 4, positionH = 'center', themeColors },
     restProps,
   ] = getItemProps(props, ['width', 'height', 'gap']);
 
@@ -58,17 +48,9 @@ export const UnderlineText: ComponentType<UnderlineTextProps> = (props) => {
     underlineHeight +
     (datum.desc ? gap * 2 + descBounds.height : 0);
 
-  // 计算内容起始位置（基于 positionV）
-  const contentStartY =
-    positionV === 'center'
-      ? (height - contentHeight) / 2
-      : positionV === 'flipped'
-        ? height - contentHeight
-        : 0;
-
   // 标题位置
   const titleX = 0; // 使用 alignHorizontal 控制对齐
-  const titleY = contentStartY;
+  const titleY = 0;
 
   // 对齐方式
   const alignHorizontal =
