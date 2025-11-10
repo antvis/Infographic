@@ -25,7 +25,7 @@ export const ItemIconCircle = (props: ItemIconProps & { colorBg?: string }) => {
   const { indexes, size = 50, fill, colorBg = 'white', ...restProps } = props;
 
   // 圆形内最大内切正方形的边长 = 圆的直径 / √2
-  const innerSize = size / Math.SQRT2;
+  const innerSize = (size / Math.SQRT2) * 0.9;
   const offset = (size - innerSize) / 2;
 
   const iconProps: RectProps = {

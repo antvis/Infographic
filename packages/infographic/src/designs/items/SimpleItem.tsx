@@ -1,6 +1,6 @@
 /** @jsxImportSource @antv/infographic-jsx */
 import { ComponentType, getElementBounds, Group } from '@antv/infographic-jsx';
-import { ItemDesc, ItemIcon, ItemLabel } from '../components';
+import { ItemDesc, ItemIcon, ItemIconCircle, ItemLabel } from '../components';
 import { FlexLayout } from '../layouts';
 import { getItemProps } from '../utils';
 import { registerItem } from './registry';
@@ -12,6 +12,7 @@ export interface SimpleItemProps extends BaseItemProps {
   gap?: number;
   showIcon?: boolean;
   iconSize?: number;
+  iconType?: 'default' | 'circle';
   usePaletteColor?: boolean;
 }
 
@@ -25,6 +26,7 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
       gap = 4,
       showIcon = true,
       iconSize = 30,
+      iconType = 'default',
       positionH = 'normal',
       positionV = 'normal',
       usePaletteColor = false,
@@ -37,6 +39,7 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
     'gap',
     'showIcon',
     'iconSize',
+    'iconType',
     'usePaletteColor',
   ]);
 
@@ -72,11 +75,20 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
   );
   const labelBounds = getElementBounds(labelContent);
   const iconContent = showIcon ? (
-    <ItemIcon
-      indexes={indexes}
-      size={iconSize}
-      fill={themeColors.colorTextSecondary}
-    />
+    iconType === 'circle' ? (
+      <ItemIconCircle
+        indexes={indexes}
+        size={iconSize}
+        fill={themeColors.colorPrimary}
+        colorBg={themeColors.colorBg}
+      />
+    ) : (
+      <ItemIcon
+        indexes={indexes}
+        size={iconSize}
+        fill={themeColors.colorTextSecondary}
+      />
+    )
   ) : null;
 
   if (!showIcon || !icon) {
