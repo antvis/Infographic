@@ -153,7 +153,7 @@ graph LR
 
 ### 工作流 3：测试组合效果
 
-**场景**：想知道 `compare-left-right` 结构 + `progress-card` 数据项的效果。
+**场景**：想知道 `list-column` 结构 + `progress-card` 数据项的效果。
 
 ```bash
 1. 打开 Dev 环境
@@ -161,7 +161,7 @@ graph LR
 2. 选择"灵活组合" Tab
 
 3. 设置：
-   - 结构：compare-left-right
+   - 结构：list-column
    - 数据项：progress-card
    - 数据集：对比数据
 

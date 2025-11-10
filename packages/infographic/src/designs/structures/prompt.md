@@ -725,7 +725,7 @@ registerStructure('some-structure', {
 > 支持的类型：List, Compare, Sequence, hierarchy, relation, geo, chart
 
 - **组件名**: 大驼峰，如 `ListRow`, `CompareLeftRight`
-- **注册名**: 小写-连字符，与分类前缀一致，如 `list-row`, `compare-left-right`
+- **注册名**: 小写-连字符，与分类前缀一致，如 `list-row`, `list-column`
 - **Props 接口**: 组件名 + `Props`，如 `ListRowProps`
 - **变量命名**: 使用有意义的名称，如 `itemElements`, `btnElements`, `decorElements`
 
