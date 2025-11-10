@@ -26,6 +26,15 @@ export const Infographic = ({ options }: { options: InfographicOptions }) => {
 
     const instance = new Renderer({
       container: ref.current,
+      svg: {
+        attributes: {
+          width: '100%',
+          height: '100%',
+        },
+        style: {
+          maxHeight: '80vh',
+        },
+      },
       ...options,
     });
 

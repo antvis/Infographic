@@ -8,6 +8,7 @@
   "dependencies": {
     "@antv/infographic": "workspace:*",
     "@antv/infographic-jsx": "workspace:*",
+    "@monaco-editor/react": "^4.7.0",
     "antd": "^5.27.4",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"

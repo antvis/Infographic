@@ -23,7 +23,7 @@ export const App = () => {
   };
 
   return (
-    <Flex vertical gap={16} style={{ padding: 16 }}>
+    <Flex vertical style={{ height: '100%' }}>
       <Radio.Group
         options={[
           { label: '灵活组合', value: 'composite' },
@@ -34,6 +34,7 @@ export const App = () => {
         block
         optionType="button"
         buttonStyle="solid"
+        style={{ padding: 16 }}
       />
       {tab === 'composite' ? <Composite /> : <Preview />}
     </Flex>
