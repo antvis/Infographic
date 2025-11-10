@@ -1,4 +1,5 @@
 export * from './chart-column';
+export * from './compare-binary-horizontal';
 export * from './compare-hierarchy-left-right';
 export * from './compare-hierarchy-row';
 export * from './hierarchy-tree';
