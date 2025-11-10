@@ -151,8 +151,7 @@ export const SequenceZigzagSteps: ComponentType<SequenceZigzagStepsProps> = (
     const glowX = 10;
     const glowY = GLOW_H + 10;
     const { colorPrimaryBg } = getThemeColors({
-      colorPrimary: currentColor || colorPrimary,
-      colorBg: 'white',
+      colorPrimary: currentColor,
     });
 
     decoElements.push(

@@ -44,7 +44,10 @@
 ```typescript
 export interface BaseStructureProps {
   Title?: ComponentType<Pick<TitleProps, 'title' | 'desc'>>;
-  Item?: ComponentType<Omit<BaseItemProps, 'themeColors'> & Partial<Pick<BaseItemProps, 'themeColors'>>>;
+  Item?: ComponentType<
+    Omit<BaseItemProps, 'themeColors'> &
+      Partial<Pick<BaseItemProps, 'themeColors'>>
+  >;
   Items?: ComponentType<Omit<BaseItemProps, 'themeColors'>>[];
   data: Data;
   options: ParsedInfographicOptions;
@@ -85,6 +88,7 @@ export interface BaseItemProps {
 ```
 
 **重要说明**:
+
 - 对于简单结构，使用 `Item` 属性传递单个组件
 - 对于层级结构（如树形、金字塔等），使用 `Items` 数组传递多个组件，不同层级可以使用不同的组件样式
 - `options` 包含主题配置、调色板等信息，可通过工具函数访问
@@ -317,16 +321,19 @@ export interface BaseItemProps {
 **主题与颜色函数** (从 ../utils 导入):
 
 - **getPaletteColor**: 获取调色板中指定索引的颜色
+
   ```typescript
   const color = getPaletteColor(options, [index]); // 返回颜色字符串
   ```
 
 - **getPaletteColors**: 获取完整调色板颜色数组
+
   ```typescript
   const palette = getPaletteColors(options); // 返回颜色数组
   ```
 
 - **getColorPrimary**: 获取主题色
+
   ```typescript
   const colorPrimary = getColorPrimary(options); // 返回主题色字符串
   ```
@@ -335,10 +342,13 @@ export interface BaseItemProps {
   ```typescript
   const themeColors = getThemeColors(options.themeConfig);
   // 或自定义配置
-  const themeColors = getThemeColors({
-    colorPrimary: '#1890ff',
-    colorBg: '#ffffff',
-  });
+  const themeColors = getThemeColors(
+    {
+      colorPrimary: '#1890ff',
+      colorBg: '#ffffff',
+    },
+    options,
+  );
   // 返回包含 colorText, colorPrimaryBg 等的主题对象
   ```
 
@@ -402,6 +412,7 @@ import type { BaseStructureProps } from './types';
 ```
 
 **注意事项**:
+
 - 只导入实际使用的组件和函数
 - 对于层级结构，记得导入 `BaseItemProps` 类型（如果需要）
 - 装饰组件和定义组件按需导入
@@ -642,6 +653,7 @@ registerStructure('some-structure', {
 ```
 
 **重要提示**：
+
 - composites 数组中的值必须是小写
 - 即使使用 `Items`（复数），也要填写 `'item'`（单数）
 - 如果结构直接渲染了某个数据字段（如 `data.title`），即使没有使用对应的 prop 组件，也应该在 composites 中声明
@@ -711,6 +723,7 @@ registerStructure('some-structure', {
 ### 8. 命名规范
 
 > 支持的类型：List, Compare, Sequence, hierarchy, relation, geo, chart
+
 - **组件名**: 大驼峰，如 `ListRow`, `CompareLeftRight`
 - **注册名**: 小写-连字符，与分类前缀一致，如 `list-row`, `compare-left-right`
 - **Props 接口**: 组件名 + `Props`，如 `ListRowProps`
@@ -732,6 +745,7 @@ registerStructure('some-structure', {
 - `showAxis` / `showConnections`: 是否显示轴线/连接线，默认 true
 
 **参数设计原则**:
+
 - 所有参数应有合理的默认值
 - 使用可选参数 `?` 标记
 - 参数名应清晰表达含义
@@ -818,12 +832,14 @@ registerStructure('some-structure', {
 **需求**: 数据项水平排列，等间距
 
 **实现要点**:
+
 - 使用单个 Item 组件
 - 每项的 x 坐标 = index × (itemWidth + gap)
 - 使用 `positionH="center"` 使内容居中
 - BtnAdd 在相邻项之间，BtnRemove 在每项下方
 
 **关键代码片段**:
+
 ```typescript
 items.forEach((item, index) => {
   const itemX = index * (itemBounds.width + gap);
@@ -838,11 +854,13 @@ items.forEach((item, index) => {
 **需求**: 左右两列，每列有根节点和多个子节点
 
 **实现要点**:
+
 - 使用 Items 数组：`[RootItem, ChildItem]`
 - 根节点固定位置，子节点在其下方排列
 - 子节点使用不同的 positionH（左列 'normal'，右列 'flipped'）
 
 **关键代码片段**:
+
 ```typescript
 const [RootItem, ChildItem] = Items;
 items.forEach((rootItem, rootIndex) => {
@@ -862,11 +880,13 @@ items.forEach((rootItem, rootIndex) => {
 **需求**: 横向流程，数据项之间有箭头连接
 
 **实现要点**:
+
 - 使用装饰元素（SimpleArrow）连接相邻项
 - 装饰元素置于独立 Group，在 ItemsGroup 之前
 - 使用主题色绘制箭头
 
 **关键代码片段**:
+
 ```typescript
 const colorPrimary = getColorPrimary(options);
 items.forEach((item, index) => {
@@ -897,11 +917,13 @@ return (
 **需求**: 数据项环形分布，每项使用不同颜色
 
 **实现要点**:
+
 - 使用三角函数计算圆周位置
 - 使用 `getPaletteColor` 获取每项的颜色
 - 将颜色通过 themeColors 传递给 Item
 
 **关键代码片段**:
+
 ```typescript
 items.forEach((item, index) => {
   const angle = (index * 2 * Math.PI) / items.length - Math.PI / 2;
@@ -916,7 +938,7 @@ items.forEach((item, index) => {
       data={data}
       x={itemX}
       y={itemY}
-      themeColors={getThemeColors({ colorPrimary: color })}
+      themeColors={getThemeColors({ colorPrimary: color }, options)}
     />
   );
 });
@@ -937,6 +959,7 @@ items.forEach((item, index) => {
 7. **结构注册**: 使用 `registerStructure` 注册组件
 
 **代码风格要求**:
+
 - 使用 2 空格缩进
 - 导入语句按类型分组
 - 变量声明使用 `const`
@@ -944,6 +967,7 @@ items.forEach((item, index) => {
 - 适当的空行分隔逻辑块
 
 **示例输出**:
+
 ```typescript
 /** @jsxImportSource @antv/infographic-jsx */
 import type { ComponentType, JSXElement } from '@antv/infographic-jsx';

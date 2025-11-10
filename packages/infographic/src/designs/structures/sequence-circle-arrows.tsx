@@ -265,10 +265,12 @@ export const SequenceCircleArrows: ComponentType<SequenceCircleArrowsProps> = (
     const midX = (startPos.x + endPos.x) / 2;
     const midY = (startPos.y + endPos.y) / 2;
 
-    const themeColors = getThemeColors({
-      colorPrimary: color || colorPrimary,
-      colorBg: 'white',
-    });
+    const themeColors = getThemeColors(
+      {
+        colorPrimary: color || colorPrimary,
+      },
+      options,
+    );
 
     decorElements.push(
       <Ellipse

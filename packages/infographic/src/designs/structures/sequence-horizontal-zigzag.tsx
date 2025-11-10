@@ -27,10 +27,7 @@ export const SequenceHorizontalZigzag: ComponentType<
 
   const titleContent = Title ? <Title title={title} desc={desc} /> : null;
   const colorPrimary = getColorPrimary(options);
-  const themeColors = getThemeColors({
-    colorPrimary,
-    colorBg: options.themeConfig.colorPrimary,
-  });
+  const themeColors = getThemeColors({ colorPrimary }, options);
 
   const btnBounds = getElementBounds(<BtnAdd indexes={[0]} />);
   const itemBounds = getElementBounds(

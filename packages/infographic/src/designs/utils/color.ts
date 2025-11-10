@@ -34,11 +34,17 @@ export function getPaletteColor(
   );
 }
 
-export function getThemeColors(options: {
-  colorPrimary?: string;
-  colorBg?: string;
-}) {
-  const { colorBg = 'white', colorPrimary = 'black' } = options;
+export function getThemeColors(
+  colors: {
+    colorPrimary?: string;
+    colorBg?: string;
+  },
+  options?: ParsedInfographicOptions,
+) {
+  const {
+    colorBg = options?.themeConfig?.colorBg || 'white',
+    colorPrimary = options ? getColorPrimary(options) : 'black',
+  } = colors;
   return generateThemeColors({
     colorPrimary: colorPrimary,
     isDarkMode: isDarkColor(colorBg),
