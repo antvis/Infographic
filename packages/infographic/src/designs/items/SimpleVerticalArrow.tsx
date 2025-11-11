@@ -52,6 +52,7 @@ export const SimpleVerticalArrow: ComponentType<SimpleVerticalArrowProps> = (
     </ItemDesc>
   );
 
+  const isNormal = positionH !== 'flipped';
   const labelGap = 15;
   const arrowWidth = 30;
   const textWidth = 120;
@@ -61,7 +62,7 @@ export const SimpleVerticalArrow: ComponentType<SimpleVerticalArrowProps> = (
   return (
     <Group width={totalWidth} height={height} {...restProps}>
       <FlexLayout flexDirection="row" alignItems="center">
-        {positionH === 'normal' ? (
+        {isNormal ? (
           <>
             <FlexLayout flexDirection="column" alignItems="flex-end">
               {label}
@@ -94,7 +95,7 @@ export const SimpleVerticalArrow: ComponentType<SimpleVerticalArrowProps> = (
               .slice(-2)}
           </Text>
         </AlignLayout>
-        {positionH === 'flipped' ? (
+        {!isNormal ? (
           <>
             <Gap width={labelGap} />
             <FlexLayout flexDirection="column" alignItems="flex-start">

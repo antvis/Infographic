@@ -510,7 +510,7 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
     design: {
       title: 'default',
       structure: { type: 'sequence-timeline' },
-      items: [{ type: 'simple-illus' }],
+      items: [{ type: 'simple-illus', usePaletteColor: true }],
     },
   },
   'sequence-zigzag-steps-underline-text': {

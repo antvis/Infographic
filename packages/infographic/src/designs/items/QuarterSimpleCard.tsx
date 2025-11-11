@@ -30,8 +30,8 @@ export const QuarterSimpleCard: ComponentType<QuarterSimpleCardProps> = (
       iconSize = 30,
       padding = 20,
       borderRadius = 16,
-      positionH = 'normal',
-      positionV = 'normal',
+      positionH = 'center',
+      positionV = 'center',
       themeColors,
     },
     restProps,
@@ -81,7 +81,21 @@ export const QuarterSimpleCard: ComponentType<QuarterSimpleCardProps> = (
   const r = borderRadius;
   let cardPath = '';
 
-  if (positionH === 'flipped' && positionV === 'flipped') {
+  if (positionH === 'center' && positionV === 'center') {
+    // 四个角都为圆角
+    cardPath = `
+  M ${r} 0
+  L ${width - r} 0
+  Q ${width} 0 ${width} ${r}
+  L ${width} ${height - r}
+  Q ${width} ${height} ${width - r} ${height}
+  L ${r} ${height}
+  Q 0 ${height} 0 ${height - r}
+  L 0 ${r}
+  Q 0 0 ${r} 0
+  Z
+`;
+  } else if (positionH === 'flipped' && positionV === 'flipped') {
     // 直角在左下角
     cardPath = `
   M ${r} 0

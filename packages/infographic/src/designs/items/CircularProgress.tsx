@@ -41,7 +41,7 @@ export const CircularProgress: ComponentType<CircularProgressProps> = (
   const d = size - strokeWidth;
 
   return (
-    <Group {...restProps}>
+    <Group {...restProps} width={size} height={size + gap + 20}>
       {/* 完整圆环背景轨道 - 表示100% */}
       <Ellipse
         x={start}
@@ -71,10 +71,10 @@ export const CircularProgress: ComponentType<CircularProgressProps> = (
       {/* 中心数值 */}
       <ItemValue
         indexes={indexes}
-        x={start}
-        y={start}
-        width={d}
-        height={d}
+        x={strokeWidth}
+        y={strokeWidth}
+        width={d - strokeWidth}
+        height={d - strokeWidth}
         fontSize={24}
         fontWeight="bold"
         fill={themeColors.colorPrimary}

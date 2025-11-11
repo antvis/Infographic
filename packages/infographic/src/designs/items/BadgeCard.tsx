@@ -8,6 +8,7 @@ import {
 } from '@antv/infographic-jsx';
 import tinycolor from 'tinycolor2';
 import { ItemDesc, ItemIcon, ItemLabel, ItemValue } from '../components';
+import { FlexLayout } from '../layouts';
 import { getItemProps } from '../utils';
 import { registerItem } from './registry';
 import type { BaseItemProps } from './types';
@@ -36,18 +37,27 @@ export const BadgeCard: ComponentType<BadgeCardProps> = (props) => {
     },
     restProps,
   ] = getItemProps(props, ['width', 'height', 'iconSize', 'badgeSize', 'gap']);
-
   const value = datum.value;
   const gradientId = `${themeColors.colorPrimary}-badge`;
 
-  const badgeX = positionH === 'flipped' ? gap : width - gap - badgeSize;
-  const badgeY = gap;
-
-  const contentStartX = positionH === 'flipped' ? badgeSize + 2 * gap : gap;
+  const badgeX = positionH === 'flipped' ? width - gap - badgeSize : gap;
+  const contentStartX = positionH === 'flipped' ? gap : badgeSize + 2 * gap;
   const contentWidth = width - badgeSize - 3 * gap;
+  const fullWidth = width - gap * 2;
+  const hasValue = value !== undefined;
+  const hasDesc = !!datum.desc;
+
+  // 描述区域的固定位置（label + value 区域的下方）
+  const descY = gap + 14 + 18 + 8; // label(14) + value(18) + gap(8)
+  const contentAreaHeight = descY - gap; // label 和 value 占据的总高度
+
+  // 当没有 desc 时，徽章和内容区域垂直居中
+  const badgeY = !hasDesc ? (height - badgeSize) / 2 : gap;
+  // 没有 value 时，label 在整个内容区域垂直居中；有 value 时从顶部开始
+  const contentY = !hasValue && !hasDesc ? (height - 14) / 2 : gap;
 
   return (
-    <Group {...restProps}>
+    <Group {...restProps} width={width} height={height}>
       <Defs>
         <radialGradient id={gradientId} cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor={themeColors.colorPrimary} />
@@ -89,49 +99,62 @@ export const BadgeCard: ComponentType<BadgeCardProps> = (props) => {
         fill={themeColors.colorWhite}
       />
 
-      {/* 标签 */}
-      <ItemLabel
-        indexes={indexes}
+      {/* 上方内容区域：label 和 value */}
+      <FlexLayout
+        flexDirection="column"
         x={contentStartX}
-        y={gap + 2}
+        y={contentY}
         width={contentWidth}
-        alignHorizontal={positionH === 'flipped' ? 'right' : 'left'}
-        fontSize={14}
-        fill={themeColors.colorText}
+        height={!hasValue && !hasDesc ? undefined : contentAreaHeight}
+        alignItems="center"
+        justifyContent="center"
       >
-        {datum.label}
-      </ItemLabel>
-
-      {/* 数值 */}
-      {value !== undefined && (
-        <ItemValue
+        {/* 标签 */}
+        <ItemLabel
           indexes={indexes}
-          x={contentStartX}
-          y={gap + 22}
           width={contentWidth}
           alignHorizontal={positionH === 'flipped' ? 'right' : 'left'}
-          fontSize={18}
-          fontWeight="bold"
-          fill={themeColors.colorPrimary}
-          value={value}
-          formatter={valueFormatter}
-        />
-      )}
+          alignVertical={'center'}
+          fontSize={14}
+          fill={themeColors.colorText}
+        >
+          {datum.label}
+        </ItemLabel>
 
-      {/* 描述 */}
-      <ItemDesc
-        indexes={indexes}
-        x={contentStartX}
-        y={value !== undefined ? gap + 45 : gap + 20}
-        width={contentWidth}
-        alignHorizontal={positionH === 'flipped' ? 'right' : 'left'}
-        fontSize={11}
-        fill={themeColors.colorTextSecondary}
-        lineNumber={2}
-        wordWrap={true}
-      >
-        {datum.desc}
-      </ItemDesc>
+        {/* 数值 */}
+        {hasValue && (
+          <ItemValue
+            indexes={indexes}
+            width={contentWidth}
+            alignHorizontal={positionH === 'flipped' ? 'right' : 'left'}
+            alignVertical="center"
+            fontSize={18}
+            lineHeight={1}
+            fontWeight="bold"
+            fill={themeColors.colorPrimary}
+            value={value}
+            formatter={valueFormatter}
+          />
+        )}
+      </FlexLayout>
+
+      {/* 描述区域（固定位置，独立于 value） */}
+      {hasDesc && (
+        <ItemDesc
+          indexes={indexes}
+          x={gap}
+          y={descY}
+          width={fullWidth}
+          alignHorizontal={positionH === 'flipped' ? 'right' : 'left'}
+          fontSize={11}
+          fill={themeColors.colorTextSecondary}
+          lineNumber={2}
+          lineHeight={1.2}
+          wordWrap={true}
+        >
+          {datum.desc}
+        </ItemDesc>
+      )}
     </Group>
   );
 };

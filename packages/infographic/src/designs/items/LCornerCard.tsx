@@ -1,11 +1,5 @@
 /** @jsxImportSource @antv/infographic-jsx */
-import {
-  ComponentType,
-  getElementBounds,
-  Group,
-  Path,
-  Polygon,
-} from '@antv/infographic-jsx';
+import { ComponentType, Group, Path, Polygon } from '@antv/infographic-jsx';
 import { ItemDesc, ItemIcon, ItemLabel } from '../components';
 import { getItemProps } from '../utils';
 import { registerItem } from './registry';
@@ -18,45 +12,50 @@ export interface LCornerCardProps extends BaseItemProps {
 
 export const LCornerCard: ComponentType<LCornerCardProps> = (props) => {
   const [
-    { indexes, datum, width = 120, iconSize = 24, themeColors },
+    { indexes, datum, width = 140, iconSize = 24, themeColors },
     restProps,
   ] = getItemProps(props, ['width', 'iconSize']);
 
   const { label, desc } = datum;
+  const lStroke = 8;
+  const arrowSize = 16;
+  const arrowGap = 12;
 
-  const descContent = (
-    <ItemDesc
-      indexes={indexes}
-      width={width}
-      height={60}
-      y={0}
-      alignHorizontal="left"
-      alignVertical="bottom"
-      fill={themeColors.colorTextSecondary}
-    >
-      {desc}
-    </ItemDesc>
-  );
-  const descBounds = getElementBounds(descContent);
+  const descX = arrowSize + arrowGap;
+  const descWidth = width - descX;
+  const descHeight = 60;
 
-  const startY = descBounds.height + 12;
   const verticalLen = iconSize + 44;
-  const d = `M 0 ${startY + verticalLen} L0 ${startY} L ${width} ${startY}`;
 
-  const stroke = 8;
+  const arrowX1 = arrowSize;
+  const arrowY1 = descHeight + arrowGap;
+  const arrowY2 = descHeight + arrowSize + arrowGap;
   const arrowVertices = [
-    { x: (-3 * stroke) / 2, y: startY - stroke / 2 },
-    { x: (-3 * stroke) / 2, y: startY + (3 * stroke) / 2 },
-    { x: (-7 * stroke) / 2, y: startY + (3 * stroke) / 2 },
+    { x: 0, y: arrowY2 },
+    { x: arrowX1, y: arrowY1 },
+    { x: arrowX1, y: arrowY2 },
   ];
+
+  const innerWidth = width - arrowX1 - arrowGap;
+  const lx1 = arrowX1 + arrowGap;
+  const lx2 = lx1 + innerWidth;
+  const ly1 = arrowY1 + lStroke / 2;
+  const ly2 = ly1 + verticalLen;
+  const d = `M ${lx1} ${ly2} L ${lx1} ${ly1} L ${lx2} ${ly1}`;
+
+  const halfStroke = lStroke / 2;
+  const x1 = lx1 + halfStroke;
+  const y1 = ly1 + halfStroke;
+  const gap = 8;
 
   return (
     <Group {...restProps}>
       <ItemDesc
         indexes={indexes}
-        width={width - stroke}
+        x={descX}
+        width={descWidth}
+        height={descHeight}
         fontSize={12}
-        lineHeight={1.4}
         alignHorizontal="left"
         alignVertical="bottom"
         fill={themeColors.colorTextSecondary}
@@ -64,34 +63,35 @@ export const LCornerCard: ComponentType<LCornerCardProps> = (props) => {
         {desc}
       </ItemDesc>
 
-      {indexes[0] > 0 && (
-        <Polygon
-          points={arrowVertices}
-          fill={themeColors.colorPrimary}
-          opacity={0.9}
-        />
-      )}
+      <Polygon
+        points={arrowVertices}
+        fill={themeColors.colorPrimary}
+        opacity={0.9}
+        width={arrowSize}
+        height={arrowSize}
+      />
 
       <Path
         d={d}
         stroke={themeColors.colorPrimary}
-        strokeWidth={stroke}
+        strokeWidth={lStroke}
         fill="none"
       />
 
       <ItemIcon
         indexes={indexes}
-        x={width / 2 - iconSize / 2}
-        y={descBounds.height + stroke + 16}
+        x={x1 + innerWidth / 2 - iconSize / 2}
+        y={y1 + gap}
         size={iconSize}
         fill={themeColors.colorPrimary}
       />
 
       <ItemLabel
         indexes={indexes}
-        y={descBounds.height + iconSize + stroke + 22}
-        width={width}
-        fontSize="14"
+        x={x1}
+        y={y1 + iconSize + gap * 2}
+        width={innerWidth}
+        fontSize={14}
         fontWeight="bold"
         alignHorizontal="center"
         alignVertical="center"

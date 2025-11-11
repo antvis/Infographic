@@ -1,6 +1,7 @@
 /** @jsxImportSource @antv/infographic-jsx */
-import { ComponentType, getElementBounds, Group } from '@antv/infographic-jsx';
+import { ComponentType, getElementBounds } from '@antv/infographic-jsx';
 import { Illus, ItemDesc, ItemLabel } from '../components';
+import { FlexLayout } from '../layouts';
 import { getItemProps } from '../utils';
 import { registerItem } from './registry';
 import type { BaseItemProps } from './types';
@@ -9,15 +10,28 @@ export interface SimpleIllusItemProps extends BaseItemProps {
   width?: number;
   illusSize?: number;
   gap?: number;
+  usePaletteColor?: boolean;
 }
 
 export const SimpleIllusItem: ComponentType<SimpleIllusItemProps> = (props) => {
   const [
-    { indexes, datum, width = 180, illusSize = width, gap = 8, themeColors },
+    {
+      indexes,
+      datum,
+      width = 180,
+      illusSize = width,
+      gap = 8,
+      themeColors,
+      usePaletteColor = false,
+    },
     restProps,
-  ] = getItemProps(props, ['width', 'illusSize', 'gap']);
+  ] = getItemProps(props, ['width', 'illusSize', 'gap', 'usePaletteColor']);
 
   const { label, desc } = datum;
+
+  const labelColor = usePaletteColor
+    ? themeColors.colorPrimary
+    : themeColors.colorText;
 
   const labelContent = (
     <ItemLabel
@@ -25,7 +39,7 @@ export const SimpleIllusItem: ComponentType<SimpleIllusItemProps> = (props) => {
       width={width}
       alignHorizontal="center"
       alignVertical="center"
-      fill={themeColors.colorText}
+      fill={labelColor}
     >
       {label}
     </ItemLabel>
@@ -33,33 +47,20 @@ export const SimpleIllusItem: ComponentType<SimpleIllusItemProps> = (props) => {
   const labelBounds = getElementBounds(labelContent);
 
   return (
-    <Group {...restProps}>
-      {/* Illus - centered */}
-      <Illus
-        indexes={indexes}
-        x={(width - illusSize) / 2}
-        y={0}
-        width={illusSize}
-        height={illusSize}
-      />
-
-      {/* ItemLabel - centered below Illus */}
-      <ItemLabel
-        indexes={indexes}
-        width={width}
-        y={illusSize + gap}
-        alignHorizontal="center"
-        alignVertical="center"
-        fill={themeColors.colorText}
-      >
-        {label}
-      </ItemLabel>
-
-      {/* ItemDesc - centered below Label */}
+    <FlexLayout
+      {...restProps}
+      width={width}
+      height={illusSize + gap + labelBounds.height + gap + 48}
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      gap={gap}
+    >
+      <Illus indexes={indexes} width={illusSize} height={illusSize} />
+      {labelContent}
       <ItemDesc
         indexes={indexes}
         width={width}
-        y={illusSize + gap + labelBounds.height + gap}
         alignHorizontal="center"
         alignVertical="top"
         fill={themeColors.colorTextSecondary}
@@ -67,7 +68,7 @@ export const SimpleIllusItem: ComponentType<SimpleIllusItemProps> = (props) => {
       >
         {desc}
       </ItemDesc>
-    </Group>
+    </FlexLayout>
   );
 };
 

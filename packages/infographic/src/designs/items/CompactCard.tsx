@@ -1,6 +1,7 @@
 /** @jsxImportSource @antv/infographic-jsx */
 import { ComponentType, Defs, Group, Rect } from '@antv/infographic-jsx';
 import { ItemDesc, ItemIcon, ItemLabel, ItemValue } from '../components';
+import { FlexLayout } from '../layouts';
 import { getItemId, getItemProps } from '../utils';
 import { registerItem } from './registry';
 import type { BaseItemProps } from './types';
@@ -29,11 +30,16 @@ export const CompactCard: ComponentType<CompactCardProps> = (props) => {
   ] = getItemProps(props, ['width', 'height', 'iconSize', 'gap']);
 
   const value = datum.value;
+  const hasValue = value !== undefined && value !== null;
   const shadowId = getItemId(indexes, 'def', 'compact-shadow');
 
   const iconX = positionH === 'flipped' ? width - gap - iconSize : gap;
   const textStartX = positionH === 'flipped' ? gap : iconSize + 2 * gap;
   const textWidth = width - iconSize - 3 * gap;
+
+  // 为 Label 和 Value 分配空间
+  const labelWidth = hasValue ? textWidth * 0.8 : textWidth;
+  const valueWidth = hasValue ? textWidth * 0.2 : 0;
 
   return (
     <Group {...restProps}>
@@ -57,9 +63,9 @@ export const CompactCard: ComponentType<CompactCardProps> = (props) => {
         filter={`url(#${shadowId})`}
       />
 
-      {/* 左侧色条 */}
+      {/* 侧边色条 */}
       <Rect
-        x={0}
+        x={positionH === 'flipped' ? width - 3 : 0}
         y={0}
         width={3}
         height={height}
@@ -77,49 +83,60 @@ export const CompactCard: ComponentType<CompactCardProps> = (props) => {
         fill={themeColors.colorPrimary}
       />
 
-      {/* 标签 */}
-      <ItemLabel
-        indexes={indexes}
+      <FlexLayout
         x={textStartX}
-        y={gap + 2}
+        y={gap}
         width={textWidth}
-        alignHorizontal={positionH === 'flipped' ? 'right' : 'left'}
-        fontSize={12}
-        fill={themeColors.colorText}
+        height={height - gap * 2}
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="flex-start"
       >
-        {datum.label}
-      </ItemLabel>
-
-      {/* 数值 */}
-      {value !== undefined && (
-        <ItemValue
-          indexes={indexes}
-          x={textStartX}
-          y={gap + 18}
+        {/* 标签和数值所在行 */}
+        <FlexLayout
           width={textWidth}
-          alignHorizontal={positionH === 'flipped' ? 'right' : 'left'}
-          fontSize={16}
-          fontWeight="bold"
-          fill={themeColors.colorPrimary}
-          value={value}
-          formatter={valueFormatter}
-        />
-      )}
-
-      {/* 描述 */}
-      <ItemDesc
-        indexes={indexes}
-        x={textStartX}
-        y={value !== undefined ? gap + 38 : gap + 16}
-        width={textWidth}
-        alignHorizontal={positionH === 'flipped' ? 'right' : 'left'}
-        fontSize={10}
-        fill={themeColors.colorTextSecondary}
-        lineNumber={1}
-        wordWrap={true}
-      >
-        {datum.desc}
-      </ItemDesc>
+          flexDirection="row"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          {/* 标签 - 始终左对齐 */}
+          <ItemLabel
+            indexes={indexes}
+            width={labelWidth}
+            alignHorizontal="left"
+            fontSize={12}
+            fill={themeColors.colorText}
+          >
+            {datum.label}
+          </ItemLabel>
+          {/* 数值 - 始终右对齐 */}
+          {hasValue && (
+            <ItemValue
+              indexes={indexes}
+              width={valueWidth}
+              alignHorizontal="right"
+              fontSize={12}
+              fontWeight="bold"
+              fill={themeColors.colorPrimary}
+              value={value}
+              formatter={valueFormatter}
+            />
+          )}
+        </FlexLayout>
+        {/* 描述 - 第二行 */}
+        <ItemDesc
+          indexes={indexes}
+          width={textWidth}
+          alignHorizontal="left"
+          alignVertical="center"
+          fontSize={10}
+          fill={themeColors.colorTextSecondary}
+          lineNumber={2}
+          wordWrap={true}
+        >
+          {datum.desc}
+        </ItemDesc>
+      </FlexLayout>
     </Group>
   );
 };

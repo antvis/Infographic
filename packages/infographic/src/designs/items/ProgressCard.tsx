@@ -35,7 +35,6 @@ export const ProgressCard: ComponentType<ProgressCardProps> = (props) => {
       progressHeight = 8,
       borderRadius = 12,
       positionH = 'normal',
-      positionV = 'normal',
       themeColors,
       valueFormatter = (v: any) => `${v}%`,
     },
@@ -70,16 +69,13 @@ export const ProgressCard: ComponentType<ProgressCardProps> = (props) => {
   // 计算布局位置
   const contentY = gap;
   const iconX = positionH === 'flipped' ? width - gap - iconSize : gap;
-  const iconY =
-    contentY +
-    (positionV === 'center'
-      ? (height - 2 * gap - progressHeight - gap - iconSize) / 2
-      : 0);
+  const iconY = contentY;
 
   const textStartX = positionH === 'flipped' ? gap : iconSize + 2 * gap;
   const textWidth = width - iconSize - 3 * gap;
   const textY = iconY;
   const progressY = height - gap - progressHeight;
+  const hasValue = value !== undefined;
 
   return (
     <Group {...restProps}>
@@ -138,14 +134,15 @@ export const ProgressCard: ComponentType<ProgressCardProps> = (props) => {
       </ItemLabel>
 
       {/* 数值 */}
-      {value !== undefined && (
+      {hasValue && (
         <ItemValue
           indexes={indexes}
           x={textStartX}
-          y={textY + labelBounds.height + 4}
+          y={textY + labelBounds.height}
           width={textWidth}
           alignHorizontal={positionH === 'flipped' ? 'right' : 'left'}
           alignVertical="top"
+          lineHeight={1}
           fontSize={24}
           fontWeight="bold"
           fill={themeColors.colorPrimary}
@@ -158,13 +155,13 @@ export const ProgressCard: ComponentType<ProgressCardProps> = (props) => {
       <ItemDesc
         indexes={indexes}
         x={textStartX}
-        y={textY + labelBounds.height + (value !== undefined ? 32 : 4)}
+        y={textY + labelBounds.height + (hasValue ? 27 : 4)}
         width={textWidth}
         alignHorizontal={positionH === 'flipped' ? 'right' : 'left'}
         alignVertical="top"
         fontSize={11}
         fill={themeColors.colorTextSecondary}
-        lineNumber={2}
+        lineNumber={hasValue ? 2 : 3}
         wordWrap={true}
       >
         {datum.desc}

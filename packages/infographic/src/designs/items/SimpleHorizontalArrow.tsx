@@ -28,7 +28,9 @@ export const SimpleHorizontalArrow: ComponentType<
     restProps,
   ] = getItemProps(props, ['width']);
 
-  const textAlignVertical = positionV === 'normal' ? 'bottom' : 'top';
+  const isVNormal = positionV !== 'flipped';
+
+  const textAlignVertical = isVNormal ? 'bottom' : 'top';
   const label = (
     <ItemLabel
       indexes={indexes}
@@ -65,7 +67,7 @@ export const SimpleHorizontalArrow: ComponentType<
   return (
     <Group width={width} height={totalHeight} {...restProps}>
       <FlexLayout flexDirection="column" alignItems="center">
-        {positionV === 'normal' ? (
+        {isVNormal ? (
           <>
             {desc}
             {label}
@@ -98,7 +100,7 @@ export const SimpleHorizontalArrow: ComponentType<
                   .slice(-2)}
           </Text>
         </AlignLayout>
-        {positionV === 'flipped' ? (
+        {!isVNormal ? (
           <>
             <Gap height={labelGap} />
             {label}

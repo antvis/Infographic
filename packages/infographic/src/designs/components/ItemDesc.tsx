@@ -14,6 +14,8 @@ export const ItemDesc = ({
   children,
   ...props
 }: ItemDescProps) => {
+  if (!children) return null;
+
   const finalProps: TextProps = {
     width: 100,
     fontSize: 14,
@@ -21,7 +23,7 @@ export const ItemDesc = ({
     wordWrap: true,
     lineHeight: 1.4,
     children,
-    backgroundColor: 'rgba(199, 207, 145, 0.1)',
+    backgroundColor: 'rgba(199, 207, 145, 0.2)',
     ...props,
   };
 

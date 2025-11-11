@@ -7,6 +7,8 @@ import { registerItem } from './registry';
 import type { BaseItemProps } from './types';
 
 export interface LetterCardProps extends BaseItemProps {
+  width?: number;
+  height?: number;
   showStripe?: boolean;
   showGradient?: boolean;
   showBottomShade?: boolean;
@@ -30,7 +32,13 @@ export const LetterCard: ComponentType<LetterCardProps> = (props) => {
       themeColors,
     },
     restProps,
-  ] = getItemProps(props, ['showStripe', 'showGradient', 'showBottomShade']);
+  ] = getItemProps(props, [
+    'width',
+    'height',
+    'showStripe',
+    'showGradient',
+    'showBottomShade',
+  ]);
 
   const displayLetter = datum.label?.[0].toUpperCase();
   const displayTitle = datum.label?.toUpperCase();
@@ -57,8 +65,18 @@ export const LetterCard: ComponentType<LetterCardProps> = (props) => {
   const shadeId = `${uniqueId}-shade`;
   const tile = stripeWidth + gapWidth;
 
+  const ratio = 1;
+  const letterFontSize = 96;
+  const letterHeight = letterFontSize * ratio;
+  const titleFontSize = 16;
+  const titleHeight = titleFontSize * ratio;
+  const textGap = height / 16;
+  const textTotalHeight = letterHeight + textGap + titleHeight;
+  const letterY = (height - textTotalHeight) / 2;
+  const titleY = letterY + letterHeight + textGap;
+
   return (
-    <Group {...restProps}>
+    <Group {...restProps} width={width} height={height}>
       <Defs>
         {showGradient && (
           <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
@@ -132,9 +150,9 @@ export const LetterCard: ComponentType<LetterCardProps> = (props) => {
         <ItemLabel
           indexes={indexes}
           x={0}
-          y={16}
+          y={letterY}
           width={width}
-          fontSize={96}
+          fontSize={letterFontSize}
           fontWeight="bold"
           fill="#FFFFFF"
           alignHorizontal="center"
@@ -148,9 +166,9 @@ export const LetterCard: ComponentType<LetterCardProps> = (props) => {
       <ItemLabel
         indexes={indexes}
         x={0}
-        y={height - 40}
+        y={titleY}
         width={width}
-        fontSize={16}
+        fontSize={titleFontSize}
         fontWeight="bold"
         fill="#FFFFFF"
         alignHorizontal="center"

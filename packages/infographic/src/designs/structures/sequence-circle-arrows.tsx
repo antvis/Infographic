@@ -21,7 +21,7 @@ import type { BaseStructureProps } from './types';
 
 import * as d3 from 'd3';
 
-const ITEM_DISTANCE = 46;
+const ITEM_DISTANCE = 20;
 const LINE_GAP = 5;
 
 export interface SequenceCircleArrowsProps extends BaseStructureProps {
@@ -38,7 +38,7 @@ export const SequenceCircleArrows: ComponentType<SequenceCircleArrowsProps> = (
     Item,
     data,
     options,
-    radius = 200,
+    radius = 150,
     arrowSize = 4,
     strokeWidth = 10,
   } = props;
@@ -99,8 +99,9 @@ export const SequenceCircleArrows: ComponentType<SequenceCircleArrowsProps> = (
   let maxX = -Infinity;
   let maxY = -Infinity;
 
+  // 计算圆上的点位置，从顶部（-90度）开始顺时针排列
   for (let i = 0; i < count; i++) {
-    const angle = i * angleStep - Math.PI / 2 - angleStep;
+    const angle = i * angleStep - Math.PI / 2;
     const x = centerX + radius * Math.cos(angle);
     const y = centerY + radius * Math.sin(angle);
     positions.push({ x, y });
@@ -111,6 +112,16 @@ export const SequenceCircleArrows: ComponentType<SequenceCircleArrowsProps> = (
     maxY = Math.max(maxY, y);
   }
 
+  // 预计算所有连线和 Item 的位置信息
+  const lineData: Array<{
+    lineLength: number;
+    circleBigW: number;
+    midX: number;
+    midY: number;
+    itemX: number;
+    itemY: number;
+  }> = [];
+
   for (let i = 0; i < count; i++) {
     const startPos = positions[i];
     const endPos = positions[(i + 1) % count];
@@ -118,47 +129,72 @@ export const SequenceCircleArrows: ComponentType<SequenceCircleArrowsProps> = (
     const lineLength = Math.sqrt(
       Math.pow(endPos.x - startPos.x, 2) + Math.pow(endPos.y - startPos.y, 2),
     );
-    const CIRCLE_BIG_W = Math.min(lineLength * 0.5, 100);
+    const circleBigW = Math.min(lineLength * 0.5, 100);
 
     const midX = (startPos.x + endPos.x) / 2;
     const midY = (startPos.y + endPos.y) / 2;
 
-    minX = Math.min(minX, midX - CIRCLE_BIG_W / 2);
-    minY = Math.min(minY, midY - CIRCLE_BIG_W / 2);
-    maxX = Math.max(maxX, midX + CIRCLE_BIG_W / 2);
-    maxY = Math.max(maxY, midY + CIRCLE_BIG_W / 2);
+    minX = Math.min(minX, midX - circleBigW / 2);
+    minY = Math.min(minY, midY - circleBigW / 2);
+    maxX = Math.max(maxX, midX + circleBigW / 2);
+    maxY = Math.max(maxY, midY + circleBigW / 2);
+
+    // 计算连线中点相对于圆心的角度
+    const midAngle = Math.atan2(midY - centerY, midX - centerX);
+
+    // 将角度标准化到 [0, 2*PI)
+    const normalizedAngle = midAngle < 0 ? midAngle + 2 * Math.PI : midAngle;
 
     let itemX: number;
     let itemY: number;
 
-    // 计算连线相对于中心的方向
-    const deltaX = midX - centerX;
-    const deltaY = midY - centerY;
+    // 根据连线中点在圆上的位置，决定 Item 的摆放方向
+    // 将圆分为8个区域，每个区域45度
+    const deg = (normalizedAngle * 180) / Math.PI;
 
-    // 判断连线主要在哪个方向
-    if (Math.abs(midY - startPos.y) < 10) {
-      // 垂直方向为主
-      if (deltaY > 0) {
-        // 下方连线，Item 放在下方
-        itemX = midX - itemBounds.width / 2;
-        itemY = midY + CIRCLE_BIG_W / 2 + ITEM_DISTANCE;
-      } else {
-        // 上方连线，Item 放在上方
-        itemX = midX - itemBounds.width / 2;
-        itemY = midY - CIRCLE_BIG_W / 2 - ITEM_DISTANCE - itemBounds.height;
-      }
+    // 计算从中点到 Item 的距离（圆心到圆边的距离 + 间距）
+    const distanceFromCenter = circleBigW / 2 + ITEM_DISTANCE;
+
+    // 使用极坐标方式计算 Item 位置，确保所有方向的距离一致
+    const itemCenterX = midX + Math.cos(midAngle) * distanceFromCenter;
+    const itemCenterY = midY + Math.sin(midAngle) * distanceFromCenter;
+
+    // 根据角度微调 Item 的对齐方式
+    if (deg >= 337.5 || deg < 22.5) {
+      // 右侧 (0度附近)，Item 左对齐
+      itemX = itemCenterX;
+      itemY = itemCenterY - itemBounds.height / 2;
+    } else if (deg >= 22.5 && deg < 67.5) {
+      // 右下角，Item 左上对齐
+      itemX = itemCenterX;
+      itemY = itemCenterY;
+    } else if (deg >= 67.5 && deg < 112.5) {
+      // 下方 (90度附近)，Item 顶部居中对齐
+      itemX = itemCenterX - itemBounds.width / 2;
+      itemY = itemCenterY;
+    } else if (deg >= 112.5 && deg < 157.5) {
+      // 左下角，Item 右上对齐
+      itemX = itemCenterX - itemBounds.width;
+      itemY = itemCenterY;
+    } else if (deg >= 157.5 && deg < 202.5) {
+      // 左侧 (180度附近)，Item 右对齐
+      itemX = itemCenterX - itemBounds.width;
+      itemY = itemCenterY - itemBounds.height / 2;
+    } else if (deg >= 202.5 && deg < 247.5) {
+      // 左上角，Item 右下对齐
+      itemX = itemCenterX - itemBounds.width;
+      itemY = itemCenterY - itemBounds.height;
+    } else if (deg >= 247.5 && deg < 292.5) {
+      // 上方 (270度附近)，Item 底部居中对齐
+      itemX = itemCenterX - itemBounds.width / 2;
+      itemY = itemCenterY - itemBounds.height;
     } else {
-      // 水平方向为主
-      if (deltaX > 0) {
-        // 右侧连线，Item 放在右侧
-        itemX = midX + CIRCLE_BIG_W / 2 + ITEM_DISTANCE;
-        itemY = midY - itemBounds.height / 2;
-      } else {
-        // 左侧连线，Item 放在左侧
-        itemX = midX - CIRCLE_BIG_W / 2 - ITEM_DISTANCE - itemBounds.width;
-        itemY = midY - itemBounds.height / 2;
-      }
+      // 右上角 (deg >= 292.5 && deg < 337.5)，Item 左下对齐
+      itemX = itemCenterX;
+      itemY = itemCenterY - itemBounds.height;
     }
+
+    lineData.push({ lineLength, circleBigW, midX, midY, itemX, itemY });
 
     minX = Math.min(minX, itemX);
     minY = Math.min(minY, itemY);
@@ -186,18 +222,16 @@ export const SequenceCircleArrows: ComponentType<SequenceCircleArrowsProps> = (
     const nextIndex = (i + 1) % count;
     const indexes = [i];
 
-    const lineLength = Math.sqrt(
-      Math.pow(endPos.x - startPos.x, 2) + Math.pow(endPos.y - startPos.y, 2),
-    );
-    const CIRCLE_BIG_W = Math.min(lineLength * 0.5, 100);
-    const CIRCLE_SMALL_W = Math.max(CIRCLE_BIG_W - 20, 20);
+    // 使用预计算的数据
+    const { lineLength, circleBigW, midX, midY } = lineData[i];
+    const CIRCLE_SMALL_W = Math.max(circleBigW - 20, 20);
     const ICON_SIZE = Math.max(CIRCLE_SMALL_W * 0.4, 16);
 
     const color = getPaletteColor(options, indexes) || colorPrimary;
 
     const dx = endPos.x - startPos.x;
     const dy = endPos.y - startPos.y;
-    const length = Math.sqrt(dx * dx + dy * dy);
+    const length = lineLength;
     const unitX = dx / length;
     const unitY = dy / length;
 
@@ -225,8 +259,8 @@ export const SequenceCircleArrows: ComponentType<SequenceCircleArrowsProps> = (
     const arrowId = `fork-arrow-${colorClean}-${i}`;
 
     const forkArrowPath = `
-      M ${-arrowSize * 0.6} ${-arrowSize * 0.4} 
-      L 0 0 
+      M ${-arrowSize * 0.6} ${-arrowSize * 0.4}
+      L 0 0
       L ${-arrowSize * 0.6} ${arrowSize * 0.4}
     `;
 
@@ -262,8 +296,9 @@ export const SequenceCircleArrows: ComponentType<SequenceCircleArrowsProps> = (
       />,
     );
 
-    const midX = (startPos.x + endPos.x) / 2;
-    const midY = (startPos.y + endPos.y) / 2;
+    // 使用预计算的 midX 和 midY（需要加上 offset）
+    const adjustedMidX = midX + offsetX;
+    const adjustedMidY = midY + offsetY;
 
     const themeColors = getThemeColors(
       {
@@ -274,18 +309,18 @@ export const SequenceCircleArrows: ComponentType<SequenceCircleArrowsProps> = (
 
     decorElements.push(
       <Ellipse
-        x={Math.max(0, midX - CIRCLE_BIG_W / 2)}
-        y={Math.max(0, midY - CIRCLE_BIG_W / 2)}
-        width={CIRCLE_BIG_W}
-        height={CIRCLE_BIG_W}
+        x={Math.max(0, adjustedMidX - circleBigW / 2)}
+        y={Math.max(0, adjustedMidY - circleBigW / 2)}
+        width={circleBigW}
+        height={circleBigW}
         fill={themeColors.colorPrimaryBg}
       />,
     );
 
     decorElements.push(
       <Ellipse
-        x={Math.max(0, midX - CIRCLE_SMALL_W / 2)}
-        y={Math.max(0, midY - CIRCLE_SMALL_W / 2)}
+        x={Math.max(0, adjustedMidX - CIRCLE_SMALL_W / 2)}
+        y={Math.max(0, adjustedMidY - CIRCLE_SMALL_W / 2)}
         width={CIRCLE_SMALL_W}
         height={CIRCLE_SMALL_W}
         fill="#ffffff"
@@ -294,73 +329,28 @@ export const SequenceCircleArrows: ComponentType<SequenceCircleArrowsProps> = (
 
     decorElements.push(
       <ItemIcon
-        x={Math.max(0, midX - ICON_SIZE / 2)}
-        y={Math.max(0, midY - ICON_SIZE / 2)}
+        x={Math.max(0, adjustedMidX - ICON_SIZE / 2)}
+        y={Math.max(0, adjustedMidY - ICON_SIZE / 2)}
         size={ICON_SIZE}
         indexes={indexes}
         fill={color}
       />,
     );
 
-    const btnAddX = Math.max(0, midX - btnBounds.width / 2);
-    const btnAddY = Math.max(0, midY - btnBounds.height / 2);
+    const btnAddX = Math.max(0, adjustedMidX - btnBounds.width / 2);
+    const btnAddY = Math.max(0, adjustedMidY - btnBounds.height / 2);
 
     btnElements.push(<BtnAdd indexes={[nextIndex]} x={btnAddX} y={btnAddY} />);
   }
 
   for (let i = 0; i < count; i++) {
-    const startPos = itemPositions[i];
-    const endPos = itemPositions[(i + 1) % count];
     const indexes = [i];
     const item = items[i];
 
-    const lineLength = Math.sqrt(
-      Math.pow(endPos.x - startPos.x, 2) + Math.pow(endPos.y - startPos.y, 2),
-    );
-    const CIRCLE_BIG_W = Math.min(lineLength * 0.5, 100);
-
-    const midX = (startPos.x + endPos.x) / 2;
-    const midY = (startPos.y + endPos.y) / 2;
-
-    let itemX: number;
-    let itemY: number;
-
-    const adjustedCenterX = centerX + offsetX;
-    const adjustedCenterY = centerY + offsetY;
-
-    // 计算连线相对于中心的方向
-    const deltaX = midX - adjustedCenterX;
-    const deltaY = midY - adjustedCenterY;
-
-    // Y 值区别不大, 线是水平的，item 垂直显示在 上/下方
-    if (Math.abs(midY - startPos.y) < 10) {
-      if (deltaY > 0) {
-        // 下方连线，Item 放在下方
-        itemX = Math.max(0, midX - itemBounds.width / 2);
-        itemY = Math.max(0, midY + CIRCLE_BIG_W / 2 + ITEM_DISTANCE);
-      } else {
-        // 上方连线，Item 放在上方
-        itemX = Math.max(0, midX - itemBounds.width / 2);
-        itemY = Math.max(
-          0,
-          midY - CIRCLE_BIG_W / 2 - ITEM_DISTANCE - itemBounds.height,
-        );
-      }
-    } else {
-      // 线是垂直的， item 显示在 做/右方
-      if (deltaX > 0) {
-        // 右侧连线，Item 放在右侧
-        itemX = Math.max(0, midX + CIRCLE_BIG_W / 2 + ITEM_DISTANCE);
-        itemY = Math.max(0, midY - itemBounds.height / 2);
-      } else {
-        // 左侧连线，Item 放在左侧
-        itemX = Math.max(
-          0,
-          midX - CIRCLE_BIG_W / 2 - ITEM_DISTANCE - itemBounds.width,
-        );
-        itemY = Math.max(0, midY - itemBounds.height / 2);
-      }
-    }
+    // 使用预计算的 Item 位置（需要加上 offset）
+    const { itemX: preItemX, itemY: preItemY } = lineData[i];
+    const itemX = Math.max(0, preItemX + offsetX);
+    const itemY = Math.max(0, preItemY + offsetY);
 
     itemElements.push(
       <Item indexes={indexes} datum={item} data={data} x={itemX} y={itemY} />,

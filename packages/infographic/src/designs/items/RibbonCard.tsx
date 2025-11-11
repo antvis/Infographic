@@ -1,7 +1,7 @@
 /** @jsxImportSource @antv/infographic-jsx */
 import { ComponentType, Defs, Group, Path, Rect } from '@antv/infographic-jsx';
 import tinycolor from 'tinycolor2';
-import { ItemDesc, ItemIcon, ItemLabel, ItemValue } from '../components';
+import { ItemDesc, ItemIcon, ItemLabel } from '../components';
 import { getItemProps } from '../utils';
 import { registerItem } from './registry';
 import type { BaseItemProps } from './types';
@@ -21,11 +21,10 @@ export const RibbonCard: ComponentType<RibbonCardProps> = (props) => {
       indexes,
       width = 240,
       height = 140,
-      iconSize = 24,
+      iconSize = 28,
       gap = 12,
       ribbonHeight = 32,
       themeColors,
-      valueFormatter,
     },
     restProps,
   ] = getItemProps(props, [
@@ -36,7 +35,6 @@ export const RibbonCard: ComponentType<RibbonCardProps> = (props) => {
     'ribbonHeight',
   ]);
 
-  const value = datum.value ?? 0;
   const gradientId = `${themeColors.colorPrimary}-ribbon`;
 
   return (
@@ -105,29 +103,17 @@ export const RibbonCard: ComponentType<RibbonCardProps> = (props) => {
         fill={themeColors.colorPrimary}
       />
 
-      {/* 数值 */}
-      <ItemValue
+      {/* 标签 */}
+      <ItemLabel
         indexes={indexes}
         x={iconSize + 2 * gap}
         y={ribbonHeight + gap}
         width={width - iconSize - 3 * gap}
+        height={iconSize}
         alignHorizontal="left"
-        fontSize={28}
+        alignVertical="center"
+        lineHeight={1}
         fontWeight="bold"
-        fill={themeColors.colorText}
-        value={value}
-        formatter={valueFormatter}
-      />
-
-      {/* 标签 */}
-      <ItemLabel
-        indexes={indexes}
-        x={gap}
-        y={ribbonHeight + iconSize + 2 * gap}
-        width={width - 2 * gap}
-        alignHorizontal="left"
-        fontSize={14}
-        fontWeight="medium"
         fill={themeColors.colorText}
       >
         {datum.label}
@@ -137,12 +123,11 @@ export const RibbonCard: ComponentType<RibbonCardProps> = (props) => {
       <ItemDesc
         indexes={indexes}
         x={gap}
-        y={ribbonHeight + iconSize + gap + 32}
+        y={ribbonHeight + iconSize + gap + 5}
         width={width - 2 * gap}
         alignHorizontal="left"
-        fontSize={11}
         fill={themeColors.colorTextSecondary}
-        lineNumber={2}
+        lineNumber={3}
         wordWrap={true}
       >
         {datum.desc}
@@ -151,8 +136,8 @@ export const RibbonCard: ComponentType<RibbonCardProps> = (props) => {
       {/* 彩带上的小图标 */}
       <ItemIcon
         indexes={indexes}
-        x={width - gap - 16}
-        y={gap}
+        x={width - gap - 8}
+        y={gap / 2}
         size={16}
         fill={themeColors.colorWhite}
       />
@@ -162,5 +147,5 @@ export const RibbonCard: ComponentType<RibbonCardProps> = (props) => {
 
 registerItem('ribbon-card', {
   component: RibbonCard,
-  composites: ['icon', 'label', 'value', 'desc'],
+  composites: ['icon', 'label', 'desc'],
 });

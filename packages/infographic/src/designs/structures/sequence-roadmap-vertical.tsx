@@ -17,6 +17,7 @@ import type { BaseStructureProps } from './types';
 export interface SequenceRoadmapVerticalProps extends BaseStructureProps {
   /** Item spacing */
   spacing?: number;
+  flipped?: boolean;
 }
 
 const CONFIG = {
@@ -61,6 +62,7 @@ function renderItemRow({
   itemBounds,
   item,
   Item,
+  flipped,
 }: any) {
   const { iconSize } = CONFIG;
   const isLeft = direction === 'left';
@@ -71,6 +73,15 @@ function renderItemRow({
     ? x.x6 + CONFIG.spacing
     : x.x1 - CONFIG.spacing - itemBounds.width;
   const itemY = y.y3 - itemBounds.height / 2;
+
+  // 根据 flipped 参数决定 positionH
+  const positionH = isLeft
+    ? flipped
+      ? 'flipped'
+      : 'normal'
+    : flipped
+      ? 'normal'
+      : 'flipped';
 
   return {
     icon: (
@@ -100,7 +111,7 @@ function renderItemRow({
         datum={item}
         x={itemX}
         y={itemY}
-        positionH={isLeft ? 'normal' : 'flipped'}
+        positionH={positionH}
       />
     ),
   };
@@ -124,7 +135,14 @@ function buildDecorations({ direction, x, y, color, elements }: any) {
 export const SequenceRoadmapVertical: ComponentType<
   SequenceRoadmapVerticalProps
 > = (props) => {
-  const { Title, Item, data, spacing = CONFIG.spacing, options } = props;
+  const {
+    Title,
+    Item,
+    data,
+    spacing = CONFIG.spacing,
+    options,
+    flipped = false,
+  } = props;
   const { title, desc, items = [] } = data;
 
   const titleContent = Title ? <Title title={title} desc={desc} /> : null;
@@ -256,6 +274,7 @@ export const SequenceRoadmapVertical: ComponentType<
       itemBounds,
       item: items[i],
       Item,
+      flipped,
     });
     itemIcons.push(icon);
     seriesNumber.push(label);

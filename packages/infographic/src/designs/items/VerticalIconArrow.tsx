@@ -30,7 +30,8 @@ export const VerticalIconArrow: ComponentType<VerticalIconArrowProps> = (
     restProps,
   ] = getItemProps(props, ['height']);
 
-  const textAlignHorizontal = positionH === 'normal' ? 'right' : 'left';
+  const isHNormal = positionH !== 'flipped';
+  const textAlignHorizontal = isHNormal ? 'right' : 'left';
   const label = (
     <ItemLabel
       indexes={indexes}
@@ -70,6 +71,7 @@ export const VerticalIconArrow: ComponentType<VerticalIconArrowProps> = (
     />
   );
 
+  const isNormal = positionH !== 'flipped';
   const dotLineGap = 5;
   const iconGap = 25;
   const arrowWidth = 30;
@@ -94,7 +96,7 @@ export const VerticalIconArrow: ComponentType<VerticalIconArrowProps> = (
   return (
     <Group width={totalWidth} height={height} {...restProps}>
       <FlexLayout flexDirection="row" alignItems="center">
-        {positionH === 'normal' ? (
+        {isNormal ? (
           <>
             <FlexLayout flexDirection="column" alignItems="flex-end">
               {label}
@@ -130,7 +132,7 @@ export const VerticalIconArrow: ComponentType<VerticalIconArrowProps> = (
               .slice(-2)}
           </Text>
         </AlignLayout>
-        {positionH === 'flipped' ? (
+        {!isNormal ? (
           <>
             {dotLine}
             <Gap width={dotLineGap} />

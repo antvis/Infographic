@@ -15,7 +15,7 @@ export const ItemLabel = ({ indexes, children, ...props }: ItemLabelProps) => {
     width: 100,
     lineHeight: 1.4,
     children,
-    backgroundColor: 'rgba(199, 207, 145, 0.1)',
+    backgroundColor: 'rgba(199, 207, 145, 0.2)',
     ...props,
   };
 

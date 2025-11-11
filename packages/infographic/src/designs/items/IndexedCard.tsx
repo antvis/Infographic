@@ -49,8 +49,6 @@ export const IndexedCard: ComponentType<IndexedCardProps> = (props) => {
       indexFontSize = 20,
       labelFontSize = 16,
       gap = 8,
-      positionH = 'normal',
-      positionV = 'normal',
       themeColors,
     },
     restProps,
@@ -128,25 +126,9 @@ export const IndexedCard: ComponentType<IndexedCardProps> = (props) => {
     (showDesc ? gap : 0) + // 分隔线后间距
     descBounds.height; // 描述高度
 
-  // 3.5 考虑 positionH/V 对齐
-  const cardX =
-    positionH === 'center' ? -width / 2 : positionH === 'flipped' ? -width : 0;
-  const cardY =
-    positionV === 'center'
-      ? -contentHeight / 2
-      : positionV === 'flipped'
-        ? -contentHeight
-        : 0;
-
   // 4. 组件结构
   return (
-    <Group
-      x={cardX}
-      y={cardY}
-      {...restProps}
-      width={width}
-      height={contentHeight}
-    >
+    <Group {...restProps} width={width} height={contentHeight}>
       {/* 4.1 背景圆角卡片 */}
       <Rect
         x={0}
