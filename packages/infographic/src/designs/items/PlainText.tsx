@@ -24,7 +24,7 @@ export const LabelText: ComponentType<LabelTextProps> = (props) => {
     },
     restProps,
   ] = getItemProps(props, ['width', 'formatter', 'usePaletteColor']);
-  console.log(width);
+
   return (
     <ItemLabel
       {...restProps}
