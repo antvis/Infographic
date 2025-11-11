@@ -1,6 +1,6 @@
 export * from './BadgeCard';
-export * from './BulletText';
 export * from './CandyCardLite';
+export * from './CapsuleItem';
 export * from './CircleNode';
 export * from './CircularProgress';
 export * from './CompactCard';
