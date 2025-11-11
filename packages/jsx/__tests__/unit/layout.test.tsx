@@ -100,16 +100,17 @@ describe('jsx layout components', () => {
     expect(renderSVG(<Node />)).toBe(
       minifySvg(
         `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 135 50">
-  <g x="0" y="0" width="135" height="50">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 135 52.32">
+  <g x="0" y="0" width="135" height="52.32">
     <rect width="30" height="40" fill="red" stroke-width="10" x="0" />
     <g x="40" y="20" width="35">
       <rect x="40" y="20" width="35" fill="none" />
-      <text x="40" y="20" fill="black" font-size="14" text-anchor="start" dominant-baseline="hanging" data-text-alignment="LEFT TOP" width="35" height="0">Hello</text>
+      <text x="40" y="32.32" fill="black" font-size="14" text-anchor="start" dominant-baseline="baseline" data-text-alignment="LEFT TOP" width="35" height="0">Hello</text>
     </g>
     <ellipse width="50" height="50" fill="blue" x="85" cx="110" cy="25" rx="25" ry="25" />
   </g>
-</svg>`,
+</svg>
+`,
       ),
     );
   });

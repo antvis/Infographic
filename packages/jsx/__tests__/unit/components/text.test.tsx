@@ -16,7 +16,7 @@ describe('Text', () => {
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
   <g width="100" height="50">
     <rect width="100" height="50" fill="none" />
-    <text fill="black" font-size="14" text-anchor="start" dominant-baseline="hanging" data-text-alignment="LEFT TOP" width="100" height="50">Hello World</text>
+    <text y="12.32" fill="black" font-size="14" text-anchor="start" dominant-baseline="baseline" data-text-alignment="LEFT TOP" width="100" height="50">Hello World</text>
   </g>
 </svg>
 `),
@@ -49,7 +49,7 @@ describe('Text', () => {
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
   <g width="100" height="50">
     <rect width="100" height="50" fill="none" />
-    <text fill="red" font-size="12" text-anchor="start" dominant-baseline="hanging" data-text-alignment="LEFT TOP" line-height="1.2" data-word-wrap="true" width="100" height="50" font-family="Arial" font-style="italic" font-weight="bold" text-decoration="underline" letter-spacing="2" word-spacing="4" opacity="0.8">Hello World</text>
+    <text y="11.76" fill="red" font-size="12" text-anchor="start" dominant-baseline="baseline" data-text-alignment="LEFT TOP" line-height="1.2" data-word-wrap="true" width="100" height="50" font-family="Arial" font-style="italic" font-weight="bold" text-decoration="underline" letter-spacing="2" word-spacing="4" opacity="0.8">Hello World</text>
   </g>
 </svg>
 `),
@@ -97,7 +97,7 @@ describe('Text', () => {
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
   <g width="100" height="50">
     <rect width="100" height="50" fill="none" />
-    <text x="100" y="50" fill="black" font-size="14" text-anchor="end" dominant-baseline="text-after-edge" data-text-alignment="RIGHT BOTTOM" width="100" height="50">Hello World</text>
+    <text x="100" y="50" fill="black" font-size="14" text-anchor="end" dominant-baseline="baseline" data-text-alignment="RIGHT BOTTOM" width="100" height="50">Hello World</text>
   </g>
 </svg>
 `),
@@ -116,7 +116,7 @@ describe('Text', () => {
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
   <g width="100" height="50">
     <rect width="100" height="50" fill="red" fill-opacity="1" rx="0" ry="0" />
-    <text fill="black" font-size="14" text-anchor="start" dominant-baseline="hanging" data-text-alignment="LEFT TOP" width="100" height="50">Hello World</text>
+    <text y="12.32" fill="black" font-size="14" text-anchor="start" dominant-baseline="baseline" data-text-alignment="LEFT TOP" width="100" height="50">Hello World</text>
   </g>
 </svg>
 `),
@@ -140,7 +140,7 @@ describe('Text', () => {
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
   <g width="100" height="50">
     <rect width="100" height="50" fill="blue" fill-opacity="0.5" rx="0" ry="0" />
-    <text fill="black" font-size="14" text-anchor="start" dominant-baseline="hanging" data-text-alignment="LEFT TOP" width="100" height="50">Hello World</text>
+    <text y="12.32" fill="black" font-size="14" text-anchor="start" dominant-baseline="baseline" data-text-alignment="LEFT TOP" width="100" height="50">Hello World</text>
   </g>
 </svg>
 `),
@@ -164,7 +164,7 @@ describe('Text', () => {
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
   <g width="100" height="50">
     <rect width="100" height="50" fill="green" fill-opacity="1" rx="10" ry="10" />
-    <text fill="black" font-size="14" text-anchor="start" dominant-baseline="hanging" data-text-alignment="LEFT TOP" width="100" height="50">Hello World</text>
+    <text y="12.32" fill="black" font-size="14" text-anchor="start" dominant-baseline="baseline" data-text-alignment="LEFT TOP" width="100" height="50">Hello World</text>
   </g>
 </svg>
 `),
@@ -183,7 +183,7 @@ describe('Text', () => {
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
   <g width="100" height="50" id="my-text">
     <rect width="100" height="50" fill="none" id="my-text-bounds" />
-    <text fill="black" font-size="14" text-anchor="start" dominant-baseline="hanging" data-text-alignment="LEFT TOP" width="100" height="50" id="my-text-text">Hello World</text>
+    <text y="12.32" fill="black" font-size="14" text-anchor="start" dominant-baseline="baseline" data-text-alignment="LEFT TOP" width="100" height="50" id="my-text-text">Hello World</text>
   </g>
 </svg>
 `),
@@ -202,7 +202,7 @@ describe('Text', () => {
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50">
   <g width="100" height="50" id="my-text">
     <rect width="100" height="50" fill="yellow" fill-opacity="1" rx="0" ry="0" id="my-text-bounds" />
-    <text fill="black" font-size="14" text-anchor="start" dominant-baseline="hanging" data-text-alignment="LEFT TOP" width="100" height="50" id="my-text-text">Hello World</text>
+    <text y="12.32" fill="black" font-size="14" text-anchor="start" dominant-baseline="baseline" data-text-alignment="LEFT TOP" width="100" height="50" id="my-text-text">Hello World</text>
   </g>
 </svg>
 `),
