@@ -6,12 +6,6 @@ const TEXT_ANCHOR_MAP = {
   left: 'start',
 } as const;
 
-const DOMINANT_BASELINE_MAP = {
-  center: 'central',
-  bottom: 'text-after-edge',
-  top: 'hanging',
-} as const;
-
 export function Text(props: TextProps): JSXElement {
   const {
     id,
@@ -53,20 +47,35 @@ export function Text(props: TextProps): JSXElement {
         ? x + width
         : x;
 
-  const textY =
-    alignVertical === 'center'
-      ? y + height / 2
-      : alignVertical === 'bottom'
-        ? y + height
-        : y;
+  const calculateTextY = () => {
+    if (alignVertical === 'center') return y + height / 2;
+    if (alignVertical === 'bottom') return y + height;
 
-  const textProps: Record<string, any> = {
+    const fz = +fontSize;
+    const ratio = 0.88;
+    if (lineHeight && lineHeight > 1) {
+      const lineHeightPx = fz * lineHeight;
+      const extraSpace = lineHeightPx - fz;
+      return y + extraSpace / 2 + fz * ratio;
+    }
+    return y + fz * ratio;
+  };
+
+  const textY = calculateTextY();
+
+  const getDominantBaseline = () => {
+    if (alignVertical === 'center') return 'central';
+    if (alignVertical === 'bottom') return 'baseline';
+    return 'baseline';
+  };
+
+  const textProps = {
     ...(textX && { x: textX }),
     ...(textY && { y: textY }),
     fill,
     fontSize,
     textAnchor: TEXT_ANCHOR_MAP[alignHorizontal],
-    dominantBaseline: DOMINANT_BASELINE_MAP[alignVertical],
+    dominantBaseline: getDominantBaseline(),
     'data-text-alignment': `${alignHorizontal.toUpperCase()} ${alignVertical.toUpperCase()}`,
     children,
     ...dataAttrs,

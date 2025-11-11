@@ -122,7 +122,7 @@ export function renderSVG(element: JSXNode, props: SVGProps = {}): string {
     ? processed.map((el) => render(el as RenderableNode, context)).join('')
     : render(processed as RenderableNode, context);
 
-  const { x, y, width, height, ...rest } = props;
+  const { x, y, width, height, style, ...rest } = props;
   const finalProps = {
     ...rest,
     xmlns: 'http://www.w3.org/2000/svg',
@@ -141,13 +141,14 @@ export function renderSVG(element: JSXNode, props: SVGProps = {}): string {
   }
 
   const attrs = renderAttrs(finalProps);
+  const styleStr = renderStyle(style);
 
   const defsContent = context.defs.size
     ? `<defs>${Array.from(context.defs.values())
         .map((def) => render(def, context))
         .join('')}</defs>`
     : '';
-  return `<svg${attrs}>${defsContent}${content}</svg>`;
+  return `<svg${attrs}${styleStr}>${defsContent}${content}</svg>`;
 }
 
 /**
@@ -166,4 +167,19 @@ function renderAttrs(props: Record<string, any>): string {
       return ` ${attrName}="${attrValue}"`;
     })
     .join('');
+}
+
+function renderStyle(style?: Record<string, any>): string {
+  if (!style || Object.keys(style).length === 0) return '';
+  const styleString = Object.entries(style)
+    .map(([key, value]) => {
+      const cssKey = key.replace(
+        /[A-Z]/g,
+        (match) => `-${match.toLowerCase()}`,
+      );
+      return `${cssKey}: ${value};`;
+    })
+    .join('');
+
+  return ` style="${escapeHtml(styleString)}"`;
 }
