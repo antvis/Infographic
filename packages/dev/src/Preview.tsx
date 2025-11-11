@@ -1,12 +1,13 @@
 import { getTemplate, getTemplates } from '@antv/infographic';
 import Editor from '@monaco-editor/react';
-import { Card, Checkbox, Form, Select } from 'antd';
+import { Card, Checkbox, ColorPicker, Form, Select } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { Infographic } from './Infographic';
 import { COMPARE_DATA, HIERARCHY_DATA, LIST_DATA, SWOT_DATA } from './data';
-import { getSearchParam, setSearchParam } from './utils/search-params';
+import { getStoredValues, setStoredValues } from './utils/storage';
 
 const templates = getTemplates();
+const STORAGE_KEY = 'preview-form-values';
 
 const DATA = {
   list: { label: '列表数据', value: LIST_DATA },
@@ -16,18 +17,76 @@ const DATA = {
 } as const;
 
 export const Preview = () => {
-  // 验证模板是否存在，如果不存在则使用默认模板
-  const initialTemplate = (() => {
-    const paramTemplate = getSearchParam('template');
-    if (paramTemplate && templates.includes(paramTemplate)) {
-      return paramTemplate;
+  // Get stored values with validation
+  const storedValues = getStoredValues<{
+    template: string;
+    data: keyof typeof DATA;
+    theme: 'light' | 'dark';
+    colorPrimary: string;
+    enablePalette: boolean;
+  }>(STORAGE_KEY, (stored) => {
+    const fallbacks: any = {};
+
+    // Validate template
+    if (stored.template && !templates.includes(stored.template)) {
+      fallbacks.template = templates[0];
     }
-    return templates[0];
-  })();
+
+    // Validate data
+    const dataKeys = Object.keys(DATA) as (keyof typeof DATA)[];
+    if (stored.data && !dataKeys.includes(stored.data)) {
+      fallbacks.data = dataKeys[0];
+    }
+
+    return fallbacks;
+  });
+
+  const initialTemplate = storedValues?.template || templates[0];
+  const initialData = storedValues?.data || 'list';
+  const initialTheme = storedValues?.theme || 'light';
+  const initialColorPrimary = storedValues?.colorPrimary || '#1890ff';
+  const initialEnablePalette = storedValues?.enablePalette || false;
 
   const [template, setTemplate] = useState(initialTemplate);
-  const [themeConfig, setThemeConfig] = useState({});
-  const [data, setData] = useState<keyof typeof DATA>('list');
+  const [data, setData] = useState<keyof typeof DATA>(initialData);
+  const [theme, setTheme] = useState<'light' | 'dark'>(initialTheme);
+  const [colorPrimary, setColorPrimary] = useState(initialColorPrimary);
+  const [enablePalette, setEnablePalette] = useState(initialEnablePalette);
+  const [themeConfig, setThemeConfig] = useState<any>(() => {
+    const config: any = {
+      colorPrimary: initialColorPrimary,
+    };
+    if (initialTheme === 'dark') {
+      config.colorBg = '#333';
+    }
+    if (initialEnablePalette) {
+      config.palette = [
+        '#1783FF',
+        '#00C9C9',
+        '#F0884D',
+        '#D580FF',
+        '#7863FF',
+        '#60C42D',
+        '#BD8F24',
+        '#FF80CA',
+        '#2491B3',
+        '#17C76F',
+        '#70CAF8',
+      ];
+    }
+    return config;
+  });
+
+  // Save to localStorage when values change
+  useEffect(() => {
+    setStoredValues(STORAGE_KEY, {
+      template,
+      data,
+      theme,
+      colorPrimary,
+      enablePalette,
+    });
+  }, [template, data, theme, colorPrimary, enablePalette]);
 
   // Get current template configuration
   const templateConfig = useMemo(() => {
@@ -35,6 +94,7 @@ export const Preview = () => {
     return config ? JSON.stringify(config, null, 2) : '{}';
   }, [template]);
 
+  // Auto-select appropriate data type based on template
   useEffect(() => {
     if (template.startsWith('hierarchy-')) {
       setData('hierarchy');
@@ -69,7 +129,6 @@ export const Preview = () => {
 
         const nextTemplate = templates[nextIndex];
         setTemplate(nextTemplate);
-        setSearchParam('template', nextTemplate);
         e.preventDefault();
       }
     };
@@ -113,10 +172,7 @@ export const Preview = () => {
                   showSearch
                   value={template}
                   options={templates.map((value) => ({ label: value, value }))}
-                  onChange={(value) => {
-                    setTemplate(value);
-                    setSearchParam('template', value);
-                  }}
+                  onChange={(value) => setTemplate(value)}
                 />
               </Form.Item>
               <Form.Item label="数据">
@@ -129,32 +185,44 @@ export const Preview = () => {
                   onChange={(value) => setData(value)}
                 />
               </Form.Item>
-              <Form.Item label="主题" name="theme">
+              <Form.Item label="主题">
                 <Select
-                  defaultValue="light"
+                  value={theme}
                   options={[
                     { label: '亮色', value: 'light' },
                     { label: '暗色', value: 'dark' },
                   ]}
-                  onChange={(theme) => {
+                  onChange={(newTheme: 'light' | 'dark') => {
+                    setTheme(newTheme);
                     setThemeConfig((pre) => ({
                       ...pre,
-                      colorBg: theme === 'dark' ? '#333' : '#fff',
+                      colorBg: newTheme === 'dark' ? '#333' : '#fff',
                     }));
                   }}
                 />
               </Form.Item>
-              <Form.Item
-                label="色板"
-                name="enablePalette"
-                valuePropName="checked"
-              >
-                <Checkbox
-                  onChange={(e) => {
-                    const enablePalette = e.target.checked;
+              <Form.Item label="主色">
+                <ColorPicker
+                  value={colorPrimary}
+                  onChange={(color) => {
+                    const hexColor = color.toHexString();
+                    setColorPrimary(hexColor);
                     setThemeConfig((pre) => ({
                       ...pre,
-                      palette: enablePalette
+                      colorPrimary: hexColor,
+                    }));
+                  }}
+                />
+              </Form.Item>
+              <Form.Item label="色板">
+                <Checkbox
+                  checked={enablePalette}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setEnablePalette(checked);
+                    setThemeConfig((pre) => ({
+                      ...pre,
+                      palette: checked
                         ? [
                             '#1783FF',
                             '#00C9C9',

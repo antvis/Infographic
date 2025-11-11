@@ -1,6 +1,7 @@
 import { Flex, Radio } from 'antd';
 import { useState } from 'react';
 import { Composite } from './Composite';
+import { ItemPreview } from './ItemPreview';
 import { Preview } from './Preview';
 
 export const App = () => {
@@ -28,6 +29,7 @@ export const App = () => {
         options={[
           { label: '灵活组合', value: 'composite' },
           { label: '模版预览', value: 'preview' },
+          { label: '数据项预览', value: 'item' },
         ]}
         value={tab}
         onChange={(e) => handleTabChange(e.target.value)}
@@ -36,7 +38,13 @@ export const App = () => {
         buttonStyle="solid"
         style={{ padding: 16 }}
       />
-      {tab === 'composite' ? <Composite /> : <Preview />}
+      {tab === 'composite' ? (
+        <Composite />
+      ) : tab === 'preview' ? (
+        <Preview />
+      ) : (
+        <ItemPreview />
+      )}
     </Flex>
   );
 };

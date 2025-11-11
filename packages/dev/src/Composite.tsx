@@ -18,6 +18,7 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Infographic } from './Infographic';
 import { COMPARE_DATA, HIERARCHY_DATA, LIST_DATA, SWOT_DATA } from './data';
+import { getStoredValues, setStoredValues } from './utils/storage';
 
 const DATA: { label: string; key: string; value: Data }[] = [
   { label: '列表数据', key: 'list', value: LIST_DATA },
@@ -27,37 +28,47 @@ const DATA: { label: string; key: string; value: Data }[] = [
 ];
 
 const items = getItems();
+const structures = getStructures();
 
 const STORAGE_KEY = 'composite-form-values';
 
-const getStoredValues = () => {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : null;
-  } catch {
-    return null;
-  }
-};
-
-const setStoredValues = (values: any) => {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
-  } catch {
-    // Ignore storage errors
-  }
-};
-
 export const Composite = () => {
   const defaultValues = {
-    structure: 'list-grid',
-    item: 'circular-progress',
-    data: 'swot',
-    theme: 'light',
+    structure: structures[0] || 'list-grid',
+    item: items[0] || 'circular-progress',
+    data: 'list',
+    theme: 'light' as const,
     colorPrimary: '#1890ff',
     enablePalette: true,
   };
 
-  const initialValues = getStoredValues() || defaultValues;
+  // Get stored values with validation
+  const storedValues = getStoredValues<typeof defaultValues>(
+    STORAGE_KEY,
+    (stored) => {
+      const fallbacks: Partial<typeof defaultValues> = {};
+
+      // Validate structure
+      if (stored.structure && !structures.includes(stored.structure)) {
+        fallbacks.structure = structures[0];
+      }
+
+      // Validate item
+      if (stored.item && !items.includes(stored.item)) {
+        fallbacks.item = items[0];
+      }
+
+      // Validate data
+      const dataKeys = DATA.map((d) => d.key);
+      if (stored.data && !dataKeys.includes(stored.data)) {
+        fallbacks.data = dataKeys[0];
+      }
+
+      return fallbacks;
+    },
+  );
+
+  const initialValues = storedValues || defaultValues;
 
   const [form] = Form.useForm<{
     structure: string;
@@ -75,6 +86,11 @@ export const Composite = () => {
   const [itemConfig, setItemConfig] = useState<string>('{}');
   const [item2Config, setItem2Config] = useState<string>('{}');
   const [useAdvancedConfig, setUseAdvancedConfig] = useState(false);
+
+  // Monaco Editor refs to access current values without triggering re-renders
+  const structureEditorRef = useRef<any>(null);
+  const itemEditorRef = useRef<any>(null);
+  const item2EditorRef = useRef<any>(null);
 
   // Debounced config states for applying changes
   const [debouncedStructureConfig, setDebouncedStructureConfig] =
@@ -96,23 +112,24 @@ export const Composite = () => {
 
   // Apply config changes
   const applyConfigChanges = useCallback(() => {
-    setDebouncedStructureConfig(structureConfig);
-    setDebouncedItemConfig(itemConfig);
-    setDebouncedItem2Config(item2Config);
-    structureConfigRef.current = structureConfig;
-    itemConfigRef.current = itemConfig;
-    item2ConfigRef.current = item2Config;
-    setHasPendingChanges(false);
-  }, [structureConfig, itemConfig, item2Config]);
+    const currentStructureConfig =
+      structureEditorRef.current?.getValue() || '{}';
+    const currentItemConfig = itemEditorRef.current?.getValue() || '{}';
+    const currentItem2Config = item2EditorRef.current?.getValue() || '{}';
 
-  // Check for pending changes
-  useEffect(() => {
-    const hasChanges =
-      structureConfig !== structureConfigRef.current ||
-      itemConfig !== itemConfigRef.current ||
-      item2Config !== item2ConfigRef.current;
-    setHasPendingChanges(hasChanges);
-  }, [structureConfig, itemConfig, item2Config]);
+    setStructureConfig(currentStructureConfig);
+    setItemConfig(currentItemConfig);
+    setItem2Config(currentItem2Config);
+
+    setDebouncedStructureConfig(currentStructureConfig);
+    setDebouncedItemConfig(currentItemConfig);
+    setDebouncedItem2Config(currentItem2Config);
+
+    structureConfigRef.current = currentStructureConfig;
+    itemConfigRef.current = currentItemConfig;
+    item2ConfigRef.current = currentItem2Config;
+    setHasPendingChanges(false);
+  }, []);
 
   // Debounce logic (optional auto-apply after 1 second)
   useEffect(() => {
@@ -137,7 +154,7 @@ export const Composite = () => {
       watch;
     if (!structure || !item || !data) return null;
 
-    setStoredValues(form.getFieldsValue());
+    setStoredValues(STORAGE_KEY, form.getFieldsValue());
 
     let structureObj: any = { type: structure };
     let itemObj: any = { type: item };
@@ -250,7 +267,7 @@ export const Composite = () => {
               <Form.Item label="结构" name="structure">
                 <Select
                   showSearch
-                  options={getStructures().map((value) => ({
+                  options={structures.map((value) => ({
                     label: value,
                     value,
                   }))}
@@ -337,8 +354,11 @@ export const Composite = () => {
                       <Editor
                         height="100%"
                         defaultLanguage="json"
-                        value={structureConfig}
-                        onChange={(value) => setStructureConfig(value || '{}')}
+                        defaultValue={structureConfig}
+                        onMount={(editor) => {
+                          structureEditorRef.current = editor;
+                        }}
+                        onChange={() => setHasPendingChanges(true)}
                         theme="vs-dark"
                         options={{
                           minimap: { enabled: false },
@@ -358,8 +378,11 @@ export const Composite = () => {
                       <Editor
                         height="100%"
                         defaultLanguage="json"
-                        value={itemConfig}
-                        onChange={(value) => setItemConfig(value || '{}')}
+                        defaultValue={itemConfig}
+                        onMount={(editor) => {
+                          itemEditorRef.current = editor;
+                        }}
+                        onChange={() => setHasPendingChanges(true)}
                         theme="vs-dark"
                         options={{
                           minimap: { enabled: false },
@@ -379,8 +402,11 @@ export const Composite = () => {
                       <Editor
                         height="100%"
                         defaultLanguage="json"
-                        value={item2Config}
-                        onChange={(value) => setItem2Config(value || '{}')}
+                        defaultValue={item2Config}
+                        onMount={(editor) => {
+                          item2EditorRef.current = editor;
+                        }}
+                        onChange={() => setHasPendingChanges(true)}
                         theme="vs-dark"
                         options={{
                           minimap: { enabled: false },
