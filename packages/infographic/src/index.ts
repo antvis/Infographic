@@ -1,6 +1,6 @@
 export * from '@antv/infographic-jsx';
 export * from './designs';
-export { getItemId, getItemProps } from './designs/utils/item';
+export { getItemId, getItemProps, getThemeColors } from './designs/utils';
 export type { InfographicOptions, ParsedInfographicOptions } from './options';
 export * from './renderer';
 export { loadSVGResource, registerResourceLoader } from './resource';

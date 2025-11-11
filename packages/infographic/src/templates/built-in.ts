@@ -1,3 +1,4 @@
+import { hierarchyTreeTemplates } from './hierarchy-tree';
 import { registerTemplate } from './registry';
 import type { TemplateOptions } from './types';
 
@@ -48,62 +49,6 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
       title: 'default',
       structure: { type: 'list-pyramid' },
       items: [{ type: 'compact-card' }],
-    },
-  },
-  'hierarchy-tree-compact-card': {
-    design: {
-      title: 'default',
-      structure: { type: 'hierarchy-tree' },
-      items: [{ type: 'compact-card' }],
-    },
-  },
-  'hierarchy-tree-badge-card': {
-    design: {
-      title: 'default',
-      structure: { type: 'hierarchy-tree' },
-      items: [{ type: 'badge-card' }],
-    },
-  },
-  'hierarchy-tree-icon-badge': {
-    design: {
-      title: 'default',
-      structure: { type: 'hierarchy-tree' },
-      items: [{ type: 'icon-badge', badgeSize: 0 }],
-    },
-  },
-  'hierarchy-tree-pill-badge': {
-    design: {
-      title: 'default',
-      structure: { type: 'hierarchy-tree' },
-      items: [{ type: 'pill-badge' }],
-    },
-  },
-  'hierarchy-tree-progress-card': {
-    design: {
-      title: 'default',
-      structure: { type: 'hierarchy-tree' },
-      items: [{ type: 'progress-card' }],
-    },
-  },
-  'hierarchy-tree-ribbon-card': {
-    design: {
-      title: 'default',
-      structure: { type: 'hierarchy-tree' },
-      items: [{ type: 'ribbon-card' }],
-    },
-  },
-  'hierarchy-tree-rounded-rect-node': {
-    design: {
-      title: 'default',
-      structure: { type: 'hierarchy-tree' },
-      items: [{ type: 'rounded-rect-node' }],
-    },
-  },
-  'hierarchy-tree-simple': {
-    design: {
-      title: 'default',
-      structure: { type: 'hierarchy-tree' },
-      items: [{ type: 'simple' }],
     },
   },
   'list-column-done-list': {
@@ -256,7 +201,7 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
   'sequence-ascending-steps': {
     design: {
       title: 'default',
-      structure: { type: 'sequence-ascending-steps', vGap: -43, hGap: 12 },
+      structure: { type: 'sequence-ascending-steps', vGap: -46, hGap: -20 },
       items: [{ type: 'l-corner-card' }],
     },
   },
@@ -294,12 +239,17 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
       structure: {
         type: 'compare-hierarchy-row',
         itemGap: 32,
+        itemPadding: 40,
         showColumnBackground: true,
         columnBackgroundAlpha: 0.08,
       },
       items: [
         { type: 'letter-card', showBottomShade: false },
-        { type: 'bullet-text' },
+        {
+          type: 'plain-text',
+          formatter: (text: string) => `● ${text}`,
+          usePaletteColor: true,
+        },
       ],
     },
   },
@@ -432,7 +382,7 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
   'sequence-roadmap-vertical-quarter-simple-card': {
     design: {
       title: 'default',
-      structure: { type: 'sequence-roadmap-vertical' },
+      structure: { type: 'sequence-roadmap-vertical', flipped: true },
       items: [{ type: 'quarter-simple-card' }],
     },
   },
@@ -738,6 +688,7 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
       items: [{ type: 'compact-card' }],
     },
   },
+  ...hierarchyTreeTemplates,
 };
 
 Object.entries(BUILT_IN_TEMPLATES).forEach(([name, options]) => {
