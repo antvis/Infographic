@@ -38,14 +38,19 @@ export const BadgeCard: ComponentType<BadgeCardProps> = (props) => {
     restProps,
   ] = getItemProps(props, ['width', 'height', 'iconSize', 'badgeSize', 'gap']);
   const value = datum.value;
+  const hasValue = value !== undefined;
+  const hasDesc = !!datum.desc;
+  const hasIcon = !!datum.icon;
   const gradientId = `${themeColors.colorPrimary}-badge`;
 
   const badgeX = positionH === 'flipped' ? width - gap - badgeSize : gap;
-  const contentStartX = positionH === 'flipped' ? gap : badgeSize + 2 * gap;
-  const contentWidth = width - badgeSize - 3 * gap;
+  const contentStartX = hasIcon
+    ? positionH === 'flipped'
+      ? gap
+      : badgeSize + 2 * gap
+    : gap; // 没有图标时从左边距开始
   const fullWidth = width - gap * 2;
-  const hasValue = value !== undefined;
-  const hasDesc = !!datum.desc;
+  const contentWidth = hasIcon ? width - badgeSize - 3 * gap : fullWidth;
 
   // 描述区域的固定位置（label + value 区域的下方）
   const descY = gap + 14 + 18 + 8; // label(14) + value(18) + gap(8)
@@ -81,23 +86,27 @@ export const BadgeCard: ComponentType<BadgeCardProps> = (props) => {
         ry={8}
       />
 
-      {/* 徽章背景 */}
-      <Ellipse
-        x={badgeX}
-        y={badgeY}
-        width={badgeSize}
-        height={badgeSize}
-        fill={`url(#${gradientId})`}
-      />
+      {hasIcon && (
+        <>
+          {/* 徽章背景 */}
+          <Ellipse
+            x={badgeX}
+            y={badgeY}
+            width={badgeSize}
+            height={badgeSize}
+            fill={`url(#${gradientId})`}
+          />
 
-      {/* 徽章图标 */}
-      <ItemIcon
-        indexes={indexes}
-        x={badgeX + (badgeSize - iconSize) / 2}
-        y={badgeY + (badgeSize - iconSize) / 2}
-        size={iconSize}
-        fill={themeColors.colorWhite}
-      />
+          {/* 徽章图标 */}
+          <ItemIcon
+            indexes={indexes}
+            x={badgeX + (badgeSize - iconSize) / 2}
+            y={badgeY + (badgeSize - iconSize) / 2}
+            size={iconSize}
+            fill={themeColors.colorWhite}
+          />
+        </>
+      )}
 
       {/* 上方内容区域：label 和 value */}
       <FlexLayout
