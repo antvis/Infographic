@@ -230,9 +230,19 @@ function fill(svg: SVGSVGElement, options: ParsedInfographicOptions) {
 }
 
 function setSVG(svg: SVGSVGElement, options: ParsedInfographicOptions) {
+  const { width, height } = options;
   const { style = {}, attributes = {}, id, className } = options.svg || {};
   if (id) svg.id = id;
   if (className) svg.classList.add(className);
+  if (width !== undefined) {
+    svg.setAttribute('width', typeof width === 'number' ? `${width}px` : width);
+  }
+  if (height !== undefined) {
+    svg.setAttribute(
+      'height',
+      typeof height === 'number' ? `${height}px` : height,
+    );
+  }
   Object.assign(svg.style, style);
   setAttributes(svg, attributes);
 }

@@ -20,7 +20,6 @@ export class Infographic {
    */
   render() {
     const { container } = this.parsedOptions;
-    this.setView();
     const template = this.compose();
     const renderer = new Renderer(this.parsedOptions, template);
 
@@ -62,12 +61,5 @@ export class Infographic {
     const structure = design.structure.composites || [];
     const items = design.items.map((it) => it.composites || []);
     return getTypes({ structure, items });
-  }
-
-  private setView() {
-    const { container, width, height } = this.parsedOptions;
-    if (!container) return;
-    if (width) container.style.width = `${width}px`;
-    if (height) container.style.height = `${height}px`;
   }
 }
