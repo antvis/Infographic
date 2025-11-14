@@ -1,5 +1,5 @@
 /** @jsxImportSource @antv/infographic-jsx */
-import { ComponentType, Ellipse, Group } from '@antv/infographic-jsx';
+import { ComponentType, Ellipse, Group, Rect } from '@antv/infographic-jsx';
 import { ItemLabel, ItemValue } from '../components';
 import { getItemProps } from '../utils';
 import { registerItem } from './registry';
@@ -40,14 +40,14 @@ export const CircularProgress: ComponentType<CircularProgressProps> = (
   const start = strokeWidth / 2;
   const d = size - strokeWidth;
 
+  const bounds = { x: start, y: start, width: d, height: d };
   return (
     <Group {...restProps} width={size} height={size + gap + 20}>
+      {/* 圆环背景轮廓，避免 getBBox 不准确 */}
+      <Rect width={size} height={size} fill="none" />
       {/* 完整圆环背景轨道 - 表示100% */}
       <Ellipse
-        x={start}
-        y={start}
-        width={d}
-        height={d}
+        {...bounds}
         fill="none"
         stroke="#f0f0f0"
         strokeWidth={strokeWidth}
@@ -55,10 +55,7 @@ export const CircularProgress: ComponentType<CircularProgressProps> = (
 
       {/* 进度圆环 */}
       <Ellipse
-        x={start}
-        y={start}
-        width={d}
-        height={d}
+        {...bounds}
         fill="none"
         stroke={themeColors.colorPrimary}
         strokeWidth={strokeWidth}
