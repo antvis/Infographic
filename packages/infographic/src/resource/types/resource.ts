@@ -6,4 +6,6 @@ export interface ResourceConfig {
 
 export type Resource = SVGSymbolElement;
 
-export type ResourceLoader = (config: ResourceConfig) => Promise<Resource>;
+export type ResourceLoader = (
+  config: ResourceConfig,
+) => Promise<Resource | null>;
