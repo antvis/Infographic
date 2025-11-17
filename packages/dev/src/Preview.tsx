@@ -1,4 +1,4 @@
-import { getTemplate, getTemplates } from '@antv/infographic';
+import { getTemplate, getTemplates, ThemeConfig } from '@antv/infographic';
 import Editor from '@monaco-editor/react';
 import { Card, Checkbox, ColorPicker, Form, Select } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
@@ -24,6 +24,7 @@ export const Preview = () => {
     theme: 'light' | 'dark';
     colorPrimary: string;
     enablePalette: boolean;
+    useHandDrawnStyle: boolean;
   }>(STORAGE_KEY, (stored) => {
     const fallbacks: any = {};
 
@@ -49,11 +50,12 @@ export const Preview = () => {
 
   const [template, setTemplate] = useState(initialTemplate);
   const [data, setData] = useState<keyof typeof DATA>(initialData);
-  const [theme, setTheme] = useState<'light' | 'dark'>(initialTheme);
+  const [theme, setTheme] = useState<string>(initialTheme);
   const [colorPrimary, setColorPrimary] = useState(initialColorPrimary);
   const [enablePalette, setEnablePalette] = useState(initialEnablePalette);
-  const [themeConfig, setThemeConfig] = useState<any>(() => {
-    const config: any = {
+
+  const [themeConfig, setThemeConfig] = useState<ThemeConfig>(() => {
+    const config: ThemeConfig = {
       colorPrimary: initialColorPrimary,
     };
     if (initialTheme === 'dark') {
@@ -191,13 +193,10 @@ export const Preview = () => {
                   options={[
                     { label: '亮色', value: 'light' },
                     { label: '暗色', value: 'dark' },
+                    { label: '手绘风格', value: 'hand-drawn' },
                   ]}
-                  onChange={(newTheme: 'light' | 'dark') => {
+                  onChange={(newTheme: string) => {
                     setTheme(newTheme);
-                    setThemeConfig((pre) => ({
-                      ...pre,
-                      colorBg: newTheme === 'dark' ? '#333' : '#fff',
-                    }));
                   }}
                 />
               </Form.Item>
@@ -214,7 +213,7 @@ export const Preview = () => {
                   }}
                 />
               </Form.Item>
-              <Form.Item label="色板">
+              <Form.Item>
                 <Checkbox
                   checked={enablePalette}
                   onChange={(e) => {
@@ -276,6 +275,7 @@ export const Preview = () => {
               template,
               data: DATA[data].value,
               padding: 20,
+              theme,
               themeConfig,
             }}
           />

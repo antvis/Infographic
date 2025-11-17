@@ -40,6 +40,7 @@ export const Composite = () => {
     theme: 'light' as const,
     colorPrimary: '#1890ff',
     enablePalette: true,
+    useHandDrawn: false,
   };
 
   // Get stored values with validation
@@ -78,6 +79,7 @@ export const Composite = () => {
     theme: 'light' | 'dark';
     colorPrimary: string;
     enablePalette: boolean;
+    useHandDrawn: boolean;
   }>();
   const watch = Form.useWatch([], form);
 
@@ -150,8 +152,16 @@ export const Composite = () => {
 
   const options = useMemo<InfographicOptions | null>(() => {
     if (!watch) return null;
-    const { structure, item, item2, data, theme, colorPrimary, enablePalette } =
-      watch;
+    const {
+      structure,
+      item,
+      item2,
+      data,
+      theme,
+      colorPrimary,
+      enablePalette,
+      useHandDrawn,
+    } = watch;
     if (!structure || !item || !data) return null;
 
     setStoredValues(STORAGE_KEY, form.getFieldsValue());
@@ -199,22 +209,21 @@ export const Composite = () => {
       },
     };
 
+    if (useHandDrawn) {
+      value.theme = 'hand-drawn';
+    }
+
     if (theme === 'dark') {
       value.themeConfig.colorBg = '#333';
     }
     if (enablePalette) {
       value.themeConfig.palette = [
-        '#1783FF',
-        '#00C9C9',
-        '#F0884D',
-        '#D580FF',
-        '#7863FF',
-        '#60C42D',
-        '#BD8F24',
-        '#FF80CA',
-        '#2491B3',
-        '#17C76F',
-        '#70CAF8',
+        'pink',
+        'orange',
+        'purple',
+        'cyan',
+        'lime',
+        'gold',
       ];
     }
 
@@ -310,12 +319,11 @@ export const Composite = () => {
               >
                 <ColorPicker />
               </Form.Item>
-              <Form.Item
-                label="色板"
-                name="enablePalette"
-                valuePropName="checked"
-              >
+              <Form.Item name="enablePalette" valuePropName="checked">
                 <Checkbox>启用色板</Checkbox>
+              </Form.Item>
+              <Form.Item name="useHandDrawn" valuePropName="checked">
+                <Checkbox>启用手绘风格</Checkbox>
               </Form.Item>
             </Form>
           </Card>
