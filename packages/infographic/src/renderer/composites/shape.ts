@@ -27,7 +27,6 @@ export function renderItemShape(
   svg: SVGSVGElement,
   node: SVGElement,
   options: ParsedInfographicOptions,
-  color?: string,
 ) {
   const { themeConfig } = options;
   const attrs = Object.assign(
@@ -36,7 +35,7 @@ export function renderItemShape(
     themeConfig.item?.shape,
   );
 
-  const parsedAttrs = parseDynamicAttributes(node, attrs, color);
+  const parsedAttrs = parseDynamicAttributes(node, attrs);
   setAttributes(node, parsedAttrs);
   stylizeShape(node, svg, themeConfig.stylize);
 

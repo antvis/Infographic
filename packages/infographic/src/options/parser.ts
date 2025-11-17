@@ -9,7 +9,7 @@ import {
 import { getPaletteColor } from '../renderer';
 import type { TemplateOptions } from '../templates';
 import { generateThemeColors, getTheme, type ThemeConfig } from '../themes';
-import { getItemKeyFromIndexes, isDarkColor, parsePadding } from '../utils';
+import { isDarkColor, parsePadding } from '../utils';
 import type { InfographicOptions, ParsedInfographicOptions } from './types';
 
 export function parseOptions(
@@ -131,7 +131,6 @@ function parseDesignItem(
         themeColors,
         ...restProps,
         ...userProps,
-        id: `item-${getItemKeyFromIndexes(indexes)}`,
       });
     },
     options: itemOptions,

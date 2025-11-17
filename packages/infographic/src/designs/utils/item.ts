@@ -1,16 +1,5 @@
-import { getItemKeyFromIndexes } from '../../utils';
 import type { BaseItemProps } from '../items/types';
 import { BaseStructureProps } from '../structures';
-
-export function getItemId(
-  indexes: number[],
-  type: 'static' | 'shape' | 'def' | 'shapes-group',
-  appendix?: string,
-) {
-  return `item-${getItemKeyFromIndexes(indexes)}-${type}` + appendix
-    ? `-${appendix}`
-    : '';
-}
 
 /**
  * 从属性中拆分出组件属性和容器属性

@@ -1,4 +1,3 @@
-import { ElementTypeEnum } from '../constants';
 import type { ParsedInfographicOptions } from '../options';
 import type { ParsedPadding } from '../types';
 import {
@@ -10,17 +9,12 @@ import {
   isGroup,
   isIllus,
   isItemDesc,
-  isItemElement,
   isItemIcon,
-  isItemIconGroup,
   isItemIllus,
   isItemLabel,
-  isItemShape,
-  isItemShapesGroup,
   isItemValue,
   isShape,
-  isShapeGroup,
-  isSVG,
+  isShapesGroup,
   isText,
   isTitle,
   parsePadding,
@@ -31,16 +25,13 @@ import {
   renderButtonsGroup,
   renderIllus,
   renderItemIcon,
-  renderItemShape,
   renderItemText,
   renderShape,
   renderStaticShape,
   renderStaticText,
-  renderSVG,
   renderText,
 } from './composites';
 import { loadFonts } from './fonts';
-import { getPaletteColor } from './palettes';
 import type { IRenderer } from './types';
 
 const upsert = (original: SVGElement, modified: SVGElement | null) => {
@@ -110,17 +101,10 @@ function renderTemplate(svg: SVGSVGElement, options: ParsedInfographicOptions) {
 function fill(svg: SVGSVGElement, options: ParsedInfographicOptions) {
   const { themeConfig, data } = options;
 
-  const traverse = (element: SVGElement) => {
-    if (isSVG(element)) {
-      renderSVG(svg, options);
+  const elements = svg.querySelectorAll<SVGElement>(`[data-element-type]`);
 
-      return Array.from(element.children).forEach((child) => {
-        traverse(child as SVGElement);
-      });
-    }
-
+  elements.forEach((element) => {
     const id = element.id || '';
-
     if (isTitle(element)) {
       const modified = renderText(
         element,
@@ -129,7 +113,6 @@ function fill(svg: SVGSVGElement, options: ParsedInfographicOptions) {
       );
       return upsert(element, modified);
     }
-
     if (isDesc(element)) {
       const modified = renderText(
         element,
@@ -138,13 +121,12 @@ function fill(svg: SVGSVGElement, options: ParsedInfographicOptions) {
       );
       return upsert(element, modified);
     }
-
     if (isIllus(element)) {
       const modified = renderIllus(svg, element, data.illus?.[id]);
       return upsert(element, modified);
     }
 
-    if (isShapeGroup(element)) {
+    if (isShapesGroup(element)) {
       return Array.from(element.children).forEach((child) => {
         renderShape(svg, child as SVGElement, options);
       });
@@ -159,25 +141,18 @@ function fill(svg: SVGSVGElement, options: ParsedInfographicOptions) {
       return renderButtonsGroup(svg, element as SVGGElement);
     }
 
-    if (isItemElement(element)) {
-      const [, , itemType] = id.split('-');
-      const indexes = getItemIndexes(id);
-      const primaryColor = getPaletteColor(
-        themeConfig.palette,
-        getItemIndexes(id),
-        data.items.length,
-      );
+    if (element.dataset.elementType?.startsWith('item-')) {
+      const indexes = getItemIndexes(element.dataset.indexes || '0');
+      const itemType = element.dataset.elementType;
 
       if (isItemLabel(element) || isItemDesc(element) || isItemValue(element)) {
         const modified = renderItemText(
           itemType as 'label' | 'desc' | 'value',
           element,
           options,
-          primaryColor,
         );
         return upsert(element, modified);
       }
-
       if (isItemIllus(element)) {
         const modified = renderIllus(
           svg,
@@ -185,10 +160,6 @@ function fill(svg: SVGSVGElement, options: ParsedInfographicOptions) {
           getDatumByIndexes(data, indexes)?.illus,
         );
         return upsert(element, modified);
-      }
-
-      if (isItemIconGroup(element)) {
-        element.setAttribute('data-element-type', ElementTypeEnum.IconGroup);
       }
 
       if (isItemIcon(element)) {
@@ -200,17 +171,6 @@ function fill(svg: SVGSVGElement, options: ParsedInfographicOptions) {
         );
         return upsert(element, modified);
       }
-
-      if (isItemShapesGroup(element)) {
-        return Array.from(element.children).forEach((child) => {
-          renderItemShape(svg, child as SVGElement, options, primaryColor);
-        });
-      }
-
-      if (isItemShape(element)) {
-        const modified = renderItemShape(svg, element, options, primaryColor);
-        return upsert(element, modified);
-      }
     }
 
     if (isText(element)) {
@@ -220,13 +180,7 @@ function fill(svg: SVGSVGElement, options: ParsedInfographicOptions) {
     if (!isGroup(element)) {
       return renderStaticShape(element, options);
     }
-
-    Array.from(element.children).forEach((child) => {
-      traverse(child as SVGElement);
-    });
-  };
-
-  traverse(svg);
+  });
 }
 
 function setSVG(svg: SVGSVGElement, options: ParsedInfographicOptions) {

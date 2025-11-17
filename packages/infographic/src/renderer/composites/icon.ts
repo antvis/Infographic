@@ -22,7 +22,6 @@ export function renderItemIcon(
   node: SVGElement,
   value: string | ResourceConfig | undefined,
   options: ParsedInfographicOptions,
-  color?: string,
 ) {
   if (!value) return null;
   const { themeConfig } = options;
@@ -30,10 +29,7 @@ export function renderItemIcon(
     ...themeConfig.item?.icon,
   };
 
-  const coloredArea = options.design.item?.options?.coloredArea || [];
-  const primaryColor = coloredArea.includes('icon') ? color : undefined;
-
-  const parsedAttrs = parseDynamicAttributes(node, attrs, primaryColor);
+  const parsedAttrs = parseDynamicAttributes(node, attrs);
   return createIcon(svg, node, value, parsedAttrs);
 }
 

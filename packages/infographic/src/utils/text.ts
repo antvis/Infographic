@@ -11,7 +11,7 @@ export function createTextElement(
   const span = document.createElement('span');
 
   span.textContent = textContent;
-  Object.assign(span.style, { fontSize: '16px' }, getTextStyle(attributes));
+  Object.assign(span.style, getTextStyle(attributes));
 
   let { width, height } = attributes;
 
@@ -22,8 +22,8 @@ export function createTextElement(
   }
 
   // 以下属性需要完成包围盒测量后再设置
-  const { id, x, y, 'text-alignment': TextAlignment = 'LEFT TOP' } = attributes;
-  const [horizontal, vertical] = getTextAlignment(TextAlignment);
+  const { id, x, y, 'text-alignment': textAlignment = 'LEFT TOP' } = attributes;
+  const [horizontal, vertical] = getTextAlignment(textAlignment);
   Object.assign(span.style, alignToFlex(horizontal, vertical));
 
   const foreignObject = createElement<SVGForeignObjectElement>(
@@ -142,7 +142,7 @@ function measureTextSpan(span: HTMLSpanElement) {
 
 function getTextAlignment(alignment: string): TextAlignment {
   if (!alignment) {
-    return ['CENTER', 'CENTER'];
+    return ['LEFT', 'TOP'];
   }
 
   const [horizontal = 'CENTER', vertical = 'CENTER'] = alignment.split(' ');

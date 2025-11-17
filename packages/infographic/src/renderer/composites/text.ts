@@ -1,4 +1,3 @@
-import type { Bounds } from '@antv/infographic-jsx';
 import { get, kebabCase } from 'lodash-es';
 import { ParsedInfographicOptions } from '../../options';
 import type { DynamicAttributes } from '../../themes';
@@ -19,55 +18,13 @@ export function renderText(
 ) {
   if (!text) return null;
 
-  let x = 0;
-  let y = 0;
-  let width = 0;
-  let height = 0;
-  let textContent = '';
-  let textElement: SVGTextElement | null = null;
-
-  const normalizer =
-    (defaultValue: number = 0) =>
-    (value: string | null) =>
-      value ? parseFloat(value) : defaultValue;
-  const normalizePos = normalizer();
-  const normalizeWidth = normalizer(800);
-  const normalizeHeight = normalizer(50);
-
-  if (node.nodeName === 'text') {
-    x = normalizePos(node.getAttribute('x'));
-    y = normalizePos(node.getAttribute('y'));
-    width = normalizeWidth(node.getAttribute('width'));
-    height = normalizeHeight(node.getAttribute('height'));
-    textContent = text;
-    textElement = node as SVGTextElement;
-  } else {
-    const bounds = node.querySelector<SVGRectElement>(`#${node.id}-bounds`);
-    const character = node.querySelector<SVGTextElement>(`#${node.id}-text`);
-
-    if (character) textElement = character;
-
-    const target = bounds || character || node;
-
-    x = normalizePos(target.getAttribute('x'));
-    y = normalizePos(target.getAttribute('y'));
-    width = normalizeWidth(target.getAttribute('width'));
-    height = normalizeHeight(target.getAttribute('height'));
-    textContent = text;
-  }
-
-  if (!textElement) return null;
+  const textElement = node as SVGTextElement;
 
   const staticAttrs = parseDynamicAttributes(textElement, attrs);
 
   setAttributes(textElement, staticAttrs);
 
-  const renderedText = layoutText(textContent, textElement, {
-    x,
-    y,
-    width,
-    height,
-  });
+  const renderedText = layoutText(text, textElement);
 
   for (const key in textElement.dataset) {
     renderedText.setAttribute(
@@ -84,30 +41,20 @@ export function renderItemText(
   type: 'label' | 'desc' | 'value',
   node: SVGElement,
   options: ParsedInfographicOptions,
-  color?: string,
 ) {
-  const textShape =
-    node.nodeName === 'text'
-      ? node
-      : node.querySelector<SVGTextElement>(`#${node.id}-text`);
+  const textShape = node.nodeName === 'text' ? node : null;
 
   if (!textShape) return null;
-  const { data, themeConfig, design } = options;
-  const coloredArea = design.item?.options?.coloredArea || [];
-  const indexes = getItemIndexes(node.id);
+  const { data, themeConfig } = options;
+  const indexes = getItemIndexes(node.dataset.indexes || '0');
   const text = String(get(getDatumByIndexes(data, indexes), type, ''));
   const attrs = Object.assign(
     {},
     themeConfig.base?.text,
     themeConfig.item?.[type],
   );
-  const assignPaletteColor = coloredArea.includes(type) ? color : undefined;
 
-  const staticAttrs = parseDynamicAttributes(
-    textShape,
-    attrs,
-    assignPaletteColor,
-  );
+  const staticAttrs = parseDynamicAttributes(textShape, attrs);
   return renderText(node, node.textContent || text, staticAttrs);
 }
 
@@ -120,12 +67,16 @@ export function renderStaticText(
   text.style.pointerEvents = 'none';
 }
 
-function layoutText(
-  textContent: string,
-  text: SVGTextElement,
-  bounds: Bounds,
-): SVGElement {
-  const { x, y, width, height } = bounds;
+const norm = (value: any, defaultValue?: number) => {
+  if (!value) return defaultValue;
+  return parseFloat(value);
+};
+
+function layoutText(textContent: string, text: SVGTextElement): SVGElement {
+  const x = norm(text.dataset.x, 0);
+  const y = norm(text.dataset.y, 0);
+  const width = norm(text.getAttribute('width'));
+  const height = norm(text.getAttribute('height'));
 
   const attributes = getTextAttributes(text);
   Object.assign(attributes, {
@@ -133,7 +84,7 @@ function layoutText(
     y,
     width,
     height,
-    'text-alignment': get(text, 'dataset.textAlignment', 'CENTER CENTER'),
+    'text-alignment': text.dataset.textAlignment || 'LEFT TOP',
   });
 
   const element = createTextElement(textContent, attributes as any);
@@ -152,8 +103,6 @@ function getTextAttributes(textElement: SVGTextElement) {
     'fill',
     'stroke',
     'stroke-width',
-    'text-anchor',
-    'dominant-baseline',
   ]);
 
   return attrs;
