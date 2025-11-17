@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { toSVGAttr } from '../../../src/utils/svg';
 
 describe('svg utils', () => {
@@ -34,7 +34,9 @@ describe('svg utils', () => {
     it('should handle multiple capital letters correctly', () => {
       expect(toSVGAttr('strokeMiterlimit')).toBe('stroke-miterlimit');
       expect(toSVGAttr('clipPathUnits')).toBe('clipPathUnits'); // This one is in the map
-      expect(toSVGAttr('someVeryLongCamelCaseName')).toBe('some-very-long-camel-case-name');
+      expect(toSVGAttr('someVeryLongCamelCaseName')).toBe(
+        'some-very-long-camel-case-name',
+      );
     });
 
     it('should handle single character attributes', () => {

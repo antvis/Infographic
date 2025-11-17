@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { isNumber } from '../../../src/utils/is-number';
 
 describe('is-number utils', () => {
@@ -66,7 +66,7 @@ describe('is-number utils', () => {
 
     it('should return false for functions', () => {
       expect(isNumber(() => {})).toBe(false);
-      expect(isNumber(function() {})).toBe(false);
+      expect(isNumber(function () {})).toBe(false);
       expect(isNumber(Math.abs)).toBe(false);
     });
 

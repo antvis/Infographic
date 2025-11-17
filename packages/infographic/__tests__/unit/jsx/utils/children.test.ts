@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { getRenderableChildrenOf } from '../../../src/utils/children';
+import { describe, expect, it } from 'vitest';
 import type { JSXElement, JSXNode } from '../../../src/types';
+import { getRenderableChildrenOf } from '../../../src/utils/children';
 
 describe('children utils', () => {
   describe('getRenderableChildrenOf', () => {
@@ -87,11 +87,7 @@ describe('children utils', () => {
     it('should handle deeply nested arrays', () => {
       const element1: JSXElement = { type: 'div', props: {} };
       const element2: JSXElement = { type: 'span', props: {} };
-      const nestedArray: JSXNode = [
-        element1,
-        ['text', [element2, 42]],
-        'end',
-      ];
+      const nestedArray: JSXNode = [element1, ['text', [element2, 42]], 'end'];
 
       const result = getRenderableChildrenOf(nestedArray);
       expect(result).toEqual([element1, 'text', element2, 42, 'end']);
@@ -128,7 +124,7 @@ describe('children utils', () => {
 
     it('should handle empty arrays', () => {
       expect(getRenderableChildrenOf([])).toEqual([]);
-      
+
       const elementWithEmptyChildren: JSXElement = {
         type: 'div',
         props: { children: [] },
