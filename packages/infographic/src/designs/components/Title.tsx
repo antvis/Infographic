@@ -29,7 +29,6 @@ export const Title = (props: TitleProps) => {
   } = props;
   const MainTitle = (props: TextProps) => {
     const defaultProps: TextProps = {
-      id: 'title',
       fontSize: 24,
       fill: themeColors.colorPrimaryText,
       width,
@@ -38,7 +37,7 @@ export const Title = (props: TitleProps) => {
       alignHorizontal,
     };
     return (
-      <Text {...defaultProps} {...props}>
+      <Text {...defaultProps} {...props} data-element-type="title">
         {title}
       </Text>
     );
@@ -46,7 +45,6 @@ export const Title = (props: TitleProps) => {
 
   const Desc = (props: TextProps) => {
     const defaultProps: TextProps = {
-      id: 'desc',
       fontSize: 16,
       fill: themeColors.colorTextSecondary,
       width,
@@ -55,21 +53,14 @@ export const Title = (props: TitleProps) => {
       height: subTitleLineNumber * 24,
     };
     return (
-      <Text {...defaultProps} {...props}>
+      <Text {...defaultProps} {...props} data-element-type="desc">
         {desc}
       </Text>
     );
   };
 
   return (
-    <FlexLayout
-      id="title-group"
-      flexDirection="column"
-      x={x}
-      y={y}
-      width={width}
-      gap={8}
-    >
+    <FlexLayout flexDirection="column" x={x} y={y} width={width} gap={8}>
       {title && <MainTitle />}
       {desc && <Desc />}
     </FlexLayout>

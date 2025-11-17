@@ -1,7 +1,6 @@
 /** @jsxImportSource @antv/infographic-jsx */
 import type { RectProps } from '@antv/infographic-jsx';
 import { Ellipse, Group, Rect } from '@antv/infographic-jsx';
-import { getItemKeyFromIndexes } from '../../utils';
 
 export interface ItemIconProps extends RectProps {
   indexes: number[];
@@ -17,7 +16,11 @@ export const ItemIcon = (props: ItemIconProps) => {
     ...restProps,
   };
   return (
-    <Rect {...finalProps} id={`item-${getItemKeyFromIndexes(indexes)}-icon`} />
+    <Rect
+      {...finalProps}
+      data-indexes={indexes}
+      data-element-type="item-icon"
+    />
   );
 };
 
@@ -37,17 +40,24 @@ export const ItemIconCircle = (props: ItemIconProps & { colorBg?: string }) => {
     height: innerSize,
   };
 
-  const prefix = `item-${getItemKeyFromIndexes(indexes)}`;
-
   return (
     <Group
       {...restProps}
       width={size}
       height={size}
-      id={`${prefix}-group-icon`}
+      data-element-type="item-icon-group"
     >
-      <Ellipse width={size} height={size} id={`${prefix}-bg`} fill={fill} />
-      <Rect {...iconProps} id={`${prefix}-icon`} />
+      <Ellipse
+        width={size}
+        height={size}
+        fill={fill}
+        data-element-type="shape"
+      />
+      <Rect
+        {...iconProps}
+        data-indexes={indexes}
+        data-element-type="item-icon"
+      />
     </Group>
   );
 };

@@ -1,7 +1,6 @@
 /** @jsxImportSource @antv/infographic-jsx */
 import type { TextProps } from '@antv/infographic-jsx';
 import { Text } from '@antv/infographic-jsx';
-import { getItemKeyFromIndexes } from '../../utils';
 
 export interface ItemValueProps extends TextProps {
   indexes: number[];
@@ -23,7 +22,6 @@ export const ItemValue = ({
     lineHeight: 1.4,
     children: formatter(value),
     'data-value': value,
-    backgroundColor: 'rgba(199, 207, 145, 0.2)',
     ...props,
   };
 
@@ -32,6 +30,10 @@ export const ItemValue = ({
   );
 
   return (
-    <Text {...finalProps} id={`item-${getItemKeyFromIndexes(indexes)}-value`} />
+    <Text
+      {...finalProps}
+      data-indexes={indexes}
+      data-element-type="item-value"
+    />
   );
 };
