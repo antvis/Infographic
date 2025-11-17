@@ -27,22 +27,27 @@
     }
   },
   "main": "./lib/index.js",
+  "jsdelivr": "./dist/infographic.umd.min.js",
+  "unpkg": "./dist/infographic.umd.min.js",
   "module": "./esm/index.js",
   "types": "./esm/index.d.ts",
   "files": [
     "lib",
     "esm",
+    "dist",
     "src"
   ],
   "scripts": {
-    "build": "run-s clean build:esm build:cjs",
+    "build": "run-s clean build:esm build:cjs build:umd size",
     "build:cjs": "tsc --module commonjs --outDir lib",
     "build:esm": "tsc --module ESNext --outDir esm",
+    "build:umd": "vite build",
     "build:watch": "tsc -p tsconfig.json --watch",
     "check:test": "tsc --noEmit -p __tests__",
     "ci": "run-s test build lint",
-    "clean": "rm -rf esm lib tsconfig.tsbuildinfo",
+    "clean": "rm -rf esm lib dist tsconfig.tsbuildinfo",
     "lint": "eslint . --ext .ts,.tsx && npm run check:test",
+    "size": "size-limit",
     "test": "vitest --run --coverage"
   },
   "dependencies": {
@@ -65,5 +70,16 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/",
     "tag": "latest"
-  }
+  },
+  "size-limit": [
+    {
+      "gzip": true,
+      "limit": "500 Kb",
+      "path": "dist/infographic.min.js"
+    },
+    {
+      "limit": "500 Kb",
+      "path": "dist/infographic.min.js"
+    }
+  ]
 }

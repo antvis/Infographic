@@ -27,20 +27,25 @@
     }
   },
   "main": "./lib/index.js",
+  "jsdelivr": "./dist/index.umd.js",
+  "unpkg": "./dist/index.umd.js",
   "module": "./esm/index.js",
   "types": "./esm/index.d.ts",
   "files": [
     "lib",
-    "esm"
+    "esm",
+    "dist"
   ],
   "scripts": {
-    "build": "run-s clean build:esm build:cjs",
+    "build": "run-s clean build:esm build:cjs build:umd size",
     "build:cjs": "MODULE=cjs vite build",
     "build:esm": "MODULE=esm vite build && tsc --emitDeclarationOnly --outDir esm",
     "build:test": "tsc --noEmit -p __tests__",
+    "build:umd": "ENTRY=index vite build --config vite.config.umd.ts && ENTRY=jsx-runtime vite build --config vite.config.umd.ts",
     "ci": "run-s test build lint",
-    "clean": "rm -rf lib esm tsconfig.tsbuildinfo",
+    "clean": "rm -rf lib esm dist tsconfig.tsbuildinfo",
     "lint": "eslint . --ext .ts,.tsx && npm run build:test",
+    "size": "size-limit",
     "test": "vitest --run --coverage",
     "watch": "MODULE=esm vite build --watch"
   },
@@ -51,5 +56,16 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/",
     "tag": "latest"
-  }
+  },
+  "size-limit": [
+    {
+      "gzip": true,
+      "limit": "500 Kb",
+      "path": "dist/index.umd.js"
+    },
+    {
+      "limit": "500 Kb",
+      "path": "dist/index.umd.js"
+    }
+  ]
 }
