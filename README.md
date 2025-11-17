@@ -21,16 +21,6 @@
 npm install @antv/infographic
 ```
 
-或使用其他包管理器：
-
-```bash
-# pnpm
-pnpm add @antv/infographic
-
-# yarn
-yarn add @antv/infographic
-```
-
 ## 🚀 快速开始
 
 ```typescript
@@ -98,36 +88,30 @@ packages/
 
 ```bash
 # 安装依赖
-pnpm install
+npm install
 
 # 启动开发环境
-pnpm dev
+npm run dev
 
 # 运行测试
-pnpm test
+npm run test
 
 # 类型检查
-pnpm run typecheck
+npm run typecheck
 ```
 
 ### 构建命令
 
 ```bash
-# 构建所有包
-pnpm build
-
-# 构建特定包
-pnpm --filter @antv/infographic build
+# 构建
+npm run build
 ```
 
 ### 代码规范
 
 ```bash
 # 代码检查
-pnpm lint
-
-# 代码格式化
-pnpm format
+npm run lint
 ```
 
 ## 📝 核心概念
