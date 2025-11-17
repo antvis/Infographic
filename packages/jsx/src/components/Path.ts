@@ -1,12 +1,20 @@
 import type { JSXElement, PathProps } from '../types';
-import { Group } from './Group';
 
-export function Path({ x, y, width, height, ...props }: PathProps): JSXElement {
-  const node: JSXElement = {
-    type: 'path',
-    props,
+export function Path(props: PathProps): JSXElement {
+  const { x, y } = props;
+
+  const finalProps = {
+    ...props,
   };
 
-  // TODO scale path to fit width/height
-  return Group({ x, y, width, height, children: [node] });
+  if (x !== undefined || y !== undefined) {
+    finalProps.transform = `translate(${x ?? 0}, ${y ?? 0})`;
+  }
+
+  const node: JSXElement = {
+    type: 'path',
+    props: finalProps,
+  };
+
+  return node;
 }

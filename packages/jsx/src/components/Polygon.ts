@@ -1,23 +1,21 @@
 import type { JSXElement, PolygonProps } from '../types';
-import { Group } from './Group';
 
-export function Polygon({
-  x,
-  y,
-  width,
-  height,
-  points = [],
-  ...props
-}: PolygonProps): JSXElement {
+export function Polygon({ points = [], ...props }: PolygonProps): JSXElement {
+  const { x, y } = props;
   const pointsStr = points.map(({ x, y }) => `${x},${y}`).join(' ');
+
+  const finalProps = {
+    ...props,
+    points: pointsStr,
+  };
+
+  if (x !== undefined || y !== undefined) {
+    finalProps.transform = `translate(${x ?? 0}, ${y ?? 0})`;
+  }
 
   const node: JSXElement = {
     type: 'polygon',
-    props: {
-      ...props,
-      points: pointsStr,
-    },
+    props: finalProps,
   };
-
-  return Group({ x, y, width, height, children: [node] });
+  return node;
 }
