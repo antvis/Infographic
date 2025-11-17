@@ -97,7 +97,7 @@ describe('text', () => {
       const centerAligned = createTextElement('Center', {
         width: '100',
         height: '30',
-        'text-alignment': 'CENTER CENTER',
+        'text-alignment': 'CENTER MIDDLE',
       });
       const centerSpan = centerAligned.querySelector('span') as HTMLSpanElement;
       expect(centerSpan.style.alignContent).toBe('center');
