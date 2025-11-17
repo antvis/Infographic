@@ -1,12 +1,5 @@
-/** @jsxImportSource @antv/infographic-jsx */
-import type { ComponentType, JSXElement } from '@antv/infographic-jsx';
-import {
-  getElementBounds,
-  Group,
-  Path,
-  Rect,
-  Text,
-} from '@antv/infographic-jsx';
+import type { ComponentType, JSXElement } from '../../jsx';
+import { getElementBounds, Group, Path, Rect, Text } from '../../jsx';
 import {
   BtnAdd,
   BtnRemove,

@@ -2,11 +2,7 @@ import { resolve } from 'path';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  resolve: {
-    alias: {
-      '@antv/infographic-jsx': resolve(__dirname, '../jsx/src'),
-    },
-  },
+  resolve: {},
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),

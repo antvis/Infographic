@@ -1,6 +1,5 @@
-/** @jsxImportSource @antv/infographic-jsx */
-import type { ComponentType } from '@antv/infographic-jsx';
-import { Group, Text, TextProps } from '@antv/infographic-jsx';
+import type { ComponentType } from '../../../../jsx';
+import { Group, Text, TextProps } from '../../../../jsx';
 import { ShapesGroup } from '../../../components';
 import { registerDivider, type DividerProps } from './types';
 

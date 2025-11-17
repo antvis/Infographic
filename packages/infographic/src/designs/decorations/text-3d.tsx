@@ -1,6 +1,5 @@
-/** @jsxImportSource @antv/infographic-jsx */
-import type { ComponentType } from '@antv/infographic-jsx';
-import { Group } from '@antv/infographic-jsx';
+import type { ComponentType } from '../../jsx';
+import { Group } from '../../jsx';
 
 export interface Text3dProps {
   /**

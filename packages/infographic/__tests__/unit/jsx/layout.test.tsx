@@ -1,4 +1,4 @@
-/** @jsxImportSource @antv/infographic-jsx */
+/** @jsxImportSource @antv/infographic */
 import { minifySvg } from '@@/utils';
 import {
   Ellipse,
@@ -11,7 +11,7 @@ import {
   getElementBounds,
   getElementsBounds,
   renderSVG,
-} from '@antv/infographic-jsx';
+} from '@antv/infographic';
 import { describe, expect, it } from 'vitest';
 
 describe('jsx layout components', () => {

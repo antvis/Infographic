@@ -1,7 +1,6 @@
-/** @jsxImportSource @antv/infographic-jsx */
-import type { ComponentType, JSXElement } from '@antv/infographic-jsx';
-import { Bounds, getElementBounds, Group, Text } from '@antv/infographic-jsx';
 import tinycolor from 'tinycolor2';
+import type { ComponentType, JSXElement } from '../../jsx';
+import { Bounds, getElementBounds, Group, Text } from '../../jsx';
 import {
   BtnAdd,
   BtnRemove,

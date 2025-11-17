@@ -1,4 +1,3 @@
-/** @jsxImportSource @antv/infographic-jsx */
 import {
   cloneElement,
   createLayout,
@@ -8,7 +7,7 @@ import {
   type Bounds,
   type GroupProps,
   type JSXElement,
-} from '@antv/infographic-jsx';
+} from '../../jsx';
 
 export interface FlexLayoutProps extends GroupProps {
   flexDirection?: 'row' | 'column' | 'row-reverse' | 'column-reverse';

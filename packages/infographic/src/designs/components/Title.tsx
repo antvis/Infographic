@@ -1,9 +1,4 @@
-/** @jsxImportSource @antv/infographic-jsx */
-import {
-  Text,
-  type BaseGeometryProps,
-  type TextProps,
-} from '@antv/infographic-jsx';
+import { Text, type BaseGeometryProps, type TextProps } from '../../jsx';
 import type { ThemeColors } from '../../themes';
 import { FlexLayout } from '../layouts';
 

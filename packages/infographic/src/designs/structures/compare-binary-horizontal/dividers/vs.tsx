@@ -1,7 +1,6 @@
-/** @jsxImportSource @antv/infographic-jsx */
-import type { ComponentType } from '@antv/infographic-jsx';
-import { Defs, Ellipse, Group } from '@antv/infographic-jsx';
 import tinycolor from 'tinycolor2';
+import type { ComponentType } from '../../../../jsx';
+import { Defs, Ellipse, Group } from '../../../../jsx';
 import { DropShadow } from '../../../defs';
 import { registerDivider, type DividerProps } from './types';
 

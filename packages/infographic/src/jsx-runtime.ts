@@ -1,1 +1,1 @@
-export * from '@antv/infographic-jsx/jsx-runtime';
+export * from './jsx/jsx-runtime';

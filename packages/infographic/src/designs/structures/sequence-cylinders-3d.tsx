@@ -1,14 +1,6 @@
-/** @jsxImportSource @antv/infographic-jsx */
-import type { ComponentType, JSXElement } from '@antv/infographic-jsx';
-import {
-  Defs,
-  getElementBounds,
-  Group,
-  Path,
-  Rect,
-  Text,
-} from '@antv/infographic-jsx';
 import tinycolor from 'tinycolor2';
+import type { ComponentType, JSXElement } from '../../jsx';
+import { Defs, getElementBounds, Group, Path, Rect, Text } from '../../jsx';
 import { BtnAdd, BtnRemove, BtnsGroup, ItemsGroup } from '../components';
 import { FlexLayout } from '../layouts';
 import { getColorPrimary, getPaletteColor } from '../utils';

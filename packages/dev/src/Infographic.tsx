@@ -38,7 +38,6 @@ export const Infographic = ({ options }: { options: InfographicOptions }) => {
       ...options,
     });
 
-    console.log(instance.compose());
     instance.render();
     instanceRef.current = instance;
   }, [options]);

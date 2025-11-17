@@ -10,12 +10,10 @@
     "types": ["node"],
     "paths": {
       "@antv/infographic": ["../infographic/src"],
-      "@antv/infographic/*": ["../infographic/src/*"],
-      "@antv/infographic-jsx": ["../jsx/src"],
-      "@antv/infographic-jsx/*": ["../jsx/src/*"]
+      "@antv/infographic/*": ["../infographic/src/*"]
     }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"],
-  "references": [{ "path": "../infographic" }, { "path": "../jsx" }]
+  "references": [{ "path": "../infographic" }]
 }

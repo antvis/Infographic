@@ -1,4 +1,3 @@
-/** @jsxImportSource @antv/infographic-jsx */
 import {
   Bounds,
   ComponentType,
@@ -8,7 +7,7 @@ import {
   Path,
   Polygon,
   Text,
-} from '@antv/infographic-jsx';
+} from '../../jsx';
 import { Gap, ItemDesc, ItemIconCircle, ItemLabel } from '../components';
 import { FlexLayout } from '../layouts';
 import { AlignLayout } from '../layouts/Align';

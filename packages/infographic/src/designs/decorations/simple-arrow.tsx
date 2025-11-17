@@ -1,5 +1,4 @@
-/** @jsxImportSource @antv/infographic-jsx */
-import { Defs, Polygon, RectProps } from '@antv/infographic-jsx';
+import { Defs, Polygon, RectProps } from '../../jsx';
 
 export const SimpleArrow = ({
   width = 25,

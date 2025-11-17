@@ -1,5 +1,4 @@
-/** @jsxImportSource @antv/infographic-jsx */
-import { renderSVG } from '@antv/infographic-jsx';
+import { renderSVG } from '../jsx';
 import {
   InfographicOptions,
   ParsedInfographicOptions,

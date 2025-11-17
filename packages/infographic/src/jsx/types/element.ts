@@ -1,6 +1,6 @@
-import type { SVGAttributes } from 'react';
-import type { JSXElement } from './jsx';
+import type { JSXNode } from './jsx';
 import { Point } from './point';
+import { SVGAttributes } from './svg';
 
 export interface BaseGeometryProps
   extends Omit<SVGAttributes<SVGElement>, 'children'> {
@@ -12,16 +12,16 @@ export interface BaseGeometryProps
 }
 
 export interface FragmentProps {
-  children?: JSXElement | JSXElement[];
+  children?: JSXNode;
 }
 export interface SVGProps extends BaseGeometryProps {
-  children?: JSXElement | JSXElement[];
+  children?: JSXNode;
 }
 export interface DefsProps {
-  children?: JSXElement | JSXElement[];
+  children?: JSXNode;
 }
 export interface GroupProps extends BaseGeometryProps {
-  children?: JSXElement | JSXElement[];
+  children?: JSXNode;
 }
 export interface RectProps extends BaseGeometryProps {}
 export interface EllipseProps extends BaseGeometryProps {}

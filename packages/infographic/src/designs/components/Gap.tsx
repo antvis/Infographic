@@ -1,5 +1,3 @@
-/** @jsxImportSource @antv/infographic-jsx */
-
 export interface GapProps {
   x?: number;
   y?: number;

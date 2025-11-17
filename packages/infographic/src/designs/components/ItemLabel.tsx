@@ -1,6 +1,5 @@
-/** @jsxImportSource @antv/infographic-jsx */
-import type { TextProps } from '@antv/infographic-jsx';
-import { Text } from '@antv/infographic-jsx';
+import type { TextProps } from '../../jsx';
+import { Text } from '../../jsx';
 
 export interface ItemLabelProps extends TextProps {
   indexes: number[];

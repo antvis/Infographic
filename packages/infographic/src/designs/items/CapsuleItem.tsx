@@ -1,4 +1,3 @@
-/** @jsxImportSource @antv/infographic-jsx */
 import {
   ComponentType,
   Defs,
@@ -6,7 +5,7 @@ import {
   getElementBounds,
   Group,
   Rect,
-} from '@antv/infographic-jsx';
+} from '../../jsx';
 import { ItemDesc, ItemIconCircle, ItemLabel } from '../components';
 import { DropShadow } from '../defs';
 import { getItemProps } from '../utils';

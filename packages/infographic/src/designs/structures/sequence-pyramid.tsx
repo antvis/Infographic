@@ -1,8 +1,7 @@
-/** @jsxImportSource @antv/infographic-jsx */
-import type { ComponentType, JSXElement } from '@antv/infographic-jsx';
-import { Defs, Group, Point, Polygon, Rect } from '@antv/infographic-jsx';
 import roundPolygon, { getSegments } from 'round-polygon';
 import tinycolor from 'tinycolor2';
+import type { ComponentType, JSXElement } from '../../jsx';
+import { Defs, Group, Point, Polygon, Rect } from '../../jsx';
 import { BtnsGroup, ItemIcon, ItemsGroup } from '../components';
 import { FlexLayout } from '../layouts';
 import { getPaletteColor, getThemeColors } from '../utils';

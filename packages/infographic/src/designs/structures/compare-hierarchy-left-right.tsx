@@ -1,12 +1,5 @@
-/** @jsxImportSource @antv/infographic-jsx */
-import type { ComponentType, JSXElement } from '@antv/infographic-jsx';
-import {
-  Defs,
-  Ellipse,
-  getElementBounds,
-  Group,
-  Rect,
-} from '@antv/infographic-jsx';
+import type { ComponentType, JSXElement } from '../../jsx';
+import { Defs, Ellipse, getElementBounds, Group, Rect } from '../../jsx';
 import { ItemsGroup, ShapesGroup } from '../components';
 import { LinearGradient } from '../defs';
 import { FlexLayout } from '../layouts';

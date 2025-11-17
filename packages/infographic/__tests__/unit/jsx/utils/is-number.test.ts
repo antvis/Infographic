@@ -1,5 +1,5 @@
+import { isNumber } from '@jsx/utils/is-number';
 import { describe, expect, it } from 'vitest';
-import { isNumber } from '../../../src/utils/is-number';
 
 describe('is-number utils', () => {
   describe('isNumber', () => {

@@ -3,8 +3,8 @@ import {
   getItems,
   getThemeColors,
   ItemDatum,
+  renderSVG,
 } from '@antv/infographic';
-import { renderSVG } from '@antv/infographic-jsx';
 import { Card, Form, Select } from 'antd';
 import { useEffect, useState } from 'react';
 import { getStoredValues, setStoredValues } from './utils/storage';

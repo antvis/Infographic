@@ -1,4 +1,4 @@
-import type { ComponentType } from '@antv/infographic-jsx';
+import type { ComponentType } from '../../../../jsx';
 
 export interface DividerProps {
   x: number;

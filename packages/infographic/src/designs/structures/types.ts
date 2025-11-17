@@ -1,4 +1,4 @@
-import type { ComponentType } from '@antv/infographic-jsx';
+import type { ComponentType } from '../../jsx';
 import type { ParsedInfographicOptions } from '../../options';
 import type { Data } from '../../types';
 import { TitleProps } from '../components';

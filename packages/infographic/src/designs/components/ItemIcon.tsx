@@ -1,6 +1,5 @@
-/** @jsxImportSource @antv/infographic-jsx */
-import type { RectProps } from '@antv/infographic-jsx';
-import { Ellipse, Group, Rect } from '@antv/infographic-jsx';
+import type { RectProps } from '../../jsx';
+import { Ellipse, Group, Rect } from '../../jsx';
 
 export interface ItemIconProps extends RectProps {
   indexes: number[];

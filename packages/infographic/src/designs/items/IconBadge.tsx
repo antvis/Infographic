@@ -1,12 +1,5 @@
-/** @jsxImportSource @antv/infographic-jsx */
-import {
-  ComponentType,
-  Defs,
-  Ellipse,
-  Group,
-  Text,
-} from '@antv/infographic-jsx';
 import tinycolor from 'tinycolor2';
+import { ComponentType, Defs, Ellipse, Group, Text } from '../../jsx';
 import { ItemIcon, ItemLabel } from '../components';
 import { getItemProps } from '../utils';
 import { registerItem } from './registry';

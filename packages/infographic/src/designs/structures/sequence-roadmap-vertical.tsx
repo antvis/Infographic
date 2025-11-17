@@ -1,4 +1,3 @@
-/** @jsxImportSource @antv/infographic-jsx */
 import {
   getElementBounds,
   Group,
@@ -6,7 +5,7 @@ import {
   Text,
   type ComponentType,
   type JSXElement,
-} from '@antv/infographic-jsx';
+} from '../../jsx';
 import { ItemIconCircle } from '../components';
 import { Triangle } from '../decorations';
 import { FlexLayout } from '../layouts';

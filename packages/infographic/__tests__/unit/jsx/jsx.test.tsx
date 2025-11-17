@@ -1,4 +1,4 @@
-/** @jsxImportSource @antv/infographic-jsx */
+/** @jsxImportSource @antv/infographic */
 import { minifySvg } from '@@/utils';
 import {
   Ellipse,
@@ -7,9 +7,9 @@ import {
   Rect,
   renderSVG,
   Text,
-} from '@antv/infographic-jsx';
+} from '@antv/infographic';
+import { getRenderableChildrenOf } from '@jsx/utils';
 import { describe, expect, it } from 'vitest';
-import { getRenderableChildrenOf } from '../../src/utils';
 
 describe('render jsx svg', () => {
   it('should render a simple jsx element', () => {

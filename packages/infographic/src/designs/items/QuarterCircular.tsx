@@ -1,4 +1,3 @@
-/** @jsxImportSource @antv/infographic-jsx */
 import {
   ComponentType,
   Ellipse,
@@ -6,7 +5,7 @@ import {
   Group,
   Path,
   Text,
-} from '@antv/infographic-jsx';
+} from '../../jsx';
 import { ItemDesc, ItemIcon, ItemLabel, ShapesGroup } from '../components';
 import { getItemProps } from '../utils';
 import { registerItem } from './registry';

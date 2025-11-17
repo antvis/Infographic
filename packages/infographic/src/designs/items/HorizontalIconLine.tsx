@@ -1,11 +1,10 @@
-/** @jsxImportSource @antv/infographic-jsx */
 import {
   ComponentType,
   Ellipse,
   getElementBounds,
   Rect,
   Text,
-} from '@antv/infographic-jsx';
+} from '../../jsx';
 import { Gap, ItemDesc, ItemIconCircle, ItemLabel } from '../components';
 import { AlignLayout, FlexLayout } from '../layouts';
 import { getItemProps } from '../utils';

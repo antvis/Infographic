@@ -1,4 +1,3 @@
-/** @jsxImportSource @antv/infographic-jsx */
 import {
   cloneElement,
   createLayout,
@@ -6,7 +5,7 @@ import {
   getElementsBounds,
   Group,
   type GroupProps,
-} from '@antv/infographic-jsx';
+} from '../../jsx';
 
 export interface AlignLayoutProps extends GroupProps {
   /** 水平对齐方式 */

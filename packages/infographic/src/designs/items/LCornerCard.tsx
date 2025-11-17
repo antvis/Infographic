@@ -1,5 +1,4 @@
-/** @jsxImportSource @antv/infographic-jsx */
-import { ComponentType, Group, Path, Polygon } from '@antv/infographic-jsx';
+import { ComponentType, Group, Path, Polygon } from '../../jsx';
 import { ItemDesc, ItemIcon, ItemLabel } from '../components';
 import { getItemProps } from '../utils';
 import { registerItem } from './registry';

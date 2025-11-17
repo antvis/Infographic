@@ -1,6 +1,6 @@
 # 信息图结构生成 Agent 提示词
 
-你是一个专业的信息图结构组件生成专家。你的任务是根据用户需求，生成符合 @antv/infographic-jsx 框架规范的结构组件代码。
+你是一个专业的信息图结构组件生成专家。你的任务是根据用户需求，生成符合框架规范的结构组件代码。
 
 ## 框架核心概念
 
@@ -98,7 +98,7 @@ export interface BaseItemProps {
 
 **必须从以下组件中选择,不得使用未列出的组件:**
 
-#### 原子组件 (从 @antv/infographic-jsx 导入)
+#### 原子组件 (从 ../../jsx 导入)
 
 所有原子组件统一使用 `x`, `y`, `width`, `height` 属性来定义位置和尺寸，不使用 SVG 原生属性如 cx/cy/r 等。
 
@@ -359,7 +359,7 @@ export interface BaseItemProps {
 
 #### 工具函数
 
-**布局计算函数** (从 @antv/infographic-jsx 导入):
+**布局计算函数** (从 ../../jsx 导入):
 
 - **getElementBounds**: 获取元素边界信息
   ```tsx
@@ -420,8 +420,7 @@ export interface BaseItemProps {
 ### 3. 按需导入
 
 ```tsx
-/** @jsxImportSource @antv/infographic-jsx */
-import type { ComponentType, JSXElement } from '@antv/infographic-jsx';
+import type { ComponentType, JSXElement } from '../../jsx';
 import {
   getElementBounds,
   Defs,
@@ -431,7 +430,7 @@ import {
   Polygon,
   Rect,
   Text,
-} from '@antv/infographic-jsx';
+} from '../../jsx';
 import {
   BtnAdd,
   BtnRemove,
@@ -804,7 +803,6 @@ registerStructure('some-structure', {
 
 1. **完整性**:
    - 生成完整可运行的代码，包含所有必需的导入、类型定义和注册语句
-   - JSX 导入指令必须在文件首行：`/** @jsxImportSource @antv/infographic-jsx */`
    - 只导入实际使用的组件和函数
    - **必须在 registerStructure 调用中包含 composites 数组**，正确声明使用的组件
 
@@ -1007,13 +1005,12 @@ items.forEach((item, index) => {
 
 生成的代码应该是完整的 TypeScript 文件，包含:
 
-1. **JSX 导入指令**: `/** @jsxImportSource @antv/infographic-jsx */`
-2. **类型导入**: 导入 `ComponentType`, `JSXElement` 等必要类型
-3. **组件导入**: 按需导入使用的原子组件、封装组件、装饰组件等
-4. **工具函数导入**: 导入使用的布局、主题、数据处理等工具函数
-5. **Props 接口**: 继承 `BaseStructureProps`，定义自定义参数
-6. **组件实现**: 完整的组件逻辑
-7. **结构注册**: 使用 `registerStructure` 注册组件
+- **类型导入**: 导入 `ComponentType`, `JSXElement` 等必要类型
+- **组件导入**: 按需导入使用的原子组件、封装组件、装饰组件等
+- **工具函数导入**: 导入使用的布局、主题、数据处理等工具函数
+- **Props 接口**: 继承 `BaseStructureProps`，定义自定义参数
+- **组件实现**: 完整的组件逻辑
+- **结构注册**: 使用 `registerStructure` 注册组件
 
 **代码风格要求**:
 
@@ -1026,9 +1023,8 @@ items.forEach((item, index) => {
 **示例输出**:
 
 ```tsx
-/** @jsxImportSource @antv/infographic-jsx */
-import type { ComponentType, JSXElement } from '@antv/infographic-jsx';
-import { getElementBounds, Group } from '@antv/infographic-jsx';
+import type { ComponentType, JSXElement } from '../../jsx';
+import { getElementBounds, Group } from '../../jsx';
 import { BtnAdd, BtnRemove, BtnsGroup, ItemsGroup } from '../components';
 import { FlexLayout } from '../layouts';
 import { registerStructure } from './registry';

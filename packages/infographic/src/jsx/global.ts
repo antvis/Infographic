@@ -1,10 +1,11 @@
-import type { SVGAttributes } from 'react';
 import type {
   DefsProps,
   EllipseProps,
   GroupProps,
+  JSXElement as InfographicJSXElement,
   PathProps,
   RectProps,
+  SVGAttributes,
   SVGProps,
   TextProps,
 } from './types';
@@ -12,6 +13,15 @@ import type {
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace JSX {
+    type Element = InfographicJSXElement;
+    type ElementType = any;
+
+    interface ElementChildrenAttribute {
+      children: {};
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    type LibraryManagedAttributes<C, P> = P;
+
     interface IntrinsicElements {
       SVG: SVGProps;
       Defs: DefsProps;
@@ -62,7 +72,7 @@ declare global {
       foreignObject: SVGAttributes<SVGForeignObjectElement>;
       g: SVGAttributes<SVGGElement>;
       image: SVGAttributes<SVGImageElement>;
-      line: React.SVGLineElementAttributes<SVGLineElement>;
+      line: SVGAttributes<SVGLineElement>;
       linearGradient: SVGAttributes<SVGLinearGradientElement>;
       marker: SVGAttributes<SVGMarkerElement>;
       mask: SVGAttributes<SVGMaskElement>;
@@ -78,7 +88,7 @@ declare global {
       stop: SVGAttributes<SVGStopElement>;
       switch: SVGAttributes<SVGSwitchElement>;
       symbol: SVGAttributes<SVGSymbolElement>;
-      text: React.SVGTextElementAttributes<SVGTextElement>;
+      text: SVGAttributes<SVGTextElement>;
       textPath: SVGAttributes<SVGTextPathElement>;
       tspan: SVGAttributes<SVGTSpanElement>;
       use: SVGAttributes<SVGUseElement>;

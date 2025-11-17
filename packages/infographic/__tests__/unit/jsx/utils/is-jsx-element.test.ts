@@ -1,6 +1,6 @@
+import type { JSXElement } from '@jsx/types';
+import { isJSXElement } from '@jsx/utils/is-jsx-element';
 import { describe, expect, it } from 'vitest';
-import type { JSXElement } from '../../../src/types';
-import { isJSXElement } from '../../../src/utils/is-jsx-element';
 
 describe('is-jsx-element utils', () => {
   describe('isJSXElement', () => {

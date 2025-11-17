@@ -1,11 +1,7 @@
-import type {
-  JSXElement,
-  JSXNode,
-  RenderableNode,
-} from '@antv/infographic-jsx';
-import { Fragment } from '@antv/infographic-jsx';
+import type { JSXElement, JSXNode, RenderableNode } from '@antv/infographic';
+import { Fragment } from '@antv/infographic';
+import { nodeToElements, nodeToRenderableNodes } from '@jsx/utils';
 import { describe, expect, it } from 'vitest';
-import { nodeToElements, nodeToRenderableNodes } from '../../../src/utils';
 
 describe('element utils', () => {
   describe('nodeToElements', () => {

@@ -1,5 +1,5 @@
+import { escapeHtml } from '@jsx/utils';
 import { describe, expect, it } from 'vitest';
-import { escapeHtml } from '../../../src/utils/escape';
 
 describe('escape utils', () => {
   describe('escapeHtml', () => {

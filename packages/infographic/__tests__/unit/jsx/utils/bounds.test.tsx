@@ -1,19 +1,17 @@
-/** @jsxImportSource @antv/infographic-jsx */
-import type { Bounds } from '@antv/infographic-jsx';
+/** @jsxImportSource @antv/infographic */
+import type { Bounds } from '@antv/infographic';
 import {
   cloneElement,
   Ellipse,
+  getCombinedBounds,
+  getElementBounds,
+  getElementsBounds,
   Group,
   Path,
   Rect,
   Text,
-} from '@antv/infographic-jsx';
+} from '@antv/infographic';
 import { describe, expect, it } from 'vitest';
-import {
-  getCombinedBounds,
-  getElementBounds,
-  getElementsBounds,
-} from '../../../src/utils';
 
 describe('bounds utils', () => {
   describe('getElementBounds', () => {
@@ -640,7 +638,7 @@ describe('bounds utils', () => {
     });
 
     it('extra case 1', () => {
-      const Node = (props) => {
+      const Node = (props: any) => {
         return (
           <Group {...props}>
             <Rect width={30} height={30} />

@@ -1,5 +1,3 @@
-/** @jsxImportSource @antv/infographic-jsx */
-
 interface DropShadowProps {
   id?: string;
   x?: string;

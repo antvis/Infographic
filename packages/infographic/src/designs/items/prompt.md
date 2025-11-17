@@ -90,7 +90,7 @@ export interface ThemeColors {
 
 ### 2. 可用组件清单
 
-**原子组件 (从 @antv/infographic-jsx 导入)**
+**原子组件 (从 ../../jsx 导入)**
 
 统一使用 `x`, `y`, `width`, `height` 属性定位和设置尺寸：
 
@@ -113,7 +113,7 @@ export interface ThemeColors {
 - **Polygon**: 多边形
 
   ```typescript
-  import { Point } from '@antv/infographic-jsx';
+  import { Point } from '../../jsx';
   <Polygon points={[{x: 0, y: 0}, {x: 100, y: 0}, {x: 50, y: 100}]} fill={color} />
   ```
 
@@ -352,8 +352,7 @@ export interface ThemeColors {
 ### 5. 导入模板
 
 ```typescript
-/** @jsxImportSource @antv/infographic-jsx */
-import { ComponentType, Group } from '@antv/infographic-jsx';
+import { ComponentType, Group } from '../../jsx';
 
 // 根据需要选择性导入原子组件和类型
 import {
@@ -365,7 +364,7 @@ import {
   Polygon,
   Rect,
   Text,
-} from '@antv/infographic-jsx';
+} from '../../jsx';
 
 // 根据需要选择性导入封装组件
 import {

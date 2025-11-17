@@ -1,5 +1,3 @@
-/** @jsxImportSource @antv/infographic-jsx */
-
 export interface LinearGradientProps {
   id?: string;
   startColor?: string;

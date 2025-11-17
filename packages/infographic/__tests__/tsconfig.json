@@ -7,8 +7,10 @@
     "composite": false,
     "paths": {
       "@antv/infographic": ["../src/index"],
+      "@antv/infographic/*": ["../src/*"],
       "@@/*": ["./*"],
-      "@/*": ["../src/*"]
+      "@/*": ["../src/*"],
+      "@jsx/*": ["../src/jsx/*"]
     }
   },
   "include": ["./**/*"],

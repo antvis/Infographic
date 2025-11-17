@@ -1,6 +1,5 @@
-/** @jsxImportSource @antv/infographic-jsx */
-import type { ComponentType, JSXElement } from '@antv/infographic-jsx';
-import { getElementBounds, Group, Path } from '@antv/infographic-jsx';
+import type { ComponentType, JSXElement } from '../../jsx';
+import { getElementBounds, Group, Path } from '../../jsx';
 import { ItemsGroup, ShapesGroup } from '../components';
 import { FlexLayout } from '../layouts';
 import { registerStructure } from './registry';

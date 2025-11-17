@@ -1,6 +1,5 @@
-/** @jsxImportSource @antv/infographic-jsx */
-import type { GroupProps } from '@antv/infographic-jsx';
-import { Group } from '@antv/infographic-jsx';
+import type { GroupProps } from '../../jsx';
+import { Group } from '../../jsx';
 
 export interface BtnsGroupProps extends GroupProps {}
 

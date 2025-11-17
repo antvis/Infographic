@@ -1,6 +1,5 @@
-/** @jsxImportSource @antv/infographic-jsx */
-import type { RectProps } from '@antv/infographic-jsx';
-import { Rect } from '@antv/infographic-jsx';
+import type { RectProps } from '../../jsx';
+import { Rect } from '../../jsx';
 
 export interface BtnProps extends RectProps {
   indexes: number[];

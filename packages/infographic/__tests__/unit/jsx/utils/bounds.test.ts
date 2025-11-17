@@ -1,10 +1,10 @@
-import type { Bounds, JSXElement } from '@antv/infographic-jsx';
-import { describe, expect, it } from 'vitest';
+import type { Bounds, JSXElement } from '@antv/infographic';
 import {
   getCombinedBounds,
   getElementBounds,
   getElementsBounds,
-} from '../../../src/utils/bounds';
+} from '@jsx/utils';
+import { describe, expect, it } from 'vitest';
 
 describe('bounds utils', () => {
   describe('getCombinedBounds', () => {

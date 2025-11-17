@@ -1,5 +1,4 @@
-/** @jsxImportSource @antv/infographic-jsx */
-import { Polygon, RectProps } from '@antv/infographic-jsx';
+import { Polygon, RectProps } from '../../jsx';
 
 export const Triangle = ({
   width = 25,

@@ -1,5 +1,5 @@
+import { toSVGAttr } from '@jsx/utils';
 import { describe, expect, it } from 'vitest';
-import { toSVGAttr } from '../../../src/utils/svg';
 
 describe('svg utils', () => {
   describe('toSVGAttr', () => {

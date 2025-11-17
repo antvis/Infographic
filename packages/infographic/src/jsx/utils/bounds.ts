@@ -214,7 +214,7 @@ export function getElementBounds(node?: JSXNode): Bounds {
   };
 }
 
-export function getElementsBounds(elements: JSXElement[]): Bounds {
+export function getElementsBounds(elements: JSXNode): Bounds {
   if (!elements || !Array.isArray(elements) || elements.length === 0) {
     return zero();
   }

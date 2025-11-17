@@ -1,8 +1,7 @@
-/** @jsxImportSource @antv/infographic-jsx */
-import { ComponentType, getElementBounds, Group } from '@antv/infographic-jsx';
+import { ComponentType, getElementBounds, Group } from '../../jsx';
 
 // 根据需要选择性导入原子组件和类型
-import { Rect, Text } from '@antv/infographic-jsx';
+import { Rect, Text } from '../../jsx';
 
 // 根据需要选择性导入封装组件
 import { ItemDesc, ItemLabel } from '../components';

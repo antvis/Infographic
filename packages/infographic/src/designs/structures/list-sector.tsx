@@ -1,12 +1,5 @@
-/** @jsxImportSource @antv/infographic-jsx */
-import type { ComponentType, JSXElement } from '@antv/infographic-jsx';
-import {
-  Ellipse,
-  getElementBounds,
-  Group,
-  Path,
-  Text,
-} from '@antv/infographic-jsx';
+import type { ComponentType, JSXElement } from '../../jsx';
+import { Ellipse, getElementBounds, Group, Path, Text } from '../../jsx';
 import { BtnAdd, BtnRemove, BtnsGroup, ItemsGroup } from '../components';
 import { getPaletteColor, getThemeColors } from '../utils';
 import { registerStructure } from './registry';

@@ -1,8 +1,7 @@
-/** @jsxImportSource @antv/infographic-jsx */
-import type { ComponentType, JSXElement } from '@antv/infographic-jsx';
-import { Defs, Group, Rect, Text } from '@antv/infographic-jsx';
 import { scaleLinear } from 'd3';
 import tinycolor from 'tinycolor2';
+import type { ComponentType, JSXElement } from '../../jsx';
+import { Defs, Group, Rect, Text } from '../../jsx';
 import { ItemDatum, Padding } from '../../types';
 import { parsePadding } from '../../utils';
 import { ItemsGroup } from '../components';

@@ -1,5 +1,5 @@
-/** @jsxImportSource @antv/infographic-jsx */
-import type { ComponentType, JSXElement } from '@antv/infographic-jsx';
+import * as d3 from 'd3';
+import type { ComponentType, JSXElement } from '../../jsx';
 import {
   Defs,
   Ellipse,
@@ -7,8 +7,7 @@ import {
   Group,
   Path,
   Polygon,
-} from '@antv/infographic-jsx';
-import * as d3 from 'd3';
+} from '../../jsx';
 import { Data } from '../../types';
 import { getDatumByIndexes } from '../../utils';
 import {
