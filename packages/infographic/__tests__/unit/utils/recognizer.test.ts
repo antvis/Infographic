@@ -6,30 +6,28 @@ import {
   isEditArea,
   isIllus,
   isItemDesc,
-  isItemElement,
-  isItemGroup,
   isItemIcon,
-  isItemIconGroup,
   isItemIllus,
   isItemLabel,
-  isItemsGroup,
-  isItemShape,
-  isItemShapesGroup,
-  isItemStaticElement,
   isItemValue,
   isShape,
-  isShapeGroup,
+  isShapesGroup,
   isText,
   isTitle,
 } from '@/utils/recognizer';
 import { beforeAll, describe, expect, it } from 'vitest';
 
-function createMockElement(id: string, tagName = 'g'): SVGElement {
+function createMockElement(
+  type?: string,
+  tagName = 'g',
+  indexes?: number[],
+): SVGElement {
   const element = document.createElementNS(
     'http://www.w3.org/2000/svg',
     tagName,
   );
-  element.id = id;
+  if (type) element.setAttribute('data-element-type', type);
+  if (indexes) element.setAttribute('data-indexes', indexes.join(','));
   return element;
 }
 
@@ -56,154 +54,82 @@ describe('recognizer', () => {
 
   describe('isShape', () => {
     it('should recognize shape elements', () => {
-      expect(isShape(createMockElement('shape-circle'))).toBe(true);
-      expect(isShape(createMockElement('shape-rect'))).toBe(true);
+      expect(isShape(createMockElement('shape'))).toBe(true);
       expect(isShape(createMockElement('not-shape'))).toBe(false);
     });
   });
 
   describe('isIllus', () => {
     it('should recognize illus elements', () => {
-      expect(isIllus(createMockElement('illus-test'))).toBe(true);
-      expect(isIllus(createMockElement('illus-test-variant'))).toBe(true);
+      expect(isIllus(createMockElement('illus'))).toBe(true);
       expect(isIllus(createMockElement('not-illus'))).toBe(false);
-      expect(isIllus(createMockElement('illus'))).toBe(false);
     });
   });
 
   describe('isText', () => {
     it('should recognize text elements by tag name', () => {
-      const textElement = createMockElement('any-id', 'text');
-
-      expect(isText(textElement)).toBe(true);
+      expect(isText(createMockElement('any-id', 'text'))).toBe(true);
       expect(isText(createMockElement('any-id', 'g'))).toBe(false);
     });
   });
 
-  describe('isShapeGroup', () => {
+  describe('isShapesGroup', () => {
     it('should recognize shape group elements', () => {
-      expect(isShapeGroup(createMockElement('union-shapes'))).toBe(true);
-      expect(isShapeGroup(createMockElement('union-shapes-variant'))).toBe(
-        true,
-      );
-      expect(isShapeGroup(createMockElement('not-shapes'))).toBe(false);
-    });
-  });
-
-  describe('isItemsGroup', () => {
-    it('should recognize items group element', () => {
-      expect(isItemsGroup(createMockElement('items-group'))).toBe(true);
-      expect(isItemsGroup(createMockElement('not-items-group'))).toBe(false);
-    });
-  });
-
-  describe('isItemElement', () => {
-    it('should recognize item elements', () => {
-      expect(isItemElement(createMockElement('item-1'))).toBe(true);
-      expect(isItemElement(createMockElement('item-1_2_3'))).toBe(true);
-      expect(isItemElement(createMockElement('item-1-button'))).toBe(true);
-      expect(isItemElement(createMockElement('not-item'))).toBe(false);
-    });
-  });
-
-  describe('isItemGroup', () => {
-    it('should recognize item group elements', () => {
-      expect(isItemGroup(createMockElement('item-1'))).toBe(true);
-      expect(isItemGroup(createMockElement('item-1_2_3'))).toBe(true);
-      expect(isItemGroup(createMockElement('item-1-button'))).toBe(false);
+      expect(isShapesGroup(createMockElement('shapes-group'))).toBe(true);
+      expect(isShapesGroup(createMockElement('not-shapes'))).toBe(false);
     });
   });
 
   describe('isItemIcon', () => {
     it('should recognize item icon elements', () => {
-      expect(isItemIcon(createMockElement('item-1-icon'))).toBe(true);
-      expect(isItemIcon(createMockElement('item-1_2_3-icon'))).toBe(true);
-      expect(isItemIcon(createMockElement('item-1-icon-variant'))).toBe(true);
+      expect(isItemIcon(createMockElement('item-icon'))).toBe(true);
+      expect(
+        isItemIcon(createMockElement('item-icon', 'rect', [0, 1, 2])),
+      ).toBe(true);
+      expect(isItemIcon(createMockElement('item-icon', 'rect', [0]))).toBe(
+        true,
+      );
       expect(isItemIcon(createMockElement('not-item-icon'))).toBe(false);
-    });
-  });
-
-  describe('isItemIconGroup', () => {
-    it('should recognize item icon group elements', () => {
-      expect(isItemIconGroup(createMockElement('item-1-group-icon'))).toBe(
-        true,
-      );
-      expect(isItemIconGroup(createMockElement('item-1_2_3-group-icon'))).toBe(
-        true,
-      );
-      expect(isItemIconGroup(createMockElement('item-1-icon'))).toBe(false);
     });
   });
 
   describe('isItemLabel', () => {
     it('should recognize item label elements', () => {
-      expect(isItemLabel(createMockElement('item-1-label'))).toBe(true);
-      expect(isItemLabel(createMockElement('item-1_2_3-label'))).toBe(true);
+      expect(isItemLabel(createMockElement('item-label'))).toBe(true);
+      expect(isItemLabel(createMockElement('item-label', 'g', [0, 1, 2]))).toBe(
+        true,
+      );
       expect(isItemLabel(createMockElement('not-item-label'))).toBe(false);
     });
   });
 
   describe('isItemDesc', () => {
     it('should recognize item desc elements', () => {
-      expect(isItemDesc(createMockElement('item-1-desc'))).toBe(true);
-      expect(isItemDesc(createMockElement('item-1_2_3-desc'))).toBe(true);
+      expect(isItemDesc(createMockElement('item-desc'))).toBe(true);
+      expect(isItemDesc(createMockElement('item-desc', 'g', [0, 1, 2]))).toBe(
+        true,
+      );
       expect(isItemDesc(createMockElement('not-item-desc'))).toBe(false);
     });
   });
 
   describe('isItemValue', () => {
     it('should recognize item value elements', () => {
-      expect(isItemValue(createMockElement('item-1-value'))).toBe(true);
-      expect(isItemValue(createMockElement('item-1_2_3-value'))).toBe(true);
+      expect(isItemValue(createMockElement('item-value'))).toBe(true);
+      expect(isItemValue(createMockElement('item-value', 'g', [0, 1, 2]))).toBe(
+        true,
+      );
       expect(isItemValue(createMockElement('not-item-value'))).toBe(false);
     });
   });
 
   describe('isItemIllus', () => {
     it('should recognize item illus elements', () => {
-      expect(isItemIllus(createMockElement('item-1-illus'))).toBe(true);
-      expect(isItemIllus(createMockElement('item-1_2_3-illus-variant'))).toBe(
+      expect(isItemIllus(createMockElement('item-illus'))).toBe(true);
+      expect(isItemIllus(createMockElement('item-illus', 'g', [0, 1, 2]))).toBe(
         true,
       );
       expect(isItemIllus(createMockElement('not-item-illus'))).toBe(false);
-    });
-  });
-
-  describe('isItemShape', () => {
-    it('should recognize item shape elements', () => {
-      expect(isItemShape(createMockElement('item-1-shape'))).toBe(true);
-      expect(isItemShape(createMockElement('item-1_2_3-shape-variant'))).toBe(
-        true,
-      );
-      expect(isItemShape(createMockElement('not-item-shape'))).toBe(false);
-    });
-  });
-
-  describe('isItemShapesGroup', () => {
-    it('should recognize item shapes group elements', () => {
-      expect(isItemShapesGroup(createMockElement('item-1-union-shapes'))).toBe(
-        true,
-      );
-      expect(
-        isItemShapesGroup(createMockElement('item-1_2_3-union-shapes-variant')),
-      ).toBe(true);
-      expect(isItemShapesGroup(createMockElement('not-item-shapes'))).toBe(
-        false,
-      );
-    });
-  });
-
-  describe('isItemStaticElement', () => {
-    it('should recognize item static elements', () => {
-      expect(isItemStaticElement(createMockElement('item-1-static'))).toBe(
-        true,
-      );
-      expect(
-        isItemStaticElement(createMockElement('item-1_2_3-static-variant')),
-      ).toBe(true);
-      expect(isItemStaticElement(createMockElement('not-item-static'))).toBe(
-        false,
-      );
     });
   });
 
@@ -223,16 +149,18 @@ describe('recognizer', () => {
 
   describe('isBtnAdd', () => {
     it('should recognize btn add elements', () => {
-      expect(isBtnAdd(createMockElement('btn-add-1'))).toBe(true);
-      expect(isBtnAdd(createMockElement('btn-add-1_2_3'))).toBe(true);
+      expect(isBtnAdd(createMockElement('btn-add', 'g', [0]))).toBe(true);
+      expect(isBtnAdd(createMockElement('btn-add', 'g', [0]))).toBe(true);
       expect(isBtnAdd(createMockElement('not-btn-add'))).toBe(false);
     });
   });
 
   describe('isBtnRemove', () => {
     it('should recognize btn remove elements', () => {
-      expect(isBtnRemove(createMockElement('btn-remove-1'))).toBe(true);
-      expect(isBtnRemove(createMockElement('btn-remove-1_2_3'))).toBe(true);
+      expect(isBtnRemove(createMockElement('btn-remove', 'g', [0]))).toBe(true);
+      expect(isBtnRemove(createMockElement('btn-remove', 'g', [0, 1, 2]))).toBe(
+        true,
+      );
       expect(isBtnRemove(createMockElement('not-btn-remove'))).toBe(false);
     });
   });

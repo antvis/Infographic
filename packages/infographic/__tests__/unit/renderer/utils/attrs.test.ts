@@ -49,54 +49,6 @@ describe('attrs', () => {
       });
     });
 
-    it('should apply primary color to fill and stroke when not already set', () => {
-      const mockElement = {
-        getAttribute: (attr: string) => {
-          const attrMap: Record<string, string> = {
-            fill: 'red',
-            stroke: 'blue',
-          };
-          return attrMap[attr] || null;
-        },
-      } as unknown as SVGElement;
-
-      const attributes = {
-        width: 100,
-      };
-
-      const result = parseDynamicAttributes(mockElement, attributes, 'green');
-      expect(result).toEqual({
-        width: 100,
-        fill: 'green',
-        stroke: 'green',
-      });
-    });
-
-    it('should not override existing fill and stroke attributes', () => {
-      const mockElement = {
-        getAttribute: (attr: string) => {
-          const attrMap: Record<string, string> = {
-            fill: 'red',
-            stroke: 'blue',
-          };
-          return attrMap[attr] || null;
-        },
-      } as unknown as SVGElement;
-
-      const attributes = {
-        fill: 'yellow',
-        stroke: 'purple',
-        width: 100,
-      };
-
-      const result = parseDynamicAttributes(mockElement, attributes, 'green');
-      expect(result).toEqual({
-        fill: 'yellow',
-        stroke: 'purple',
-        width: 100,
-      });
-    });
-
     it('should skip function attributes that return falsy values', () => {
       const mockElement = {
         getAttribute: () => null,
