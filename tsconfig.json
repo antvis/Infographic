@@ -16,8 +16,8 @@
     "target": "ES2020",
     "types": ["node"],
     "paths": {
-      "@antv/infographic": ["../infographic/src"],
-      "@antv/infographic/*": ["../infographic/src/*"]
+      "@antv/infographic": ["./src"],
+      "@antv/infographic/*": ["./src/*"]
     }
   },
   "include": ["src"],
