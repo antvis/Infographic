@@ -2,7 +2,7 @@
 import { ComponentType, Defs, Group, Rect } from '@antv/infographic-jsx';
 import { ItemDesc, ItemIcon, ItemLabel, ItemValue } from '../components';
 import { FlexLayout } from '../layouts';
-import { getItemId, getItemProps } from '../utils';
+import { getItemProps } from '../utils';
 import { registerItem } from './registry';
 import type { BaseItemProps } from './types';
 
@@ -31,7 +31,7 @@ export const CompactCard: ComponentType<CompactCardProps> = (props) => {
 
   const value = datum.value;
   const hasValue = value !== undefined && value !== null;
-  const shadowId = getItemId(indexes, 'def', 'compact-shadow');
+  const shadowId = 'compact-shadow';
 
   const iconX = positionH === 'flipped' ? width - gap - iconSize : gap;
   const textStartX = positionH === 'flipped' ? gap : iconSize + 2 * gap;
@@ -61,6 +61,7 @@ export const CompactCard: ComponentType<CompactCardProps> = (props) => {
         rx={6}
         ry={6}
         filter={`url(#${shadowId})`}
+        data-element-type="shape"
       />
 
       {/* 侧边色条 */}
@@ -72,6 +73,7 @@ export const CompactCard: ComponentType<CompactCardProps> = (props) => {
         fill={themeColors.colorPrimary}
         rx={1.5}
         ry={1.5}
+        data-element-type="shape"
       />
 
       {/* 图标 */}

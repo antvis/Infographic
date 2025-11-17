@@ -107,6 +107,7 @@ export const ProgressCard: ComponentType<ProgressCardProps> = (props) => {
         strokeWidth={1}
         rx={borderRadius}
         ry={borderRadius}
+        data-element-type="shape"
       />
 
       {/* 图标 */}
@@ -176,6 +177,7 @@ export const ProgressCard: ComponentType<ProgressCardProps> = (props) => {
         fill={`url(#${progressBgId})`}
         rx={progressHeight / 2}
         ry={progressHeight / 2}
+        data-element-type="shape"
       />
 
       {/* 进度条填充 */}
@@ -187,6 +189,7 @@ export const ProgressCard: ComponentType<ProgressCardProps> = (props) => {
         fill={`url(#${gradientId})`}
         rx={progressHeight / 2}
         ry={progressHeight / 2}
+        data-element-type="shape"
       />
     </Group>
   );

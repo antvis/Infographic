@@ -78,6 +78,7 @@ export const PillBadge: ComponentType<PillBadgeProps> = (props) => {
         rx={pillHeight / 2}
         ry={pillHeight / 2}
         filter={`url(#${dropShadowId})`}
+        data-element-type="shape"
       />
       <Rect
         x={pillX}

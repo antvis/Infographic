@@ -176,6 +176,7 @@ const VerticalArrow = (
         { x, y: y + height - size },
       ]}
       fill={fill}
+      data-element-type="shape"
     />
   );
 };
@@ -207,6 +208,7 @@ const DotLine = (props: {
         height={height}
         fill={fill}
         x={positionH === 'normal' ? 0 : lineLength - r}
+        data-element-type="shape"
       />
       <Path
         d={
@@ -216,6 +218,7 @@ const DotLine = (props: {
         }
         strokeWidth={strokeWidth}
         stroke={fill}
+        data-element-type="shape"
       />
     </Group>
   );

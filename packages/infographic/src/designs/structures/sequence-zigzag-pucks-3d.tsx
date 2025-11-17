@@ -1,7 +1,13 @@
 /** @jsxImportSource @antv/infographic-jsx */
 import type { ComponentType, JSXElement } from '@antv/infographic-jsx';
 import { Defs, getElementBounds, Group, Path } from '@antv/infographic-jsx';
-import { BtnAdd, BtnRemove, BtnsGroup, ItemsGroup } from '../components';
+import {
+  BtnAdd,
+  BtnRemove,
+  BtnsGroup,
+  ItemsGroup,
+  ShapesGroup,
+} from '../components';
 import { FlexLayout } from '../layouts';
 import { getColorPrimary, getPaletteColor } from '../utils';
 import { registerStructure } from './registry';
@@ -154,25 +160,25 @@ export const SequenceZigzagPucks3d: ComponentType<
             <stop offset="1" stopColor="#8E8C90" />
           </linearGradient>
         </Defs>
-        <Group width={PUCK_WIDTH} height={PUCK_HEIGHT}>
+        <ShapesGroup width={PUCK_WIDTH} height={PUCK_HEIGHT}>
           <Path d={PUCK_TOP_PATH} fill={currentColor || colorPrimary} />
           <Path d={PUCK_MIDDLE_PATH} fill={`url(#${gradientId1})`} />
           <Path d={PUCK_BOTTOM_PATH} fill={`url(#${gradientId2})`} />
-          <text
-            x={65}
-            y={40}
-            width={50}
-            height={50}
-            fontSize={40}
-            fontWeight="bold"
-            fill="#FFFFFF"
-            textAnchor="middle"
-            dominantBaseline="middle"
-            transform="rotate(-15 65 40) scale(1, 0.8)"
-          >
-            {index + 1}
-          </text>
-        </Group>
+        </ShapesGroup>
+        <text
+          x={65}
+          y={40}
+          width={50}
+          height={50}
+          fontSize={40}
+          fontWeight="bold"
+          fill="#FFFFFF"
+          textAnchor="middle"
+          dominantBaseline="middle"
+          transform="rotate(-15 65 40) scale(1, 0.8)"
+        >
+          {index + 1}
+        </text>
       </Group>,
     );
 

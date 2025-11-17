@@ -1,7 +1,7 @@
 /** @jsxImportSource @antv/infographic-jsx */
 import { ComponentType, Group, Rect } from '@antv/infographic-jsx';
 import { ItemLabel } from '../components';
-import { getItemId, getItemProps } from '../utils';
+import { getItemProps } from '../utils';
 import { registerItem } from './registry';
 import type { BaseItemProps } from './types';
 
@@ -37,7 +37,7 @@ export const RoundedRectNode: ComponentType<RoundedRectNodeProps> = (props) => {
     <Group {...restProps}>
       {/* Rounded rectangle background */}
       <Rect
-        id={getItemId(indexes, 'shape', 'rect')}
+        data-element-type="shape"
         width={width}
         height={height}
         rx={borderRadius}

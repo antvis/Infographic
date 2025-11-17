@@ -120,6 +120,7 @@ export const LetterCard: ComponentType<LetterCardProps> = (props) => {
         fill={showGradient ? `url(#${gradientId})` : baseColor}
         rx={0}
         ry={0}
+        data-element-type="shape"
       />
 
       {showStripe && (

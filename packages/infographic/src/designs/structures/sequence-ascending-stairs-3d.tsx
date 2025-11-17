@@ -1,7 +1,13 @@
 /** @jsxImportSource @antv/infographic-jsx */
 import type { ComponentType, JSXElement } from '@antv/infographic-jsx';
 import { Defs, getElementBounds, Group, Path } from '@antv/infographic-jsx';
-import { BtnAdd, BtnRemove, BtnsGroup, ItemsGroup } from '../components';
+import {
+  BtnAdd,
+  BtnRemove,
+  BtnsGroup,
+  ItemsGroup,
+  ShapesGroup,
+} from '../components';
 import { Text3d } from '../decorations';
 import { FlexLayout } from '../layouts';
 import { getPaletteColor } from '../utils';
@@ -154,12 +160,12 @@ export const SequenceAscendingStairs3d: ComponentType<
             <stop offset="1" stopColor={currentColor} stopOpacity="0.7" />
           </linearGradient>
         </Defs>
-        <Group transform={`scale(${cubeScale})`}>
+        <ShapesGroup transform={`scale(${cubeScale})`}>
           <Path d={CUBE_PATH_BOTTOM} fill={`url(#${gradientIdBottom})`} />
           <Path d={CUBE_PATH_TOP} fill={`url(#${gradientIdTop})`} />
           <Path d={CUBE_PATH_STROKE} fill={`url(#${gradientIdStroke})`} />
-          <Text3d text={index + 1} x={115} y={65} fontSize={56} />
-        </Group>
+        </ShapesGroup>
+        <Text3d text={index + 1} x={115} y={65} fontSize={56} />
       </Group>,
     );
 

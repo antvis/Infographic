@@ -129,6 +129,10 @@ export interface ThemeColors {
   > Group 的宽高不会有任何约束作用，仅用于获取包围盒，如果未设置，则会基于子节点计算包围盒
   > 其余属性与 React SVG group 一致
 
+- **ShapesGroup**
+
+和 Group 属性和用法完全一致，但内部图形可以被进行风格化渲染
+
 - **Text**: 文本
 
   ```typescript
@@ -297,15 +301,6 @@ export interface ThemeColors {
   // restProps: 剩余的 props，通常传给最外层 Group（避免 DOM 警告）
   ```
 
-- **getItemId**: 生成组件 ID
-
-  ```typescript
-  // function getItemId(indexes: number[], type: 'static' | 'shape' | 'def' | 'shapes-group', appendix?: string): string
-  const id = getItemId(indexes, 'shape', 'item');
-  // 生成: "item-0-shape-item" 格式的 ID
-  // 如果 type 为 shape，那么后续可以被渲染器进行二次着色或者风格化处理
-  ```
-
 - **getItemKeyFromIndexes**: 从索引数组生成 key
   ```typescript
   import { getItemKeyFromIndexes } from '../../utils';
@@ -387,7 +382,7 @@ import { AlignLayout, FlexLayout } from '../layouts';
 
 import { registerItem } from './registry';
 import type { BaseItemProps } from './types';
-import { getItemProps, getItemId } from './utils';
+import { getItemProps } from './utils';
 
 // 根据需要导入第三方库
 // import { xxx } from 'd3';
@@ -412,19 +407,19 @@ import { getItemProps, getItemId } from './utils';
 // 如果组件使用了 ItemLabel 和 ItemDesc
 registerItem('simple-text', {
   component: SimpleText,
-  values: ['label', 'desc']
+  values: ['label', 'desc'],
 });
 
 // 如果组件使用了 ItemIcon, ItemLabel, ItemValue 和 ItemDesc
 registerItem('full-card', {
   component: FullCard,
-  values: ['icon', 'label', 'value', 'desc']
+  values: ['icon', 'label', 'value', 'desc'],
 });
 
 // 如果组件使用了 Illus, ItemLabel 和 ItemDesc
 registerItem('illus-item', {
   component: IllusItem,
-  values: ['illus', 'label', 'desc']
+  values: ['illus', 'label', 'desc'],
 });
 ```
 
@@ -477,7 +472,7 @@ export const [ItemName]: ComponentType<[ItemName]Props> = (props) => {
       {datum.icon && <ItemIcon indexes={indexes} {...iconProps} />}
 
       {datum.label !== undefined && (
-        <ItemLabel 
+        <ItemLabel
           indexes={indexes}
           x={/** 计算 X 坐标 */}
           y={/** 计算 Y 坐标 */}
@@ -676,9 +671,33 @@ const patternId = `${uniqueId}-pattern`;
 <Rect fill={`url(#${patternId})`} {...props} />;
 ```
 
+#### 风格化渲染支持
+
+风格化渲染是指将图形在渲染阶段转换为风格化图形，例如手绘风格。
+
+通过以下方式标识的图形可以被进行风格化渲染（由渲染器实现）
+
+1. 添加 `data-element-type="shape"` 属性
+
+```tsx
+<Rect data-element-type="shape" width="100" height="100" />
+```
+
+2. 使用 ShapesGroup 包裹
+
+```tsx
+<ShapesGroup>
+  <Rect width="100" height="100" />
+  <Rect x="100" width="100" height="100" />
+  <Rect x="200" width="100" height="100" />
+</ShapesGroup>
+```
+
+> 风格化渲染只支持图形元素（如 Path、Ellipse、Rect、Polygon 等），不支持文本元素和分组
+
 #### 响应式尺寸
 
-```typescript
+```tsx
 // 基于内容动态调整
 const labelBounds = getElementBounds(
   <ItemLabel indexes={indexes}>{datum.label}</ItemLabel>,
@@ -730,14 +749,13 @@ const quarterCirclePath = isFlipped
 2. **所有图形组件使用 x/y/width/height 定位**
 3. **必须传递 indexes 给所有封装组件**（ItemIcon、ItemLabel、ItemDesc、ItemValue 等）
 4. **使用 getItemProps 处理 props**
-5. **使用 getItemId 生成唯一 ID**，但渐变 ID 建议基于颜色生成以便复用
-6. **tinycolor 正确使用**：
+5. **tinycolor 正确使用**：
    - 实例方法：`tinycolor(color).darken(20).toHexString()`
    - 静态方法：`tinycolor.mix(color1, color2, amount).toHexString()`
-7. **支持 positionH/V 对齐方式**（根据设计需求）
-8. **避免出现元素坐标为负值的情况**
-9. **条件渲染可选元素**（icon、label、desc、value）
-10. **注册组件时必须提供 values 字段**，根据实际使用的封装组件确定值
+6. **支持 positionH/V 对齐方式**（根据设计需求）
+7. **避免出现元素坐标为负值的情况**
+8. **条件渲染可选元素**（icon、label、desc、value）
+9. **注册组件时必须提供 values 字段**，根据实际使用的封装组件确定值
 
 ### 11. 命名规范
 
@@ -752,7 +770,6 @@ const quarterCirclePath = isFlipped
 2. **正确性**：
    - 只使用允许的组件和属性
    - indexes 正确传递给所有封装组件
-   - ID 生成唯一（使用 getItemId）
    - 坐标计算准确
    - Ellipse 的 x/y 为左上角坐标
 3. **样式原则**：
@@ -807,14 +824,6 @@ const displayValue = value ?? 0; // 用于显示
 ```
 
 ### 渐变 ID 生成
-
-❌ **错误做法**：
-
-```typescript
-const gradientId = getItemId(indexes, 'def', 'gradient'); // 基于索引，无法复用
-```
-
-✅ **正确做法**：
 
 ```typescript
 // 推荐：基于颜色和用途（可复用）

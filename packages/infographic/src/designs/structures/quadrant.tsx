@@ -1,7 +1,7 @@
 /** @jsxImportSource @antv/infographic-jsx */
 import type { ComponentType, JSXElement } from '@antv/infographic-jsx';
 import { getElementBounds, Group, Path } from '@antv/infographic-jsx';
-import { ItemsGroup } from '../components';
+import { ItemsGroup, ShapesGroup } from '../components';
 import { FlexLayout } from '../layouts';
 import { registerStructure } from './registry';
 import type { BaseStructureProps } from './types';
@@ -133,9 +133,10 @@ function createAxisElements(
       strokeWidth={strokeWidth}
       strokeDasharray={strokeDasharray}
       fill="none"
+      data-element-type="shape"
     />,
     // X 轴正方向箭头（右侧）
-    <Group transform={`translate(${maxX}, ${centerY})`}>
+    <ShapesGroup transform={`translate(${maxX}, ${centerY})`}>
       <Path
         d={`M 0 0 L ${-axisArrowSize} ${-axisArrowSize / 2}`}
         stroke={axisColor}
@@ -148,9 +149,9 @@ function createAxisElements(
         strokeWidth={strokeWidth}
         fill="none"
       />
-    </Group>,
+    </ShapesGroup>,
     // X 轴负方向箭头（左侧）
-    <Group transform={`translate(0, ${centerY})`}>
+    <ShapesGroup transform={`translate(0, ${centerY})`}>
       <Path
         d={`M 0 0 L ${axisArrowSize} ${-axisArrowSize / 2}`}
         stroke={axisColor}
@@ -163,7 +164,7 @@ function createAxisElements(
         strokeWidth={strokeWidth}
         fill="none"
       />
-    </Group>,
+    </ShapesGroup>,
     // Y 轴
     <Path
       d={`M ${centerX} 0 L ${centerX} ${maxY}`}
@@ -171,9 +172,10 @@ function createAxisElements(
       strokeWidth={strokeWidth}
       strokeDasharray={strokeDasharray}
       fill="none"
+      data-element-type="shape"
     />,
     // Y 轴正方向箭头（上方）
-    <Group transform={`translate(${centerX}, 0)`}>
+    <ShapesGroup transform={`translate(${centerX}, 0)`}>
       <Path
         d={`M 0 0 L ${-axisArrowSize / 2} ${axisArrowSize}`}
         stroke={axisColor}
@@ -186,9 +188,9 @@ function createAxisElements(
         strokeWidth={strokeWidth}
         fill="none"
       />
-    </Group>,
+    </ShapesGroup>,
     // Y 轴负方向箭头（下方）
-    <Group transform={`translate(${centerX}, ${maxY})`}>
+    <ShapesGroup transform={`translate(${centerX}, ${maxY})`}>
       <Path
         d={`M 0 0 L ${-axisArrowSize / 2} ${-axisArrowSize}`}
         stroke={axisColor}
@@ -201,7 +203,7 @@ function createAxisElements(
         strokeWidth={strokeWidth}
         fill="none"
       />
-    </Group>,
+    </ShapesGroup>,
   ];
 }
 

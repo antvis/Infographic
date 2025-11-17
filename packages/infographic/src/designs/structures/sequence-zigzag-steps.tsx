@@ -13,6 +13,7 @@ import {
   BtnsGroup,
   ItemIcon,
   ItemsGroup,
+  ShapesGroup,
 } from '../components';
 import { FlexLayout } from '../layouts';
 import { getColorPrimary, getPaletteColor, getThemeColors } from '../utils';
@@ -155,13 +156,7 @@ export const SequenceZigzagSteps: ComponentType<SequenceZigzagStepsProps> = (
     });
 
     decoElements.push(
-      <Group
-        x={decoX}
-        y={decoY}
-        id={`deco-group-${index}`}
-        width={140}
-        height={110}
-      >
+      <ShapesGroup x={decoX} y={decoY} width={140} height={110}>
         <Ellipse
           x={glowX}
           y={glowY}
@@ -174,7 +169,7 @@ export const SequenceZigzagSteps: ComponentType<SequenceZigzagStepsProps> = (
         <Path d={DECO_PATH_1} fill={currentColor || colorPrimary} />
         <Path d={DECO_PATH_2} fill={'#fff'} />
         <Path d={DECO_PATH_2} fill={colorPrimaryBg || colorPrimaryBg} />
-      </Group>,
+      </ShapesGroup>,
     );
 
     // Icon 元素

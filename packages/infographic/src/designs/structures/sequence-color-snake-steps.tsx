@@ -148,6 +148,7 @@ export const SequenceColorSnakeSteps: ComponentType<
               fill="none"
               width={arcWidth}
               height={arcHeight}
+              data-element-type="shape"
             />
           </>,
         );
@@ -196,6 +197,7 @@ export const SequenceColorSnakeSteps: ComponentType<
         width={arcRadius}
         height={circleStrokeWidth}
         fill={firstItemColor || colorPrimary}
+        data-element-type="shape"
       />,
     );
   }

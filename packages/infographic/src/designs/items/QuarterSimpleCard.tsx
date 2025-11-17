@@ -160,6 +160,7 @@ export const QuarterSimpleCard: ComponentType<QuarterSimpleCardProps> = (
         width={width}
         height={height}
         fill={themeColors.colorPrimary}
+        data-element-type="shape"
       />
 
       {/* 图标 */}

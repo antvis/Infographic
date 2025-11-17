@@ -77,6 +77,7 @@ export const BadgeCard: ComponentType<BadgeCardProps> = (props) => {
 
       {/* 背景卡片 */}
       <Rect
+        data-element-type="shape"
         x={0}
         y={0}
         width={width}

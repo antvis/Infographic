@@ -1,5 +1,11 @@
 /** @jsxImportSource @antv/infographic-jsx */
-import { ComponentType, Ellipse, Group, Rect } from '@antv/infographic-jsx';
+import {
+  ComponentType,
+  Ellipse,
+  Group,
+  Path,
+  Rect,
+} from '@antv/infographic-jsx';
 import { ItemLabel, ItemValue } from '../components';
 import { getItemProps } from '../utils';
 import { registerItem } from './registry';
@@ -32,13 +38,13 @@ export const CircularProgress: ComponentType<CircularProgressProps> = (
   const percentage = Math.min(Math.max(value / maxValue, 0), 1);
 
   const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const strokeDasharray = circumference;
-  const strokeDashoffset = circumference * (1 - percentage);
 
   const center = size / 2;
   const start = strokeWidth / 2;
   const d = size - strokeWidth;
+
+  const angle = percentage * 360;
+  const pathData = describeArc(center, center, radius, 0, angle);
 
   const bounds = { x: start, y: start, width: d, height: d };
   return (
@@ -51,18 +57,17 @@ export const CircularProgress: ComponentType<CircularProgressProps> = (
         fill="none"
         stroke="#f0f0f0"
         strokeWidth={strokeWidth}
+        data-element-type="shape"
       />
 
       {/* 进度圆环 */}
-      <Ellipse
-        {...bounds}
+      <Path
+        d={pathData}
         fill="none"
         stroke={themeColors.colorPrimary}
         strokeWidth={strokeWidth}
         strokeLinecap="round"
-        strokeDasharray={strokeDasharray}
-        strokeDashoffset={strokeDashoffset}
-        transform={`rotate(-90 ${center} ${center})`}
+        data-element-type="shape"
       />
 
       {/* 中心数值 */}
@@ -96,6 +101,33 @@ export const CircularProgress: ComponentType<CircularProgressProps> = (
     </Group>
   );
 };
+
+function describeArc(
+  x: number,
+  y: number,
+  radius: number,
+  startAngle: number,
+  endAngle: number,
+) {
+  const start = polarToCartesian(x, y, radius, endAngle);
+  const end = polarToCartesian(x, y, radius, startAngle);
+  const largeArcFlag = endAngle - startAngle <= 180 ? '0' : '1';
+
+  return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`;
+}
+
+function polarToCartesian(
+  cx: number,
+  cy: number,
+  radius: number,
+  angleInDegrees: number,
+) {
+  const rad = ((angleInDegrees - 90) * Math.PI) / 180;
+  return {
+    x: cx + radius * Math.cos(rad),
+    y: cy + radius * Math.sin(rad),
+  };
+}
 
 registerItem('circular-progress', {
   component: CircularProgress,

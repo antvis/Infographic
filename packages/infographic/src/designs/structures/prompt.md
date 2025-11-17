@@ -41,7 +41,7 @@
 
 ### 1. 类型定义
 
-```typescript
+```tsx
 export interface BaseStructureProps {
   Title?: ComponentType<Pick<TitleProps, 'title' | 'desc'>>;
   Item?: ComponentType<
@@ -104,13 +104,13 @@ export interface BaseItemProps {
 
 - **Defs**: 定义渐变、滤镜等 SVG 定义
 
-  ```typescript
+  ```tsx
   <Defs>{/* 渐变、滤镜等定义 */}</Defs>
   ```
 
 - **Ellipse**: 椭圆图形
 
-  ```typescript
+  ```tsx
   <Ellipse x={0} y={0} width={100} height={60} fill="blue" />
   // 注意:
   // 1. x/y 为左上角位置，非中心点
@@ -120,7 +120,7 @@ export interface BaseItemProps {
 
 - **Group**: 分组容器
 
-  ```typescript
+  ```tsx
   <Group x={10} y={10}>
     {children}
   </Group>
@@ -128,20 +128,26 @@ export interface BaseItemProps {
 
 - **Path**: 路径图形
 
-  ```typescript
-  <Path d="M 0 0 L 100 100" stroke="black" strokeWidth={2} width={100} height={100} />
+  ```tsx
+  <Path
+    d="M 0 0 L 100 100"
+    stroke="black"
+    strokeWidth={2}
+    width={100}
+    height={100}
+  />
   // width/height 为 d 的预估尺寸
   ```
 
 - **Rect**: 矩形图形
 
-  ```typescript
+  ```tsx
   <Rect x={0} y={0} width={100} height={50} fill="red" />
   ```
 
 - **Text**: 文本元素(支持换行)
 
-  ```typescript
+  ```tsx
   <Text
     x={0}
     y={0}
@@ -159,7 +165,7 @@ export interface BaseItemProps {
   ```
 
 - **Polygon**: 多边形
-  ```typescript
+  ```tsx
   <Polygon
     points={[
       { x: 0, y: 0 },
@@ -175,66 +181,78 @@ export interface BaseItemProps {
 
 - **BtnAdd**: 添加按钮,需要 indexes 属性
 
-  ```typescript
+  ```tsx
   <BtnAdd indexes={[0]} x={10} y={20} />
   ```
 
 - **BtnRemove**: 删除按钮,需要 indexes 属性
 
-  ```typescript
+  ```tsx
   <BtnRemove indexes={[0]} x={10} y={20} />
   ```
 
 - **BtnsGroup**: 按钮组容器
 
-  ```typescript
+  ```tsx
   <BtnsGroup>{btnElements}</BtnsGroup>
   ```
 
+- **ShapesGroup**
+
+和 Group 属性和用法完全一致，但内部图形可以被进行风格化渲染
+
+```tsx
+<ShapesGroup>
+  <Rect width="100" height="100" />
+  <Rect x="100" width="100" height="100" />
+  <Rect x="200" width="100" height="100" />
+</ShapesGroup>
+```
+
 - **ItemsGroup**: 数据项组容器
 
-  ```typescript
+  ```tsx
   <ItemsGroup>{itemElements}</ItemsGroup>
   ```
 
 - **Illus**: 插图组件(会被替换为图片或 SVG)
 
-  ```typescript
+  ```tsx
   <Illus x={0} y={0} width={200} height={150} />
   ```
 
 - **Title**: 默认标题组件
 
-  ```typescript
+  ```tsx
   <Title title="标题" desc="描述" alignHorizontal="center" />
   ```
 
 - **ItemLabel**: 数据项标签
 
-  ```typescript
+  ```tsx
   <ItemLabel text="标签" x={0} y={0} />
   ```
 
 - **ItemDesc**: 数据项描述
 
-  ```typescript
+  ```tsx
   <ItemDesc text="描述" x={0} y={0} />
   ```
 
 - **ItemIcon**: 数据项图标
 
-  ```typescript
+  ```tsx
   <ItemIcon x={0} y={0} width={40} height={40} />
   ```
 
 - **ItemValue**: 数据项数值
 
-  ```typescript
+  ```tsx
   <ItemValue value={100} x={0} y={0} />
   ```
 
 - **ItemIconCircle**: 圆形图标组件
-  ```typescript
+  ```tsx
   <ItemIconCircle indexes={[0]} x={0} y={0} size={50} fill="#000000" />
   ```
 
@@ -242,7 +260,7 @@ export interface BaseItemProps {
 
 - **SimpleArrow**: 简单箭头装饰
 
-  ```typescript
+  ```tsx
   <SimpleArrow
     x={0}
     y={0}
@@ -254,7 +272,7 @@ export interface BaseItemProps {
   ```
 
 - **Triangle**: 三角形装饰
-  ```typescript
+  ```tsx
   <Triangle
     x={0}
     y={0}
@@ -268,7 +286,7 @@ export interface BaseItemProps {
 #### 定义组件 (从 ../defs 导入)
 
 - **LinearGradient**: 线性渐变定义
-  ```typescript
+  ```tsx
   <Defs>
     <LinearGradient
       id="my-gradient"
@@ -283,9 +301,16 @@ export interface BaseItemProps {
 **原生 SVG 元素在 Defs 中的使用**:
 在 `<Defs>` 标签内可以使用原生 SVG 元素：
 
-```typescript
+```tsx
 <Defs>
-  <linearGradient id="gradient-id" x1="0%" y1="0%" x2="100%" y2="100%" gradientUnits="userSpaceOnUse">
+  <linearGradient
+    id="gradient-id"
+    x1="0%"
+    y1="0%"
+    x2="100%"
+    y2="100%"
+    gradientUnits="userSpaceOnUse"
+  >
     <stop offset="0%" stopColor="#ff0000" />
     <stop offset="100%" stopColor="#0000ff" />
   </linearGradient>
@@ -295,7 +320,7 @@ export interface BaseItemProps {
 #### 布局组件 (从 ../layouts 导入)
 
 - **FlexLayout**: 弹性盒子布局
-  ```typescript
+  ```tsx
   <FlexLayout
     flexDirection="row" // 'row' | 'column' | 'row-reverse' | 'column-reverse'
     justifyContent="center" // 'flex-start' | 'flex-end' | 'center' | 'space-between'
@@ -308,12 +333,36 @@ export interface BaseItemProps {
   </FlexLayout>
   ```
 
+#### 风格化渲染
+
+风格化渲染是指将图形在渲染阶段转换为风格化图形，例如手绘风格。
+
+通过以下方式标识的图形可以被进行风格化渲染（由渲染器实现）
+
+1. 添加 `data-element-type="shape"` 属性
+
+```tsx
+<Rect data-element-type="shape" width="100" height="100" />
+```
+
+2. 使用 ShapesGroup 包裹
+
+```tsx
+<ShapesGroup>
+  <Rect width="100" height="100" />
+  <Rect x="100" width="100" height="100" />
+  <Rect x="200" width="100" height="100" />
+</ShapesGroup>
+```
+
+> 风格化渲染只支持图形元素（如 Path、Ellipse、Rect、Polygon 等），不支持文本元素和分组
+
 #### 工具函数
 
 **布局计算函数** (从 @antv/infographic-jsx 导入):
 
 - **getElementBounds**: 获取元素边界信息
-  ```typescript
+  ```tsx
   const bounds = getElementBounds(<Rect width={100} height={50} />);
   // 返回: { x: number, y: number, width: number, height: number }
   ```
@@ -322,24 +371,24 @@ export interface BaseItemProps {
 
 - **getPaletteColor**: 获取调色板中指定索引的颜色
 
-  ```typescript
+  ```tsx
   const color = getPaletteColor(options, [index]); // 返回颜色字符串
   ```
 
 - **getPaletteColors**: 获取完整调色板颜色数组
 
-  ```typescript
+  ```tsx
   const palette = getPaletteColors(options); // 返回颜色数组
   ```
 
 - **getColorPrimary**: 获取主题色
 
-  ```typescript
+  ```tsx
   const colorPrimary = getColorPrimary(options); // 返回主题色字符串
   ```
 
 - **getThemeColors**: 获取主题配置
-  ```typescript
+  ```tsx
   const themeColors = getThemeColors(options.themeConfig);
   // 或自定义配置
   const themeColors = getThemeColors(
@@ -355,14 +404,14 @@ export interface BaseItemProps {
 **数据处理函数** (从 ../../utils 导入):
 
 - **getDatumByIndexes**: 根据索引获取数据项
-  ```typescript
+  ```tsx
   const datum = getDatumByIndexes(items, [0, 1]); // 获取嵌套数据
   ```
 
 **组件选择函数** (从 ../utils 导入):
 
 - **getItemComponent**: 获取指定层级的 Item 组件（用于 Items 数组）
-  ```typescript
+  ```tsx
   const ItemComponent = getItemComponent(Items, level);
   // Items 为组件数组，level 为层级索引
   // 如果 level 超出数组长度，返回最后一个组件
@@ -370,7 +419,7 @@ export interface BaseItemProps {
 
 ### 3. 按需导入
 
-```typescript
+```tsx
 /** @jsxImportSource @antv/infographic-jsx */
 import type { ComponentType, JSXElement } from '@antv/infographic-jsx';
 import {
@@ -429,7 +478,7 @@ import type { BaseStructureProps } from './types';
 
 **简单结构模板** (使用 Item):
 
-```typescript
+```tsx
 export interface [StructureName]Props extends BaseStructureProps {
   gap?: number;
   // 其他自定义参数
@@ -524,7 +573,7 @@ registerStructure('[structure-name]', {
 
 **层级结构模板** (使用 Items 数组):
 
-```typescript
+```tsx
 export interface [StructureName]Props extends BaseStructureProps {
   gap?: number;
   // 其他自定义参数
@@ -626,7 +675,7 @@ composites 数组中的值应该是小写字符串，包括以下几种：
 
 **示例**：
 
-```typescript
+```tsx
 // 示例 1: 使用了 Title 和 Item props
 registerStructure('list-row', {
   component: ListRow,
@@ -840,11 +889,17 @@ registerStructure('some-structure', {
 
 **关键代码片段**:
 
-```typescript
+```tsx
 items.forEach((item, index) => {
   const itemX = index * (itemBounds.width + gap);
   itemElements.push(
-    <Item indexes={[index]} datum={item} data={data} x={itemX} positionH="center" />
+    <Item
+      indexes={[index]}
+      datum={item}
+      data={data}
+      x={itemX}
+      positionH="center"
+    />,
   );
 });
 ```
@@ -861,15 +916,17 @@ items.forEach((item, index) => {
 
 **关键代码片段**:
 
-```typescript
+```tsx
 const [RootItem, ChildItem] = Items;
 items.forEach((rootItem, rootIndex) => {
   const { children = [] } = rootItem;
-  itemElements.push(<RootItem indexes={[rootIndex]} datum={rootItem} data={data} />);
+  itemElements.push(
+    <RootItem indexes={[rootIndex]} datum={rootItem} data={data} />,
+  );
 
   children.forEach((child, childIndex) => {
     itemElements.push(
-      <ChildItem indexes={[rootIndex, childIndex]} datum={child} data={data} />
+      <ChildItem indexes={[rootIndex, childIndex]} datum={child} data={data} />,
     );
   });
 });
@@ -887,7 +944,7 @@ items.forEach((rootItem, rootIndex) => {
 
 **关键代码片段**:
 
-```typescript
+```tsx
 const colorPrimary = getColorPrimary(options);
 items.forEach((item, index) => {
   if (index < items.length - 1) {
@@ -898,7 +955,7 @@ items.forEach((item, index) => {
         width={arrowWidth}
         height={arrowHeight}
         colorPrimary={colorPrimary}
-      />
+      />,
     );
   }
 });
@@ -924,7 +981,7 @@ return (
 
 **关键代码片段**:
 
-```typescript
+```tsx
 items.forEach((item, index) => {
   const angle = (index * 2 * Math.PI) / items.length - Math.PI / 2;
   const itemX = centerX + radius * Math.cos(angle) - itemBounds.width / 2;
@@ -939,7 +996,7 @@ items.forEach((item, index) => {
       x={itemX}
       y={itemY}
       themeColors={getThemeColors({ colorPrimary: color }, options)}
-    />
+    />,
   );
 });
 ```
@@ -968,7 +1025,7 @@ items.forEach((item, index) => {
 
 **示例输出**:
 
-```typescript
+```tsx
 /** @jsxImportSource @antv/infographic-jsx */
 import type { ComponentType, JSXElement } from '@antv/infographic-jsx';
 import { getElementBounds, Group } from '@antv/infographic-jsx';

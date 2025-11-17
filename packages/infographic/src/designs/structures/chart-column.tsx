@@ -122,6 +122,7 @@ export const ChartColumn: ComponentType<ChartColumnProps> = (props) => {
         fill={`url(#${value >= 0 ? gradientPositiveId : gradientNegativeId})`}
         rx={8}
         ry={8}
+        data-element-type="shape"
       />,
     );
 

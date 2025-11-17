@@ -37,7 +37,14 @@ export const VSDivider: ComponentType<DividerProps> = (props) => {
         filter="url(#vs-divider-glow-filter)"
         opacity={0.6}
       />
-      <Ellipse x={0} y={0} width={width} height={height} fill={colorPrimary} />
+      <Ellipse
+        x={0}
+        y={0}
+        width={width}
+        height={height}
+        fill={colorPrimary}
+        data-element-type="shape"
+      />
       <text
         x={width / 2}
         y={height / 2}

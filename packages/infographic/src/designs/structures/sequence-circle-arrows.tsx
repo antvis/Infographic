@@ -281,6 +281,7 @@ export const SequenceCircleArrows: ComponentType<SequenceCircleArrowsProps> = (
           stroke={color}
           strokeLinecap="round"
           strokeLinejoin="round"
+          data-element-type="shape"
         />
       </marker>,
     );
@@ -293,6 +294,7 @@ export const SequenceCircleArrows: ComponentType<SequenceCircleArrowsProps> = (
         fill="none"
         markerEnd={`url(#${arrowId})`}
         strokeLinecap="round"
+        data-element-type="shape"
       />,
     );
 
@@ -314,6 +316,7 @@ export const SequenceCircleArrows: ComponentType<SequenceCircleArrowsProps> = (
         width={circleBigW}
         height={circleBigW}
         fill={themeColors.colorPrimaryBg}
+        data-element-type="shape"
       />,
     );
 

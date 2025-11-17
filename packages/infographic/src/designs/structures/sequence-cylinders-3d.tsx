@@ -403,8 +403,8 @@ const createCylinderElements = (
       fontSize={32}
       fontWeight={900}
       fill={`url(#numberGradient${index})`}
-      textAnchor="middle"
-      dominantBaseline="middle"
+      alignHorizontal="center"
+      alignVertical="center"
       transform={transformValue}
     >
       {index + 1}

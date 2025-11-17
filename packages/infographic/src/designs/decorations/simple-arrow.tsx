@@ -41,6 +41,7 @@ export const SimpleArrow = ({
         fill={`url(#${fillId})`}
         stroke={`url(#${strokeId})`}
         transform={transform}
+        data-element-type="shape"
       />
       <Defs>
         <linearGradient id={fillId} x1="100%" y1="0%" x2="0%" y2="0%">

@@ -183,6 +183,7 @@ export const SequenceCircular: ComponentType<SequenceCircularProps> = (
         fill={lightColor}
         width={outerRadius * 2}
         height={outerRadius * 2}
+        data-element-type="shape"
       />,
     );
 
@@ -202,6 +203,7 @@ export const SequenceCircular: ComponentType<SequenceCircularProps> = (
         fill={itemColor}
         width={outerRadius * 2}
         height={outerRadius * 2}
+        data-element-type="shape"
       />,
     );
 
@@ -218,6 +220,7 @@ export const SequenceCircular: ComponentType<SequenceCircularProps> = (
         width={iconBgRadius * 2}
         height={iconBgRadius * 2}
         fill="#ffffff"
+        data-element-type="shape"
       />,
     );
 
@@ -229,6 +232,7 @@ export const SequenceCircular: ComponentType<SequenceCircularProps> = (
         width={iconRadius * 2}
         height={iconRadius * 2}
         fill={itemColor}
+        data-element-type="shape"
       />,
     );
 

@@ -8,7 +8,13 @@ import {
   Path,
   Text,
 } from '@antv/infographic-jsx';
-import { BtnAdd, BtnRemove, BtnsGroup, ItemsGroup } from '../components';
+import {
+  BtnAdd,
+  BtnRemove,
+  BtnsGroup,
+  ItemsGroup,
+  ShapesGroup,
+} from '../components';
 import { FlexLayout } from '../layouts';
 import { getColorPrimary, getPaletteColor, getPaletteColors } from '../utils';
 import { registerStructure } from './registry';
@@ -175,7 +181,7 @@ export const SequenceTimeline: ComponentType<SequenceTimelineProps> = (
     >
       {titleContent}
       <Group>
-        <Group>{decorElements}</Group>
+        <ShapesGroup>{decorElements}</ShapesGroup>
         <ItemsGroup>{itemElements}</ItemsGroup>
         <BtnsGroup>{btnElements}</BtnsGroup>
       </Group>

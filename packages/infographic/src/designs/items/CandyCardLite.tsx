@@ -2,7 +2,7 @@
 import type { ComponentType } from '@antv/infographic-jsx';
 import { Group, Path } from '@antv/infographic-jsx';
 import { ItemDesc, ItemIcon, ItemLabel } from '../components';
-import { getItemId, getItemProps } from '../utils';
+import { getItemProps } from '../utils';
 import { registerItem } from './registry';
 import type { BaseItemProps } from './types';
 
@@ -29,6 +29,7 @@ export const CandyCardLite: ComponentType<CandyCardLiteProps> = (props) => {
         ry={18}
         fill={themeColors.colorPrimaryBg}
         stroke={themeColors.colorPrimary}
+        data-element-type="shape"
       />
 
       {/* 右上角白色装饰区域 */}
@@ -37,9 +38,9 @@ export const CandyCardLite: ComponentType<CandyCardLiteProps> = (props) => {
         y={0.5}
         width={85}
         height={65}
-        id={getItemId(indexes, 'static', 'decoration')}
         d="M0.496704 0H61.7558C74.0725 0 84.0571 9.99394 84.0571 22.3221V60.1302L78.4401 62.9458C64.9296 68.1198 49.0492 65.0802 38.3968 53.9843L10.7444 25.1801C5.41799 19.6306 2.15489 12.855 0.935998 5.80383L0.496704 0Z"
-        fill="white"
+        fill={themeColors.colorBg}
+        data-element-type="shape"
       />
 
       {/* 主标题 */}

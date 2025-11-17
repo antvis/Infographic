@@ -7,7 +7,7 @@ import {
   Path,
   Text,
 } from '@antv/infographic-jsx';
-import { ItemDesc, ItemIcon, ItemLabel } from '../components';
+import { ItemDesc, ItemIcon, ItemLabel, ShapesGroup } from '../components';
 import { getItemProps } from '../utils';
 import { registerItem } from './registry';
 import type { BaseItemProps } from './types';
@@ -183,7 +183,7 @@ export const QuarterCircular: ComponentType<QuarterCircularProps> = (props) => {
   return (
     <Group {...restProps} width={width} height={height}>
       {/* 装饰线条组 */}
-      <Group>
+      <ShapesGroup>
         {/* 左侧对角线 */}
         <Path
           d={`M ${decorationCoords.diagonalStartX} ${decorationCoords.diagonalStartY} L ${decorationCoords.diagonalEndX} ${decorationCoords.diagonalEndY}`}
@@ -217,7 +217,7 @@ export const QuarterCircular: ComponentType<QuarterCircularProps> = (props) => {
           height={DOT_RADIUS * 2}
           fill={themeColors.colorPrimary}
         />
-      </Group>
+      </ShapesGroup>
 
       {/* 内容组 */}
       <Group>
@@ -234,7 +234,11 @@ export const QuarterCircular: ComponentType<QuarterCircularProps> = (props) => {
         </Text>
 
         {/* 1/4 圆背景 */}
-        <Path d={getQuarterCirclePath()} fill={themeColors.colorPrimary} />
+        <Path
+          d={getQuarterCirclePath()}
+          fill={themeColors.colorPrimary}
+          data-element-type="shape"
+        />
 
         {/* 图标 */}
         {datum.icon && (

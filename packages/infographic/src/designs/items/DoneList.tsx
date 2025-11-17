@@ -1,7 +1,7 @@
 /** @jsxImportSource @antv/infographic-jsx */
 import { ComponentType, Group, Path } from '@antv/infographic-jsx';
 import { ItemLabel } from '../components';
-import { getItemId, getItemProps } from '../utils';
+import { getItemProps } from '../utils';
 import { registerItem } from './registry';
 import type { BaseItemProps } from './types';
 
@@ -36,11 +36,10 @@ export const DoneList: ComponentType<DoneListProps> = (props) => {
       : positionV === 'flipped'
         ? height - iconSize
         : 0;
-
   return (
     <Group {...restProps}>
       <Path
-        id={getItemId(indexes, 'shape', 'done-icon')}
+        data-element-type="shape"
         x={positionH === 'flipped' ? textWidth + gap : 0}
         y={shapeY}
         fill={themeColors.colorPrimary}

@@ -137,6 +137,7 @@ const VerticalArrow = (
         { x, y: y + height - size },
       ]}
       fill={fill}
+      data-element-type="shape"
     />
   );
 };

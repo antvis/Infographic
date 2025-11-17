@@ -140,6 +140,7 @@ export const IndexedCard: ComponentType<IndexedCardProps> = (props) => {
         fill={cardBgColor}
         stroke={tinycolor(cardBgColor).darken(5).toHexString()}
         strokeWidth={0.5}
+        data-element-type="shape"
       />
 
       {/* 4.2 内容区域 */}
@@ -182,6 +183,7 @@ export const IndexedCard: ComponentType<IndexedCardProps> = (props) => {
           width={contentWidth}
           height={separatorHeight}
           fill={separatorColor}
+          data-element-type="shape"
         />
 
         {/* 描述文本 */}

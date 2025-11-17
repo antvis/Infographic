@@ -121,13 +121,13 @@ function buildDecorations({ direction, x, y, color, elements }: any) {
   const isLeft = direction === 'left';
   elements.push(
     <Triangle
-      id="shape-triangle"
       x={isLeft ? x.x6 + 10 : x.x1 - 20}
       y={y.y3 - 5}
       width={10}
       height={8}
       rotation={isLeft ? 90 : -90}
       colorPrimary={color}
+      data-element-type="shape"
     />,
   );
 }
@@ -302,7 +302,6 @@ export const SequenceRoadmapVertical: ComponentType<
         }
       >
         <Path
-          id="shape-road"
           width={rowWidth}
           height={roadmapHeight}
           d={pathArr.join(' ')}
@@ -311,6 +310,7 @@ export const SequenceRoadmapVertical: ComponentType<
           strokeWidth="4"
           strokeLinecap="round"
           strokeLinejoin="round"
+          data-element-type="shape"
         />
         <Path
           d={midPath.join(' ')}
@@ -320,6 +320,7 @@ export const SequenceRoadmapVertical: ComponentType<
           strokeDasharray="8 8"
           strokeLinecap="round"
           strokeLinejoin="round"
+          data-element-type="shape"
         />
         <>
           {itemIcons}

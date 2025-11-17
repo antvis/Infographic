@@ -1,7 +1,7 @@
 /** @jsxImportSource @antv/infographic-jsx */
 import { ComponentType, Defs, Group, Path, Rect } from '@antv/infographic-jsx';
 import tinycolor from 'tinycolor2';
-import { ItemDesc, ItemIcon, ItemLabel } from '../components';
+import { ItemDesc, ItemIcon, ItemLabel, ShapesGroup } from '../components';
 import { getItemProps } from '../utils';
 import { registerItem } from './registry';
 import type { BaseItemProps } from './types';
@@ -51,48 +51,50 @@ export const RibbonCard: ComponentType<RibbonCardProps> = (props) => {
         </linearGradient>
       </Defs>
 
-      {/* 主背景 */}
-      <Rect
-        x={0}
-        y={0}
-        width={width}
-        height={height}
-        fill={themeColors.colorBgElevated}
-        stroke={themeColors.colorPrimaryBg}
-        strokeWidth={1}
-        rx={8}
-        ry={8}
-      />
+      <ShapesGroup>
+        {/* 主背景 */}
+        <Rect
+          x={0}
+          y={0}
+          width={width}
+          height={height}
+          fill={themeColors.colorBgElevated}
+          stroke={themeColors.colorPrimaryBg}
+          strokeWidth={1}
+          rx={8}
+          ry={8}
+        />
 
-      {/* 顶部彩带 */}
-      <Rect
-        x={0}
-        y={0}
-        width={width}
-        height={ribbonHeight}
-        fill={`url(#${gradientId})`}
-        rx={8}
-        ry={8}
-      />
+        {/* 顶部彩带 */}
+        <Rect
+          x={0}
+          y={0}
+          width={width}
+          height={ribbonHeight}
+          fill={`url(#${gradientId})`}
+          rx={8}
+          ry={8}
+        />
 
-      {/* 彩带底部切角 */}
-      <Rect
-        x={0}
-        y={8}
-        width={width}
-        height={ribbonHeight - 8}
-        fill={`url(#${gradientId})`}
-      />
+        {/* 彩带底部切角 */}
+        <Rect
+          x={0}
+          y={8}
+          width={width}
+          height={ribbonHeight - 8}
+          fill={`url(#${gradientId})`}
+        />
 
-      {/* 彩带装饰三角 */}
-      <Path
-        x={width - 20}
-        y={ribbonHeight}
-        width={20}
-        height={8}
-        fill={tinycolor(themeColors.colorPrimary).darken(25).toHexString()}
-        d="M0,0 L20,0 L15,8 L5,8 Z"
-      />
+        {/* 彩带装饰三角 */}
+        <Path
+          x={width - 20}
+          y={ribbonHeight}
+          width={20}
+          height={8}
+          fill={tinycolor(themeColors.colorPrimary).darken(25).toHexString()}
+          d="M0,0 L20,0 L15,8 L5,8 Z"
+        />
+      </ShapesGroup>
 
       {/* 图标 */}
       <ItemIcon

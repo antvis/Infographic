@@ -6,7 +6,7 @@ import {
   Rect,
   Text,
 } from '@antv/infographic-jsx';
-import { Gap, ItemDesc, ItemIcon, ItemLabel } from '../components';
+import { Gap, ItemDesc, ItemIconCircle, ItemLabel } from '../components';
 import { AlignLayout, FlexLayout } from '../layouts';
 import { getItemProps } from '../utils';
 import { registerItem } from './registry';
@@ -65,19 +65,12 @@ export const HorizontalIconLine: ComponentType<HorizontalIconLineProps> = (
 
   const iconSize = 45;
   const icon = datum.icon ? (
-    <AlignLayout horizontal="center" vertical="center">
-      <Ellipse
-        width={iconSize}
-        height={iconSize}
-        fill={themeColors.colorPrimary}
-      />
-      <ItemIcon
-        indexes={indexes}
-        width={iconSize * 0.58}
-        height={iconSize * 0.58}
-        fill={themeColors.colorBg}
-      />
-    </AlignLayout>
+    <ItemIconCircle
+      size={iconSize}
+      indexes={indexes}
+      colorBg={themeColors.colorBg}
+      fill={themeColors.colorPrimary}
+    />
   ) : null;
   const iconBounds = getElementBounds(icon);
 
@@ -99,15 +92,27 @@ export const HorizontalIconLine: ComponentType<HorizontalIconLineProps> = (
   const lineHeight = 18;
   const line = (
     <AlignLayout horizontal="center" width={width} height={lineHeight}>
-      <Rect width={width} height={lineHeight} fill={themeColors.colorPrimary} />
+      <Rect
+        width={width}
+        height={lineHeight}
+        fill={themeColors.colorPrimary}
+        data-element-type="shape"
+      />
       <Ellipse
         y={-3}
         width={lineHeight + 6}
         height={lineHeight + 6}
         fill={themeColors.colorBg}
         fillOpacity={0.5}
+        data-element-type="shape"
       />
-      <Ellipse y={(lineHeight - 12) / 2} width={12} height={12} fill="white" />
+      <Ellipse
+        y={(lineHeight - 12) / 2}
+        width={12}
+        height={12}
+        fill="white"
+        data-element-type="shape"
+      />
     </AlignLayout>
   );
 

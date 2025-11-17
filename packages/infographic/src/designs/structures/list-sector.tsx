@@ -106,6 +106,7 @@ export const ListSector: ComponentType<ListSectorProps> = (props) => {
         fill={color}
         width={outerRadius * 2 + 200}
         height={outerRadius * 2 + 200}
+        data-element-type="shape"
       />,
     );
 
@@ -259,6 +260,7 @@ export const ListSector: ComponentType<ListSectorProps> = (props) => {
           height={centerRadius * 2}
           fill={themeColors.colorPrimaryBg}
           fillOpacity={0.5}
+          data-element-type="shape"
         />
       ) : (
         <Path
@@ -268,6 +270,7 @@ export const ListSector: ComponentType<ListSectorProps> = (props) => {
           fillOpacity={0.5}
           width={outerRadius * 2 + 200}
           height={outerRadius * 2 + 200}
+          data-element-type="shape"
         />
       )}
       <Text

@@ -140,6 +140,7 @@ const HorizontalArrow = (
         { x: x + size, y: y + height / 2 },
       ]}
       fill={fill}
+      data-element-type="shape"
     />
   );
 };

@@ -2,7 +2,13 @@
 import type { ComponentType, JSXElement } from '@antv/infographic-jsx';
 import { Bounds, getElementBounds, Group, Text } from '@antv/infographic-jsx';
 import tinycolor from 'tinycolor2';
-import { BtnAdd, BtnRemove, BtnsGroup, ItemsGroup } from '../components';
+import {
+  BtnAdd,
+  BtnRemove,
+  BtnsGroup,
+  ItemsGroup,
+  ShapesGroup,
+} from '../components';
 import { FlexLayout } from '../layouts';
 import { getPaletteColor, getThemeColors } from '../utils';
 import { registerStructure } from './registry';
@@ -130,7 +136,7 @@ function Mountain(props: { colorPrimary: string } & Bounds) {
     points.map((p) => `${p.x},${p.y}`).join(' ');
 
   return (
-    <Group {...props}>
+    <ShapesGroup {...props}>
       <polygon points={toPointsString(leftTopShape)} fill={leftTopColor} />
       <polygon points={toPointsString(rightTopShape)} fill={rightTopColor} />
       <polygon
@@ -141,7 +147,7 @@ function Mountain(props: { colorPrimary: string } & Bounds) {
         points={toPointsString(rightBottomShape)}
         fill={rightBottomColor}
       />
-    </Group>
+    </ShapesGroup>
   );
 }
 
@@ -169,7 +175,7 @@ function Tree(size: 'tiny' | 'small' | 'medium' | 'large') {
   const trunkY = leafHeight;
 
   return (
-    <Group width={width} height={height}>
+    <ShapesGroup width={width} height={height}>
       {/* 左半椭圆（叶子左侧） */}
       <ellipse
         cx={leafWidth / 2}
@@ -198,7 +204,7 @@ function Tree(size: 'tiny' | 'small' | 'medium' | 'large') {
         height={trunkHeight}
         fill={trunkColor}
       />
-    </Group>
+    </ShapesGroup>
   );
 }
 
@@ -233,26 +239,26 @@ function Sun(props: Bounds) {
   });
 
   return (
-    <Group {...props}>
+    <ShapesGroup {...props}>
       <circle cx={centerX} cy={centerY} r={radius} fill="#FFCB0E" />
-      <Group>{rays}</Group>
-    </Group>
+      {...rays}
+    </ShapesGroup>
   );
 }
 
 function Cloud(props: { type: 'single' | 'double' } & Bounds) {
   if (props.type === 'single') {
     return (
-      <Group {...props} width={54} height={36}>
+      <ShapesGroup {...props} width={54} height={36}>
         <path
           d="M10.2635 13.3806C11.0019 9.99045 12.7381 6.91002 15.2405 4.55004C17.743 2.19007 20.8929 0.662716 24.2701 0.171643C27.6473 -0.31943 31.0914 0.24912 34.143 1.80148C37.1946 3.35385 39.7087 5.81625 41.3501 8.86031C44.8835 9.0468 48.1994 10.6544 50.5684 13.3294C52.9373 16.0044 54.1653 19.5277 53.9821 23.1242C53.7989 26.7207 52.2195 30.0959 49.5914 32.5071C46.9634 34.9184 43.5019 36.1683 39.9684 35.9818H11.1517C4.93436 35.9818 0 30.9593 0 24.6309C0.0598447 21.8016 1.13799 19.093 3.02989 17.0192C4.9218 14.9454 7.49584 13.6506 10.2635 13.3806Z"
           fill="#70CAF8"
         />
-      </Group>
+      </ShapesGroup>
     );
   }
   return (
-    <Group {...props} width={73} height={40}>
+    <ShapesGroup {...props} width={73} height={40}>
       <path
         d="M61.6461 14.9716C60.8681 11.1875 58.9581 7.73823 56.1763 5.09315C53.3944 2.44806 49.8758 0.735682 46.0992 0.189041C42.3226 -0.357601 38.4714 0.288046 35.0699 2.03812C31.6683 3.7882 28.8815 6.5577 27.0889 9.96971C23.161 10.1687 19.4719 11.9405 16.8333 14.8953C14.1947 17.8502 12.8227 21.746 13.0191 25.7258C13.2155 29.7055 14.9642 33.4433 17.8806 36.1167C20.7969 38.7901 24.642 40.1802 28.5699 39.9812H60.6588C67.5702 39.9812 73.0006 34.4791 73.0006 27.4764C73.0006 20.9739 67.8664 15.4718 61.6461 14.9716Z"
         fill="#70CAF8"
@@ -261,7 +267,7 @@ function Cloud(props: { type: 'single' | 'double' } & Bounds) {
         d="M21.9691 6.47136e-09C25.9369 6.47136e-09 29.5264 1.62125 32.0003 4.21094C30.0604 5.7917 28.4423 7.75571 27.2581 10C23.3149 10.1989 19.6111 11.9702 16.9622 14.9238C14.3136 17.8774 12.936 21.772 13.1331 25.75C13.2057 27.2131 13.4902 28.6432 13.9652 30H10.7689C7.96116 29.8907 5.29664 28.7203 3.30402 26.7217C1.31144 24.7231 0.135825 22.0419 0.0110544 19.21C-0.113702 16.378 0.821178 13.6017 2.63019 11.4326C4.43921 9.26356 6.99065 7.8602 9.77766 7.5C11.9582 3.00012 16.6168 8.76701e-05 21.9691 6.47136e-09Z"
         fill="#5BA2C6"
       />
-    </Group>
+    </ShapesGroup>
   );
 }
 

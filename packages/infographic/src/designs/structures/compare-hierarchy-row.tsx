@@ -93,6 +93,7 @@ export const CompareHierarchyRow: ComponentType<CompareHierarchyRowProps> = (
           fill={bgColor}
           rx={0}
           ry={0}
+          data-element-type="shape"
         />,
       );
     }

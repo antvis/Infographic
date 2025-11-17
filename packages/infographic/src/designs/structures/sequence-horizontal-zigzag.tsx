@@ -8,7 +8,13 @@ import {
   Path,
   Rect,
 } from '@antv/infographic-jsx';
-import { BtnAdd, BtnRemove, BtnsGroup, ItemsGroup } from '../components';
+import {
+  BtnAdd,
+  BtnRemove,
+  BtnsGroup,
+  ItemsGroup,
+  ShapesGroup,
+} from '../components';
 import { FlexLayout } from '../layouts';
 import { getColorPrimary, getPaletteColor, getThemeColors } from '../utils';
 import { registerStructure } from './registry';
@@ -36,7 +42,7 @@ export const SequenceHorizontalZigzag: ComponentType<
 
   const btnElements: JSXElement[] = [];
   const itemElements: JSXElement[] = [];
-  const decorElements: JSXElement[] = [];
+  const decoElements: JSXElement[] = [];
 
   const cardWidth = itemBounds.width + cardPadding * 2;
   const cardHeight = itemBounds.height + cardPadding * 2 + 30;
@@ -80,7 +86,7 @@ export const SequenceHorizontalZigzag: ComponentType<
           ry={20}
         />
       );
-      decorElements.push(cardBackground);
+      decoElements.push(cardBackground);
     }
 
     itemElements.push(
@@ -102,7 +108,7 @@ export const SequenceHorizontalZigzag: ComponentType<
     for (let i = 0; i < items.length; i++) {
       const dotX = dotsStartX + i * (dotSize + dotGap);
       const isCurrent = i === index;
-      decorElements.push(
+      decoElements.push(
         <Ellipse
           x={dotX}
           y={dotsY}
@@ -222,7 +228,7 @@ export const SequenceHorizontalZigzag: ComponentType<
       return <stop offset={`${offset}%`} stopColor={color} />;
     });
 
-    decorElements.unshift(
+    decoElements.unshift(
       <>
         <Defs>
           <linearGradient
@@ -249,7 +255,7 @@ export const SequenceHorizontalZigzag: ComponentType<
       </>,
     );
 
-    decorElements.unshift(
+    decoElements.unshift(
       <Ellipse
         x={startX - circleRadius}
         y={startY - circleRadius}
@@ -261,7 +267,7 @@ export const SequenceHorizontalZigzag: ComponentType<
       />,
     );
 
-    decorElements.unshift(
+    decoElements.unshift(
       <Ellipse
         x={endX - circleRadius}
         y={endY - circleRadius}
@@ -296,7 +302,7 @@ export const SequenceHorizontalZigzag: ComponentType<
     >
       {titleContent}
       <Group>
-        <Group>{decorElements}</Group>
+        <ShapesGroup>{decoElements}</ShapesGroup>
         <ItemsGroup>{itemElements}</ItemsGroup>
         <BtnsGroup>{btnElements}</BtnsGroup>
       </Group>

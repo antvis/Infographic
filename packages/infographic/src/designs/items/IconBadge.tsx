@@ -70,6 +70,7 @@ export const IconBadge: ComponentType<IconBadgeProps> = (props) => {
         width={size}
         height={size}
         fill={`url(#${gradientId})`}
+        data-element-type="shape"
       />
 
       {/* 图标 */}

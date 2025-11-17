@@ -115,6 +115,7 @@ export const SequencePyramid: ComponentType<SequencePyramidProps> = (props) => {
         height={backgroundHeight}
         ry="10"
         fill={themeColors.colorPrimaryBg}
+        data-element-type="shape"
       />,
     );
 
@@ -134,6 +135,7 @@ export const SequencePyramid: ComponentType<SequencePyramidProps> = (props) => {
         points={segments}
         fill={`url(#${pyramidColorId})`}
         y={pyramidY}
+        data-element-type="shape"
       />,
     );
 

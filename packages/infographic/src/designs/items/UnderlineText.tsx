@@ -99,6 +99,7 @@ export const UnderlineText: ComponentType<UnderlineTextProps> = (props) => {
           width={underlineWidth}
           height={underlineHeight}
           fill={themeColors.colorPrimary}
+          data-element-type="shape"
         />
       )}
 

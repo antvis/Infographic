@@ -7,7 +7,13 @@ import {
   Rect,
   Text,
 } from '@antv/infographic-jsx';
-import { BtnAdd, BtnRemove, BtnsGroup, ItemsGroup } from '../components';
+import {
+  BtnAdd,
+  BtnRemove,
+  BtnsGroup,
+  ItemsGroup,
+  ShapesGroup,
+} from '../components';
 import { FlexLayout } from '../layouts';
 import { getPaletteColor } from '../utils';
 import { registerStructure } from './registry';
@@ -223,6 +229,7 @@ function renderParticles(particles: Particle[], options: any): JSXElement[] {
         y={particle.y}
         width={PARTICLE_CONFIG.SIZE}
         height={PARTICLE_CONFIG.SIZE}
+        data-element-type="shape"
       />
     );
   });
@@ -245,21 +252,23 @@ function createDecorElement(
       width={SHAPE_CONFIG.WIDTH}
       height={SHAPE_CONFIG.HEIGHT}
     >
-      <Path d={createMeshPath()} stroke="#D9D9D9" strokeWidth={2} />
-      <Path
-        d={`M${SHAPE_CONFIG.LINE_X} 25V260`}
-        stroke="#BFBFBF"
-        strokeWidth={2}
-        strokeLinecap="round"
-      />
-      <Rect
-        x={SHAPE_CONFIG.RECT_X}
-        y={SHAPE_CONFIG.RECT_Y}
-        width={SHAPE_CONFIG.RECT_WIDTH}
-        height={SHAPE_CONFIG.RECT_HEIGHT}
-        fill="#FFCB0E"
-        fillOpacity={0.2}
-      />
+      <ShapesGroup>
+        <Path d={createMeshPath()} stroke="#D9D9D9" strokeWidth={2} />
+        <Path
+          d={`M${SHAPE_CONFIG.LINE_X} 25V260`}
+          stroke="#BFBFBF"
+          strokeWidth={2}
+          strokeLinecap="round"
+        />
+        <Rect
+          x={SHAPE_CONFIG.RECT_X}
+          y={SHAPE_CONFIG.RECT_Y}
+          width={SHAPE_CONFIG.RECT_WIDTH}
+          height={SHAPE_CONFIG.RECT_HEIGHT}
+          fill="#FFCB0E"
+          fillOpacity={0.2}
+        />
+      </ShapesGroup>
       <>{renderParticles(particles, options)}</>
       <Text
         x={SHAPE_CONFIG.LINE_X - 25}
@@ -308,6 +317,7 @@ function createArrowElement(itemX: number, options: any): JSXElement {
         height={SHAPE_CONFIG.ARROW_HEIGHT}
         fill="#FFCB0E"
         fillOpacity={0.2}
+        data-element-type="shape"
       />
       <>{renderParticles(arrowParticles, options)}</>
     </Group>

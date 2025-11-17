@@ -11,7 +11,13 @@ import {
 import * as d3 from 'd3';
 import { Data } from '../../types';
 import { getDatumByIndexes } from '../../utils';
-import { BtnAdd, BtnRemove, BtnsGroup, ItemsGroup } from '../components';
+import {
+  BtnAdd,
+  BtnRemove,
+  BtnsGroup,
+  ItemsGroup,
+  ShapesGroup,
+} from '../components';
 import { FlexLayout } from '../layouts';
 import type { HierarchyColorMode } from '../utils';
 import {
@@ -214,7 +220,7 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
     const elements = {
       items: [] as JSXElement[],
       btns: [] as JSXElement[],
-      decor: [] as JSXElement[],
+      deco: [] as JSXElement[],
     };
 
     // 计算节点颜色
@@ -358,7 +364,7 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
       const dashArray = edgeStyle === 'dashed' ? edgeDashPattern : '';
 
       // 绘制连接线
-      elements.decor.push(
+      elements.deco.push(
         <Path
           d={pathD}
           stroke={strokeColor}
@@ -388,7 +394,7 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
           },
         ];
 
-        elements.decor.push(
+        elements.deco.push(
           <Polygon
             points={arrowPoints}
             fill={arrowColor}
@@ -414,7 +420,7 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
             : getColorPrimary(options);
 
         // 父节点连接点
-        elements.decor.push(
+        elements.deco.push(
           <Ellipse
             x={parentX - markerSize}
             y={
@@ -435,7 +441,7 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
             ? getPaletteColor(options, colorIndexes)
             : getColorPrimary(options);
 
-        elements.decor.push(
+        elements.deco.push(
           <Ellipse
             x={childX - markerSize}
             y={y + offsets.y - edgeOffset - markerSize}
@@ -545,7 +551,7 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
   // 收集所有渲染元素
   const itemElements: JSXElement[] = [];
   const btnElements: JSXElement[] = [];
-  const decorElements: JSXElement[] = [];
+  const decoElements: JSXElement[] = [];
   const gradientDefs: JSXElement[] = [];
 
   // 为 node-flat 模式添加扁平索引
@@ -555,7 +561,7 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
   });
 
   nodes.forEach((node) => {
-    const { items, btns, decor } = renderNode(
+    const { items, btns, deco } = renderNode(
       node,
       levelBounds,
       btnBounds,
@@ -565,7 +571,7 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
     );
     itemElements.push(...items);
     btnElements.push(...btns);
-    decorElements.push(...decor);
+    decoElements.push(...deco);
   });
 
   btnElements.push(...renderSiblingBtns(nodes, btnBounds, offsets));
@@ -580,7 +586,7 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
       {titleContent}
       <Group>
         {gradientDefs.length > 0 && <Defs>{gradientDefs}</Defs>}
-        <Group>{decorElements}</Group>
+        <ShapesGroup>{decoElements}</ShapesGroup>
         <ItemsGroup>{itemElements}</ItemsGroup>
         <BtnsGroup>{btnElements}</BtnsGroup>
       </Group>

@@ -7,7 +7,7 @@ import {
   Group,
   Rect,
 } from '@antv/infographic-jsx';
-import { ItemsGroup } from '../components';
+import { ItemsGroup, ShapesGroup } from '../components';
 import { LinearGradient } from '../defs';
 import { FlexLayout } from '../layouts';
 import { getPaletteColor } from '../utils';
@@ -329,22 +329,25 @@ const DotLine = (props: DecorationProps) => {
           direction={side === 'left' ? 'left-right' : 'right-left'}
         />
       </Defs>
-      <Ellipse
-        x={cx - radius}
-        y={cy - radius}
-        width={d}
-        height={d}
-        fill="none"
-        strokeWidth={1}
-        stroke={color}
-      />
-      <Ellipse
-        x={innerX}
-        y={innerY}
-        width={innerD}
-        height={innerD}
-        fill={color}
-      />
+      <ShapesGroup>
+        <Ellipse
+          x={cx - radius}
+          y={cy - radius}
+          width={d}
+          height={d}
+          fill="none"
+          strokeWidth={1}
+          stroke={color}
+        />
+        <Ellipse
+          x={innerX}
+          y={innerY}
+          width={innerD}
+          height={innerD}
+          fill={color}
+        />
+      </ShapesGroup>
+
       <Rect
         x={side === 'left' ? cx : cx + dx}
         y={cy - 0.5}
