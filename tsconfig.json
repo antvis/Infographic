@@ -1,14 +1,25 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "composite": true,
     "declaration": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "@antv/infographic",
     "module": "ESNext",
     "moduleResolution": "node",
+    "outDir": "./esm",
+    "rootDir": "./src",
     "skipLibCheck": true,
     "strict": true,
-    "target": "ES2020"
+    "target": "ES2020",
+    "types": ["node"],
+    "paths": {
+      "@antv/infographic": ["../infographic/src"],
+      "@antv/infographic/*": ["../infographic/src/*"]
+    }
   },
-  "files": [],
-  "references": []
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "lib", "esm"]
 }

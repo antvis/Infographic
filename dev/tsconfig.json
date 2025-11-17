@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "./dist",
+    "jsx": "react-jsx",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "types": ["node"],
+    "paths": {
+      "@antv/infographic": ["../src"],
+      "@antv/infographic/*": ["../src/*"]
+    }
+  }
+}

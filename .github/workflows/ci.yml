@@ -20,13 +20,8 @@ jobs:
         with:
           node-version: 20
 
-      - uses: pnpm/action-setup@v4
-        name: Install pnpm
-        with:
-          run_install: false
-
       - name: Install Dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: npm install
 
       - name: Run CI
         run: |

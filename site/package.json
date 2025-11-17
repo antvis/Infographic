@@ -19,7 +19,6 @@
     "@ai-sdk/google": "^2.0.26",
     "@ai-sdk/openai": "^2.0.60",
     "@ant-design/icons": "^6.1.0",
-    "@antv/infographic": "workspace:^",
     "@docusaurus/core": "3.9.2",
     "@docusaurus/preset-classic": "3.9.2",
     "@mdx-js/react": "^3.0.0",

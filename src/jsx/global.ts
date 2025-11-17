@@ -2,7 +2,6 @@ import type {
   DefsProps,
   EllipseProps,
   GroupProps,
-  JSXElement as InfographicJSXElement,
   PathProps,
   RectProps,
   SVGAttributes,
@@ -13,15 +12,6 @@ import type {
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace JSX {
-    type Element = InfographicJSXElement;
-    type ElementType = any;
-
-    interface ElementChildrenAttribute {
-      children: {};
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    type LibraryManagedAttributes<C, P> = P;
-
     interface IntrinsicElements {
       SVG: SVGProps;
       Defs: DefsProps;

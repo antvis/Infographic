@@ -5,6 +5,7 @@ lib
 tsconfig.tsbuildinfo
 
 pnpm-lock.yaml
+package-lock.json
 coverage
 
 .claude
