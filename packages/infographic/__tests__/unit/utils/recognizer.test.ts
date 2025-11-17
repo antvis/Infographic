@@ -150,7 +150,6 @@ describe('recognizer', () => {
   describe('isBtnAdd', () => {
     it('should recognize btn add elements', () => {
       expect(isBtnAdd(createMockElement('btn-add', 'g', [0]))).toBe(true);
-      expect(isBtnAdd(createMockElement('btn-add', 'g', [0]))).toBe(true);
       expect(isBtnAdd(createMockElement('not-btn-add'))).toBe(false);
     });
   });

@@ -24,7 +24,6 @@ export const Preview = () => {
     theme: 'light' | 'dark';
     colorPrimary: string;
     enablePalette: boolean;
-    useHandDrawnStyle: boolean;
   }>(STORAGE_KEY, (stored) => {
     const fallbacks: any = {};
 
@@ -53,6 +52,10 @@ export const Preview = () => {
   const [theme, setTheme] = useState<string>(initialTheme);
   const [colorPrimary, setColorPrimary] = useState(initialColorPrimary);
   const [enablePalette, setEnablePalette] = useState(initialEnablePalette);
+  const [customData, setCustomData] = useState<string>(() =>
+    JSON.stringify(DATA[initialData].value, null, 2),
+  );
+  const [dataError, setDataError] = useState<string>('');
 
   const [themeConfig, setThemeConfig] = useState<ThemeConfig>(() => {
     const config: ThemeConfig = {
@@ -106,6 +109,24 @@ export const Preview = () => {
       setData('list');
     }
   }, [template]);
+
+  // Update custom data when data type changes
+  useEffect(() => {
+    setCustomData(JSON.stringify(DATA[data].value, null, 2));
+    setDataError('');
+  }, [data]);
+
+  // Parse custom data
+  const parsedData = useMemo(() => {
+    try {
+      const parsed = JSON.parse(customData);
+      setDataError('');
+      return parsed;
+    } catch (error) {
+      setDataError(error instanceof Error ? error.message : 'Invalid JSON');
+      return DATA[data].value;
+    }
+  }, [customData, data]);
 
   // 键盘导航：上下或左右方向键切换模板
   useEffect(() => {
@@ -245,6 +266,38 @@ export const Preview = () => {
             </Form>
           </Card>
 
+          <Card
+            title="数据编辑器"
+            size="small"
+            extra={
+              dataError && (
+                <span style={{ color: '#ff4d4f', fontSize: 12 }}>
+                  {dataError}
+                </span>
+              )
+            }
+          >
+            <div style={{ height: 300 }}>
+              <Editor
+                height="100%"
+                defaultLanguage="json"
+                value={customData}
+                theme="vs-dark"
+                options={{
+                  minimap: { enabled: false },
+                  fontSize: 12,
+                  lineNumbers: 'on',
+                  scrollBeyondLastLine: false,
+                  wordWrap: 'on',
+                  contextmenu: true,
+                  formatOnPaste: true,
+                  formatOnType: true,
+                }}
+                onChange={(value) => setCustomData(value || '')}
+              />
+            </div>
+          </Card>
+
           <Card title="模板配置" size="small">
             <div style={{ height: 300 }}>
               <Editor
@@ -273,7 +326,7 @@ export const Preview = () => {
           <Infographic
             options={{
               template,
-              data: DATA[data].value,
+              data: parsedData,
               padding: 20,
               theme,
               themeConfig,

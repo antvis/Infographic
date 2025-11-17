@@ -12,13 +12,11 @@ export const Illus = ({ indexes, ...props }: IllusProps) => {
   };
   const finalProps = { ...defaultProps, ...props };
 
-  if (indexes?.length) {
-    if (indexes) {
-      finalProps['data-indexes'] = indexes;
-      finalProps['data-element-type'] = 'item-illus';
-    } else {
-      finalProps['data-element-type'] = 'illus';
-    }
+  if (indexes) {
+    finalProps['data-indexes'] = indexes;
+    finalProps['data-element-type'] = 'item-illus';
+  } else {
+    finalProps['data-element-type'] = 'illus';
   }
 
   return <Rect {...finalProps} />;
