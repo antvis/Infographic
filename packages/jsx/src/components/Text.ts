@@ -70,8 +70,13 @@ export function Text(props: TextProps): JSXElement {
   };
 
   const textProps = {
+    'data-element-type': 'text',
     ...(textX && { x: textX }),
     ...(textY && { y: textY }),
+    ...(width && { width }),
+    ...(height && { height }),
+    ...(x && { 'data-x': x }),
+    ...(y && { 'data-y': y }),
     fill,
     fontSize,
     textAnchor: TEXT_ANCHOR_MAP[alignHorizontal],
@@ -80,7 +85,6 @@ export function Text(props: TextProps): JSXElement {
     children,
     ...dataAttrs,
     ...restProps,
-    ...(id && { id: `${id}-text` }),
     ...(fontFamily && { fontFamily }),
     ...(fontStyle && { fontStyle }),
     ...(fontWeight && { fontWeight }),
@@ -103,15 +107,24 @@ export function Text(props: TextProps): JSXElement {
   };
 
   const hasBackground = backgroundColor && backgroundColor !== 'none';
+
+  if (!hasBackground) {
+    return {
+      type: 'text',
+      props: {
+        ...containerProps,
+        ...textProps,
+      },
+    };
+  }
+
   const rectProps: RectProps = {
+    'data-element-type': 'shape',
     ...bounds,
     fill: backgroundColor,
-    ...(hasBackground && {
-      fillOpacity: backgroundOpacity,
-      rx: backgroundRadius,
-      ry: backgroundRadius,
-    }),
-    ...(id && { id: `${id}-bounds` }),
+    fillOpacity: backgroundOpacity,
+    rx: backgroundRadius,
+    ry: backgroundRadius,
   };
 
   return {
