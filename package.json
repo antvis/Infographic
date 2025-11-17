@@ -44,7 +44,7 @@
     "build:umd": "vite build",
     "build:watch": "tsc -p tsconfig.json --watch",
     "check:test": "tsc --noEmit -p __tests__",
-    "ci": "run-s test build lint",
+    "ci": "run-s build test lint",
     "clean": "rm -rf esm lib dist tsconfig.tsbuildinfo",
     "dev": "cd dev && npm run dev",
     "lint": "eslint . --ext .ts,.tsx && npm run check:test",
