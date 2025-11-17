@@ -22,7 +22,7 @@ export const DoneList: ComponentType<DoneListProps> = (props) => {
       iconSize = 30,
       gap = 5,
       positionH = 'normal',
-      positionV = 'center',
+      positionV = 'middle',
       themeColors,
     },
     restProps,
@@ -31,7 +31,7 @@ export const DoneList: ComponentType<DoneListProps> = (props) => {
   const textWidth = width - iconSize - gap;
 
   const shapeY =
-    positionV === 'center'
+    positionV === 'middle'
       ? (height - iconSize) / 2
       : positionV === 'flipped'
         ? height - iconSize
@@ -53,7 +53,7 @@ export const DoneList: ComponentType<DoneListProps> = (props) => {
         width={textWidth}
         height={height}
         fontWeight="normal"
-        alignVertical="center"
+        alignVertical="middle"
         wordWrap={false}
         fill="#666"
       >

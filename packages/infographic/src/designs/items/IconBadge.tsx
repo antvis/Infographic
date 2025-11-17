@@ -99,7 +99,7 @@ export const IconBadge: ComponentType<IconBadgeProps> = (props) => {
         fontWeight="bold"
         fill={themeColors.colorWhite}
         alignHorizontal="center"
-        alignVertical="center"
+        alignVertical="middle"
       >
         {value > 99 ? '99+' : Math.round(value)}
       </Text>

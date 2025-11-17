@@ -67,7 +67,7 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
       indexes={indexes}
       width={width}
       alignHorizontal="center"
-      alignVertical="center"
+      alignVertical="middle"
       fill={labelColor}
     >
       {label}
@@ -103,7 +103,7 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
       : 2;
 
     const labelY = height
-      ? positionV === 'center'
+      ? positionV === 'middle'
         ? (height - labelBounds.height - (descHeight || 0) - gap) / 2
         : positionV === 'flipped'
           ? height - labelBounds.height - (descHeight || 0) - gap
@@ -117,7 +117,7 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
           width={width}
           y={labelY}
           alignHorizontal={textAlign}
-          alignVertical="center"
+          alignVertical="middle"
           fill={labelColor}
         >
           {label}
@@ -152,7 +152,7 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
 
     const contentHeight = labelBounds.height + (descHeight || 0) + gap;
     const labelY = height
-      ? positionV === 'center'
+      ? positionV === 'middle'
         ? (height - contentHeight - iconHeight - gap) / 2
         : positionV === 'flipped'
           ? height - contentHeight - iconHeight - gap
@@ -174,7 +174,7 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
                 width={width}
                 y={labelY}
                 alignHorizontal="center"
-                alignVertical="center"
+                alignVertical="middle"
                 fill={labelColor}
               >
                 {label}
@@ -203,7 +203,7 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
                 width={width}
                 y={labelY}
                 alignHorizontal="center"
-                alignVertical="center"
+                alignVertical="middle"
                 fill={labelColor}
               >
                 {label}
@@ -241,7 +241,7 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
     : 2;
 
   const labelY = height
-    ? positionV === 'center'
+    ? positionV === 'middle'
       ? (height - labelBounds.height - (descHeight || 0) - gap) / 2
       : positionV === 'flipped'
         ? height - labelBounds.height - (descHeight || 0) - gap
@@ -263,7 +263,7 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
               width={textWidth}
               y={labelY}
               alignHorizontal="right"
-              alignVertical="center"
+              alignVertical="middle"
               fill={labelColor}
             >
               {label}
@@ -292,7 +292,7 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
               width={textWidth}
               y={labelY}
               alignHorizontal="left"
-              alignVertical="center"
+              alignVertical="middle"
               fill={labelColor}
             >
               {label}
@@ -320,7 +320,7 @@ export const SimpleItem: ComponentType<SimpleItemProps> = (props) => {
     // if (positionV === 'normal') return 'top';
     // if (positionV === 'flipped') return 'bottom';
 
-    return hasIcon ? 'center' : 'top';
+    return hasIcon ? 'middle' : 'top';
   }
 
   function getIconVerticalAlign(positionV: string) {

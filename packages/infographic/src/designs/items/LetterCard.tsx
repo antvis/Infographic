@@ -173,7 +173,7 @@ export const LetterCard: ComponentType<LetterCardProps> = (props) => {
         fontWeight="bold"
         fill="#FFFFFF"
         alignHorizontal="center"
-        alignVertical="center"
+        alignVertical="middle"
         lineHeight={1}
       >
         {displayTitle}

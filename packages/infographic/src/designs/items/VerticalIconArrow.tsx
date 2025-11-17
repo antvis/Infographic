@@ -38,7 +38,7 @@ export const VerticalIconArrow: ComponentType<VerticalIconArrowProps> = (
       width={120}
       fill={themeColors.colorText}
       alignHorizontal={textAlignHorizontal}
-      alignVertical="center"
+      alignVertical="middle"
       fontSize={14}
     >
       {datum.label}
@@ -112,7 +112,7 @@ export const VerticalIconArrow: ComponentType<VerticalIconArrowProps> = (
             <Gap width={iconGap} />
           </>
         )}
-        <AlignLayout horizontal="center" vertical="center">
+        <AlignLayout horizontal="center" vertical="middle">
           <VerticalArrow
             width={arrowWidth}
             height={height}
@@ -122,7 +122,7 @@ export const VerticalIconArrow: ComponentType<VerticalIconArrowProps> = (
             width={arrowWidth}
             height={height}
             alignHorizontal="center"
-            alignVertical="center"
+            alignVertical="middle"
             fill={themeColors.colorWhite}
             fontWeight="bold"
             fontSize={16}

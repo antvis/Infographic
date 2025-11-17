@@ -106,7 +106,7 @@ export const SequenceTimeline: ComponentType<SequenceTimelineProps> = (
         fontSize={18}
         fontWeight="bold"
         alignHorizontal="left"
-        alignVertical="center"
+        alignVertical="middle"
         fill={palette[index % palette.length]}
       >
         {`STEP ${index + 1}`}

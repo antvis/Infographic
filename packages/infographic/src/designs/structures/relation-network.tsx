@@ -105,7 +105,7 @@ export const RelationNetwork: ComponentType<RelationNetworkProps> = (props) => {
 
   const positionBy = (x: number, y: number) => ({
     positionH: x < -50 ? 'flipped' : x > 50 ? 'normal' : 'center',
-    positionV: y < -50 ? 'flipped' : y > 50 ? 'normal' : 'center',
+    positionV: y < -50 ? 'flipped' : y > 50 ? 'normal' : 'middle',
   });
 
   /** --- 节点 --- */

@@ -99,7 +99,7 @@ export const PillBadge: ComponentType<PillBadgeProps> = (props) => {
         width={pillWidth}
         height={pillHeight}
         alignHorizontal="center"
-        alignVertical="center"
+        alignVertical="middle"
         fontSize={14}
         fontWeight="500"
         fill={themeColors.colorText}

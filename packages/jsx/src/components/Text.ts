@@ -48,7 +48,7 @@ export function Text(props: TextProps): JSXElement {
         : x;
 
   const calculateTextY = () => {
-    if (alignVertical === 'center') return y + height / 2;
+    if (alignVertical === 'middle') return y + height / 2;
     if (alignVertical === 'bottom') return y + height;
 
     const fz = +fontSize;
@@ -64,7 +64,7 @@ export function Text(props: TextProps): JSXElement {
   const textY = calculateTextY();
 
   const getDominantBaseline = () => {
-    if (alignVertical === 'center') return 'central';
+    if (alignVertical === 'middle') return 'central';
     if (alignVertical === 'bottom') return 'baseline';
     return 'baseline';
   };

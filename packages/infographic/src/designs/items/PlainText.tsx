@@ -40,7 +40,7 @@ export const LabelText: ComponentType<LabelTextProps> = (props) => {
             ? 'center'
             : 'left'
       }
-      alignVertical="center"
+      alignVertical="middle"
     >
       {formatter(datum.label || datum.desc)}
     </ItemLabel>

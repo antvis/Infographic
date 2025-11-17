@@ -124,7 +124,7 @@ export const BadgeCard: ComponentType<BadgeCardProps> = (props) => {
           indexes={indexes}
           width={contentWidth}
           alignHorizontal={positionH === 'flipped' ? 'right' : 'left'}
-          alignVertical={'center'}
+          alignVertical="middle"
           fontSize={14}
           fill={themeColors.colorText}
         >
@@ -137,7 +137,7 @@ export const BadgeCard: ComponentType<BadgeCardProps> = (props) => {
             indexes={indexes}
             width={contentWidth}
             alignHorizontal={positionH === 'flipped' ? 'right' : 'left'}
-            alignVertical="center"
+            alignVertical="middle"
             fontSize={18}
             lineHeight={1}
             fontWeight="bold"

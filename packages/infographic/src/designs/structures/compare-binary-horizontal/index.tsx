@@ -113,7 +113,7 @@ export const CompareBinaryHorizontal: ComponentType<
         x={leftX}
         y={childY}
         positionH={leftPositionH}
-        positionV="center"
+        positionV="middle"
       />,
     );
 
@@ -175,7 +175,7 @@ export const CompareBinaryHorizontal: ComponentType<
         x={rightX}
         y={childY}
         positionH={rightPositionH}
-        positionV="center"
+        positionV="middle"
       />,
     );
 

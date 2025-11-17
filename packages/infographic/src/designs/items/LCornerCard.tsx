@@ -96,7 +96,7 @@ export const LCornerCard: ComponentType<LCornerCardProps> = (props) => {
         fontSize={14}
         fontWeight="bold"
         alignHorizontal="center"
-        alignVertical="center"
+        alignVertical="middle"
         fill={themeColors.colorText}
       >
         {label}

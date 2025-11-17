@@ -312,7 +312,7 @@ const centerY = y + height / 2;
   fontWeight="bold" // 'normal' | 'bold' | number
   fontFamily="Arial"
   alignHorizontal="center" // 'left' | 'center' | 'right'
-  alignVertical="center" // 'top' | 'center' | 'bottom'
+  alignVertical="middle" // 'top' | 'middle' | 'bottom'
   lineHeight={1.5} // 行高倍数
   wordWrap={true} // 启用自动换行
   fill="#000000" // 文本颜色
@@ -340,7 +340,7 @@ const centerY = y + height / 2;
   width={200}
   height={100}
   alignHorizontal="center"
-  alignVertical="center"
+  alignVertical="middle"
   fontSize={16}
 >
   居中显示的文本
@@ -579,7 +579,7 @@ const Button = ({
       x={width / 2}
       y={height / 2}
       alignHorizontal="center"
-      alignVertical="center"
+      alignVertical="middle"
       fill="white"
       fontWeight="bold"
     >

@@ -280,7 +280,7 @@ export const ListSector: ComponentType<ListSectorProps> = (props) => {
         width={titleWidth}
         height={titleHeight}
         alignHorizontal="center"
-        alignVertical="center"
+        alignVertical="middle"
         fontSize={24}
         fontWeight="bold"
         fill={themeColors.colorText}

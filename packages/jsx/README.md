@@ -75,7 +75,7 @@ The Text component supports advanced text positioning and styling:
   width={100}
   height={30}
   alignHorizontal="center"
-  alignVertical="center"
+  alignVertical="middle"
   fontSize={14}
   fontFamily="Arial"
   fill="black"
@@ -99,7 +99,7 @@ const Button = ({ x, y, width, height, label, color = "blue" }) => (
       x={width/2}
       y={height/2}
       alignHorizontal="center"
-      alignVertical="center"
+      alignVertical="middle"
     >
       {label}
     </Text>

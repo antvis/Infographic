@@ -12,7 +12,7 @@ export interface AlignLayoutProps extends GroupProps {
   /** 水平对齐方式 */
   horizontal?: 'left' | 'center' | 'right';
   /** 垂直对齐方式 */
-  vertical?: 'top' | 'center' | 'bottom';
+  vertical?: 'top' | 'middle' | 'bottom';
 }
 
 export const AlignLayout = createLayout<AlignLayoutProps>(
@@ -71,7 +71,7 @@ export const AlignLayout = createLayout<AlignLayoutProps>(
           case 'top':
             childProps.y = alignmentY;
             break;
-          case 'center':
+          case 'middle':
             childProps.y = alignmentY + (alignmentHeight - bounds.height) / 2;
             break;
           case 'bottom':

@@ -80,7 +80,7 @@ export interface BaseItemProps {
   datum: Data['items'][number];
   themeColors?: ThemeColors;
   positionH?: 'normal' | 'center' | 'flipped';
-  positionV?: 'normal' | 'center' | 'flipped';
+  positionV?: 'normal' | 'middle' | 'flipped';
   width?: number;
   height?: number;
   [key: string]: any;
@@ -156,7 +156,7 @@ export interface BaseItemProps {
     fontSize={14}
     fontWeight="normal" // 或 'bold'
     alignHorizontal="center" // 'left' | 'center' | 'right'
-    alignVertical="center" // 'top' | 'center' | 'bottom'
+    alignVertical="middle" // 'top' | 'middle' | 'bottom'
     fill="#000000"
   >
     Text Content
@@ -757,7 +757,7 @@ registerStructure('some-structure', {
 - **坐标系统**: x 向右为正，y 向下为正
 - **Item 对齐方式**: `positionH` 和 `positionV` 用于控制元素内部内容的对齐方式
   - `positionH`: 'normal'(默认设计) | 'center'(水平居中) | 'flipped'(翻转布局)
-  - `positionV`: 'normal'(默认设计) | 'center'(垂直居中) | 'flipped'(翻转布局)
+  - `positionV`: 'normal'(默认设计) | 'middle'(垂直居中) | 'flipped'(翻转布局)
   - 示例：圆形分布时，右侧 Item 使用 'normal'，左侧使用 'flipped'
 - **Item 尺寸约束**: 某些结构需要限制 Item 的尺寸，通过 `width` 和 `height` 属性传递
 - **布局方式**:

@@ -75,7 +75,7 @@ function alignToFlex(
       style.alignContent = 'flex-start';
       style.alignItems = 'flex-start';
       break;
-    case 'CENTER':
+    case 'MIDDLE':
       style.alignContent = 'center';
       style.alignItems = 'center';
       break;
@@ -145,6 +145,6 @@ function getTextAlignment(alignment: string): TextAlignment {
     return ['LEFT', 'TOP'];
   }
 
-  const [horizontal = 'CENTER', vertical = 'CENTER'] = alignment.split(' ');
+  const [horizontal = 'CENTER', vertical = 'MIDDLE'] = alignment.split(' ');
   return [horizontal, vertical] as TextAlignment;
 }

@@ -78,7 +78,7 @@ export const SimpleHorizontalArrow: ComponentType<
             <Gap height={textHeight + labelGap} />
           </>
         )}
-        <AlignLayout horizontal="center" vertical="center">
+        <AlignLayout horizontal="center" vertical="middle">
           <HorizontalArrow
             width={width}
             height={arrowHeight}
@@ -88,7 +88,7 @@ export const SimpleHorizontalArrow: ComponentType<
             width={width}
             height={arrowHeight}
             alignHorizontal="center"
-            alignVertical="center"
+            alignVertical="middle"
             fill={themeColors.colorWhite}
             fontWeight="bold"
             fontSize={16}

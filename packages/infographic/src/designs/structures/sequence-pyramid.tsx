@@ -160,7 +160,7 @@ export const SequencePyramid: ComponentType<SequencePyramidProps> = (props) => {
         y={itemY}
         width={itemWidth}
         height={itemHeight}
-        positionV="center"
+        positionV="middle"
       />,
     );
   });

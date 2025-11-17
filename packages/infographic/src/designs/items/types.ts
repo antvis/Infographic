@@ -12,7 +12,7 @@ export interface BaseItemProps {
   datum: Data['items'][number];
   themeColors: ThemeColors;
   positionH?: 'normal' | 'center' | 'flipped';
-  positionV?: 'normal' | 'center' | 'flipped';
+  positionV?: 'normal' | 'middle' | 'flipped';
   valueFormatter?: (value: number) => string | number;
   [key: string]: any;
 }

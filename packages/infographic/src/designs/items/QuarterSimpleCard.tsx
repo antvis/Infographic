@@ -31,7 +31,7 @@ export const QuarterSimpleCard: ComponentType<QuarterSimpleCardProps> = (
       padding = 20,
       borderRadius = 16,
       positionH = 'center',
-      positionV = 'center',
+      positionV = 'middle',
       themeColors,
     },
     restProps,
@@ -81,7 +81,7 @@ export const QuarterSimpleCard: ComponentType<QuarterSimpleCardProps> = (
   const r = borderRadius;
   let cardPath = '';
 
-  if (positionH === 'center' && positionV === 'center') {
+  if (positionH === 'center' && positionV === 'middle') {
     // 四个角都为圆角
     cardPath = `
   M ${r} 0

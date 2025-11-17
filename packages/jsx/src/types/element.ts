@@ -29,7 +29,7 @@ export interface TextProps extends BaseGeometryProps {
   lineHeight?: number;
   wordWrap?: boolean;
   alignHorizontal?: 'left' | 'center' | 'right';
-  alignVertical?: 'top' | 'center' | 'bottom';
+  alignVertical?: 'top' | 'middle' | 'bottom';
   backgroundColor?: string;
   backgroundOpacity?: number;
   backgroundRadius?: number;

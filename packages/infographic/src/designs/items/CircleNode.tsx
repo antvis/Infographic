@@ -89,7 +89,7 @@ export const CircleNode: ComponentType<CircleNodeProps> = (props) => {
         height={labelSize}
         lineHeight={1.1}
         alignHorizontal="center"
-        alignVertical="center"
+        alignVertical="middle"
         fill={colorText}
         fontWeight="500"
       >

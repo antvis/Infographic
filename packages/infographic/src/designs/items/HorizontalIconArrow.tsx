@@ -116,7 +116,7 @@ export const HorizontalIconArrow: ComponentType<HorizontalIconArrowProps> = (
             <Gap height={iconGap} />
           </>
         )}
-        <AlignLayout horizontal="center" vertical="center">
+        <AlignLayout horizontal="center" vertical="middle">
           <HorizontalArrow
             width={width}
             height={arrowHeight}
@@ -126,7 +126,7 @@ export const HorizontalIconArrow: ComponentType<HorizontalIconArrowProps> = (
             width={width}
             height={arrowHeight}
             alignHorizontal="center"
-            alignVertical="center"
+            alignVertical="middle"
             fill={themeColors.colorWhite}
             fontWeight="bold"
             fontSize={16}
@@ -191,7 +191,7 @@ const DotLine = (props: {
   width?: number;
   height?: number;
   fill: string;
-  positionV?: 'normal' | 'center' | 'flipped';
+  positionV?: 'normal' | 'middle' | 'flipped';
 }) => {
   const {
     x = 0,

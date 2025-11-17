@@ -56,7 +56,7 @@ describe('Text', () => {
         width={100}
         height={50}
         alignHorizontal="center"
-        alignVertical="center"
+        alignVertical="middle"
       >
         Hello World
       </Text>
@@ -65,7 +65,7 @@ describe('Text', () => {
     expect(renderSVG(text)).toBe(
       minifySvg(`
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="50 25 100 50">
-  <text width="100" height="50" data-element-type="text" x="50" y="25" fill="black" font-size="14" text-anchor="middle" dominant-baseline="central" data-text-alignment="CENTER CENTER">Hello World</text>
+  <text width="100" height="50" data-element-type="text" x="50" y="25" fill="black" font-size="14" text-anchor="middle" dominant-baseline="central" data-text-alignment="CENTER MIDDLE">Hello World</text>
 </svg>
 `),
     );

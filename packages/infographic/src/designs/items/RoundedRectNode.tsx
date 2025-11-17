@@ -62,7 +62,7 @@ export const RoundedRectNode: ComponentType<RoundedRectNodeProps> = (props) => {
               ? 'center'
               : 'left'
         }
-        alignVertical="center"
+        alignVertical="middle"
         fontSize={14}
         fontWeight="500"
         fill={themeColors.colorText}

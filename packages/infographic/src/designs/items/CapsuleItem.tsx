@@ -52,7 +52,7 @@ export const CapsuleItem: ComponentType<CapsuleItemProps> = (props) => {
     indexes,
     width: textWidth,
     alignHorizontal: textAlign,
-    alignVertical: 'center',
+    alignVertical: 'middle',
     fontSize: 16,
     fontWeight: '600',
     fill: themeColors.colorWhite,

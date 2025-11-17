@@ -38,7 +38,7 @@ export const SimpleIllusItem: ComponentType<SimpleIllusItemProps> = (props) => {
       indexes={indexes}
       width={width}
       alignHorizontal="center"
-      alignVertical="center"
+      alignVertical="middle"
       fill={labelColor}
     >
       {label}

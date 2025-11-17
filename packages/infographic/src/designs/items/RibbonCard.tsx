@@ -113,7 +113,7 @@ export const RibbonCard: ComponentType<RibbonCardProps> = (props) => {
         width={width - iconSize - 3 * gap}
         height={iconSize}
         alignHorizontal="left"
-        alignVertical="center"
+        alignVertical="middle"
         lineHeight={1}
         fontWeight="bold"
         fill={themeColors.colorText}

@@ -39,7 +39,7 @@ export const ListColumn: ComponentType<ListColumnProps> = (props) => {
         data={data}
         y={itemY}
         width={width}
-        positionV="center"
+        positionV="middle"
         positionH={zigzag ? (index % 2 === 0 ? 'normal' : 'flipped') : 'normal'}
       />,
     );

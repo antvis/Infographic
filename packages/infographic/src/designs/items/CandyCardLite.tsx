@@ -50,7 +50,7 @@ export const CandyCardLite: ComponentType<CandyCardLiteProps> = (props) => {
         y={24}
         width={200}
         alignHorizontal="left"
-        alignVertical="center"
+        alignVertical="middle"
         fill={themeColors.colorText}
       >
         {datum.label}

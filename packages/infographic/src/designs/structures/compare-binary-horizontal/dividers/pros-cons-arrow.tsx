@@ -15,7 +15,7 @@ export const ProsConsArrow: ComponentType<DividerProps> = (props) => {
     height: 40,
     fontSize: 22,
     alignHorizontal: 'center',
-    alignVertical: 'center',
+    alignVertical: 'middle',
     fontWeight: 'bold',
     fill: colorBg,
   };

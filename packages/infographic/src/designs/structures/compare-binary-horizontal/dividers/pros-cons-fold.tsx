@@ -15,7 +15,7 @@ export const ProsConsFold: ComponentType<DividerProps> = (props) => {
     height: 30,
     fontSize: 20,
     alignHorizontal: 'center',
-    alignVertical: 'center',
+    alignVertical: 'middle',
     fontWeight: 'bold',
     fill: colorBg,
   };

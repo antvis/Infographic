@@ -12,7 +12,8 @@
 - **data**: 完整的数据集合（包含所有 items）
 - **indexes**: 当前数据项在结构中的位置索引
 - **themeColors**: 主题色彩配置
-- **positionH / positionV**: 水平和垂直对齐方式（支持 'normal' 'center' 'flipped'）
+- **positionH**: 水平对齐方式（支持 'normal' 'center' 'flipped'）
+- **positionV**: 垂直对齐方式（支持 'normal' 'middle' 'flipped'）
 
 ## 数据项设计理念
 
@@ -44,7 +45,7 @@ export interface BaseItemProps {
   datum: Data['items'][number];
   themeColors: ThemeColors;
   positionH?: 'normal' | 'center' | 'flipped';
-  positionV?: 'normal' | 'center' | 'flipped';
+  positionV?: 'normal' | 'middle' | 'flipped';
   valueFormatter?: (value: number) => string | number;
   [key: string]: any;
 }
@@ -143,7 +144,7 @@ export interface ThemeColors {
 
   扩展属性：
   - **alignHorizontal**: "left" | "center" | "right"，水平对齐位置
-  - **alignVertical**: "top" | "bottom" | "center"，垂直对齐位置
+  - **alignVertical**: "top" | "middle" | "bottom" ，垂直对齐位置
   - **lineHeight**: 行高，默认 1.2
   - **wordWrap**: 是否换行，默认 false
   - **backgroundColor**: 背景色
@@ -188,7 +189,7 @@ export interface ThemeColors {
     // 除非需要特殊样式，否则不建议设置以下属性
     // fontSize={14}
     // alignHorizontal="center"
-    // alignVertical="center"
+    // alignVertical="middle"
     // fill={themeColors.colorText}
   >
     {datum.label}
@@ -271,7 +272,7 @@ export interface ThemeColors {
 ```typescript
 <AlignLayout
   horizontal="left" | "center" | "right"
-  vertical="top" | "center" | "bottom"
+  vertical="top" | "middle" | "bottom"
   width={100}   // 可选，对齐容器尺寸
   height={100}  // 可选，对齐容器尺寸
 >
@@ -554,7 +555,7 @@ const iconX =
 
 // positionV 处理示例
 const iconY =
-  positionV === 'center'
+  positionV === 'middle'
     ? (height - iconSize) / 2
     : positionV === 'flipped'
       ? height - iconSize

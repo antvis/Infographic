@@ -130,7 +130,7 @@ export const CompactCard: ComponentType<CompactCardProps> = (props) => {
           indexes={indexes}
           width={textWidth}
           alignHorizontal="left"
-          alignVertical="center"
+          alignVertical="middle"
           fontSize={10}
           fill={themeColors.colorTextSecondary}
           lineNumber={2}
