@@ -8,3 +8,14 @@ registerTheme('dark', {
     },
   },
 });
+
+registerTheme('hand-drawn', {
+  base: {
+    text: {
+      'font-family': '851tegakizatsu',
+    },
+  },
+  stylize: {
+    type: 'rough',
+  },
+});
