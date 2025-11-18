@@ -1,5 +1,5 @@
-import { uuid } from '@/utils/uuid';
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { uuid } from '../../../src/utils/uuid';
 
 describe('uuid', () => {
   beforeEach(() => {
@@ -24,7 +24,9 @@ describe('uuid', () => {
 
     const result = uuid();
 
-    expect(result).toMatch(/^[0-9a-f]{4}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}$/);
+    expect(result).toMatch(
+      /^[0-9a-f]{4}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}$/,
+    );
     expect(result.length).toBe(19);
   });
 
@@ -33,7 +35,9 @@ describe('uuid', () => {
 
     const result = uuid();
 
-    expect(result).toMatch(/^[0-9a-f]{4}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}$/);
+    expect(result).toMatch(
+      /^[0-9a-f]{4}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}$/,
+    );
     expect(result.length).toBe(19);
   });
 
@@ -44,8 +48,12 @@ describe('uuid', () => {
     const uuid2 = uuid();
 
     expect(uuid1).not.toBe(uuid2);
-    expect(uuid1).toMatch(/^[0-9a-f]{4}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}$/);
-    expect(uuid2).toMatch(/^[0-9a-f]{4}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}$/);
+    expect(uuid1).toMatch(
+      /^[0-9a-f]{4}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}$/,
+    );
+    expect(uuid2).toMatch(
+      /^[0-9a-f]{4}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}$/,
+    );
   });
 
   it('should always have version 4 UUID format in fallback', () => {

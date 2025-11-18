@@ -1,5 +1,5 @@
-import { getIndexesFromItemKey, getItemIndexes } from '@/utils/item';
 import { describe, expect, it } from 'vitest';
+import { getIndexesFromItemKey, getItemIndexes } from '../../../src/utils/item';
 
 describe('item', () => {
   describe('getIndexesFromItemKey', () => {

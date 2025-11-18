@@ -1,6 +1,6 @@
-import { Fragment } from '@antv/infographic';
-import { isFragment } from '@jsx/utils';
 import { describe, expect, it } from 'vitest';
+import { Fragment } from '../../../../src';
+import { isFragment } from '../../../../src/jsx//utils';
 
 describe('isFragment', () => {
   it('should return true for Fragment nodes', () => {

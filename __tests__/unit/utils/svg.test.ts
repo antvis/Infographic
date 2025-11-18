@@ -1,14 +1,14 @@
+import { describe, expect, it, vi } from 'vitest';
 import {
   createElement,
-  parseSVG,
-  setAttributes,
   getAttributes,
-  removeAttributes,
-  traverse,
   getOrCreateDefs,
   getSizeBaseVal,
-} from '@/utils/svg';
-import { describe, expect, it, vi } from 'vitest';
+  parseSVG,
+  removeAttributes,
+  setAttributes,
+  traverse,
+} from '../../../src/utils/svg';
 
 describe('svg', () => {
   describe('createElement', () => {
@@ -19,7 +19,11 @@ describe('svg', () => {
     });
 
     it('should create SVG element with attributes', () => {
-      const element = createElement('rect', { width: '100', height: '50', fill: 'red' });
+      const element = createElement('rect', {
+        width: '100',
+        height: '50',
+        fill: 'red',
+      });
       expect(element.getAttribute('width')).toBe('100');
       expect(element.getAttribute('height')).toBe('50');
       expect(element.getAttribute('fill')).toBe('red');
@@ -33,7 +37,8 @@ describe('svg', () => {
 
   describe('parseSVG', () => {
     it('should parse valid SVG string', () => {
-      const svgString = '<svg xmlns="http://www.w3.org/2000/svg"><rect width="100" height="50"/></svg>';
+      const svgString =
+        '<svg xmlns="http://www.w3.org/2000/svg"><rect width="100" height="50"/></svg>';
       const result = parseSVG(svgString);
 
       expect(result?.tagName).toBe('svg');
@@ -72,7 +77,11 @@ describe('svg', () => {
 
   describe('getAttributes', () => {
     it('should get specified attributes', () => {
-      const element = createElement('rect', { width: '100', height: '50', fill: 'red' });
+      const element = createElement('rect', {
+        width: '100',
+        height: '50',
+        fill: 'red',
+      });
       const attrs = getAttributes(element, ['width', 'height']);
 
       expect(attrs).toEqual({ width: '100', height: '50' });
@@ -102,7 +111,11 @@ describe('svg', () => {
 
   describe('removeAttributes', () => {
     it('should remove specified attributes', () => {
-      const element = createElement('rect', { width: '100', height: '50', fill: 'red' });
+      const element = createElement('rect', {
+        width: '100',
+        height: '50',
+        fill: 'red',
+      });
       removeAttributes(element, ['width', 'fill']);
 
       expect(element.getAttribute('width')).toBeNull();
@@ -180,10 +193,10 @@ describe('svg', () => {
     it('should get size from width and height baseVal', () => {
       const svg = createElement<SVGSVGElement>('svg');
       Object.defineProperty(svg, 'width', {
-        value: { baseVal: { value: 300 } }
+        value: { baseVal: { value: 300 } },
       });
       Object.defineProperty(svg, 'height', {
-        value: { baseVal: { value: 200 } }
+        value: { baseVal: { value: 200 } },
       });
 
       const [width, height] = getSizeBaseVal(svg);
@@ -196,10 +209,14 @@ describe('svg', () => {
       svg.setAttribute('viewBox', '0 0 400 300');
 
       Object.defineProperty(svg, 'width', {
-        get() { throw new Error('baseVal error'); }
+        get() {
+          throw new Error('baseVal error');
+        },
       });
 
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
 
       const [width, height] = getSizeBaseVal(svg);
       expect(width).toBe(400);
@@ -213,10 +230,14 @@ describe('svg', () => {
       svg.setAttribute('viewBox', '10 20 400 300');
 
       Object.defineProperty(svg, 'width', {
-        get() { throw new Error('baseVal error'); }
+        get() {
+          throw new Error('baseVal error');
+        },
       });
 
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
 
       const [width, height] = getSizeBaseVal(svg);
       expect(width).toBe(390);
@@ -229,10 +250,14 @@ describe('svg', () => {
       const svg = createElement<SVGSVGElement>('svg');
 
       Object.defineProperty(svg, 'width', {
-        get() { throw new Error('baseVal error'); }
+        get() {
+          throw new Error('baseVal error');
+        },
       });
 
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
 
       const [width, height] = getSizeBaseVal(svg);
       expect(width).toBe(0);

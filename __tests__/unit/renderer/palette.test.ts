@@ -1,7 +1,7 @@
-import { getPaletteColor } from '@/renderer/palettes/utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { getPaletteColor } from '../../../src/renderer/palettes/utils';
 
-vi.mock('@/renderer/palettes', () => ({
+vi.mock('../../../src/renderer/palettes', () => ({
   getPalette: vi.fn(),
 }));
 

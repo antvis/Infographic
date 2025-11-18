@@ -1,5 +1,5 @@
-import { parseDynamicAttributes } from '@/renderer/utils/attrs';
 import { describe, expect, it } from 'vitest';
+import { parseDynamicAttributes } from '../../../../src/renderer/utils/attrs';
 
 describe('attrs', () => {
   describe('parseDynamicAttributes', () => {

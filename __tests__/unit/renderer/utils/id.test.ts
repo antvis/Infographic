@@ -1,5 +1,5 @@
-import { getSafetyId } from '@/renderer/utils/id';
 import { describe, expect, it } from 'vitest';
+import { getSafetyId } from '../../../../src/renderer/utils/id';
 
 describe('id', () => {
   describe('getSafetyId', () => {

@@ -1,5 +1,5 @@
-import { parsePadding } from '@/utils/padding';
 import { describe, expect, it } from 'vitest';
+import { parsePadding } from '../../../src/utils/padding';
 
 describe('padding', () => {
   describe('parsePadding', () => {

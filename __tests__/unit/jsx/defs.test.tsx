@@ -1,7 +1,7 @@
-/** @jsxImportSource @antv/infographic */
-import { minifySvg } from '@@/utils';
-import { Defs, Rect, renderSVG } from '@antv/infographic';
+/** @jsxImportSource ../../../src */
 import { describe, expect, it } from 'vitest';
+import { Defs, Rect, renderSVG } from '../../../src';
+import { minifySvg } from '../../utils';
 
 describe('defs element', () => {
   it('should collect defs content and render correctly', () => {

@@ -1,6 +1,6 @@
-import { getDatumByIndexes } from '@/utils/data';
-import type { Data } from '@antv/infographic';
 import { describe, expect, it } from 'vitest';
+import type { Data } from '../../../src';
+import { getDatumByIndexes } from '../../../src/utils/data';
 
 describe('data', () => {
   describe('getDatumByIndexes', () => {

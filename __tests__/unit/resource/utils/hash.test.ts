@@ -1,5 +1,5 @@
-import { getSimpleHash } from '@/resource/utils/hash';
 import { describe, expect, it } from 'vitest';
+import { getSimpleHash } from '../../../../src/resource/utils/hash';
 
 describe('hash', () => {
   describe('getSimpleHash', () => {

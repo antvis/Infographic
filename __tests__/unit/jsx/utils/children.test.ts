@@ -1,6 +1,6 @@
-import type { JSXElement, JSXNode } from '@jsx/types';
-import { getRenderableChildrenOf } from '@jsx/utils';
 import { describe, expect, it } from 'vitest';
+import type { JSXElement, JSXNode } from '../../../../src/jsx/types';
+import { getRenderableChildrenOf } from '../../../../src/jsx/utils';
 
 describe('children utils', () => {
   describe('getRenderableChildrenOf', () => {

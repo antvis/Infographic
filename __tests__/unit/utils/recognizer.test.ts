@@ -1,3 +1,4 @@
+import { beforeAll, describe, expect, it } from 'vitest';
 import {
   isBtnAdd,
   isBtnRemove,
@@ -14,8 +15,7 @@ import {
   isShapesGroup,
   isText,
   isTitle,
-} from '@/utils/recognizer';
-import { beforeAll, describe, expect, it } from 'vitest';
+} from '../../../src/utils/recognizer';
 
 function createMockElement(
   type?: string,

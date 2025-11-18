@@ -1,7 +1,7 @@
-/** @jsxImportSource @antv/infographic */
-import { minifySvg } from '@@/utils';
-import { renderSVG, Text } from '@antv/infographic';
+/** @jsxImportSource ../../../../src */
 import { describe, expect, it } from 'vitest';
+import { renderSVG, Text } from '../../../../src';
+import { minifySvg } from '../../../utils';
 
 describe('Text', () => {
   it('should render a simple text element', () => {

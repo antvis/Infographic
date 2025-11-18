@@ -4,14 +4,7 @@
     "baseUrl": ".",
     "rootDir": null,
     "noEmit": true,
-    "composite": false,
-    "paths": {
-      "@antv/infographic": ["../src/index"],
-      "@antv/infographic/*": ["../src/*"],
-      "@@/*": ["./*"],
-      "@/*": ["../src/*"],
-      "@jsx/*": ["../src/jsx/*"]
-    }
+    "composite": false
   },
   "include": ["./**/*"],
   "exclude": ["node_modules"],

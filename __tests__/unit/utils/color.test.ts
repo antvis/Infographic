@@ -1,5 +1,5 @@
-import { hasColor } from '@/utils/color';
 import { describe, expect, it } from 'vitest';
+import { hasColor } from '../../../src/utils/color';
 
 describe('color', () => {
   describe('hasColor', () => {

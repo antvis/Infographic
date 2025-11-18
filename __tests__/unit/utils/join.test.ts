@@ -1,5 +1,5 @@
-import { join } from '@/utils/join';
 import { describe, expect, it } from 'vitest';
+import { join } from '../../../src/utils/join';
 
 describe('join', () => {
   it('should join paths with single slash', () => {
@@ -39,6 +39,8 @@ describe('join', () => {
 
   it('should handle complex path scenarios', () => {
     expect(join('/api/v1/', '/users/', '/123/')).toBe('api/v1/users/123');
-    expect(join('https://example.com/', '/api/', 'data')).toBe('https://example.com/api/data');
+    expect(join('https://example.com/', '/api/', 'data')).toBe(
+      'https://example.com/api/data',
+    );
   });
 });

@@ -1,5 +1,5 @@
-import { createDefaultContext } from '@jsx/utils';
 import { describe, expect, it } from 'vitest';
+import { createDefaultContext } from '../../../../src/jsx//utils';
 
 describe('context utils', () => {
   describe('createDefaultContext', () => {

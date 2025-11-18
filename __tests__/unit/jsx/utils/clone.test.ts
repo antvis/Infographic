@@ -1,6 +1,6 @@
-import type { JSXElement } from '@jsx/types';
-import { cloneElement } from '@jsx/utils';
 import { describe, expect, it } from 'vitest';
+import type { JSXElement } from '../../../../src/jsx//types';
+import { cloneElement } from '../../../../src/jsx//utils';
 
 describe('clone utils', () => {
   describe('cloneElement', () => {

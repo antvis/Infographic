@@ -1,12 +1,11 @@
-import { parseResourceConfig } from '@/resource/utils/parser';
 import { describe, expect, it, vi } from 'vitest';
+import { parseDataURI } from '../../../../src/resource/utils/data-uri';
+import { parseResourceConfig } from '../../../../src/resource/utils/parser';
 
 // Mock parseDataURI
-vi.mock('@/resource/utils/data-uri', () => ({
+vi.mock('../../../../src/resource/utils/data-uri', () => ({
   parseDataURI: vi.fn(),
 }));
-
-import { parseDataURI } from '@/resource/utils/data-uri';
 
 describe('parser', () => {
   describe('parseResourceConfig', () => {
@@ -37,7 +36,9 @@ describe('parser', () => {
 
       const result = parseResourceConfig('data:image/svg+xml,<svg></svg>');
 
-      expect(vi.mocked(parseDataURI)).toHaveBeenCalledWith('data:image/svg+xml,<svg></svg>');
+      expect(vi.mocked(parseDataURI)).toHaveBeenCalledWith(
+        'data:image/svg+xml,<svg></svg>',
+      );
       expect(result).toBe(mockResult);
     });
 

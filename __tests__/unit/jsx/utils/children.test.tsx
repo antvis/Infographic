@@ -1,6 +1,6 @@
-import type { JSXElement, JSXNode } from '@antv/infographic';
-import { getRenderableChildrenOf } from '@jsx/utils';
 import { describe, expect, it } from 'vitest';
+import type { JSXElement, JSXNode } from '../../../../src';
+import { getRenderableChildrenOf } from '../../../../src/jsx//utils';
 
 describe('getRenderableChildrenOf', () => {
   describe('处理 null/undefined/boolean 值', () => {

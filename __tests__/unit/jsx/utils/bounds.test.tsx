@@ -1,5 +1,6 @@
-/** @jsxImportSource @antv/infographic */
-import type { Bounds } from '@antv/infographic';
+/** @jsxImportSource ../../../../src */
+import { describe, expect, it } from 'vitest';
+import type { Bounds } from '../../../../src';
 import {
   cloneElement,
   Ellipse,
@@ -10,8 +11,7 @@ import {
   Path,
   Rect,
   Text,
-} from '@antv/infographic';
-import { describe, expect, it } from 'vitest';
+} from '../../../../src';
 
 describe('bounds utils', () => {
   describe('getElementBounds', () => {

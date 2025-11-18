@@ -1,5 +1,5 @@
-import { createTextElement } from '@/utils/text';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { createTextElement } from '../../../src/utils/text';
 
 describe('text', () => {
   beforeEach(() => {

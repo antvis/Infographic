@@ -1,5 +1,5 @@
-/** @jsxImportSource @antv/infographic */
-import { minifySvg } from '@@/utils';
+/** @jsxImportSource ../../../src */
+import { describe, expect, it } from 'vitest';
 import {
   Ellipse,
   Group,
@@ -11,8 +11,8 @@ import {
   getElementBounds,
   getElementsBounds,
   renderSVG,
-} from '@antv/infographic';
-import { describe, expect, it } from 'vitest';
+} from '../../../src';
+import { minifySvg } from '../../utils';
 
 describe('jsx layout components', () => {
   interface HorizontalLayoutProps extends GroupProps {

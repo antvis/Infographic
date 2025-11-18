@@ -1,17 +1,19 @@
-import { getResourceId, getResourceHref } from '@/resource/utils/ref';
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { parseDataURI } from '../../../../src/resource/utils/data-uri';
+import { getSimpleHash } from '../../../../src/resource/utils/hash';
+import {
+  getResourceHref,
+  getResourceId,
+} from '../../../../src/resource/utils/ref';
 
 // Mock dependencies
-vi.mock('@/resource/utils/data-uri', () => ({
+vi.mock('../../../../src/resource/utils/data-uri', () => ({
   parseDataURI: vi.fn(),
 }));
 
-vi.mock('@/resource/utils/hash', () => ({
+vi.mock('../../../../src/resource/utils/hash', () => ({
   getSimpleHash: vi.fn(),
 }));
-
-import { parseDataURI } from '@/resource/utils/data-uri';
-import { getSimpleHash } from '@/resource/utils/hash';
 
 describe('ref', () => {
   beforeEach(() => {

@@ -1,6 +1,6 @@
-import { DataURITypeEnum } from '@/renderer/constants';
-import { parseDataURI } from '@/resource/utils/data-uri';
 import { describe, expect, it } from 'vitest';
+import { DataURITypeEnum } from '../../../../src/renderer/constants';
+import { parseDataURI } from '../../../../src/resource/utils/data-uri';
 
 describe('data-uri', () => {
   describe('parseDataURI', () => {
