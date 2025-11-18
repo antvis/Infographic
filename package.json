@@ -21,9 +21,9 @@
       "require": "./lib/jsx-runtime.js"
     },
     "./jsx-dev-runtime": {
-      "types": "./esm/jsx-runtime.d.ts",
-      "import": "./esm/jsx-runtime.js",
-      "require": "./lib/jsx-runtime.js"
+      "types": "./esm/jsx-dev-runtime.d.ts",
+      "import": "./esm/jsx-dev-runtime.js",
+      "require": "./lib/jsx-dev-runtime.js"
     }
   },
   "main": "./lib/index.js",
