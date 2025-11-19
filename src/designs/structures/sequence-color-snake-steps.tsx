@@ -39,6 +39,9 @@ export const SequenceColorSnakeSteps: ComponentType<
   const itemElements: JSXElement[] = [];
   const decorElements: JSXElement[] = [];
 
+  const arcRadius = (rowGap + itemBounds.height) / 2;
+  const arcWidth = arcRadius;
+
   items.forEach((item, index) => {
     const rowIndex = Math.floor(index / itemsPerRow);
     const colIndex = index % itemsPerRow;
@@ -47,7 +50,7 @@ export const SequenceColorSnakeSteps: ComponentType<
       ? itemsPerRow - 1 - colIndex
       : colIndex;
 
-    const itemX = actualColIndex * (itemBounds.width + gap);
+    const itemX = actualColIndex * (itemBounds.width + gap) + arcWidth;
     const itemY = rowIndex * (itemBounds.height + rowGap);
     const indexes = [index];
 
@@ -80,7 +83,6 @@ export const SequenceColorSnakeSteps: ComponentType<
         />,
       );
     }
-
     if (index < items.length - 1) {
       const nextRowIndex = Math.floor((index + 1) / itemsPerRow);
 
@@ -95,8 +97,6 @@ export const SequenceColorSnakeSteps: ComponentType<
           />,
         );
       } else {
-        const arcRadius = (rowGap + itemBounds.height) / 2;
-
         const currentItemY = itemY + itemBounds.height / 2;
         const nextItemY =
           itemY + itemBounds.height + rowGap + itemBounds.height / 2;
@@ -113,7 +113,6 @@ export const SequenceColorSnakeSteps: ComponentType<
           pathD = `M ${arcX} ${currentItemY} A ${arcRadius} ${arcRadius} 0 0 ${sweepFlag} ${arcX} ${nextItemY}`;
         }
 
-        const arcWidth = arcRadius * 2;
         const arcHeight = nextItemY - currentItemY;
 
         const currentColor = getPaletteColor(options, indexes);
@@ -185,7 +184,7 @@ export const SequenceColorSnakeSteps: ComponentType<
 
     decorElements.push(
       <Rect
-        x={0 - arcRadius}
+        x={0}
         y={itemBounds.height / 2 - circleStrokeWidth / 2}
         width={arcRadius}
         height={circleStrokeWidth}
@@ -203,7 +202,16 @@ export const SequenceColorSnakeSteps: ComponentType<
       alignItems="center"
     >
       {titleContent}
-      <Group>
+      <Group
+        width={
+          itemsPerRow * itemBounds.width +
+          (itemsPerRow - 1) * gap +
+          arcRadius * 2
+        }
+        height={
+          Math.ceil(items.length / itemsPerRow) * (itemBounds.height + rowGap)
+        }
+      >
         <Group>{decorElements}</Group>
         <ItemsGroup>{itemElements}</ItemsGroup>
         <BtnsGroup>{btnElements}</BtnsGroup>
