@@ -5,7 +5,6 @@ import {
   applyPatternStyle,
   applyRoughStyle,
 } from '../stylize';
-import type { StylizeConfig } from '../types';
 import { parseDynamicAttributes } from '../utils';
 
 export function renderShape(
@@ -18,7 +17,7 @@ export function renderShape(
   const parsedAttrs = parseDynamicAttributes(node, attrs);
 
   setAttributes(node, parsedAttrs);
-  stylizeShape(node, svg, themeConfig.stylize);
+  stylizeShape(node, svg, options);
 
   return node;
 }
@@ -37,7 +36,7 @@ export function renderItemShape(
 
   const parsedAttrs = parseDynamicAttributes(node, attrs);
   setAttributes(node, parsedAttrs);
-  stylizeShape(node, svg, themeConfig.stylize);
+  stylizeShape(node, svg, options);
 
   return node;
 }
@@ -52,8 +51,10 @@ export function renderStaticShape(
 function stylizeShape(
   node: SVGElement,
   svg: SVGSVGElement,
-  config?: StylizeConfig | null,
+  options: ParsedInfographicOptions,
 ) {
+  const config = options.themeConfig.stylize;
+
   if (!config) return node;
   const { type } = config;
 
@@ -63,7 +64,7 @@ function stylizeShape(
     return applyRoughStyle(node, svg, config);
   }
   if (type === 'pattern') {
-    return applyPatternStyle(node, svg, config);
+    return applyPatternStyle(node, svg, options);
   }
   if (type === 'linear-gradient' || type === 'radial-gradient') {
     const { fill, stroke } = getAttributes(node, ['fill', 'stroke']);

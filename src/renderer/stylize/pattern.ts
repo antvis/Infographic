@@ -1,4 +1,4 @@
-import tinycolor from 'tinycolor2';
+import { ParsedInfographicOptions } from '../../options';
 import { getAttributes, getOrCreateDefs, hasColor } from '../../utils';
 import type { PatternConfig, PatternGenerator } from '../types';
 import { getSafetyId } from '../utils';
@@ -18,8 +18,10 @@ for (const [name, generator] of Object.entries(builtInPatterns)) {
 export function applyPatternStyle(
   node: SVGElement,
   svg: SVGSVGElement,
-  config: PatternConfig,
+  options: ParsedInfographicOptions,
 ) {
+  const config = options.themeConfig.stylize;
+  if (!config || config.type !== 'pattern') return;
   const { pattern, ...restConfig } = config;
 
   const generator = PATTERNS.get(pattern);
@@ -27,14 +29,12 @@ export function applyPatternStyle(
     return console.warn(`Pattern ${pattern} not found`);
   }
 
-  const { fill, stroke } = getAttributes(node, ['fill', 'stroke']);
+  const { fill } = getAttributes(node, ['fill', 'stroke']);
+
+  const color = fill;
   const style = {
-    backgroundColor: tinycolor('#fff').toHexString(),
-    foregroundColor:
-      getColorDistance(fill || 'white', '#fff') >
-      getColorDistance(stroke || 'white', '#fff')
-        ? fill
-        : stroke,
+    backgroundColor: color,
+    foregroundColor: color,
     ...restConfig,
   };
   const id = getPatternId({ ...config, ...style });
@@ -67,16 +67,5 @@ function getPatternId(config: PatternConfig) {
   } = config;
   return getSafetyId(
     `pattern-${pattern}-${foregroundColor}-${backgroundColor}-${scale}`,
-  );
-}
-
-function getColorDistance(a: string, b: string) {
-  const _a = tinycolor(a).toRgb();
-  const _b = tinycolor(b).toRgb();
-
-  return Math.sqrt(
-    Math.pow(_b.r - _a.r, 2) +
-      Math.pow(_b.g - _a.g, 2) +
-      Math.pow(_b.b - _a.b, 2),
   );
 }
