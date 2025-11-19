@@ -1,3 +1,4 @@
+import { merge } from 'lodash-es';
 import {
   DesignOptions,
   getItem,
@@ -142,7 +143,9 @@ function parseTheme(
   themeConfig: ThemeConfig = {},
 ): ThemeConfig {
   const base = theme ? getTheme(theme) || {} : {};
-  const parsedThemeConfig = { ...base, ...themeConfig };
+  const parsedThemeConfig = merge({}, base, themeConfig);
+  parsedThemeConfig.palette = themeConfig.palette || base.palette;
+  parsedThemeConfig.stylize = themeConfig.stylize ?? base.stylize;
 
   if (!parsedThemeConfig.colorPrimary) {
     parsedThemeConfig.colorPrimary = '#1677FF';
