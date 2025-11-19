@@ -9,6 +9,7 @@ import {
   getItemIndexes,
   setAttributes,
 } from '../../utils';
+import { encodeFontFamily } from '../fonts';
 import { parseDynamicAttributes } from '../utils';
 
 export function renderText(
@@ -62,7 +63,11 @@ export function renderStaticText(
   text: SVGTextElement,
   options: ParsedInfographicOptions,
 ) {
-  setAttributes(text, options.themeConfig.base?.text || {});
+  const attrs = options.themeConfig.base?.text || {};
+  setAttributes(text, attrs);
+  if (attrs['font-family']) {
+    text.setAttribute('font-family', encodeFontFamily(attrs['font-family']));
+  }
   text.style.userSelect = 'none';
   text.style.pointerEvents = 'none';
 }
