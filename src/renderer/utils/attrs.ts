@@ -7,7 +7,8 @@ export function parseDynamicAttributes<T extends object>(
   const attrs = Object.entries(attributes).reduce((acc, [key, value]) => {
     if (typeof value === 'function') {
       const staticValue = value(node.getAttribute(key), node);
-      if (staticValue) acc[key as keyof T] = staticValue;
+      if (staticValue !== undefined && staticValue !== null)
+        acc[key as keyof T] = staticValue;
     } else {
       Object.assign(acc, { [key]: value });
     }

@@ -6,12 +6,8 @@ import type {
   TextAttributes,
 } from '../types';
 
-export type DynamicAttribute<T, R extends any[] = []> =
-  | T
-  | ((value: T, ...args: R) => T);
-
 export type DynamicAttributes<T extends object> = {
-  [key in keyof T]?: DynamicAttribute<T[key], [SVGElement]>;
+  [key in keyof T]?: T | ((value: T, node: SVGElement) => T);
 };
 
 export interface ThemeConfig {
