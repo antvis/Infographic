@@ -100,7 +100,7 @@ const createBaseTheme = ({
   primaryColor: Color;
   bgColor: Color;
 }) => ({
-  colorPrimary: safeFormatHex(primaryColor, '#1677ff'),
+  colorPrimary: safeFormatHex(primaryColor, '#FF356A'),
   colorBg: safeFormatHex(bgColor, '#ffffff'),
   colorWhite: '#ffffff',
 });

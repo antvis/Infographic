@@ -122,7 +122,7 @@ function parseDesignItem(
         themeColors = generateColors(
           getPaletteColor(themeConfig?.palette, indexes, data?.items?.length) ||
             themeConfig?.colorPrimary ||
-            '#1677FF',
+            '#FF356A',
           background,
         ),
         ...restProps
@@ -148,7 +148,7 @@ function parseTheme(
   parsedThemeConfig.stylize = themeConfig.stylize ?? base.stylize;
 
   if (!parsedThemeConfig.colorPrimary) {
-    parsedThemeConfig.colorPrimary = '#1677FF';
+    parsedThemeConfig.colorPrimary = '#FF356A';
   }
   if (!parsedThemeConfig.palette) {
     parsedThemeConfig.palette = [parsedThemeConfig.colorPrimary];
