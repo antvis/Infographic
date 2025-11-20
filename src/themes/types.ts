@@ -1,14 +1,18 @@
-import { Palette, StylizeConfig } from '../renderer';
-import { IconAttributes, ShapeAttributes, TextAttributes } from '../types';
+import type { Palette, StylizeConfig } from '../renderer';
+import type {
+  BaseAttributes,
+  IconAttributes,
+  ShapeAttributes,
+  TextAttributes,
+} from '../types';
 
-export type DynamicAttributes<T extends object, R extends any[] = []> = {
-  [key in keyof T]?: T[key] | ((value: T[key], ...args: R) => T[key]);
+export type DynamicAttribute<T, R extends any[] = []> =
+  | T
+  | ((value: T, ...args: R) => T);
+
+export type DynamicAttributes<T extends object> = {
+  [key in keyof T]?: DynamicAttribute<T[key], [SVGElement]>;
 };
-
-export type DynamicItemAttribute<T extends object> = DynamicAttributes<
-  T,
-  [string | null] // paletteColor
->;
 
 export interface ThemeConfig {
   /** 背景色 */
@@ -17,6 +21,8 @@ export interface ThemeConfig {
   colorPrimary?: string;
   /** 全局基础样式 */
   base?: {
+    /** 所有图形配置 */
+    global?: DynamicAttributes<BaseAttributes>;
     /** 全局图形配置 */
     shape?: ShapeAttributes;
     /** 全局文本配置 */
@@ -27,11 +33,11 @@ export interface ThemeConfig {
   desc?: TextAttributes;
   shape?: TextAttributes;
   item?: {
-    icon?: DynamicItemAttribute<IconAttributes>;
-    label?: DynamicItemAttribute<TextAttributes>;
-    desc?: DynamicItemAttribute<TextAttributes>;
-    value?: DynamicItemAttribute<TextAttributes>;
-    shape?: DynamicItemAttribute<ShapeAttributes>;
+    icon?: DynamicAttributes<IconAttributes>;
+    label?: DynamicAttributes<TextAttributes>;
+    desc?: DynamicAttributes<TextAttributes>;
+    value?: DynamicAttributes<TextAttributes>;
+    shape?: DynamicAttributes<ShapeAttributes>;
   };
   /** 风格化 */
   stylize?: StylizeConfig | null;

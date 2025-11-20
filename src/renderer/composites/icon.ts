@@ -1,6 +1,6 @@
 import { ParsedInfographicOptions } from '../../options';
 import { loadResource, ResourceConfig } from '../../resource';
-import type { DynamicAttributes, DynamicItemAttribute } from '../../themes';
+import type { DynamicAttributes } from '../../themes';
 import type { IconAttributes, IconElement } from '../../types';
 import { createIconElement, getAttributes } from '../../utils';
 import { parseDynamicAttributes } from '../utils';
@@ -25,7 +25,7 @@ export function renderItemIcon(
 ) {
   if (!value) return null;
   const { themeConfig } = options;
-  const attrs: DynamicItemAttribute<IconAttributes> = {
+  const attrs: DynamicAttributes<IconAttributes> = {
     ...themeConfig.item?.icon,
   };
 
