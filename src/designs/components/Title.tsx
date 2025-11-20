@@ -54,6 +54,8 @@ export const Title = (props: TitleProps) => {
     );
   };
 
+  if (!title && !desc) return null;
+
   return (
     <FlexLayout flexDirection="column" x={x} y={y} width={width} gap={8}>
       {title && <MainTitle />}

@@ -45,7 +45,10 @@ export function parseOptions(
     template,
     design: parseDesign({ ...templateDesign, ...design }, options),
     theme,
-    themeConfig: parseTheme(theme, themeConfig),
+    themeConfig: parseTheme(
+      theme,
+      merge({ ...restTemplateOptions?.themeConfig }, themeConfig),
+    ),
   };
 }
 
@@ -153,7 +156,7 @@ function parseTheme(
   if (!parsedThemeConfig.palette) {
     parsedThemeConfig.palette = [parsedThemeConfig.colorPrimary];
   }
-
+  console.log('Parsed Theme Config:', parsedThemeConfig);
   return parsedThemeConfig;
 }
 
