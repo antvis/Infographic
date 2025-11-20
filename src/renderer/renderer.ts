@@ -22,6 +22,7 @@ import {
 } from '../utils';
 import {
   renderBackground,
+  renderBaseElement,
   renderButtonsGroup,
   renderIllus,
   renderItemIcon,
@@ -101,6 +102,8 @@ function renderTemplate(svg: SVGSVGElement, options: ParsedInfographicOptions) {
 function fill(svg: SVGSVGElement, options: ParsedInfographicOptions) {
   const { themeConfig, data } = options;
 
+  renderBaseElement(svg, themeConfig.base?.global);
+
   const elements = svg.querySelectorAll<SVGElement>(`[data-element-type]`);
 
   elements.forEach((element) => {
@@ -143,7 +146,7 @@ function fill(svg: SVGSVGElement, options: ParsedInfographicOptions) {
 
     if (element.dataset.elementType?.startsWith('item-')) {
       const indexes = getItemIndexes(element.dataset.indexes || '0');
-      const itemType = element.dataset.elementType;
+      const itemType = element.dataset.elementType.replace('item-', '');
 
       if (isItemLabel(element) || isItemDesc(element) || isItemValue(element)) {
         const modified = renderItemText(
