@@ -24,4 +24,4 @@ export interface ParsedDesignsOptions {
 }
 
 type WithType<T> = T & { type: string };
-type WithProps<T> = T & { props?: any };
+type WithProps<T, P = any> = T & { props?: P };
