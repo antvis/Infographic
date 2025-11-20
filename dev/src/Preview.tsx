@@ -44,7 +44,7 @@ export const Preview = () => {
   const initialTemplate = storedValues?.template || templates[0];
   const initialData = storedValues?.data || 'list';
   const initialTheme = storedValues?.theme || 'light';
-  const initialColorPrimary = storedValues?.colorPrimary || '#1890ff';
+  const initialColorPrimary = storedValues?.colorPrimary || '#FF356A';
   const initialEnablePalette = storedValues?.enablePalette || false;
 
   const [template, setTemplate] = useState(initialTemplate);

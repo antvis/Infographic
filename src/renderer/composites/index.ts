@@ -1,4 +1,5 @@
 export { renderBackground } from './background';
+export { renderBaseElement } from './base';
 export { renderButtonsGroup } from './button';
 export { renderIcon, renderItemIcon } from './icon';
 export { renderIllus } from './illus';

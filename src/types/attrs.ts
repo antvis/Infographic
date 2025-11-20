@@ -1,56 +1,67 @@
+export type NumericalValue = number | string | undefined;
+export type TextualValue = string | undefined;
+
+export type BaseAttributes = {
+  opacity?: NumericalValue;
+  fill?: TextualValue;
+  'fill-opacity'?: NumericalValue;
+  stroke?: TextualValue;
+  'stroke-opacity'?: NumericalValue;
+};
+
 export type IconAttributes = {
-  id?: number | string | undefined;
-  class?: number | string | undefined;
-  x?: number | string | undefined;
-  y?: number | string | undefined;
-  width?: number | string | undefined;
-  height?: number | string | undefined;
-  href?: number | string | undefined;
-  fill?: number | string | undefined;
-  'fill-opacity'?: number | string | undefined;
-  opacity?: number | string | undefined;
+  id?: NumericalValue;
+  class?: NumericalValue;
+  x?: NumericalValue;
+  y?: NumericalValue;
+  width?: NumericalValue;
+  height?: NumericalValue;
+  href?: NumericalValue;
+  fill?: NumericalValue;
+  'fill-opacity'?: NumericalValue;
+  opacity?: NumericalValue;
 };
 
 export type TextAttributes = {
-  id?: number | string | undefined;
-  class?: number | string | undefined;
-  x?: number | string | undefined;
-  y?: number | string | undefined;
-  width?: number | string | undefined;
-  height?: number | string | undefined;
-  'text-alignment'?: string | undefined;
-  'font-family'?: string | undefined;
-  'font-size'?: number | string | undefined;
-  'font-weight'?: number | string | undefined;
-  'font-style'?: number | string | undefined;
-  'font-variant'?: number | string | undefined;
-  'letter-spacing'?: number | string | undefined;
-  'line-height'?: number | string | undefined;
-  fill?: number | string | undefined;
-  stroke?: number | string | undefined;
-  'stroke-width'?: number | string | undefined;
-  'text-anchor'?: number | string | undefined;
-  'dominant-baseline'?: number | string | undefined;
+  id?: NumericalValue;
+  class?: NumericalValue;
+  x?: NumericalValue;
+  y?: NumericalValue;
+  width?: NumericalValue;
+  height?: NumericalValue;
+  'text-alignment'?: TextualValue;
+  'font-family'?: TextualValue;
+  'font-size'?: NumericalValue;
+  'font-weight'?: NumericalValue;
+  'font-style'?: NumericalValue;
+  'font-variant'?: NumericalValue;
+  'letter-spacing'?: NumericalValue;
+  'line-height'?: NumericalValue;
+  fill?: NumericalValue;
+  stroke?: NumericalValue;
+  'stroke-width'?: NumericalValue;
+  'text-anchor'?: NumericalValue;
+  'dominant-baseline'?: NumericalValue;
 };
 
 export type ShapeAttributes = {
-  opacity?: number | string | undefined;
-  fill?: string | undefined;
-  'fill-opacity'?: number | string | undefined;
+  opacity?: NumericalValue;
+  fill?: TextualValue;
+  'fill-opacity'?: NumericalValue;
   'fill-rule'?: 'nonzero' | 'evenodd' | 'inherit' | undefined;
-  stroke?: string | undefined;
-  'stroke-width'?: number | string | undefined;
-  'stroke-linecap'?: number | string | undefined;
-  'stroke-linejoin'?: number | string | undefined;
-  'stroke-dasharray'?: number | string | undefined;
-  'stroke-dashoffset'?: number | string | undefined;
-  'stroke-opacity'?: number | string | undefined;
+  stroke?: TextualValue;
+  'stroke-width'?: NumericalValue;
+  'stroke-linecap'?: NumericalValue;
+  'stroke-linejoin'?: NumericalValue;
+  'stroke-dasharray'?: NumericalValue;
+  'stroke-dashoffset'?: NumericalValue;
+  'stroke-opacity'?: NumericalValue;
 };
 
 export type IllusAttributes = {
-  x: number | string | undefined;
-  y: number | string | undefined;
-  width: number | string | undefined;
-  height: number | string | undefined;
-  'clip-path'?: string | undefined;
+  x: NumericalValue;
+  y: NumericalValue;
+  width: NumericalValue;
+  height: NumericalValue;
+  'clip-path'?: TextualValue;
 };
