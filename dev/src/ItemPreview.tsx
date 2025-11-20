@@ -43,7 +43,7 @@ export const ItemPreview = () => {
   const [selectedItem, setSelectedItem] = useState(initialItem);
   const [theme, setTheme] = useState<'light' | 'dark'>(initialTheme);
   const [themeConfig, setThemeConfig] = useState({
-    colorPrimary: '#1890ff',
+    colorPrimary: '#FF356A',
     colorBg: initialTheme === 'dark' ? '#333' : '#fff',
   });
 

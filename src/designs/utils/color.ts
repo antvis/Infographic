@@ -3,7 +3,7 @@ import { getPaletteColor as _getPaletteColor } from '../../renderer';
 import { generateThemeColors } from '../../themes';
 import { isDarkColor } from '../../utils';
 
-const DEFAULT_COLOR = '#1890FF';
+const DEFAULT_COLOR = '#FF356A';
 
 export function getColorPrimary(options: ParsedInfographicOptions) {
   return options?.themeConfig?.colorPrimary || DEFAULT_COLOR;

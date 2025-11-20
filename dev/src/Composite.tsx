@@ -38,7 +38,7 @@ export const Composite = () => {
     item: items[0] || 'circular-progress',
     data: 'list',
     theme: 'light' as const,
-    colorPrimary: '#1890ff',
+    colorPrimary: '#FF356A',
     enablePalette: true,
     useHandDrawn: false,
   };

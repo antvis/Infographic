@@ -114,7 +114,7 @@ const VerticalArrow = (
     y = 0,
     width = 30,
     height = 100,
-    fill = '#1890FF',
+    fill = '#FF356A',
     size = 10,
   } = props;
   return (

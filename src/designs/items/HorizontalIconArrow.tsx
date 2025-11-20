@@ -163,7 +163,7 @@ const HorizontalArrow = (
     y = 0,
     width = 100,
     height = 40,
-    fill = '#1890FF',
+    fill = '#FF356A',
     size = 10,
   } = props;
   return (
