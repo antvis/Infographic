@@ -1,3 +1,6 @@
+import pkg from '../package.json' assert { type: 'json' };
+
+export const VERSION = pkg.version;
 export * from './designs';
 export { getItemProps, getThemeColors } from './designs/utils';
 export {
