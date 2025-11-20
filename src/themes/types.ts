@@ -7,7 +7,9 @@ import type {
 } from '../types';
 
 export type DynamicAttributes<T extends object> = {
-  [key in keyof T]?: T | ((value: T, node: SVGElement) => T);
+  [key in keyof T]?:
+    | T[key]
+    | ((value: T[key], node: SVGElement) => T[key] | undefined);
 };
 
 export interface ThemeConfig {
