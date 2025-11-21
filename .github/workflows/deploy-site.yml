@@ -35,8 +35,11 @@ jobs:
           cache: 'npm'
           cache-dependency-path: '**/package.json'
 
-      - name: Install dependencies (workspace)
+      - name: Install dependencies
         run: npm install
+
+      - name: Install site dependencies
+        run: npm --prefix site install
 
       - name: Build
         run: npm run build

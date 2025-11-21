@@ -37,9 +37,6 @@
     "dist",
     "src"
   ],
-  "workspaces": [
-    "site"
-  ],
   "scripts": {
     "build": "run-s clean build:esm build:cjs build:umd build:site size",
     "build:cjs": "tsc --module commonjs --outDir lib",
