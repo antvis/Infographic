@@ -1,0 +1,64 @@
+name: Deploy Site
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy-site-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            site/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build library
+        run: npm run build
+
+      - name: Pack library for site
+        id: pack
+        run: |
+          TARBALL=$(npm pack)
+          echo "tarball=$TARBALL" >> "$GITHUB_OUTPUT"
+          echo "tarball_path=$PWD/$TARBALL" >> "$GITHUB_OUTPUT"
+
+      - name: Use local @antv/infographic in site if possible
+        run: |
+          TARBALL_PATH="${{ steps.pack.outputs.tarball_path }}"
+          if npm --prefix site install --no-save "$TARBALL_PATH"; then
+            echo "Linked site to local tarball ${{ steps.pack.outputs.tarball }}"
+          else
+            echo "Linking tarball failed, using existing dependency"
+          fi
+
+      - name: Build site
+        run: npm run site:build
+
+      - name: Deploy to GitHub Pages
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: site/out

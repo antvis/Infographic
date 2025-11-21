@@ -4,6 +4,11 @@
 const nextConfig = {
   pageExtensions: ['jsx', 'js', 'ts', 'tsx', 'mdx', 'md'],
   reactStrictMode: true,
+  output: 'export',
+  images: {
+    // Static export needs unoptimized images
+    unoptimized: true,
+  },
   experimental: {
     scrollRestoration: true,
     reactCompiler: true,

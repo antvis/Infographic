@@ -30,7 +30,6 @@ export default async function compileMDX(
     for (const lockfile of lockfiles) {
       try {
         if (fs.existsSync(lockfile.path)) {
-          console.log(`使用 ${lockfile.name} 作为缓存键`);
           return fs.readFileSync(lockfile.path, 'utf8');
         }
       } catch (err) {

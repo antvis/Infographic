@@ -51,6 +51,7 @@
     "lint": "run-s lint:root lint:site",
     "lint:root": "eslint . --ext .ts,.tsx --ignore-pattern 'site/**' && npm run check:test",
     "lint:site": "npm --prefix site run lint",
+    "site:build": "npm --prefix site run build:static",
     "postinstall": "npm --prefix site install",
     "size": "size-limit",
     "test": "vitest --run --coverage"

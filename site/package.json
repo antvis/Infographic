@@ -9,6 +9,7 @@
     "dev:next": "next dev",
     "dev:watch-content": "node scripts/watch-content.js",
     "build": "next build",
+    "build:static": "next build",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "format:source": "prettier --config .prettierrc --write \"{plugins,src}/**/*.{js,ts,jsx,tsx,css}\"",
