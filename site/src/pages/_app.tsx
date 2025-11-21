@@ -3,8 +3,6 @@ import {useEffect} from 'react';
 import {ContentReloader} from '../components/ContentReloader';
 import '../components/ResourceLoader';
 
-import '@docsearch/css';
-import '../styles/algolia.css';
 import '../styles/index.css';
 import '../styles/sandpack.css';
 

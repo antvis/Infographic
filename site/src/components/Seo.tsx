@@ -108,9 +108,6 @@ export const Seo = withRouter(
           name="google-site-verification"
           content="sIlAGs48RulR4DdP95YSWNKZIEtCqQmRjzn-Zq-CcD0"
         />
-        {searchOrder != null && (
-          <meta name="algolia-search-order" content={'' + searchOrder} />
-        )}
         <link
           rel="preload"
           href="https://react.dev/fonts/Source-Code-Pro-Regular.woff2"

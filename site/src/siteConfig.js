@@ -8,9 +8,4 @@ exports.siteConfig = {
   // --------------------------------------
   copyright: `Copyright © ${new Date().getFullYear()} Ant Group Co. All Rights Reserved.`,
   repoUrl: 'https://github.com/antvis/infographic',
-  algolia: {
-    appId: '',
-    apiKey: '',
-    indexName: 'antv-infographic',
-  },
 };
