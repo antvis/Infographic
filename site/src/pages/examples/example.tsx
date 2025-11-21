@@ -7,7 +7,8 @@ export default function ExampleDetail() {
       toc={[]}
       routeTree={{title: '示例', path: '/examples', routes: []}}
       meta={{title: '示例'}}
-      section="examples">
+      section="examples"
+      showFooter={false}>
       <DetailPage />
     </Page>
   );

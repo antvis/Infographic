@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import {useRouter} from 'next/router';
 import {useEffect, useRef, useState} from 'react';
+import {CodeEditor} from '../MDX/CodeEditor';
 import {TEMPLATES} from './templates';
 
 const generateJavaScriptCode = async (config) => {
@@ -80,7 +81,6 @@ export default function DetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
-  const textareaRef = useRef(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const infographicRef = useRef<any>(null);
 
@@ -140,10 +140,8 @@ export default function DetailPage() {
     };
   }, [code]);
 
-  // 处理代码编辑
-  const handleCodeChange = (e: {target: {value: any}}) => {
-    const newCode = e.target.value;
-    setCode(newCode);
+  const handleCodeChange = (e: string) => {
+    setCode(e);
   };
 
   const handleCopy = () => {
@@ -157,7 +155,7 @@ export default function DetailPage() {
   };
 
   return (
-    <div className="h-[calc(100vh-56px)] w-full bg-[#F8F9FC] flex overflow-hidden font-sans text-slate-800">
+    <div className="h-[calc(100vh-64px)] w-full bg-[#F8F9FC] flex overflow-hidden font-sans text-slate-800">
       {/* Left Panel: Canvas */}
       <div className="flex-1 relative bg-slate-100/50 flex flex-col overflow-hidden">
         <motion.button
@@ -248,15 +246,15 @@ export default function DetailPage() {
           </div>
         </div>
 
-        <div className="flex-1 relative bg-slate-50/30">
-          <textarea
-            ref={textareaRef}
-            value={code}
-            onChange={handleCodeChange}
-            spellCheck={false}
-            className="w-full h-full resize-none p-6 font-mono text-[13px] leading-loose text-slate-700 bg-transparent focus:outline-none custom-scrollbar selection:bg-[#ff356a]/20"
-            style={{tabSize: 2}}
-          />
+        <div className="flex-1 relative bg-slate-50/30 overflow-hidden">
+          <div className="h-full overflow-auto custom-scrollbar">
+            <CodeEditor
+              className="w-full resize-none font-mono text-[15px] leading-loose text-slate-700 bg-transparent focus:outline-none selection:bg-[#ff356a]/20"
+              language={'javascript'}
+              onChange={handleCodeChange}
+              value={code}
+            />
+          </div>
 
           <div className="absolute bottom-0 left-0 right-0 px-4 py-2 bg-white/80 backdrop-blur border-t border-slate-100 text-[10px] text-slate-400 flex justify-between items-center">
             <span>Line {code.split('\n').length}, Col 1</span>

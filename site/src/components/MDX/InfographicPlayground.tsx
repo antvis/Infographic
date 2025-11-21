@@ -11,6 +11,7 @@ import {CodeEditor} from './CodeEditor';
 type PlaygroundBaseProps = {
   className?: string;
   height?: number;
+  showPreview?: boolean;
 };
 
 type PlaygroundLayoutProps = PlaygroundBaseProps & {
@@ -267,6 +268,7 @@ function JsCodeRunnerPreview({code}: {code: string}) {
 export function InfographicJsPlayground({
   className,
   initialCode = DEFAULT_JS_CODE,
+  showPreview = true,
 }: PlaygroundBaseProps & {
   initialCode?: string;
 }) {
@@ -280,9 +282,11 @@ export function InfographicJsPlayground({
       language="javascript"
       onCodeChange={setCode}
       preview={
-        <div className="bg-white dark:bg-gray-950 p-4">
-          <JsCodeRunnerPreview code={code} />
-        </div>
+        showPreview ? (
+          <div className="bg-white dark:bg-gray-950 p-4">
+            <JsCodeRunnerPreview code={code} />
+          </div>
+        ) : null
       }
     />
   );

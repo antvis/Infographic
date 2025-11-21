@@ -75,7 +75,7 @@ const GalleryCard = ({
       whileHover="hover"
       whileTap="tap"
       className="group relative w-full h-[320px] flex flex-col"
-      onClick={() => onClick(item.id)}>
+      onClick={() => onClick(item.template)}>
       {/* Card Body */}
       <motion.div
         variants={{
@@ -230,17 +230,12 @@ export default function GalleryPage() {
 
       {/* Grid Area */}
       <main className="px-6 md:px-12 pb-24 max-w-[1600px] mx-auto">
-        {/*
-           Grid Config:
-           大屏幕(2xl) 3列，普通桌面(lg) 2列，手机(1列)
-           GAP 设置大一点 (gap-10) 增加呼吸感
-        */}
         <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-8 md:gap-12">
           {filteredTemplates.map((item, index) => (
             <GalleryCard
               key={index}
               item={item}
-              onClick={() => handleCardClick(item.template)}
+              onClick={() => handleCardClick(item.template!)}
             />
           ))}
         </div>
