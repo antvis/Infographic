@@ -5,6 +5,10 @@ on:
     branches:
       - main
       - dev
+  pull_request:
+    branches:
+      - main
+      - dev
   workflow_dispatch:
 
 permissions:
@@ -17,43 +21,37 @@ concurrency:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-          cache-dependency-path: |
-            package.json
-            site/package.json
+          cache: 'npm'
+          cache-dependency-path: '**/package.json'
 
-      - name: Install dependencies
+      - name: Install dependencies (workspace)
         run: npm install
 
-      - name: Build library
+      - name: Build
         run: npm run build
 
       - name: Pack library for site
         id: pack
         run: |
           TARBALL=$(npm pack)
-          echo "tarball=$TARBALL" >> "$GITHUB_OUTPUT"
-          echo "tarball_path=$PWD/$TARBALL" >> "$GITHUB_OUTPUT"
+          echo "tarball=$TARBALL" >> $GITHUB_OUTPUT
+          echo "tarball_path=$PWD/$TARBALL" >> $GITHUB_OUTPUT
 
-      - name: Install site dependencies
-        run: npm --prefix site install
-
-      - name: Use local @antv/infographic in site if possible
+      - name: Link local library into site
         run: |
           TARBALL_PATH="${{ steps.pack.outputs.tarball_path }}"
-          if npm --prefix site install --no-save "$TARBALL_PATH"; then
-            echo "Linked site to local tarball ${{ steps.pack.outputs.tarball }}"
-          else
-            echo "Linking tarball failed, using existing dependency"
-          fi
+          npm --prefix site install --no-save "$TARBALL_PATH"
 
       - name: Build site
         run: npm run build:site
@@ -65,3 +63,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: site/out
+          force_orphan: true
