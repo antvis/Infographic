@@ -17,6 +17,7 @@ export * from './ProgressCard';
 export * from './QuarterCircular';
 export * from './QuarterSimpleCard';
 export * from './registry';
+export { getItem, getItems, registerItem } from './registry';
 export * from './RibbonCard';
 export * from './RoundedRectNode';
 export * from './SimpleHorizontalArrow';

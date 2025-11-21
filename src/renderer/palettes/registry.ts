@@ -9,3 +9,7 @@ export function registerPalette(name: string, palette: Palette) {
 export function getPalette(type: string): Palette | undefined {
   return PALETTE_REGISTRY.get(type);
 }
+
+export function getPalettes(): Palette[] {
+  return Array.from(PALETTE_REGISTRY.values());
+}

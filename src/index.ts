@@ -23,20 +23,11 @@ export {
   jsxs,
   renderSVG,
 } from './jsx';
-export type { InfographicOptions, ParsedInfographicOptions } from './options';
 export {
-  DEFAULT_FONT,
-  Renderer,
-  decodeFontFamily,
-  encodeFontFamily,
   getFont,
-  getFontURLs,
   getFonts,
   getPalette,
   getPaletteColor,
-  getWoff2BaseURL,
-  loadFont,
-  loadFonts,
   registerFont,
   registerPalette,
   registerPattern,
@@ -68,6 +59,7 @@ export type {
   TextProps,
   WithChildren,
 } from './jsx';
+export type { InfographicOptions, ParsedInfographicOptions } from './options';
 export type {
   Font,
   FontWeightName,
