@@ -312,7 +312,7 @@ export const BUILTIN_TEMPLATES: InfographicOptions[] = [
       palette: 'antv',
     },
     template: 'relation-circle-circular-progress',
-    data: DATASET.LIST,
+    data: DATASET.RELATION,
   },
   {
     theme: 'light',
@@ -320,7 +320,7 @@ export const BUILTIN_TEMPLATES: InfographicOptions[] = [
       palette: 'antv',
     },
     template: 'relation-circle-icon-badge',
-    data: DATASET.LIST,
+    data: DATASET.RELATION,
   },
   {
     theme: 'light',
@@ -608,7 +608,7 @@ export const BUILTIN_TEMPLATES: InfographicOptions[] = [
       palette: 'antv',
     },
     template: 'quadrant-quarter-simple-card',
-    data: DATASET.LIST,
+    data: DATASET.QUADRANT,
   },
   {
     theme: 'light',
@@ -616,7 +616,7 @@ export const BUILTIN_TEMPLATES: InfographicOptions[] = [
       palette: 'antv',
     },
     template: 'quadrant-quarter-circular',
-    data: DATASET.LIST,
+    data: DATASET.QUADRANT,
   },
   {
     theme: 'light',
@@ -624,7 +624,7 @@ export const BUILTIN_TEMPLATES: InfographicOptions[] = [
       palette: 'antv',
     },
     template: 'quadrant-simple-illus',
-    data: DATASET.LIST,
+    data: DATASET.QUADRANT,
   },
   {
     theme: 'light',
