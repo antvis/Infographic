@@ -22,25 +22,6 @@ export function renderShape(
   return node;
 }
 
-export function renderItemShape(
-  svg: SVGSVGElement,
-  node: SVGElement,
-  options: ParsedInfographicOptions,
-) {
-  const { themeConfig } = options;
-  const attrs = Object.assign(
-    {},
-    themeConfig.base?.shape,
-    themeConfig.item?.shape,
-  );
-
-  const parsedAttrs = parseDynamicAttributes(node, attrs);
-  setAttributes(node, parsedAttrs);
-  stylizeShape(node, svg, options);
-
-  return node;
-}
-
 export function renderStaticShape(
   node: SVGElement,
   options: ParsedInfographicOptions,
