@@ -15,7 +15,7 @@ export const SelectTrigger = forwardRef<
     <SelectPrimitive.Trigger
       ref={ref}
       className={cn(
-        'flex w-full items-center justify-between rounded-xl border border-border dark:border-border-dark bg-wash dark:bg-wash-dark px-4 py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-link/40 dark:focus-visible:ring-link-dark/40',
+        'flex w-full items-center justify-between rounded-xl border border-border dark:border-border-dark bg-wash dark:bg-wash-dark px-4 py-3 text-base outline-none focus-visible:ring-2 focus-visible:ring-link/40 dark:focus-visible:ring-link-dark/40',
         className
       )}
       {...props}>
@@ -58,11 +58,22 @@ export const SelectItem = forwardRef<
     <SelectPrimitive.Item
       ref={ref}
       className={cn(
-        'flex cursor-pointer select-none items-center rounded-lg px-3 py-2 text-sm text-primary dark:text-primary-dark outline-none data-[highlighted]:bg-primary/10 data-[highlighted]:text-primary',
+        'relative cursor-pointer select-none items-center rounded-lg px-3 py-2 text-base text-primary dark:text-primary-dark outline-none data-[highlighted]:bg-primary/10 data-[highlighted]:text-primary pl-7',
         className
       )}
       {...props}>
-      <SelectPrimitive.ItemIndicator className="mr-2 h-3 w-3" />
+      <SelectPrimitive.ItemIndicator className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3">
+        <svg
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          className="text-link dark:text-link-dark">
+          <path
+            fillRule="evenodd"
+            d="M16.707 5.293a1 1 0 010 1.414l-7.071 7.07a1 1 0 01-1.414 0L3.292 9.85a1 1 0 011.415-1.415l3.101 3.102 6.364-6.364a1 1 0 011.414 0z"
+            clipRule="evenodd"
+          />
+        </svg>
+      </SelectPrimitive.ItemIndicator>
       <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
     </SelectPrimitive.Item>
   );

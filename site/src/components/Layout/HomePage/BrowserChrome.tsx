@@ -225,7 +225,7 @@ export function BrowserChrome({
 
               <span className="text-gray-30 dark:text-gray-60">
                 {domain}
-                {path != null && '/'}
+                {!!domain && '/'}
               </span>
               {path}
             </div>

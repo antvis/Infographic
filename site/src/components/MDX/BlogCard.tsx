@@ -7,22 +7,36 @@ export interface BlogCardProps {
   icon?: string;
   date?: string;
   url?: string;
+  detail?: React.ReactNode;
   children?: React.ReactNode;
 }
 
-function BlogCard({title, badge, date, icon, url, children}: BlogCardProps) {
-  return (
-    <Link
-      href={url as string}
-      passHref
-      className="block h-full w-full rounded-2xl outline-none focus:outline-none focus-visible:outline focus-visible:outline-link focus:outline-offset-2 focus-visible:dark:focus:outline-link-dark">
-      <div className="justify-between p-5 sm:p-5 cursor-pointer w-full h-full flex flex-col flex-1 shadow-secondary-button-stroke dark:shadow-secondary-button-stroke-dark hover:bg-gray-40/5 active:bg-gray-40/10  hover:dark:bg-gray-60/5 active:dark:bg-gray-60/10 rounded-2xl text-xl text-primary dark:text-primary-dark leading-relaxed">
-        <div className="flex flex-row gap-3 w-full">
-          <h2 className="font-semibold flex-1 text-2xl lg:text-3xl hover:underline leading-snug mb-4">
-            {title}
-          </h2>
-        </div>
-        <div>
+function BlogCard({
+  title,
+  badge,
+  date,
+  icon,
+  url,
+  detail,
+  children,
+}: BlogCardProps) {
+  const content = detail ?? children;
+  const hasMeta = icon || date || badge;
+  const outerClassName =
+    'block h-full w-full rounded-2xl outline-none focus:outline-none focus-visible:outline focus-visible:outline-link focus:outline-offset-2 focus-visible:dark:focus:outline-link-dark';
+  const cardClassName = `justify-between p-5 sm:p-5 w-full h-full flex flex-col flex-1 shadow-secondary-button-stroke dark:shadow-secondary-button-stroke-dark hover:bg-gray-40/5 active:bg-gray-40/10 hover:dark:bg-gray-60/5 active:dark:bg-gray-60/10 rounded-2xl text-xl text-primary dark:text-primary-dark leading-relaxed ${
+    url ? 'cursor-pointer' : ''
+  }`;
+
+  const card = (
+    <div className={cardClassName}>
+      <div className="flex flex-row gap-3 w-full">
+        <h2 className="font-semibold flex-1 text-2xl lg:text-3xl hover:underline leading-snug mb-4">
+          {title}
+        </h2>
+      </div>
+      <div>
+        {hasMeta && (
           <div className="flex flex-row justify-start gap-2 items-center text-base text-tertiary dark:text-tertiary-dark">
             {icon === 'labs' && (
               <svg
@@ -59,18 +73,30 @@ function BlogCard({title, badge, date, icon, url, children}: BlogCardProps) {
               </div>
             ) : null}
           </div>
+        )}
+        {content && (
           <span className="text-base text-secondary dark:text-secondary-dark">
-            {children}
+            {content}
           </span>
-          {children != null && (
-            <div className="text-link text-base dark:text-link-dark hover:underline mt-4">
-              Read more
-            </div>
-          )}
-        </div>
+        )}
+        {content != null && url ? (
+          <div className="text-link text-base dark:text-link-dark hover:underline mt-4">
+            Read more
+          </div>
+        ) : null}
       </div>
-    </Link>
+    </div>
   );
+
+  if (url) {
+    return (
+      <Link href={url} passHref className={outerClassName}>
+        {card}
+      </Link>
+    );
+  }
+
+  return <div className={outerClassName}>{card}</div>;
 }
 
 export default BlogCard;

@@ -69,31 +69,22 @@ function FullBleed({children}) {
   );
 }
 
-// 示例动态数据
-const recentPosts = [
+const features = [
   {
-    title: '欢迎使用 AntV Infographic',
-    icon: 'blog',
-    date: '2024-01-01',
-    url: '/blog/welcome',
+    title: '信息图语法',
+    detail: '基于信息图视觉特点设计信息图语法，覆盖布局、元素、主题等内容',
   },
   {
-    title: 'AI 生成信息图功能发布',
-    icon: 'blog',
-    date: '2024-01-15',
-    url: '/blog/ai-feature',
+    title: 'JSX 定制开发',
+    detail: '基于 JSX 作为设计资产开发语言，直观、可复用、开发灵活',
   },
   {
-    title: '新增多种主题模板',
-    icon: 'blog',
-    date: '2024-02-01',
-    url: '/blog/new-themes',
+    title: '风格化渲染',
+    detail: '一套模版多种视觉效果，支持手绘、纹理、渐变等风格',
   },
   {
-    title: '性能优化更新',
-    icon: 'blog',
-    date: '2024-02-15',
-    url: '/blog/performance',
+    title: '可视化编辑',
+    detail: '支持添加、删除数据项；添加图形、文本标注，所见即所得',
   },
 ];
 
@@ -260,9 +251,7 @@ export function HomeContent() {
               <div className="w-full lg:w-6/12 max-w-3xl flex flex-col items-start justify-start lg:ps-5 lg:pe-10">
                 <Header>持续演进，拥抱未来</Header>
                 <Para>
-                  AntV Infographic 基于 AntV 可视化生态的深厚积累，
-                  承载了大量业务实践经验。我们致力于将前沿的信息图技术
-                  和最佳实践带给每一位开发者。
+                  我们的目标是“让信息图成为 AI 时代的视觉语言基础设施”
                 </Para>
                 <div className="order-last pt-5">
                   <Para>
@@ -280,20 +269,20 @@ export function HomeContent() {
               <div className="w-full lg:w-6/12">
                 <p className="uppercase tracking-wide font-bold text-sm text-tertiary dark:text-tertiary-dark flex flex-row gap-2 items-center mt-5 lg:-mt-2 w-full">
                   <IconChevron />
-                  最新动态
+                  特性
                 </p>
                 <div className="flex-col sm:flex-row flex-wrap flex gap-5 text-start my-5">
                   <div className="flex-1 min-w-[40%] text-start">
-                    <BlogCard {...recentPosts[0]} />
+                    <BlogCard {...features[0]} />
                   </div>
                   <div className="flex-1 min-w-[40%] text-start">
-                    <BlogCard {...recentPosts[1]} />
+                    <BlogCard {...features[1]} />
                   </div>
                   <div className="flex-1 min-w-[40%] text-start">
-                    <BlogCard {...recentPosts[2]} />
+                    <BlogCard {...features[2]} />
                   </div>
                   <div className="hidden sm:flex-1 sm:inline">
-                    <BlogCard {...recentPosts[3]} />
+                    <BlogCard {...features[3]} />
                   </div>
                 </div>
                 <div className="flex lg:hidden justify-start w-full">
