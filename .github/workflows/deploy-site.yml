@@ -53,7 +53,7 @@ jobs:
           fi
 
       - name: Build site
-        run: npm run site:build
+        run: npm run build:site
 
       - name: Deploy to GitHub Pages
         if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')

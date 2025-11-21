@@ -1,6 +1,6 @@
 {
   "name": "@antv/infographic",
-  "version": "0.0.1-beta.7",
+  "version": "0.0.1-beta.8",
   "description": "AntV Infographic generator and visualization library",
   "keywords": [
     "antv",
@@ -38,9 +38,10 @@
     "src"
   ],
   "scripts": {
-    "build": "run-s clean build:esm build:cjs build:umd size",
+    "build": "run-s clean build:esm build:cjs build:umd build:site size",
     "build:cjs": "tsc --module commonjs --outDir lib",
     "build:esm": "tsc --module ESNext --outDir esm",
+    "build:site": "npm --prefix site run build:static",
     "build:umd": "vite build",
     "build:watch": "tsc -p tsconfig.json --watch",
     "check:test": "tsc --noEmit -p __tests__",
@@ -48,11 +49,10 @@
     "clean": "rimraf esm lib dist tsconfig.tsbuildinfo",
     "dev": "cd dev && npm run dev",
     "format": "prettier --write . --ignore-path ./.gitignore",
+    "postinstall": "npm --prefix site install",
     "lint": "run-s lint:root lint:site",
     "lint:root": "eslint . --ext .ts,.tsx --ignore-pattern 'site/**' && npm run check:test",
     "lint:site": "npm --prefix site run lint",
-    "site:build": "npm --prefix site run build:static",
-    "postinstall": "npm --prefix site install",
     "size": "size-limit",
     "test": "vitest --run --coverage"
   },
