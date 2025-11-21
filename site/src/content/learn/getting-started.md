@@ -89,9 +89,9 @@ infographic.render();
 
 在这个例子中没有通过 `template` 指定模版，而是通过 `design` 进行自定义，可以把模版理解为内置的一套 `design` 配置，AntV Infographic 中许多可注册的内容都是类似的逻辑，例如色板、主题。
 
-如果你想了解关于完整的配置项细节，请继续阅读下一节[《信息图语法》](/infographic-syntax)。
+如果你想了解关于完整的配置项细节，请继续阅读下一节[信息图语法](/learn/infographic-syntax)。
 
-关于资源及资源加载器的更多信息，请参考：[核心概念-资源](/core-concepts/resources)。
-关于数据的更多信息，请参考：[核心概念-数据](/core-concepts/data)。
-关于主题的更多信息，请参考：[核心概念-主题](/core-concepts/theme)。
-关于信息图设计的更多信息，请参考：[核心概念-设计](/core-concepts/design)。
+关于资源及资源加载器的更多信息，请参考：[核心概念-资源](/learn/resources)。
+关于数据的更多信息，请参考：[核心概念-数据](/learn/data)。
+关于主题的更多信息，请参考：[核心概念-主题](/learn/theme)。
+关于信息图设计的更多信息，请参考：[核心概念-设计](/learn/design)。

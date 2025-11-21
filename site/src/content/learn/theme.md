@@ -224,7 +224,7 @@ infographic.render();
 
 - [rough](/reference/infographic-types#rough-config)：应用手绘风格，使图形看起来像是手工绘制的。
 - [pattern](/reference/infographic-types#pattern-config)：应用图案填充，为图形添加重复的图案效果。
-- [linear-gradient](/reference/infographic-types#linear-gradient-config) / [radial-gradient](/reference/infographic-types#radial-gradient-config)：应用渐变填充，为图形添加线性或径向渐变效果。
+- [linear-gradient](/reference/infographic-types#linear-gradient) / [radial-gradient](/reference/infographic-types#radial-gradient)：应用渐变填充，为图形添加线性或径向渐变效果。
 
 通过 `themeConfig.stylize.type` 指定风格化类型，并通过 `themeConfig.stylize` 传入对应的配置参数。
 

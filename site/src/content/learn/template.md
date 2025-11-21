@@ -8,7 +8,7 @@ AntV Infographic 允许用户通过信息图语法灵活的组合出丰富多样
 
 广义上来说模版可以是[信息图语法的子集](/reference/infographic-types#template-options)，因此它可以相当灵活。不过在大多数实践中，我们通常只会配置 `options.design` 部分，而将 `theme`、`themeConfig` 等留给用户自行发挥。
 
-模版可以通过 `registerTemplate` 方法进行[注册](/learn/custom-template#register)，注册后即可通过 `template` 字段进行调用，以下两种写法是**等价**的：
+模版可以通过 [registerTemplate](/reference/infographic-exports#register-template) 方法进行注册，注册后即可通过 `template` 字段进行调用，以下两种写法是**等价**的：
 
 1. 通过 `design` 直接配置设计项：
 

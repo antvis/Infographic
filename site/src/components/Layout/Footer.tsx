@@ -53,7 +53,7 @@ export function Footer() {
           <FooterLink href="/learn/infographic-theory">信息图理论</FooterLink>
         </div>
         <div className="flex flex-col">
-          <FooterLink href="/reference" isHeader={true}>
+          <FooterLink href="/reference/infographic-api" isHeader={true}>
             API 参考
           </FooterLink>
           <FooterLink href="/reference/jsx">JSX</FooterLink>

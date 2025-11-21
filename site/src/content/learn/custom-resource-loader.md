@@ -148,7 +148,7 @@ if (!resource) {
 }
 ```
 
-> 💡 **提示**：完整的 API 参数说明请参考 [资源 API 文档](/api/resources#loadsvgresource)
+> 💡 **提示**：完整的 API 参数说明请参考 [核心概念 - 资源](/learn/resources)
 
 ### loadImageBase64Resource() - 图片资源转换 {#loadimagebase64resource---图片资源转换}
 
