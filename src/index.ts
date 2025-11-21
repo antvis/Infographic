@@ -39,6 +39,7 @@ export {
   loadFonts,
   registerFont,
   registerPalette,
+  registerPattern,
   setDefaultFont,
 } from './renderer';
 export { loadSVGResource, registerResourceLoader } from './resource';

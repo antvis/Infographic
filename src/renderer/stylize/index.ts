@@ -1,3 +1,3 @@
 export { applyGradientStyle } from './gradient';
-export { applyPatternStyle } from './pattern';
+export { applyPatternStyle, registerPattern } from './pattern';
 export { applyRoughStyle } from './rough';

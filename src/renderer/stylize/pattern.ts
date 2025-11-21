@@ -1,3 +1,4 @@
+import tinycolor from 'tinycolor2';
 import { ParsedInfographicOptions } from '../../options';
 import { getAttributes, getOrCreateDefs, hasColor } from '../../utils';
 import type { PatternConfig, PatternGenerator } from '../types';
@@ -33,7 +34,9 @@ export function applyPatternStyle(
 
   const color = fill;
   const style = {
-    backgroundColor: color,
+    backgroundColor: color
+      ? tinycolor(color).setAlpha(0.5).toRgbString()
+      : color,
     foregroundColor: color,
     ...restConfig,
   };
