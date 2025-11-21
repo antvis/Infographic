@@ -11,7 +11,7 @@ title: 创建布局
 3. 嵌套使用：在 JSX 中像普通组件一样使用你的布局，布局会在渲染前被展开。
 
 <Note>
-  关于工具函数的更多细节，请参见[工具函数](/reference/utility-functions)一章。
+  关于工具函数的更多细节，请参见[工具函数](/reference/jsx-utils)一章。
 </Note>
 
 ```tsx

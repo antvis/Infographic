@@ -28,7 +28,7 @@ title: 资源
 
 ### 字符串形式 {#string-format}
 
-字符串会被自动解析为 [ResourceConfig](/api/types#resource-config) 对象：
+字符串会被自动解析为 [ResourceConfig](/api/infographic-types#resource-config) 对象：
 
 ```typescript
 // 直接使用字符串
@@ -39,7 +39,7 @@ illus: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...';
 
 ### 对象形式 {#object-format}
 
-可以直接提供 [ResourceConfig](/api/types#resource-config) 对象：
+可以直接提供 [ResourceConfig](/api/infographic-types#resource-config) 对象：
 
 ```typescript
 interface ResourceConfig {

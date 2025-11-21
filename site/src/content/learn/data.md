@@ -25,7 +25,7 @@ export interface ItemDatum {
 }
 ```
 
-其中 `Data` 包含标题、描述和数据项列表，并支持扩展其他字段。`ItemDatum` 列表支持配置图标、标题、描述、数值、插图和子项等字段，也支持扩展其他字段。完整的数据说明请查阅[Data](/reference/types#data)
+其中 `Data` 包含标题、描述和数据项列表，并支持扩展其他字段。`ItemDatum` 列表支持配置图标、标题、描述、数值、插图和子项等字段，也支持扩展其他字段。完整的数据说明请查阅[Data](/reference/infographic-types#data)
 
 ## 一维数据/列表数据 {#flat-data}
 

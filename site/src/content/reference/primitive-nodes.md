@@ -27,15 +27,29 @@ AntV Infographic 实现的 JSX Engine 提供了一组原语节点。与 SVG 节�
 | `children` | `JSXNode` | 必填   | 渐变、图案或滤镜等定义内容，需带 `id` 才能在其他节点中引用。 |
 
 ```jsx
-<>
-  <Defs>
-    <linearGradient id="pink-white-gradient" x1="100%" y1="0%" x2="0%" y2="0%">
-      <stop offset="0%" stop-color="pink" stop-opacity="0.36" />
-      <stop offset="100%" stop-color="white" stop-opacity="0" />
-    </linearGradient>
-  </Defs>
-  <Rect width="100" height="100" fill="url(#pink-white-gradient)" />
-</>
+<Defs>
+  {/* 线性渐变 */}
+  <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" stopColor="#ff0000" />
+    <stop offset="100%" stopColor="#0000ff" />
+  </linearGradient>
+
+  {/* 径向渐变 */}
+  <radialGradient id="gradient2" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stopColor="#ffffff" />
+    <stop offset="100%" stopColor="#000000" />
+  </radialGradient>
+
+  {/* 滤镜 */}
+  <filter id="shadow">
+    <feDropShadow dx="2" dy="2" stdDeviation="3" floodColor="#000000" />
+  </filter>
+</Defs>
+
+{/* 使用定义 */}
+<Rect fill="url(#gradient1)" width={100} height={50} />
+<Ellipse fill="url(#gradient2)" width={80} height={80} />
+<Rect filter="url(#shadow)" width={100} height={50} />
 ```
 
 `Defs` 中的声明对象通过 `id` 进行识别和引用，如果指定了多个声明对象 `id` 一致，那么后者会覆盖前者。
@@ -61,18 +75,39 @@ AntV Infographic 实现的 JSX Engine 提供了一组原语节点。与 SVG 节�
 | `x` `y`    | `number`  | `0`         | 当至少有一个不为 `0` 且未设置 `transform` 时，生成 `translate(x, y)`。 |
 
 ```jsx
-<Group x={50} y={50} width={200} height={200}>
-  <Rect x={0} y={0} width={100} height={100} fill="red" />
-  <Rect x={100} y={0} width={100} height={100} fill="green" />
+<Group
+  x={10}
+  y={10}
+  width={200} // 可选，用于边界计算
+  height={100} // 可选，用于边界计算
+  transform="rotate(45)" // SVG transform
+  opacity={0.8}>
+  {children}
 </Group>
 ```
+
+<Note>
+  Group 的 width/height
+  不会约束子元素，仅用于边界计算。如果未设置，会自动根据子元素计算。
+</Note>
 
 ## Rect {#rect}
 
 `Rect` 定义矩形，等同于 SVG `<rect>` 元素。直接使用几何属性控制位置与尺寸。
 
 ```jsx
-<Rect x={10} y={10} width={120} height={60} rx={8} fill="#6CA5FF" />
+<Rect
+  x={0}
+  y={0}
+  width={100}
+  height={50}
+  fill="blue"
+  stroke="black"
+  strokeWidth={2}
+  rx={5} // 圆角半径
+  ry={5} // 圆角半径（Y 方向）
+  opacity={0.8}
+/>
 ```
 
 | 参数                     | 类型        | 默认值 | 说明                      |
@@ -87,28 +122,40 @@ AntV Infographic 实现的 JSX Engine 提供了一组原语节点。与 SVG 节�
 
 ```jsx
 // 椭圆
-<Ellipse x={40} y={20} width={160} height={100} fill="#FF9F7A" stroke="#333" />
+<Ellipse
+  x={0} // 包围盒左上角 x（非圆心）
+  y={0} // 包围盒左上角 y（非圆心）
+  width={100} // 宽度
+  height={60} // 高度（与 width 相等时为圆形）
+  fill="red"
+  stroke="black"
+  strokeWidth={2}
+/>
 // 圆形
 <Ellipse x={200} y={20} width={100} height={100} fill="#4ECB73" stroke="#1B4224" />
 ```
 
 | 参数                     | 类型           | 默认值 | 说明                   |
 | ------------------------ | -------------- | ------ | ---------------------- |
-| `x` `y` `width` `height` | `number`       | `0`    | 外接矩形几何尺寸。     |
+| `x` `y` `width` `height` | `number`       | `0`    | 包围盒几何尺寸。       |
 | 其他                     | `EllipseProps` | -      | SVG `<ellipse>` 属性。 |
 
-> `Ellipse` 的 `x` `y` 参数表示椭圆的外接矩形的左上角坐标，而非椭圆的中心点坐标。
+> `Ellipse` 的 `x` `y` 参数表示椭圆的包围盒的左上角坐标，而非椭圆的中心点坐标。
 
 ## Path {#path}
 
 `Path` 用于定义路径，类似于 SVG 中的 `<path>` 元素。 `Path` 支持 `d` 属性，用于定义路径数据。
 
 ```jsx
-export default () => {
-  return (
-    <Path d="M10 10 H 90 V 90 H 10 L 10 10" stroke="black" fill="transparent" />
-  );
-};
+<Path
+  d="M 0 0 L 100 100 L 100 0 Z"
+  fill="green"
+  stroke="black"
+  strokeWidth={2}
+  width={100} // 估算宽度（用于边界计算）
+  height={100} // 估算高度
+  // 其他 SVG 属性...
+/>
 ```
 
 > Path 是信息图中最灵活的元素，它几乎能够绘制出任意的二维图形。对于一些极为复杂的元素，你也可以从设计软件中导出 SVG Path 数据，并直接使用在 `d` 属性中。
@@ -127,17 +174,18 @@ export default () => {
 
 ```jsx
 <Polygon
-  x={100}
-  y={20}
   points={[
     {x: 0, y: 0},
-    {x: 120, y: 40},
-    {x: 60, y: 120},
+    {x: 100, y: 0},
+    {x: 50, y: 100},
   ]}
-  fill="#4ECB73"
-  stroke="#1B4224"
+  fill="purple"
+  stroke="black"
+  strokeWidth={2}
 />
 ```
+
+<Note>`points` 必须是**对象数组** `{(x, y)}[]`，不是字符串格式。</Note>
 
 | 参数     | 类型                         | 默认值      | 说明                                                  |
 | -------- | ---------------------------- | ----------- | ----------------------------------------------------- |
@@ -151,13 +199,23 @@ export default () => {
 支持 `x`、`y`、`fontSize`、`fontFamily`、`fill` 等属性，用于控制文本的样式和位置。
 
 ```jsx
-export default () => {
-  return (
-    <Text x={10} y={20} fontSize={16} fontFamily="Arial" fill="black">
-      Hello, AntV!
-    </Text>
-  );
-};
+<Text
+  x={0}
+  y={0}
+  width={200} // 文本容器宽度
+  height={100} // 文本容器高度
+  fontSize={14}
+  fontWeight="bold" // 'normal' | 'bold' | number
+  fontFamily="Arial"
+  alignHorizontal="center" // 'left' | 'center' | 'right'
+  alignVertical="middle" // 'top' | 'middle' | 'bottom'
+  lineHeight={1.5} // 行高倍数
+  wordWrap={true} // 启用自动换行
+  fill="#000000" // 文本颜色
+  backgroundColor="#ffff00" // 背景色（可选）
+>
+  文本内容支持换行
+</Text>
 ```
 
 `Text` 提供了便捷的对齐与背景能力：当设置 `backgroundColor` 且不为 `none` 时，会自动输出一个包含背景矩形与文本的 `<g>` 节点。

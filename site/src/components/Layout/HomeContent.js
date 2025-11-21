@@ -214,7 +214,7 @@ export function HomeContent() {
           <Center>
             <Para>支持自定义主题配置，灵活扩展样式系统</Para>
             <div className="flex justify-start w-full lg:justify-center">
-              <CTA color="gray" icon="code" href="/learn/core-concepts/theme">
+              <CTA color="gray" icon="code" href="/learn/theme">
                 查看主题配置文档
               </CTA>
             </div>

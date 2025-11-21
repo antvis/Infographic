@@ -26,10 +26,10 @@ title: 信息图语法
 | container   | `string \| HTMLElement` | 否     | 容器，可以是选择器或者 HTMLElement     | -                                                |
 | width       | `number \| string`      | 否     | 宽度，支持数字（像素值）或者百分比形式 | -                                                |
 | height      | `number \| string`      | 否     | 高度，支持数字（像素值）或者百分比形式 | -                                                |
-| padding     | `Padding`               | 否     | 容器内边距                             | [Padding](/reference/types#padding)              |
+| padding     | `Padding`               | 否     | 容器内边距                             | [Padding](/reference/infographic-types#padding)              |
 | template    | `string`                | 否     | 模板                                   | -                                                |
-| design      | `DesignOptions`         | 否     | 设计                                   | [DesignOptions](/reference/types#design-options) |
-| data        | `Data`                  | **是** | 数据                                   | [Data](/reference/types#data)                    |
+| design      | `DesignOptions`         | 否     | 设计                                   | [DesignOptions](/reference/infographic-types#design-options) |
+| data        | `Data`                  | **是** | 数据                                   | [Data](/reference/infographic-types#data)                    |
 | theme       | `string`                | 否     | 主题                                   | -                                                |
-| themeConfig | `ThemeConfig`           | 否     | 额外主题配置                           | [ThemeConfig](/reference/types#theme-config)     |
-| svg         | `SVGOptions`            | 否     | svg 容器上的配置                       | [SVGOptions](/reference/types#svg-options)       |
+| themeConfig | `ThemeConfig`           | 否     | 额外主题配置                           | [ThemeConfig](/reference/infographic-types#theme-config)     |
+| svg         | `SVGOptions`            | 否     | svg 容器上的配置                       | [SVGOptions](/reference/infographic-types#svg-options)       |

@@ -8,7 +8,7 @@ AntV Infographic 中主题提供以下能力：
 - 针对信息图中特定部分（如：文本、图形等）进行样式调整
 - 风格化配置
 
-主题在配置中可以通过 `options.theme` 和 options.[themeConfig](/reference/types#theme-config) 进行配置，
+主题在配置中可以通过 `options.theme` 和 options.[themeConfig](/reference/infographic-types#theme-config) 进行配置，
 其中 `options.theme` 用于指定已经注册的主题名称，`options.themeConfig` 用于对主题进行更细粒度的配置和覆盖。
 
 ## 主色及背景色 {#color-primary-and-bg}
@@ -62,7 +62,7 @@ AntV Infographic 中主题提供以下能力：
 
 色板用于为数据项指定颜色集合，通常用于区分不同的数据类别。可以通过 `themeConfig.palette` 来配置色板。
 
-色板类型定义见[Palette](/reference/types#palette)，其支持 `string`、`string[]` 和函数类型。
+色板类型定义见[Palette](/reference/infographic-types#palette)，其支持 `string`、`string[]` 和函数类型。
 
 传入 `string` 时，表示使用[内置](/reference/built-in-palettes)或者[自定义](/learn/custom-palette)的色板名称，下面的示例中，使用了内置的 AntV 色板。
 
@@ -222,9 +222,9 @@ infographic.render();
 
 常用的风格化类型包括：
 
-- [rough](/reference/types#rough-config)：应用手绘风格，使图形看起来像是手工绘制的。
-- [pattern](/reference/types#pattern-config)：应用图案填充，为图形添加重复的图案效果。
-- [linear-gradient](/reference/types#linear-gradient-config) / [radial-gradient](/reference/types#radial-gradient-config)：应用渐变填充，为图形添加线性或径向渐变效果。
+- [rough](/reference/infographic-types#rough-config)：应用手绘风格，使图形看起来像是手工绘制的。
+- [pattern](/reference/infographic-types#pattern-config)：应用图案填充，为图形添加重复的图案效果。
+- [linear-gradient](/reference/infographic-types#linear-gradient-config) / [radial-gradient](/reference/infographic-types#radial-gradient-config)：应用渐变填充，为图形添加线性或径向渐变效果。
 
 通过 `themeConfig.stylize.type` 指定风格化类型，并通过 `themeConfig.stylize` 传入对应的配置参数。
 

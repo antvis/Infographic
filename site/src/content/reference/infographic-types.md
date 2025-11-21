@@ -2,11 +2,11 @@
 title: 类型定义
 ---
 
-信息图语法的顶层配置即 [`InfographicOptions`](../learn/infographic-syntax.md)。本页补充其中涉及到的复合类型，方便在查阅语法表格时快速定位到字段的结构。
+信息图语法的顶层配置即 [`InfographicOptions`](/reference/infographic-options)。本页补充其中涉及到的复合类型，方便在查阅语法表格时快速定位到字段的结构。
 
 ## Bounds {#bounds}
 
-描述元素的外接矩形，常用于布局和工具函数。
+描述元素的包围盒，常用于布局和工具函数。
 
 ```ts
 type Bounds = {x: number; y: number; width: number; height: number};
@@ -83,19 +83,19 @@ SVG 容器上的附加配置，允许为根节点设置样式、属性与标识�
 
 渲染单个数据项时组件可接收的基础属性。
 
-| 属性            | 类型                                                    | 必填   | 说明                           |
-| --------------- | ------------------------------------------------------- | ------ | ------------------------------ |
-| x               | `number`                                                | 否     | 组件左上角 X 坐标              |
-| y               | `number`                                                | 否     | 组件左上角 Y 坐标              |
-| id              | `string`                                                | 否     | 自定义 id                      |
-| indexes         | `number[]`                                              | **是** | 当前数据项在层级中的索引路径   |
-| data            | [Data](#data)                                           | **是** | 整体数据对象                   |
-| datum           | [ItemDatum](#item-datum)                                | **是** | 当前数据项                     |
-| themeColors     | [ThemeColors](#theme-colors)                            | **是** | 当前主题色集合                 |
-| positionH       | `'normal' \| 'center' \| 'flipped'`                     | 否     | 水平朝向                       |
-| positionV       | `'normal' \| 'middle' \| 'flipped'`                     | 否     | 垂直朝向                       |
-| valueFormatter  | `(value: number) => string \| number`                   | 否     | 数值格式化函数                 |
-| `[key: string]` | `any`                                                   | 否     | 其他扩展属性，会透传到组件内部 |
+| 属性            | 类型                                  | 必填   | 说明                           |
+| --------------- | ------------------------------------- | ------ | ------------------------------ |
+| x               | `number`                              | 否     | 组件左上角 X 坐标              |
+| y               | `number`                              | 否     | 组件左上角 Y 坐标              |
+| id              | `string`                              | 否     | 自定义 id                      |
+| indexes         | `number[]`                            | **是** | 当前数据项在层级中的索引路径   |
+| data            | [Data](#data)                         | **是** | 整体数据对象                   |
+| datum           | [ItemDatum](#item-datum)              | **是** | 当前数据项                     |
+| themeColors     | [ThemeColors](#theme-colors)          | **是** | 当前主题色集合                 |
+| positionH       | `'normal' \| 'center' \| 'flipped'`   | 否     | 水平朝向                       |
+| positionV       | `'normal' \| 'middle' \| 'flipped'`   | 否     | 垂直朝向                       |
+| valueFormatter  | `(value: number) => string \| number` | 否     | 数值格式化函数                 |
+| `[key: string]` | `any`                                 | 否     | 其他扩展属性，会透传到组件内部 |
 
 ## ItemOptions {#item-options}
 
@@ -124,7 +124,10 @@ interface Item<T extends BaseItemProps = BaseItemProps> {
 ```ts
 interface BaseStructureProps {
   Title?: ComponentType<Pick<TitleProps, 'title' | 'desc'>>; // 可选标题组件
-  Item: ComponentType<Omit<BaseItemProps, 'themeColors'> & Partial<Pick<BaseItemProps, 'themeColors'>>>; // 当前层级数据项组件
+  Item: ComponentType<
+    Omit<BaseItemProps, 'themeColors'> &
+      Partial<Pick<BaseItemProps, 'themeColors'>>
+  >; // 当前层级数据项组件
   Items: ComponentType<Omit<BaseItemProps, 'themeColors'>>[]; // 按层级选择的数据项组件列表
   data: Data; // 完整数据
   options: ParsedInfographicOptions; // 解析后的配置
@@ -328,8 +331,11 @@ interface Font {
 自定义资源加载器的签名。
 
 ```ts
-type ResourceLoader = (config: ResourceConfig) => Promise<SVGSymbolElement | null>;
+type ResourceLoader = (
+  config: ResourceConfig
+) => Promise<SVGSymbolElement | null>;
 ```
+
 // 入参为资源配置，返回解析好的 `SVGSymbolElement` 或 `null`。
 
 ## DynamicAttributes {#dynamic-attributes}
