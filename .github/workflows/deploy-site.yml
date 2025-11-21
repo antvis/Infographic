@@ -43,6 +43,9 @@ jobs:
           echo "tarball=$TARBALL" >> "$GITHUB_OUTPUT"
           echo "tarball_path=$PWD/$TARBALL" >> "$GITHUB_OUTPUT"
 
+      - name: Install site dependencies
+        run: npm --prefix site install
+
       - name: Use local @antv/infographic in site if possible
         run: |
           TARBALL_PATH="${{ steps.pack.outputs.tarball_path }}"
