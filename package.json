@@ -38,7 +38,7 @@
     "src"
   ],
   "scripts": {
-    "build": "run-s clean build:esm build:cjs build:umd build:site size",
+    "build": "run-s clean build:esm build:cjs build:umd size",
     "build:cjs": "tsc --module commonjs --outDir lib",
     "build:esm": "tsc --module ESNext --outDir esm",
     "build:site": "npm --prefix site run build:static",

@@ -31,32 +31,21 @@ jobs:
           cache: 'npm'
           cache-dependency-path: '**/package.json'
 
-      - name: Install dependencies
+      - name: Install root dependencies
         run: npm install
-
-      - name: Install site dependencies
-        run: npm --prefix site install
 
       - name: Build
         run: npm run build
 
-      - name: Pack library for site
-        id: pack
-        run: |
-          TARBALL=$(npm pack)
-          echo "tarball=$TARBALL" >> $GITHUB_OUTPUT
-          echo "tarball_path=$PWD/$TARBALL" >> $GITHUB_OUTPUT
-
-      - name: Link local library into site
-        run: |
-          TARBALL_PATH="${{ steps.pack.outputs.tarball_path }}"
-          npm --prefix site install --no-save "$TARBALL_PATH"
+      - name: Install site dependencies
+        run: npm --prefix site install
 
       - name: Build site
         run: npm run build:site
 
       - name: Deploy to GitHub Pages
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')
+        if: github.event_name == 'push' &&
+          (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

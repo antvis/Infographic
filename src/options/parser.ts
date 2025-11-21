@@ -156,7 +156,6 @@ function parseTheme(
   if (!parsedThemeConfig.palette) {
     parsedThemeConfig.palette = [parsedThemeConfig.colorPrimary];
   }
-  console.log('Parsed Theme Config:', parsedThemeConfig);
   return parsedThemeConfig;
 }
 

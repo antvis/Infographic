@@ -25,7 +25,7 @@
     "deadlinks": "node scripts/deadLinkChecker.js"
   },
   "dependencies": {
-    "@antv/infographic": "^0.0.1-beta.6",
+    "@antv/infographic": "file:../",
     "@codemirror/commands": "^6.8.0",
     "@codemirror/lang-css": "^6.3.1",
     "@codemirror/lang-html": "^6.4.11",
