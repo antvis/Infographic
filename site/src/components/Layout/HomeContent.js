@@ -253,12 +253,36 @@ export function HomeContent() {
                 <Para>
                   我们的目标是“让信息图成为 AI 时代的视觉语言基础设施”
                 </Para>
-                <div className="order-last pt-5">
-                  <Para>
-                    团队持续探索信息图领域的创新技术，包括 AI 辅助设计、
-                    智能布局优化等方向。只有经过充分验证的功能才会被引入，
-                    确保为用户提供稳定可靠的体验。
-                  </Para>
+                <div className="order-last pt-5 w-full">
+                  <div className="flex flex-row justify-between items-center gap-3 mt-5 lg:-mt-2 w-full">
+                    <p className="uppercase tracking-wide font-bold text-sm text-tertiary dark:text-tertiary-dark flex flex-row gap-2 items-center">
+                      <IconChevron />
+                      特性
+                    </p>
+                    <p className="uppercase tracking-wide font-bold text-sm text-tertiary dark:text-tertiary-dark flex flex-row gap-2 items-center">
+                      未来计划
+                      <IconChevron className="-rotate-90" />
+                    </p>
+                  </div>
+                  <div className="flex-col sm:flex-row flex-wrap flex gap-5 text-start my-5">
+                    <div className="flex-1 min-w-[40%] text-start">
+                      <BlogCard {...features[0]} />
+                    </div>
+                    <div className="flex-1 min-w-[40%] text-start">
+                      <BlogCard {...features[1]} />
+                    </div>
+                    <div className="flex-1 min-w-[40%] text-start">
+                      <BlogCard {...features[2]} />
+                    </div>
+                    <div className="hidden sm:flex-1 sm:inline">
+                      <BlogCard {...features[3]} />
+                    </div>
+                  </div>
+                  <div className="flex lg:hidden justify-start w-full">
+                    <CTA color="gray" icon="news" href="">
+                      了解更多动态
+                    </CTA>
+                  </div>
                   {/* <div className="hidden lg:flex justify-start w-full">
                     <CTA color="gray" icon="news" href="">
                       了解更多动态
@@ -266,30 +290,13 @@ export function HomeContent() {
                   </div> */}
                 </div>
               </div>
-              <div className="w-full lg:w-6/12">
-                <p className="uppercase tracking-wide font-bold text-sm text-tertiary dark:text-tertiary-dark flex flex-row gap-2 items-center mt-5 lg:-mt-2 w-full">
-                  <IconChevron />
-                  特性
-                </p>
-                <div className="flex-col sm:flex-row flex-wrap flex gap-5 text-start my-5">
-                  <div className="flex-1 min-w-[40%] text-start">
-                    <BlogCard {...features[0]} />
-                  </div>
-                  <div className="flex-1 min-w-[40%] text-start">
-                    <BlogCard {...features[1]} />
-                  </div>
-                  <div className="flex-1 min-w-[40%] text-start">
-                    <BlogCard {...features[2]} />
-                  </div>
-                  <div className="hidden sm:flex-1 sm:inline">
-                    <BlogCard {...features[3]} />
-                  </div>
-                </div>
-                <div className="flex lg:hidden justify-start w-full">
-                  <CTA color="gray" icon="news" href="">
-                    了解更多动态
-                  </CTA>
-                </div>
+              <div className="w-full lg:w-6/12 flex flex-col items-center lg:items-end">
+                <img
+                  src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*15OrQo7ftkAAAAAASxAAAAgAemJ7AQ/original"
+                  alt="AntV Infographic 团队技术探索示意"
+                  className="w-full h-auto rounded-2xl lg:max-h-[480px] object-contain"
+                  draggable={false}
+                />
               </div>
             </div>
           </div>
