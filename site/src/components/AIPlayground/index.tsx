@@ -1,0 +1,443 @@
+import {InfographicOptions} from '@antv/infographic';
+import {Page} from 'components/Layout/Page';
+import {useEffect, useMemo, useRef, useState} from 'react';
+import {IconStarTwinkle} from '../Icon/IconStarTwinkle';
+import {ChatPanel} from './ChatPanel';
+import {ConfigPanel} from './ConfigPanel';
+import {PreviewPanel} from './PreviewPanel';
+import {sendMessage} from './Service';
+import {
+  DEFAULT_CONFIG,
+  FALLBACK_OPTIONS,
+  PROVIDER_OPTIONS,
+  STORAGE_KEYS,
+} from './constants';
+import {formatJSON} from './helpers';
+import {AIConfig, AIModelConfig, ChatMessage} from './types';
+
+export function AIPageContent() {
+  const [prompt, setPrompt] = useState('');
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [config, setConfig] = useState<AIConfig>(DEFAULT_CONFIG);
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [previewOptions, setPreviewOptions] =
+    useState<Partial<InfographicOptions> | null>(null);
+  const [previewError, setPreviewError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'preview' | 'json'>('preview');
+  const [lastJSON, setLastJSON] = useState('');
+  const [copyHint, setCopyHint] = useState('');
+  const [mounted, setMounted] = useState(false);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const copyTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const recoveredPendingRef = useRef(false);
+
+  useEffect(() => {
+    setMounted(true);
+    if (typeof window === 'undefined') return;
+    const savedConfig = localStorage.getItem(STORAGE_KEYS.config);
+    const savedMessages = localStorage.getItem(STORAGE_KEYS.messages);
+    const savedInfographic = localStorage.getItem(STORAGE_KEYS.infographic);
+    if (savedConfig) {
+      try {
+        const parsed = {...DEFAULT_CONFIG, ...JSON.parse(savedConfig)};
+        const safeProvider =
+          PROVIDER_OPTIONS.find((item) => item.value === parsed.provider)
+            ?.value ||
+          PROVIDER_OPTIONS[0]?.value ||
+          DEFAULT_CONFIG.provider;
+        setConfig({
+          ...parsed,
+          provider: safeProvider,
+          baseUrl:
+            parsed.baseUrl ||
+            PROVIDER_OPTIONS.find((i) => i.value === safeProvider)?.baseUrl ||
+            DEFAULT_CONFIG.baseUrl,
+        });
+      } catch {
+        setConfig(DEFAULT_CONFIG);
+      }
+    }
+    if (savedMessages) {
+      try {
+        setMessages(JSON.parse(savedMessages));
+      } catch {
+        setMessages([]);
+      }
+    }
+    if (savedInfographic) {
+      try {
+        setPreviewOptions(JSON.parse(savedInfographic));
+      } catch {
+        setPreviewOptions(null);
+      }
+    }
+    return () => {
+      if (copyTimerRef.current) {
+        clearTimeout(copyTimerRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!mounted || recoveredPendingRef.current || isGenerating) return;
+    if (messages.length === 0) return;
+    const last = messages[messages.length - 1];
+    if (last.role === 'user') {
+      recoveredPendingRef.current = true;
+      const errorAssistant: ChatMessage = {
+        id: crypto.randomUUID(),
+        role: 'assistant',
+        text: '上次请求未完成，已标记为失败',
+        isError: true,
+        config: previewOptions || undefined,
+      };
+      setMessages((prev) => [...prev, errorAssistant]);
+      if (previewOptions) {
+        setLastJSON(formatJSON(previewOptions));
+      } else {
+        setLastJSON('');
+      }
+      setPreviewError('上次请求未完成，已标记为失败');
+      setActiveTab('preview');
+    }
+  }, [messages, mounted, isGenerating, previewOptions]);
+
+  useEffect(() => {
+    if (!mounted) return;
+    localStorage.setItem(STORAGE_KEYS.config, JSON.stringify(config));
+  }, [config, mounted]);
+
+  useEffect(() => {
+    if (!mounted) return;
+    localStorage.setItem(STORAGE_KEYS.messages, JSON.stringify(messages));
+  }, [messages, mounted]);
+
+  useEffect(() => {
+    if (!mounted || !previewOptions) return;
+    localStorage.setItem(
+      STORAGE_KEYS.infographic,
+      JSON.stringify(previewOptions)
+    );
+  }, [previewOptions, mounted]);
+
+  const effectivePreview = previewOptions || FALLBACK_OPTIONS;
+  const isReady = !!config.apiKey;
+
+  const handleSend = async (value?: string) => {
+    const content = (value ?? prompt).trim();
+    if (!content) return;
+
+    const newUser: ChatMessage = {
+      id: crypto.randomUUID(),
+      role: 'user',
+      text: content,
+    };
+    setMessages((prev) => [...prev, newUser]);
+    setPrompt('');
+    setIsGenerating(true);
+
+    try {
+      if (!config.apiKey) {
+        throw new Error('API Key 不存在');
+      }
+
+      const modelConfig: AIModelConfig = {
+        provider: config.provider,
+        baseURL: config.baseUrl.replace(/\/$/, ''),
+        apiKey: config.apiKey,
+        model: config.model || DEFAULT_CONFIG.model,
+      };
+
+      const payloadMessages: Array<{
+        role: 'user' | 'assistant' | 'system';
+        content: string;
+      }> = [
+        {
+          role: 'user',
+          content,
+        },
+      ];
+
+      const assistantContent =
+        (await sendMessage(modelConfig, payloadMessages)) ||
+        '无法解析模型返回内容';
+      let parsedConfig: Partial<InfographicOptions> | null = null;
+      let parseError = '';
+
+      try {
+        const match = assistantContent.match(/```(?:json)?\s*([\s\S]*?)```/);
+        const candidate = match ? match[1] : assistantContent;
+        const raw = JSON.parse(candidate);
+        parsedConfig =
+          raw && typeof raw === 'object' && 'config' in raw
+            ? (raw as {config: Partial<InfographicOptions>}).config
+            : (raw as Partial<InfographicOptions>);
+      } catch (err) {
+        parseError = err instanceof Error ? err.message : '解析失败';
+      }
+
+      const newAssistant: ChatMessage = {
+        id: crypto.randomUUID(),
+        role: 'assistant',
+        text: parsedConfig ? '已生成配置' : assistantContent,
+        summary: parsedConfig ? undefined : undefined,
+        isError: !parsedConfig,
+        config: parsedConfig || undefined,
+      };
+
+      setMessages((prev) => [...prev, newAssistant]);
+
+      if (parsedConfig) {
+        setPreviewOptions(parsedConfig);
+        setPreviewError(null);
+        setLastJSON(formatJSON(parsedConfig));
+        setActiveTab('preview');
+      } else {
+        const fallbackText =
+          parseError ||
+          (typeof assistantContent === 'string' ? assistantContent : '');
+        setLastJSON(fallbackText);
+        setPreviewError(parseError || null);
+      }
+    } catch (error) {
+      const newAssistant: ChatMessage = {
+        id: crypto.randomUUID(),
+        role: 'assistant',
+        text:
+          error instanceof Error
+            ? error.message
+            : '生成失败，请检查网络或 Key 配置。',
+        isError: true,
+        config: previewOptions || undefined,
+      };
+      setMessages((prev) => [...prev, newAssistant]);
+      if (previewOptions) {
+        setLastJSON(formatJSON(previewOptions));
+      }
+    } finally {
+      setIsGenerating(false);
+      inputRef.current?.focus();
+    }
+  };
+
+  const handleCopy = async (text: string) => {
+    if (!text) return;
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopyHint('已复制');
+      if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+      copyTimerRef.current = setTimeout(() => setCopyHint(''), 1500);
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleClear = () => {
+    setMessages([]);
+    setPreviewOptions(null);
+    setLastJSON('');
+    setPreviewError(null);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(STORAGE_KEYS.messages);
+      localStorage.removeItem(STORAGE_KEYS.infographic);
+    }
+  };
+
+  const historyItems = useMemo(() => {
+    const items: Array<{
+      id: string;
+      title: string;
+      text: string;
+      status: 'pending' | 'ready' | 'error';
+      summary?: string;
+      config?: Partial<InfographicOptions>;
+    }> = [];
+    let pendingUser: ChatMessage | any = null;
+    messages.forEach((m) => {
+      if (m.role === 'user') {
+        pendingUser = m;
+      } else if (m.role === 'assistant' && pendingUser) {
+        items.push({
+          id: pendingUser.id,
+          title:
+            pendingUser.text.slice(0, 18) +
+            (pendingUser.text.length > 18 ? '…' : ''),
+          text: pendingUser.text,
+          status: m.isError ? 'error' : 'ready',
+          summary: m.summary,
+          config: m.config,
+        });
+        pendingUser = null;
+      }
+    });
+    if (pendingUser) {
+      items.push({
+        id: pendingUser.id,
+        title:
+          pendingUser.text.length > 18
+            ? pendingUser.text.slice(0, 18) + '…'
+            : pendingUser.text || '待输入',
+        text: pendingUser.text,
+        status: 'pending',
+      });
+    }
+    return items;
+  }, [messages]);
+
+  const handleSelectHistory = (config?: Partial<InfographicOptions>) => {
+    if (!config) return;
+    setPreviewOptions(config);
+    setPreviewError(null);
+    setLastJSON(formatJSON(config));
+    setActiveTab('preview');
+  };
+
+  const handleRetry = (text: string) => {
+    handleSend(text);
+  };
+
+  const handleJsonChange = (value: string) => {
+    setLastJSON(value);
+    try {
+      const parsed = JSON.parse(value) as Partial<InfographicOptions>;
+      setPreviewOptions(parsed);
+      setPreviewError(null);
+    } catch (err) {
+      setPreviewError(err instanceof Error ? err.message : 'JSON 解析失败');
+    }
+  };
+
+  return (
+    <Page
+      toc={[]}
+      routeTree={{title: 'AI', path: '/ai', routes: []}}
+      meta={{title: 'AI 在线体验'}}
+      section="ai">
+      <div className="relative isolate overflow-hidden bg-wash dark:bg-wash-dark">
+        {/* Background decorations */}
+        <div className="pointer-events-none absolute -left-32 -top-40 h-96 w-96 rounded-full bg-gradient-to-br from-link/20 via-link/5 to-transparent blur-3xl" />
+        <div className="pointer-events-none absolute -right-32 top-20 h-96 w-96 rounded-full bg-gradient-to-br from-purple-40/15 via-transparent to-link/5 blur-3xl" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-border dark:via-border-dark to-transparent" />
+
+        <div className="relative mx-auto max-w-7xl px-5 sm:px-12 py-12 lg:py-16 flex flex-col gap-12">
+          {/* Header Section */}
+          <header className="max-w-4xl space-y-6">
+            <div>
+              <h1 className="flex items-center gap-3 text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight text-primary dark:text-primary-dark">
+                <IconStarTwinkle className="w-10 h-10 md:w-12 md:h-12 text-link dark:text-link-dark" />
+                <span>
+                  AI 生成
+                  <span className="bg-gradient-to-r from-link to-purple-40 bg-clip-text text-transparent">
+                    {' '}
+                    信息图
+                  </span>
+                </span>
+              </h1>
+            </div>
+
+            <p className="text-lg lg:text-xl text-secondary dark:text-secondary-dark max-w-3xl leading-relaxed">
+              描述需求、上传自己的接口配置，即可让大模型生成 AntV Infographic
+              的完整配置并实时预览。
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <button
+                onClick={() => setIsConfigOpen(true)}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-link text-white dark:bg-link-dark hover:bg-opacity-90 text-sm font-semibold shadow-secondary-button-stroke active:scale-[.98] transition-all">
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                </svg>
+                {isReady ? '修改配置' : '配置模型服务'}
+              </button>
+              <button
+                onClick={handleClear}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-primary dark:text-primary-dark text-sm shadow-secondary-button-stroke dark:shadow-secondary-button-stroke-dark hover:bg-gray-40/5 active:bg-gray-40/10 hover:dark:bg-gray-60/5 active:dark:bg-gray-60/10 font-semibold active:scale-[.98] transition-all">
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+                清空对话
+              </button>
+            </div>
+          </header>
+
+          <section className="space-y-5">
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-tertiary dark:text-tertiary-dark">
+                AI 工作区
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <ChatPanel
+                prompt={prompt}
+                onPromptChange={setPrompt}
+                onSend={handleSend}
+                isGenerating={isGenerating}
+                textareaRef={inputRef}
+                history={historyItems}
+                onSelectHistory={handleSelectHistory}
+                onRetry={handleRetry}
+              />
+
+              {
+                <PreviewPanel
+                  activeTab={activeTab}
+                  onTabChange={setActiveTab}
+                  isGenerating={isGenerating}
+                  previewOptions={effectivePreview}
+                  json={lastJSON}
+                  onJsonChange={handleJsonChange}
+                  error={previewError}
+                  onCopy={() =>
+                    handleCopy(lastJSON || formatJSON(effectivePreview))
+                  }
+                />
+              }
+            </div>
+          </section>
+
+          {copyHint && (
+            <div className="fixed bottom-8 right-8 rounded-full bg-link dark:bg-link-dark text-white px-5 py-2.5 shadow-lg animate-fade-up font-medium text-sm">
+              ✓ {copyHint}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <ConfigPanel
+        open={isConfigOpen}
+        value={config}
+        onClose={() => setIsConfigOpen(false)}
+        onSave={(value) => {
+          setConfig(value);
+          setIsConfigOpen(false);
+        }}
+      />
+    </Page>
+  );
+}
