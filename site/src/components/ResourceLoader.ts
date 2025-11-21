@@ -2,7 +2,7 @@ import {loadSVGResource, registerResourceLoader} from '@antv/infographic';
 
 // 缓存 SVG 文本而不是 DOM 元素
 const svgTextCache = new Map<string, string>();
-const pendingRequests = new Map<string, Promise<string>>();
+const pendingRequests = new Map<string, Promise<string | null>>();
 
 registerResourceLoader(async (config) => {
   const {data} = config;
@@ -17,7 +17,7 @@ registerResourceLoader(async (config) => {
     }
 
     const key = `${type}:${id}`;
-    let svgText: string;
+    let svgText: string | null;
 
     // 1. 命中缓存
     if (svgTextCache.has(key)) {
@@ -37,27 +37,29 @@ registerResourceLoader(async (config) => {
         } else if (type === 'illus') {
           url = `https://raw.githubusercontent.com/balazser/undraw-svg-collection/refs/heads/main/svgs/${id}.svg`;
         } else {
-          throw new Error(`Unknown resource type: ${type}`);
+          return null;
         }
 
         try {
           const response = await fetch(url);
 
           if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: Failed to load ${url}`);
+            console.error(`HTTP ${response.status}: Failed to load ${url}`);
+            return null;
           }
 
           const text = await response.text();
 
           if (!text || !text.trim().startsWith('<svg')) {
-            throw new Error(`Invalid SVG content from ${url}`);
+            console.error(`Invalid SVG content from ${url}`);
+            return null;
           }
 
           svgTextCache.set(key, text);
           return text;
         } catch (fetchError) {
           console.error(`Failed to fetch resource ${key}:`, fetchError);
-          throw fetchError;
+          return null;
         }
       })();
 
@@ -72,6 +74,10 @@ registerResourceLoader(async (config) => {
       } finally {
         pendingRequests.delete(key);
       }
+    }
+
+    if (!svgText) {
+      return null;
     }
 
     const resource = loadSVGResource(svgText);
