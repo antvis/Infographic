@@ -27,11 +27,11 @@ jobs:
           node-version: 20
           cache: npm
           cache-dependency-path: |
-            package-lock.json
-            site/package-lock.json
+            package.json
+            site/package.json
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build library
         run: npm run build
