@@ -16,14 +16,12 @@ const getType = (templateString: string | undefined) => {
 // ==========================================
 // 2. Component: Glass Tag (毛玻璃标签)
 // ==========================================
-const TypeTag = ({label}: {label: keyof typeof TYPE_DISPLAY_NAMES}) => (
-  <div className="absolute top-4 left-4 z-20 overflow-hidden rounded-full">
-    <div className="relative px-4 py-1.5 bg-white/80 dark:bg-gray-90/80 backdrop-blur-md border border-primary/10 dark:border-primary-dark/10 shadow-secondary-button-stroke dark:shadow-secondary-button-stroke-dark flex items-center gap-2">
-      <div className="w-1.5 h-1.5 rounded-full bg-link dark:bg-link-dark" />
-      <span className="text-[11px] font-semibold tracking-wide text-primary dark:text-primary-dark uppercase">
-        {TYPE_DISPLAY_NAMES[label]}
-      </span>
-    </div>
+const TypeTag = ({label}: {label: string}) => (
+  <div className="absolute top-4 left-4 z-20 flex items-center gap-2">
+    <span className="w-1.5 h-1.5 rounded-full bg-link dark:bg-link-dark" />
+    <span className="text-[11px] font-semibold tracking-wide text-primary dark:text-primary-dark uppercase">
+      {TYPE_DISPLAY_NAMES[label as keyof typeof TYPE_DISPLAY_NAMES]}
+    </span>
   </div>
 );
 
@@ -35,7 +33,7 @@ const FilterChip = ({
   isActive,
   onClick,
 }: {
-  label: keyof typeof TYPE_DISPLAY_NAMES;
+  label: string;
   isActive: boolean;
   onClick: () => void;
 }) => {
@@ -50,7 +48,7 @@ const FilterChip = ({
             : 'bg-card text-secondary border-primary/10 hover:border-link/50 hover:text-primary hover:bg-gray-40/5 dark:bg-card-dark dark:text-secondary-dark dark:border-primary-dark/15 dark:hover:border-link-dark/50 dark:hover:text-primary-dark dark:hover:bg-gray-60/5'
         }
       `}>
-      {TYPE_DISPLAY_NAMES[label]}
+      {TYPE_DISPLAY_NAMES[label as keyof typeof TYPE_DISPLAY_NAMES]}
     </button>
   );
 };
@@ -99,7 +97,7 @@ const GalleryCard = ({
               backgroundSize: '22px 22px',
             }}></div>
 
-          <div className="w-full h-full px-4 pt-6 pointer-events-none flex items-center justify-center">
+          <div className="w-full h-full pointer-events-none flex items-center justify-center">
             <Infographic
               options={{width: '100%', height: '100%', padding: 20, ...item}}
             />
@@ -114,7 +112,7 @@ const GalleryCard = ({
               }}
               className="flex items-center gap-2 text-link dark:text-link-dark font-semibold text-sm bg-card dark:bg-card-dark px-6 py-3 rounded-full shadow-secondary-button-stroke dark:shadow-secondary-button-stroke-dark border border-primary/10 dark:border-primary-dark/10">
               <Sparkles className="w-4 h-4" />
-              <span>Use Template</span>
+              <span>使用</span>
               <ArrowRight className="w-4 h-4 ml-1" />
             </motion.div>
           </div>

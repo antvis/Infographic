@@ -6,6 +6,7 @@ import type {RouteItem} from '../getRouteMeta';
 
 declare global {
   interface Window {
+    // @ts-expect-error ignore
     __theme: string;
     __setPreferredTheme: (theme: string) => void;
   }

@@ -6,20 +6,19 @@ export function Infographic(props: {options: Partial<InfographicOptions>}) {
   const ref = useRef<HTMLDivElement>(null);
   const theme = useTheme();
   const isDark = useMemo(() => theme === 'dark', [theme]);
-
   useEffect(() => {
     if (ref.current) {
+      const options = {...props.options};
+
       if (isDark) {
-        const options = {...props.options};
-        if (!options.themeConfig) options.themeConfig = {};
+        options.themeConfig = {...options.themeConfig};
         options.theme ||= 'dark';
         options.themeConfig!.colorBg = '#000';
       }
-
       try {
         const instance = new Renderer({
           container: ref.current,
-          ...props.options,
+          ...options,
           svg: {
             style: {
               width: '100%',

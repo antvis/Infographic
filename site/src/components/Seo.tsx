@@ -31,7 +31,6 @@ export const Seo = withRouter(
     router,
     children,
     isHomePage,
-    searchOrder,
   }: SeoProps & {router: Router}) => {
     const siteDomain = getDomain(siteConfig.languageCode);
     const canonicalUrl = `https://${siteDomain}${
