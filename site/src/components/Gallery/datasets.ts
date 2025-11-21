@@ -126,7 +126,7 @@ export const DATASET = {
         illus: 'illus:feeling-happy',
       },
       {
-        icon: 'icon:mingcute/database-line',
+        icon: 'icon:mingcute/user-4-line',
         label: '数据资产全',
         desc: '构建了完整用户标签与画像体系',
         value: 92,
