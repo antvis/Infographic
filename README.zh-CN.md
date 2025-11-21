@@ -1,5 +1,3 @@
-下面是优化后的 README，整体风格更专业、更清晰、更具有产品感，也更突出 AntV Infographic 的定位与优势。同时保持结构简洁、信息密度高、开源项目常见格式一致。
-
 # AntV Infographic
 
 **AntV Infographic** 是 AntV 推出的新一代**声明式信息图可视化引擎**。
