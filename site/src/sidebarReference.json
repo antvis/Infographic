@@ -1,0 +1,76 @@
+{
+  "title": "API Reference",
+  "path": "/reference",
+  "routes": [
+    {
+      "title": "JSX",
+      "path": "/reference/jsx",
+      "routes": [
+        {
+          "title": "原语节点",
+          "path": "/reference/primitive-nodes"
+        },
+        {
+          "title": "创建布局",
+          "path": "/reference/create-layout"
+        },
+        {
+          "title": "工具函数",
+          "path": "/reference/utility-functions"
+        }
+      ]
+    },
+    {
+      "title": "API",
+      "path": "/reference/api",
+      "routes": [
+        {
+          "title": "Infographic API",
+          "path": "/reference/infographic-api"
+        },
+        {
+          "title": "配置",
+          "path": "/reference/configuration"
+        },
+        {
+          "title": "类型定义",
+          "path": "/reference/types"
+        }
+      ]
+    },
+    {
+      "title": "设计资产",
+      "path": "/reference/design-assets",
+      "routes": [
+        {
+          "title": "内置结构",
+          "path": "/reference/built-in-structures"
+        },
+        {
+          "title": "内置数据项",
+          "path": "/reference/built-in-items"
+        },
+        {
+          "title": "内置模版",
+          "path": "/reference/built-in-templates"
+        },
+        {
+          "title": "内置主题",
+          "path": "/reference/built-in-themes"
+        },
+        {
+          "title": "内置色板",
+          "path": "/reference/built-in-palettes"
+        },
+        {
+          "title": "内置图案",
+          "path": "/reference/built-in-patterns"
+        },
+        {
+          "title": "内置组件",
+          "path": "/reference/built-in-components"
+        }
+      ]
+    }
+  ]
+}

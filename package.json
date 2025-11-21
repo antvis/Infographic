@@ -48,7 +48,10 @@
     "clean": "rimraf esm lib dist tsconfig.tsbuildinfo",
     "dev": "cd dev && npm run dev",
     "format": "prettier --write . --ignore-path ./.gitignore",
-    "lint": "eslint . --ext .ts,.tsx && npm run check:test",
+    "lint": "run-s lint:root lint:site",
+    "lint:root": "eslint . --ext .ts,.tsx --ignore-pattern 'site/**' && npm run check:test",
+    "lint:site": "npm --prefix site run lint",
+    "postinstall": "npm --prefix site install",
     "size": "size-limit",
     "test": "vitest --run --coverage"
   },

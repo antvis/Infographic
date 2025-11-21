@@ -1,41 +1,49 @@
-# Website
+# AntV Infographic Site
 
-This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
+## 快速开始
 
-## Installation
-
-```bash
-yarn
-```
-
-## Local Development
+### 安装
 
 ```bash
-yarn start
+npm install
 ```
 
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+### 本地开发
 
-## Build
+启动开发服务器
 
 ```bash
-yarn build
+# npm
+npm run dev
 ```
 
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
+然后打开浏览器访问 `http://localhost:3000`
 
-## Deployment
+## 项目结构
 
-Using SSH:
+- `/src/content` - Markdown 文档内容
+- `/src/components` - 组件
+- `/src/pages` - Next.js 页面路由
+- `/public` - 静态资源
+
+## 开发
+
+### 代码检查
+
+执行 Prettier、ESLint 和类型检查：
 
 ```bash
-USE_SSH=true yarn deploy
+npm run check-all
 ```
 
-Not using SSH:
+### 构建
+
+构建生产版本：
 
 ```bash
-GIT_USER=<Your GitHub username> yarn deploy
+npm run build
 ```
 
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+## License
+
+MIT

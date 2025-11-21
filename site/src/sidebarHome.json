@@ -1,0 +1,46 @@
+{
+  "title": "信息图文档",
+  "path": "/",
+  "routes": [
+    {
+      "hasSectionHeader": true,
+      "sectionHeader": "快速开始"
+    },
+    {
+      "title": "入门指南",
+      "path": "/learn/quick-start/getting-started"
+    },
+    {
+      "title": "安装",
+      "path": "/learn/quick-start/installation"
+    },
+    {
+      "hasSectionHeader": true,
+      "sectionHeader": "文档"
+    },
+    {
+      "title": "文档",
+      "path": "/learn"
+    },
+    {
+      "hasSectionHeader": true,
+      "sectionHeader": "API 参考"
+    },
+    {
+      "title": "参考文档",
+      "path": "/reference"
+    },
+    {
+      "hasSectionHeader": true,
+      "sectionHeader": "示例与体验"
+    },
+    {
+      "title": "示例",
+      "path": "/examples"
+    },
+    {
+      "title": "AI 在线体验",
+      "path": "/ai"
+    }
+  ]
+}
