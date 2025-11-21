@@ -31,6 +31,7 @@ interface PageProps {
   };
   section: 'learn' | 'reference' | 'examples' | 'ai' | 'home' | 'unknown';
   languages?: Languages | null;
+  showFooter?: boolean;
 }
 
 export function Page({
@@ -40,6 +41,7 @@ export function Page({
   meta,
   section,
   languages = null,
+  showFooter = true,
 }: PageProps) {
   const {asPath} = useRouter();
   const cleanedPath = asPath.split(/[\?\#]/)[0];
@@ -157,18 +159,20 @@ export function Page({
                 'self-stretch w-full',
                 isHomePage && 'bg-wash dark:bg-gray-95 mt-[-1px]'
               )}>
-              {!isHomePage && (
+              {!isHomePage && showFooter && (
                 <div className="w-full px-5 pt-10 mx-auto sm:px-12 md:px-12 md:pt-12 lg:pt-10">
                   <hr className="mx-auto max-w-7xl border-border dark:border-border-dark" />
                 </div>
               )}
-              <div
-                className={cn(
-                  'py-12 px-5 sm:px-12 md:px-12 sm:py-12 md:py-16 lg:py-14',
-                  isHomePage && 'lg:pt-0'
-                )}>
-                <Footer />
-              </div>
+              {showFooter && (
+                <div
+                  className={cn(
+                    'py-12 px-5 sm:px-12 md:px-12 sm:py-12 md:py-16 lg:py-14',
+                    isHomePage && 'lg:pt-0'
+                  )}>
+                  <Footer />
+                </div>
+              )}
             </div>
           </main>
         </Suspense>
