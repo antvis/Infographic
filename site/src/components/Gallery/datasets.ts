@@ -312,6 +312,9 @@ export const DATASET = {
         label: '新能源子公司',
         desc: '绿色能源项目实现规模化盈利，增长潜力巨大',
         value: 50,
+      },
+    ],
+  },
   TIMELINE: {
     title: '企业发展时间线',
     desc: '展示企业在关键年份的战略动作与发展节点',
