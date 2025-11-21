@@ -1,0 +1,136 @@
+{
+  "title": "文档",
+  "path": "/learn",
+  "routes": [
+    {
+      "title": "快速开始",
+      "path": "/learn",
+      "routes": [
+        {
+          "title": "入门指南",
+          "path": "/learn/getting-started"
+        },
+        {
+          "title": "信息图语法",
+          "path": "/learn/infographic-syntax"
+        }
+      ]
+    },
+    {
+      "title": "核心概念",
+      "path": "/learn/core-concepts",
+      "routes": [
+        {
+          "title": "设计",
+          "path": "/learn/design"
+        },
+        {
+          "title": "模版",
+          "path": "/learn/template"
+        },
+        {
+          "title": "数据",
+          "path": "/learn/data"
+        },
+        {
+          "title": "主题",
+          "path": "/learn/theme"
+        },
+        {
+          "title": "资源",
+          "path": "/learn/resources"
+        }
+      ]
+    },
+    {
+      "title": "自定义设计",
+      "path": "/learn/custom-design",
+      "routes": [
+        {
+          "title": "自定义结构",
+          "path": "/learn/custom-structure"
+        },
+        {
+          "title": "自定义数据项",
+          "path": "/learn/custom-data-items"
+        },
+        {
+          "title": "自定义模版",
+          "path": "/learn/custom-template"
+        },
+        {
+          "title": "自定义主题",
+          "path": "/learn/custom-theme"
+        },
+        {
+          "title": "自定义色板",
+          "path": "/learn/custom-palette"
+        },
+        {
+          "title": "自定义字体",
+          "path": "/learn/custom-fonts"
+        },
+        {
+          "title": "自定义资源加载器",
+          "path": "/learn/custom-resource-loader"
+        },
+        {
+          "title": "自定义图案",
+          "path": "/learn/custom-pattern"
+        }
+      ]
+    },
+    {
+      "title": "信息图理论",
+      "path": "/learn/infographic-theory",
+      "routes": [
+        {
+          "title": "基本概念",
+          "path": "/learn/basic-concepts"
+        },
+        {
+          "title": "信息图分类",
+          "path": "/learn/infographic-classification"
+        },
+        {
+          "title": "核心理论",
+          "path": "/learn/core-theory"
+        },
+        {
+          "title": "信息图构成要素",
+          "path": "/learn/infographic-elements"
+        },
+        {
+          "title": "信息图设计",
+          "path": "/learn/infographic-design"
+        }
+      ]
+    },
+    {
+      "title": "参与贡献",
+      "path": "/learn/contributing",
+      "routes": [
+        {
+          "title": "项目介绍",
+          "path": "/learn/project-introduction"
+        },
+        {
+          "title": "开源计划",
+          "path": "/learn/os-plan"
+        },
+        {
+          "title": "贡献指南",
+          "path": "/learn/contribution-guide"
+        },
+        {
+          "title": "代码规范",
+          "path": "/learn/code-standards"
+        },
+        {
+          "title": "提交 PR",
+          "path": "/learn/submit-pr"
+        }
+      ]
+    }
+  ]
+}
