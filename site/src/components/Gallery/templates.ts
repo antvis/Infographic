@@ -40,7 +40,7 @@ export const BUILTIN_TEMPLATES: InfographicOptions[] = [
       palette: 'antv',
     },
     template: 'compare-hierarchy-left-right-circle-node-pill-badge',
-    data: DATASET.COMPARE,
+    data: DATASET.PROS_CONS,
   },
   {
     theme: 'light',
@@ -48,7 +48,7 @@ export const BUILTIN_TEMPLATES: InfographicOptions[] = [
       palette: 'antv',
     },
     template: 'compare-hierarchy-left-right-circle-node-plain-text',
-    data: DATASET.COMPARE,
+    data: DATASET.PROS_CONS,
   },
   {
     theme: 'light',
@@ -64,7 +64,7 @@ export const BUILTIN_TEMPLATES: InfographicOptions[] = [
       palette: 'antv',
     },
     template: 'compare-binary-horizontal-simple-fold',
-    data: DATASET.COMPARE,
+    data: DATASET.PROS_CONS,
   },
   {
     theme: 'light',
@@ -72,7 +72,7 @@ export const BUILTIN_TEMPLATES: InfographicOptions[] = [
       palette: 'antv',
     },
     template: 'compare-hierarchy-row-letter-card-compact-card',
-    data: DATASET.COMPARE,
+    data: DATASET.PROS_CONS,
   },
   {
     theme: 'light',
@@ -80,7 +80,7 @@ export const BUILTIN_TEMPLATES: InfographicOptions[] = [
       palette: 'antv',
     },
     template: 'compare-binary-horizontal-underline-text-fold',
-    data: DATASET.COMPARE,
+    data: DATASET.PROS_CONS,
   },
   {
     theme: 'light',
@@ -88,7 +88,7 @@ export const BUILTIN_TEMPLATES: InfographicOptions[] = [
       palette: 'antv',
     },
     template: 'compare-binary-horizontal-underline-text-arrow',
-    data: DATASET.COMPARE,
+    data: DATASET.PROS_CONS,
   },
   {
     theme: 'light',
@@ -96,7 +96,7 @@ export const BUILTIN_TEMPLATES: InfographicOptions[] = [
       palette: 'antv',
     },
     template: 'compare-binary-horizontal-compact-card-arrow',
-    data: DATASET.COMPARE,
+    data: DATASET.PROS_CONS,
   },
   {
     theme: 'light',
@@ -104,7 +104,7 @@ export const BUILTIN_TEMPLATES: InfographicOptions[] = [
       palette: 'antv',
     },
     template: 'compare-binary-horizontal-badge-card-vs',
-    data: DATASET.COMPARE,
+    data: DATASET.PROS_CONS,
   },
   {
     theme: 'light',
@@ -112,7 +112,7 @@ export const BUILTIN_TEMPLATES: InfographicOptions[] = [
       palette: 'antv',
     },
     template: 'compare-binary-horizontal-compact-card-vs',
-    data: DATASET.COMPARE,
+    data: DATASET.PROS_CONS,
   },
   {
     theme: 'light',
@@ -152,7 +152,7 @@ export const BUILTIN_TEMPLATES: InfographicOptions[] = [
       palette: 'antv',
     },
     template: 'list-column-vertical-icon-arrow',
-    data: DATASET.LIST,
+    data: DATASET.TIMELINE,
   },
   {
     theme: 'light',
@@ -248,7 +248,7 @@ export const BUILTIN_TEMPLATES: InfographicOptions[] = [
       palette: 'antv',
     },
     template: 'list-column-simple-vertical-arrow',
-    data: DATASET.LIST,
+    data: DATASET.TIMELINE,
   },
   {
     theme: 'light',
@@ -304,7 +304,7 @@ export const BUILTIN_TEMPLATES: InfographicOptions[] = [
       palette: 'antv',
     },
     template: 'chart-column-simple',
-    data: DATASET.LIST,
+    data: DATASET.CHART,
   },
   {
     theme: 'light',

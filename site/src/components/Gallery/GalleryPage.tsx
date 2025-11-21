@@ -85,7 +85,6 @@ const GalleryCard = ({
         }}
         transition={{type: 'spring', stiffness: 400, damping: 25}}
         className="relative flex-1 bg-white dark:bg-[#18181c] rounded-[1.6rem] overflow-hidden border border-slate-100 dark:border-[#23232a] shadow-lg dark:shadow-black/40 cursor-pointer transition-colors duration-300 ease-out"
-        // 悬停时边框颜色微变
         style={{transformStyle: 'preserve-3d'}}>
         {/* 1. 分类标签 */}
         <TypeTag label={type} />
@@ -95,7 +94,8 @@ const GalleryCard = ({
           <div
             className="absolute inset-0 opacity-[0.4]"
             style={{
-              backgroundImage: 'radial-gradient(var(--tw-prose-bullets, #cbd5e1) 1px, transparent 1px)',
+              backgroundImage:
+                'radial-gradient(var(--tw-prose-bullets, #cbd5e1) 1px, transparent 1px)',
               backgroundSize: '24px 24px',
             }}></div>
 
@@ -161,7 +161,7 @@ export default function GalleryPage() {
   return (
     <div className="min-h-screen bg-[#F8F9FC] dark:bg-[#18181c] text-slate-800 dark:text-slate-100 font-sans selection:bg-[#ff356a]/20 dark:selection:bg-[#ff356a]/40">
       {/* Header Area */}
-  <div className="pt-20 pb-12 px-6 md:px-12 max-w-[1600px] mx-auto text-center md:text-left">
+      <div className="pt-20 pb-12 px-6 md:px-12 max-w-[1600px] mx-auto text-center md:text-left">
         <motion.div
           initial={{opacity: 0, y: 20}}
           animate={{opacity: 1, y: 0}}
@@ -176,7 +176,7 @@ export default function GalleryPage() {
       </div>
 
       {/* Filter Bar Area */}
-  <div className="sticky top-16 z-40 bg-[#F8F9FC]/85 dark:bg-[#18181c]/85 backdrop-blur-xl border-b border-slate-200/60 dark:border-slate-700/60 py-4 mb-8 transition-all">
+      <div className="sticky top-16 z-40 bg-[#F8F9FC]/85 dark:bg-[#18181c]/85 backdrop-blur-xl border-b border-slate-200/60 dark:border-slate-700/60 py-4 mb-8 transition-all">
         <motion.div
           initial={{opacity: 0, y: 20}}
           animate={{opacity: 1, y: 0}}
@@ -230,7 +230,7 @@ export default function GalleryPage() {
       </div>
 
       {/* Grid Area */}
-  <main className="px-6 md:px-12 pb-24 max-w-[1600px] mx-auto">
+      <main className="px-6 md:px-12 pb-24 max-w-[1600px] mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-8 md:gap-12">
           {filteredTemplates.map((item, index) => (
             <GalleryCard
