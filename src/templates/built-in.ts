@@ -301,6 +301,9 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
       structure: { type: 'sequence-pyramid' },
       items: [{ type: 'simple', showIcon: false, usePaletteColor: true }],
     },
+    themeConfig: {
+      colorPrimary: '#1677ff',
+    },
   },
   'list-row-horizontal-icon-line': {
     design: {
