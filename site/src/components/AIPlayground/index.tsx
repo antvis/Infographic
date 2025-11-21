@@ -1,5 +1,6 @@
 import {InfographicOptions} from '@antv/infographic';
 import {Page} from 'components/Layout/Page';
+import {AnimatePresence, motion} from 'framer-motion';
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {IconStarTwinkle} from '../Icon/IconStarTwinkle';
 import {ChatPanel} from './ChatPanel';
@@ -31,6 +32,7 @@ export function AIPageContent() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const copyTimerRef = useRef<NodeJS.Timeout | null>(null);
   const recoveredPendingRef = useRef(false);
+  const PANEL_HEIGHT_CLASS = 'min-h-[520px] h-[640px] max-h-[75vh]';
 
   useEffect(() => {
     setMounted(true);
@@ -322,27 +324,33 @@ export function AIPageContent() {
 
         <div className="relative mx-auto max-w-7xl px-5 sm:px-12 py-12 lg:py-16 flex flex-col gap-12">
           {/* Header Section */}
-          <header className="max-w-4xl space-y-6">
+          <motion.header
+            initial={{opacity: 0, y: 20}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.6, ease: 'easeOut'}}
+            className="max-w-4xl space-y-6">
             <div>
               <h1 className="flex items-center gap-3 text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight text-primary dark:text-primary-dark">
                 <IconStarTwinkle className="w-10 h-10 md:w-12 md:h-12 text-link dark:text-link-dark" />
                 <span>
-                  AI 生成
+                  AI
                   <span className="bg-gradient-to-r from-link to-purple-40 bg-clip-text text-transparent">
                     {' '}
-                    信息图
+                    Infographic
                   </span>
                 </span>
               </h1>
             </div>
 
             <p className="text-lg lg:text-xl text-secondary dark:text-secondary-dark max-w-3xl leading-relaxed">
-              描述需求、上传自己的接口配置，即可让大模型生成 AntV Infographic
-              的完整配置并实时预览。
+              将你在日常写作、汇报或其他文字工作中遇到的内容粘贴到这里，AI
+              会理解语境并为你生成相匹配的信息图方案
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
-              <button
+              <motion.button
+                whileHover={{y: -2, scale: 1.01}}
+                whileTap={{scale: 0.98, y: 0}}
                 onClick={() => setIsConfigOpen(true)}
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-link text-white dark:bg-link-dark hover:bg-opacity-90 text-sm font-semibold shadow-secondary-button-stroke active:scale-[.98] transition-all">
                 <svg
@@ -364,8 +372,10 @@ export function AIPageContent() {
                   />
                 </svg>
                 {isReady ? '修改配置' : '配置模型服务'}
-              </button>
-              <button
+              </motion.button>
+              <motion.button
+                whileHover={{y: -2, scale: 1.01}}
+                whileTap={{scale: 0.98, y: 0}}
                 onClick={handleClear}
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-primary dark:text-primary-dark text-sm shadow-secondary-button-stroke dark:shadow-secondary-button-stroke-dark hover:bg-gray-40/5 active:bg-gray-40/10 hover:dark:bg-gray-60/5 active:dark:bg-gray-60/10 font-semibold active:scale-[.98] transition-all">
                 <svg
@@ -381,11 +391,15 @@ export function AIPageContent() {
                   />
                 </svg>
                 清空对话
-              </button>
+              </motion.button>
             </div>
-          </header>
+          </motion.header>
 
-          <section className="space-y-5">
+          <motion.section
+            initial={{opacity: 0, y: 10}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.5, ease: 'easeOut', delay: 0.1}}
+            className="space-y-5">
             <div className="space-y-2">
               <p className="text-sm font-medium text-tertiary dark:text-tertiary-dark">
                 AI 工作区
@@ -402,6 +416,7 @@ export function AIPageContent() {
                 history={historyItems}
                 onSelectHistory={handleSelectHistory}
                 onRetry={handleRetry}
+                panelClassName={PANEL_HEIGHT_CLASS}
               />
 
               {
@@ -413,19 +428,27 @@ export function AIPageContent() {
                   json={lastJSON}
                   onJsonChange={handleJsonChange}
                   error={previewError}
+                  panelClassName={PANEL_HEIGHT_CLASS}
                   onCopy={() =>
                     handleCopy(lastJSON || formatJSON(effectivePreview))
                   }
                 />
               }
             </div>
-          </section>
+          </motion.section>
 
-          {copyHint && (
-            <div className="fixed bottom-8 right-8 rounded-full bg-link dark:bg-link-dark text-white px-5 py-2.5 shadow-lg animate-fade-up font-medium text-sm">
-              ✓ {copyHint}
-            </div>
-          )}
+          <AnimatePresence>
+            {copyHint && (
+              <motion.div
+                initial={{opacity: 0, y: 12}}
+                animate={{opacity: 1, y: 0}}
+                exit={{opacity: 0, y: 12}}
+                transition={{duration: 0.25}}
+                className="fixed bottom-8 right-8 rounded-full bg-link dark:bg-link-dark text-white px-5 py-2.5 shadow-lg font-medium text-sm">
+                ✓ {copyHint}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 

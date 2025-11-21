@@ -8,7 +8,7 @@ export default function Examples() {
       routeTree={{title: '示例', path: '/examples', routes: []}}
       meta={{title: '示例'}}
       section="examples">
-        <GalleryPage />
+      <GalleryPage />
     </Page>
   );
 }
