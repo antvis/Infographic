@@ -2,7 +2,14 @@
 
 import cn from 'classnames';
 import {ReactNode, useEffect, useRef, useState} from 'react';
+import {IconErrorCircle} from '../../Icon/IconErrorCircle';
 import {IconRestart} from '../../Icon/IconRestart';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '../../ui/tooltip';
 
 interface BrowserChromeProps {
   children: ReactNode;
@@ -13,6 +20,8 @@ interface BrowserChromeProps {
   hasFullscreen?: boolean;
   onRestart?: () => void;
   error?: string | null;
+  toolbarContent?: ReactNode;
+  hideDefaultActions?: boolean;
 }
 
 /**
@@ -34,6 +43,8 @@ export function BrowserChrome({
   hasFullscreen = false,
   onRestart,
   error,
+  toolbarContent,
+  hideDefaultActions = false,
 }: BrowserChromeProps) {
   const [restartId, setRestartId] = useState(0);
   const isPulsing = hasPulse && restartId === 0;
@@ -173,36 +184,28 @@ export function BrowserChrome({
         }>
         {/* 地址栏 */}
         <div className="w-full h-14 rounded-t-2xl shadow-outer-border backdrop-filter overflow-visible backdrop-blur-lg backdrop-saturate-200 bg-wash dark:bg-card-dark z-50 absolute top-0 px-3 gap-2 flex flex-row items-center">
-          <div className="select-none h-8 relative bg-gray-30/20 dark:bg-gray-950 text-sm text-tertiary dark:text-tertiary-dark text-center rounded-full w-full flex-row flex space-between items-center">
+          <div className="select-none h-8 relative bg-gray-30/20 dark:bg-gray-950 text-sm text-tertiary dark:text-tertiary-dark text-center rounded-full flex-1 min-w-0 flex-row flex items-center justify-center px-3">
             {hasRefresh && <div className="h-4 w-6" />}
-            <div className="w-full leading-snug flex flex-row items-center justify-center">
+            <div className="w-full leading-snug flex flex-row items-center justify-center truncate">
               {/* 锁图标或错误图标 */}
               {error ? (
-                <div className="relative group">
-                  <svg
-                    className="text-red-500 dark:text-red-400 me-1"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                  {/* Tooltip */}
-                  <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 hidden group-hover:block z-[100] w-64">
-                    <div className="bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs rounded-lg p-3 shadow-xl">
-                      <div className="font-semibold mb-1">JSON 语法错误</div>
-                      <div className="font-mono text-[11px] break-words">
-                        {error}
+                <TooltipProvider delayDuration={150}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="inline-flex">
+                        <IconErrorCircle className="text-red-500 dark:text-red-400 me-1" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="max-w-xs">
+                      <div className="space-y-1">
+                        <div className="font-semibold">JSON 语法错误</div>
+                        <div className="font-mono text-[11px] break-words">
+                          {error}
+                        </div>
                       </div>
-                      {/* 小三角 */}
-                      <div className="absolute left-1/2 -translate-x-1/2 -top-1 w-2 h-2 bg-gray-900 dark:bg-gray-100 rotate-45"></div>
-                    </div>
-                  </div>
-                </div>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               ) : (
                 <svg
                   className="text-tertiary dark:text-tertiary-dark me-1 opacity-60"
@@ -226,73 +229,83 @@ export function BrowserChrome({
               </span>
               {path}
             </div>
-
-            {/* 刷新按钮 */}
-            {hasRefresh && (
-              <div
-                ref={refreshRef}
-                className={cn(
-                  'relative rounded-full flex justify-center items-center',
-                  isPulsing && shouldAnimatePulse && 'animation-pulse-button'
-                )}>
-                {isPulsing && shouldAnimatePulse && (
-                  <div className="z-0 absolute shadow-[0_0_0_8px_rgba(0,0,0,0.5)] inset-0 rounded-full animation-pulse-shadow" />
-                )}
-                <button
-                  aria-label="Reload"
-                  onClick={handleRestart}
-                  className={
-                    'z-10 flex items-center p-1.5 rounded-full cursor-pointer justify-center bg-[#ebecef] hover:bg-[#d3d7de] dark:bg-gray-70 dark:hover:bg-gray-60'
-                  }>
-                  <IconRestart className="text-tertiary dark:text-tertiary-dark text-lg" />
-                </button>
-              </div>
-            )}
-
-            {/* 全屏按钮 */}
-            {hasFullscreen && (
-              <button
-                aria-label={
-                  isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'
-                }
-                onClick={toggleFullscreen}
-                className="flex items-center p-1.5 rounded-full cursor-pointer justify-center bg-[#ebecef] hover:bg-[#d3d7de] dark:bg-gray-70 dark:hover:bg-gray-60 transition-colors">
-                {isFullscreen ? (
-                  <svg
-                    className="text-tertiary dark:text-tertiary-dark"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M4 14h6m0 0v6m0-6l-7 7m17-11h-6m0 0V4m0 6l7-7"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    className="text-tertiary dark:text-tertiary-dark"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                )}
-              </button>
-            )}
           </div>
+
+          {toolbarContent && (
+            <div className="flex items-center gap-1.5 shrink-0 ps-1">
+              {toolbarContent}
+            </div>
+          )}
+
+          {!hideDefaultActions && (
+            <div className="flex items-center gap-1.5 shrink-0 ps-1">
+              {/* 刷新按钮 */}
+              {hasRefresh && (
+                <div
+                  ref={refreshRef}
+                  className={cn(
+                    'relative rounded-full flex justify-center items-center',
+                    isPulsing && shouldAnimatePulse && 'animation-pulse-button'
+                  )}>
+                  {isPulsing && shouldAnimatePulse && (
+                    <div className="z-0 absolute shadow-[0_0_0_8px_rgba(0,0,0,0.5)] inset-0 rounded-full animation-pulse-shadow" />
+                  )}
+                  <button
+                    aria-label="Reload"
+                    onClick={handleRestart}
+                    className={
+                      'z-10 flex items-center p-1.5 rounded-full cursor-pointer justify-center bg-[#ebecef] hover:bg-[#d3d7de] dark:bg-gray-70 dark:hover:bg-gray-60'
+                    }>
+                    <IconRestart className="text-tertiary dark:text-tertiary-dark text-lg" />
+                  </button>
+                </div>
+              )}
+
+              {/* 全屏按钮 */}
+              {hasFullscreen && (
+                <button
+                  aria-label={
+                    isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'
+                  }
+                  onClick={toggleFullscreen}
+                  className="flex items-center p-1.5 rounded-full cursor-pointer justify-center bg-[#ebecef] hover:bg-[#d3d7de] dark:bg-gray-70 dark:hover:bg-gray-60 transition-colors">
+                  {isFullscreen ? (
+                    <svg
+                      className="text-tertiary dark:text-tertiary-dark"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M4 14h6m0 0v6m0-6l-7 7m17-11h-6m0 0V4m0 6l7-7"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      className="text-tertiary dark:text-tertiary-dark"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  )}
+                </button>
+              )}
+            </div>
+          )}
 
           {/* 加载进度条 */}
           {restartId > 0 && (

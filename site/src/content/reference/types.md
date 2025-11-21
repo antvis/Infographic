@@ -18,13 +18,17 @@ type Bounds = {x: number; y: number; width: number; height: number};
 
 ```ts
 interface JSXElement {
-  type: string | symbol | ((props?: any) => JSXNode);
-  props: Record<string, any>;
-  key?: string | null;
+  type: string | symbol | ((props?: any) => JSXNode); // 节点类型
+  props: Record<string, any>; // 属性对象
+  key?: string | null; // 可选稳定标识
 }
+```
 
 ## JSXNode {#jsx-node}
 
+通用的 JSX 节点类型。
+
+```ts
 type JSXNode =
   | JSXElement
   | string
@@ -36,6 +40,14 @@ type JSXNode =
 ```
 
 > `JSXNode` 代表渲染树上的任意节点；`JSXElement` 仅指带 `type`/`props` 的节点。
+
+## ComponentType {#component-type}
+
+声明组件签名的通用类型，组件接受 `children` 并返回 `JSXNode`。
+
+```ts
+type ComponentType<P = {}> = (props: P & {children?: JSXNode}) => JSXNode; // 输入包含 children，输出 JSXNode
+```
 
 ## Padding {#padding}
 
@@ -66,6 +78,77 @@ SVG 容器上的附加配置，允许为根节点设置样式、属性与标识�
 | title     | `string` \| [WithType](#with-type)\<[TitleOptions](#title-options)\>         | 否   | 标题                                |
 | item      | `string` \| [WithType](#with-type)\<[ItemOptions](#item-options)\>           | 否   | 数据项                              |
 | items     | `string` \| [WithType](#with-type)\<[ItemOptions](#item-options)\>[]         | 否   | 针对层级布局，不同层级使用不同 item |
+
+## BaseItemProps {#base-item-props}
+
+渲染单个数据项时组件可接收的基础属性。
+
+| 属性            | 类型                                                    | 必填   | 说明                           |
+| --------------- | ------------------------------------------------------- | ------ | ------------------------------ |
+| x               | `number`                                                | 否     | 组件左上角 X 坐标              |
+| y               | `number`                                                | 否     | 组件左上角 Y 坐标              |
+| id              | `string`                                                | 否     | 自定义 id                      |
+| indexes         | `number[]`                                              | **是** | 当前数据项在层级中的索引路径   |
+| data            | [Data](#data)                                           | **是** | 整体数据对象                   |
+| datum           | [ItemDatum](#item-datum)                                | **是** | 当前数据项                     |
+| themeColors     | [ThemeColors](#theme-colors)                            | **是** | 当前主题色集合                 |
+| positionH       | `'normal' \| 'center' \| 'flipped'`                     | 否     | 水平朝向                       |
+| positionV       | `'normal' \| 'middle' \| 'flipped'`                     | 否     | 垂直朝向                       |
+| valueFormatter  | `(value: number) => string \| number`                   | 否     | 数值格式化函数                 |
+| `[key: string]` | `any`                                                   | 否     | 其他扩展属性，会透传到组件内部 |
+
+## ItemOptions {#item-options}
+
+数据项的可选配置，等同于 `Partial<BaseItemProps>`。
+
+```ts
+type ItemOptions = Partial<BaseItemProps>;
+```
+
+## Item {#item}
+
+描述一个数据项的组件及其组合能力。
+
+```ts
+interface Item<T extends BaseItemProps = BaseItemProps> {
+  component: ComponentType<T>; // 用于渲染的组件
+  composites: string[]; // 可组合的结构类型
+  options?: ItemOptions; // 默认项配置
+}
+```
+
+## BaseStructureProps {#base-structure-props}
+
+结构组件接收的渲染属性。
+
+```ts
+interface BaseStructureProps {
+  Title?: ComponentType<Pick<TitleProps, 'title' | 'desc'>>; // 可选标题组件
+  Item: ComponentType<Omit<BaseItemProps, 'themeColors'> & Partial<Pick<BaseItemProps, 'themeColors'>>>; // 当前层级数据项组件
+  Items: ComponentType<Omit<BaseItemProps, 'themeColors'>>[]; // 按层级选择的数据项组件列表
+  data: Data; // 完整数据
+  options: ParsedInfographicOptions; // 解析后的配置
+}
+```
+
+## Structure {#structure}
+
+定义结构组件及其组合关系。
+
+```ts
+interface Structure {
+  component: ComponentType<BaseStructureProps>; // 结构组件实现
+  composites: string[]; // 结构包含组成部分，用于为 AI 生成类型说明
+}
+```
+
+## StructureOptions {#structure-options}
+
+结构配置项的扩展字典。
+
+```ts
+type StructureOptions = Record<string, any>;
+```
 
 ## Data {#data}
 
@@ -150,6 +233,31 @@ SVG 容器上的附加配置，允许为根节点设置样式、属性与标识�
 | colorBgElevated    | `string`  | **是** | 卡片背景色           |
 | isDarkMode         | `boolean` | **是** | 是否为暗色模式       |
 
+## Font {#font}
+
+字体资源的配置。
+
+```ts
+type FontWeightName =
+  | 'thin'
+  | 'extralight'
+  | 'light'
+  | 'regular'
+  | 'medium'
+  | 'semibold'
+  | 'bold'
+  | 'extrabold'
+  | 'black'
+  | 'extrablack';
+
+interface Font {
+  fontFamily: string; // 字体族名
+  name: string; // 展示用名称
+  baseUrl: string; // 字体文件基地址或 CSS 地址
+  fontWeight: {[keys in FontWeightName]?: string}; // 各字重映射到实际资源
+}
+```
+
 ## IconAttributes {#icon-attributes}
 
 图标（通常为 `<use>` 或 `<image>`）可配置的属性。
@@ -214,6 +322,15 @@ SVG 容器上的附加配置，允许为根节点设置样式、属性与标识�
 | type            | `'image' \| 'svg' \| 'remote' \| 'custom'` | **是** | 资源类型         |
 | data            | `string`                                   | **是** | 资源的标识或数据 |
 | `[key: string]` | `any`                                      | 否     | 资源扩展配置     |
+
+## ResourceLoader {#resource-loader}
+
+自定义资源加载器的签名。
+
+```ts
+type ResourceLoader = (config: ResourceConfig) => Promise<SVGSymbolElement | null>;
+```
+// 入参为资源配置，返回解析好的 `SVGSymbolElement` 或 `null`。
 
 ## DynamicAttributes {#dynamic-attributes}
 

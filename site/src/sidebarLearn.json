@@ -85,10 +85,6 @@
       "path": "/learn/infographic-theory",
       "routes": [
         {
-          "title": "基本概念",
-          "path": "/learn/basic-concepts"
-        },
-        {
           "title": "信息图分类",
           "path": "/learn/infographic-classification"
         },

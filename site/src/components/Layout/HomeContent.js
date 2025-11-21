@@ -101,44 +101,51 @@ export function HomeContent() {
   return (
     <>
       <div className="ps-0">
-        <div className="mx-5 mt-12 lg:mt-24 mb-20 lg:mb-32 flex flex-col justify-center">
-          <Logo
-            className={cn(
-              'mt-4 mb-3 text-brand dark:text-brand-dark w-24 lg:w-28 self-center text-sm me-0 flex origin-center transition-all ease-in-out'
-            )}
-          />
-          <h1 className="text-5xl font-display lg:text-6xl self-center flex font-semibold leading-snug text-primary dark:text-primary-dark">
-            AntV Infographic
-          </h1>
-          <p className="text-4xl font-display max-w-lg md:max-w-full py-1 text-center text-secondary dark:text-primary-dark leading-snug self-center">
-            新一代信息图可视化引擎
-          </p>
-          <div className="mt-5 self-center flex gap-2 w-full sm:w-auto flex-col sm:flex-row">
-            <ButtonLink
-              href={'/learn'}
-              type="primary"
-              size="lg"
-              className="w-full sm:w-auto justify-center"
-              label="快速开始">
-              快速开始
-            </ButtonLink>
-            <ButtonLink
-              href={'/reference'}
-              type="secondary"
-              size="lg"
-              className="w-full sm:w-auto justify-center"
-              label="参考文档">
-              参考文档
-            </ButtonLink>
-            <ExternalLink
-              href="https://github.com/antvis/infographic"
-              aria-label="AntV Infographic on GitHub"
-              className="inline-flex items-center justify-center gap-2 text-primary dark:text-primary-dark shadow-secondary-button-stroke dark:shadow-secondary-button-stroke-dark hover:bg-gray-40/5 active:bg-gray-40/10 hover:dark:bg-gray-60/5 active:dark:bg-gray-60/10 text-lg px-4 py-3 rounded-full min-w-[52px] focus:outline-none focus-visible:outline focus-visible:outline-link focus:outline-offset-2 focus-visible:dark:focus:outline-link-dark">
-              <IconGitHub className="w-6 h-6" />
-              <span className="font-semibold">GitHub</span>
-            </ExternalLink>
+        {/* Hero section with pink gradient background */}
+        <div className="relative isolate overflow-hidden">
+          {/* Background decorations - matching AI page */}
+          <div className="pointer-events-none absolute -left-32 -top-40 h-96 w-96 rounded-full bg-gradient-to-br from-link/20 via-link/5 to-transparent blur-3xl" />
+          <div className="pointer-events-none absolute -right-32 top-20 h-96 w-96 rounded-full bg-gradient-to-br from-purple-40/15 via-transparent to-link/5 blur-3xl" />
+
+          <div className="mx-5 mt-12 lg:mt-24 mb-20 lg:mb-32 flex flex-col justify-center relative z-10">
+            <Logo
+              className={cn(
+                'mt-4 mb-3 text-brand dark:text-brand-dark w-24 lg:w-28 self-center text-sm me-0 flex origin-center transition-all ease-in-out'
+              )}
+            />
+            <h1 className="text-5xl font-display lg:text-6xl self-center flex font-semibold leading-snug text-primary dark:text-primary-dark">
+              AntV Infographic
+            </h1>
+            <p className="text-4xl font-display max-w-lg md:max-w-full py-1 text-center text-secondary dark:text-primary-dark leading-snug self-center">
+              新一代信息图可视化引擎
+            </p>
+            <div className="mt-5 self-center flex gap-2 w-full sm:w-auto flex-col sm:flex-row">
+              <ButtonLink
+                href={'/learn'}
+                type="primary"
+                size="lg"
+                className="w-full sm:w-auto justify-center"
+                label="快速开始">
+                快速开始
+              </ButtonLink>
+              <ButtonLink
+                href={'/reference'}
+                type="secondary"
+                size="lg"
+                className="w-full sm:w-auto justify-center"
+                label="参考文档">
+                参考文档
+              </ButtonLink>
+              <ExternalLink
+                href="https://github.com/antvis/infographic"
+                aria-label="AntV Infographic on GitHub"
+                className="inline-flex items-center justify-center gap-2 text-primary dark:text-primary-dark shadow-secondary-button-stroke dark:shadow-secondary-button-stroke-dark hover:bg-gray-40/5 active:bg-gray-40/10 hover:dark:bg-gray-60/5 active:dark:bg-gray-60/10 text-lg px-4 py-3 rounded-full min-w-[52px] focus:outline-none focus-visible:outline focus-visible:outline-link focus:outline-offset-2 focus-visible:dark:focus:outline-link-dark">
+                <IconGitHub className="w-6 h-6" />
+                <span className="font-semibold">GitHub</span>
+              </ExternalLink>
+            </div>
+            <Gallery />
           </div>
-          <Gallery />
         </div>
 
         <Section background="left-card">

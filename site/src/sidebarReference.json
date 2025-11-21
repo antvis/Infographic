@@ -21,20 +21,24 @@
       ]
     },
     {
-      "title": "API",
+      "title": "Infographic",
       "path": "/reference/api",
       "routes": [
         {
-          "title": "Infographic API",
+          "title": "API",
           "path": "/reference/infographic-api"
         },
         {
-          "title": "配置",
+          "title": "配置项",
           "path": "/reference/configuration"
         },
         {
           "title": "类型定义",
           "path": "/reference/types"
+        },
+        {
+          "title": "导出内容",
+          "path": "/reference/exports"
         }
       ]
     },

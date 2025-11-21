@@ -133,6 +133,7 @@ export default function TopNav({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const searchEnabled = false;
   const scrollParentRef = useRef<HTMLDivElement>(null);
   const {asPath} = useRouter();
 
@@ -204,11 +205,13 @@ export default function TopNav({
 
   return (
     <>
-      <Search
-        isOpen={showSearch}
-        onOpen={onOpenSearch}
-        onClose={onCloseSearch}
-      />
+      {searchEnabled && (
+        <Search
+          isOpen={showSearch}
+          onOpen={onOpenSearch}
+          onClose={onCloseSearch}
+        />
+      )}
       <div ref={scrollDetectorRef} />
       <div
         className={cn(
@@ -259,24 +262,26 @@ export default function TopNav({
                 </NextLink>
               </div>
             </div>
-            <div className="items-center justify-center flex-1 hidden w-full md:flex 3xl:w-auto 3xl:shrink-0 3xl:justify-center">
-              <button
-                type="button"
-                className={cn(
-                  'flex 3xl:w-[56rem] 3xl:mx-0 relative ps-4 pe-1 py-1 h-10 bg-gray-30/20 dark:bg-gray-40/20 outline-none focus:outline-link betterhover:hover:bg-opacity-80 pointer items-center text-start w-full text-gray-30 rounded-full align-middle text-base'
-                )}
-                onClick={onOpenSearch}>
-                <IconSearch className="align-middle me-3 text-gray-30 shrink-0 group-betterhover:hover:text-gray-70" />
-                Search
-                <span className="hidden ms-auto sm:flex item-center me-1">
-                  <Kbd data-platform="mac">⌘</Kbd>
-                  <Kbd data-platform="win" wide>
-                    Ctrl
-                  </Kbd>
-                  <Kbd>K</Kbd>
-                </span>
-              </button>
-            </div>
+            {searchEnabled && (
+              <div className="items-center justify-center flex-1 hidden w-full md:flex 3xl:w-auto 3xl:shrink-0 3xl:justify-center">
+                <button
+                  type="button"
+                  className={cn(
+                    'flex 3xl:w-[56rem] 3xl:mx-0 relative ps-4 pe-1 py-1 h-10 bg-gray-30/20 dark:bg-gray-40/20 outline-none focus:outline-link betterhover:hover:bg-opacity-80 pointer items-center text-start w-full text-gray-30 rounded-full align-middle text-base'
+                  )}
+                  onClick={onOpenSearch}>
+                  <IconSearch className="align-middle me-3 text-gray-30 shrink-0 group-betterhover:hover:text-gray-70" />
+                  Search
+                  <span className="hidden ms-auto sm:flex item-center me-1">
+                    <Kbd data-platform="mac">⌘</Kbd>
+                    <Kbd data-platform="win" wide>
+                      Ctrl
+                    </Kbd>
+                    <Kbd>K</Kbd>
+                  </span>
+                </button>
+              </div>
+            )}
             <div className="text-base justify-center items-center gap-1.5 flex 3xl:flex-1 flex-row 3xl:justify-end">
               <div className="mx-2.5 gap-1.5 hidden lg:flex">
                 <NavItem isActive={section === 'learn'} url="/learn">
@@ -310,15 +315,17 @@ export default function TopNav({
                 </a>
               </div>
               <div className="flex items-center -space-x-2.5 xs:space-x-0 ">
-                <div className="flex md:hidden">
-                  <button
-                    aria-label="Search"
-                    type="button"
-                    className="flex items-center justify-center w-12 h-12 transition-transform rounded-full active:scale-95 md:hidden hover:bg-secondary-button hover:dark:bg-secondary-button-dark outline-link"
-                    onClick={onOpenSearch}>
-                    <IconSearch className="w-5 h-5 align-middle" />
-                  </button>
-                </div>
+                {searchEnabled && (
+                  <div className="flex md:hidden">
+                    <button
+                      aria-label="Search"
+                      type="button"
+                      className="flex items-center justify-center w-12 h-12 transition-transform rounded-full active:scale-95 md:hidden hover:bg-secondary-button hover:dark:bg-secondary-button-dark outline-link"
+                      onClick={onOpenSearch}>
+                      <IconSearch className="w-5 h-5 align-middle" />
+                    </button>
+                  </div>
+                )}
                 <div className="flex dark:hidden">
                   <button
                     type="button"
