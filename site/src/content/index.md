@@ -1,6 +1,6 @@
 ---
 id: home
-title: React
+title: AntV Infographic
 permalink: index.html
 ---
 

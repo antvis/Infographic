@@ -4,11 +4,9 @@ title: 快速开始
 
 ## 安装 {#安装}
 
-AntV Infographic 提供了 npm 包，可通过以下方式进行安装：
+AntV Infographic 提供了 [npm 包](https://www.npmjs.com/package/@antv/infographic)，可通过以下方式进行安装：
 
-<TerminalBlock>
-npm install @antv/infographic --save
-</TerminalBlock>
+<TerminalBlock>npm install @antv/infographic --save</TerminalBlock>
 
 ## 使用 {#使用}
 

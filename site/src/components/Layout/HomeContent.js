@@ -5,6 +5,7 @@ import {useEffect, useRef, useState} from 'react';
 import {VERSION} from '@antv/infographic';
 import {ExternalLink} from 'components/ExternalLink';
 import {IconChevron} from 'components/Icon/IconChevron';
+import {IconGitHub} from 'components/Icon/IconGitHub';
 import {Logo} from 'components/Logo';
 import BlogCard from 'components/MDX/BlogCard';
 import CodeBlock from 'components/MDX/CodeBlock';
@@ -129,6 +130,13 @@ export function HomeContent() {
               label="参考文档">
               参考文档
             </ButtonLink>
+            <ExternalLink
+              href="https://github.com/antvis/infographic"
+              aria-label="AntV Infographic on GitHub"
+              className="inline-flex items-center justify-center gap-2 text-primary dark:text-primary-dark shadow-secondary-button-stroke dark:shadow-secondary-button-stroke-dark hover:bg-gray-40/5 active:bg-gray-40/10 hover:dark:bg-gray-60/5 active:dark:bg-gray-60/10 text-lg px-4 py-3 rounded-full min-w-[52px] focus:outline-none focus-visible:outline focus-visible:outline-link focus:outline-offset-2 focus-visible:dark:focus:outline-link-dark">
+              <IconGitHub className="w-6 h-6" />
+              <span className="font-semibold">GitHub</span>
+            </ExternalLink>
           </div>
           <Gallery />
         </div>

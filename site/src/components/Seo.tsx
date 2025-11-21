@@ -20,7 +20,7 @@ export interface SeoProps {
 
 function getDomain(languageCode: string): string {
   const subdomain = languageCode === 'en' ? '' : languageCode + '.';
-  return subdomain + 'react.dev';
+  return subdomain + 'infographic.antv.vision';
 }
 
 export const Seo = withRouter(
@@ -39,12 +39,12 @@ export const Seo = withRouter(
     }`;
     // Allow setting a different title for Google results
     const pageTitle =
-      (titleForTitleTag ?? title) + (isHomePage ? '' : ' – React');
+      (titleForTitleTag ?? title) + (isHomePage ? '' : ' – AntV Infographic');
     // Twitter's meta parser is not very good.
     const twitterTitle = pageTitle.replace(/[<>]/g, '');
     let description = isHomePage
-      ? 'React is the library for web and native user interfaces. Build user interfaces out of individual pieces called components written in JavaScript. React is designed to let you seamlessly combine components written by independent people, teams, and organizations.'
-      : 'The library for web and native user interfaces';
+      ? 'AntV Infographic is a powerful visualization library for building interactive and customizable infographics. Create stunning visual stories with ease using our intuitive API and rich set of components.'
+      : 'AntV Infographic - A powerful visualization library for building interactive and customizable infographics.';
     return (
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -85,13 +85,6 @@ export const Seo = withRouter(
           key="og:image"
           content={`https://${siteDomain}${image}`}
         />
-        <meta
-          name="twitter:card"
-          key="twitter:card"
-          content="summary_large_image"
-        />
-        <meta name="twitter:site" key="twitter:site" content="@reactjs" />
-        <meta name="twitter:creator" key="twitter:creator" content="@reactjs" />
         {title != null && (
           <meta
             name="twitter:title"

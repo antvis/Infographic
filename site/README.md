@@ -1,13 +1,6 @@
-# My Documentation Site
-
-基于 React.dev 构建的自定义文档网站。
+# AntV Infographic Site
 
 ## 快速开始
-
-### 环境要求
-
-1. Git
-2. Node.js: v16.8.0 或更高版本
 
 ### 安装
 
@@ -17,7 +10,7 @@ npm install
 
 ### 本地开发
 
-启动开发服务器（基于 [Next.js](https://nextjs.org/)）：
+启动开发服务器
 
 ```bash
 # npm
@@ -29,7 +22,7 @@ npm run dev
 ## 项目结构
 
 - `/src/content` - Markdown 文档内容
-- `/src/components` - React 组件
+- `/src/components` - 组件
 - `/src/pages` - Next.js 页面路由
 - `/public` - 静态资源
 
