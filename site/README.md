@@ -11,9 +11,6 @@
 
 ### 安装
 
-1. `cd react.dev` 进入项目根目录
-2. 安装依赖：
-
 ```bash
 npm install
 ```
