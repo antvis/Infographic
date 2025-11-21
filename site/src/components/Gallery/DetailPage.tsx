@@ -249,7 +249,7 @@ export default function DetailPage() {
         <div className="flex-1 relative bg-slate-50/30 overflow-hidden">
           <div className="h-full overflow-auto custom-scrollbar">
             <CodeEditor
-              className="w-full resize-none font-mono text-[15px] leading-loose text-slate-700 bg-transparent focus:outline-none selection:bg-[#ff356a]/20"
+              className="w-full resize-none font-mono text-[15px] text-slate-700 bg-transparent focus:outline-none selection:bg-[#ff356a]/20"
               language={'javascript'}
               onChange={handleCodeChange}
               value={code}

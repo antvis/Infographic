@@ -83,7 +83,7 @@ const GalleryCard = ({
           tap: {scale: 0.98, y: 0},
         }}
         transition={{type: 'spring', stiffness: 400, damping: 25}}
-        className="relative flex-1 bg-white rounded-[2rem] overflow-hidden border border-slate-100 shadow-lg cursor-pointer transition-colors duration-300 ease-out"
+        className="relative flex-1 bg-white rounded-[1.6rem] overflow-hidden border border-slate-100 shadow-lg cursor-pointer transition-colors duration-300 ease-out"
         // 悬停时边框颜色微变
         style={{transformStyle: 'preserve-3d'}}>
         {/* 1. 分类标签 */}
@@ -98,7 +98,7 @@ const GalleryCard = ({
               backgroundSize: '24px 24px',
             }}></div>
 
-          <div className="w-full h-full px-4 md:px-6 pt-6 pointer-events-none flex items-center justify-center">
+          <div className="w-full h-full px-4 pt-6 pointer-events-none flex items-center justify-center">
             <Infographic
               options={{width: '100%', height: '100%', padding: 20, ...item}}
             />
