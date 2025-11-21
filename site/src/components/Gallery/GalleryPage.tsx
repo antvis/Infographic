@@ -1,14 +1,15 @@
 import {AnimatePresence, motion} from 'framer-motion';
 import {uniq} from 'lodash-es';
 import {ArrowRight, Filter, Layers, Sparkles, X} from 'lucide-react';
+import {useRouter} from 'next/router';
 import {useMemo, useState} from 'react';
 import {Infographic} from '../Infographic';
 import {TEMPLATES} from './templates';
 
-const getCategory = (templateString: string) => {
+const getCategory = (templateString: string | undefined) => {
   if (!templateString) return 'GENERAL';
   const raw = templateString.split('-')[0];
-  return raw.toUpperCase();
+  return raw ? raw.toUpperCase() : 'GENERAL';
 };
 
 // ==========================================
@@ -73,7 +74,7 @@ const GalleryCard = ({
       viewport={{once: true, margin: '-50px'}}
       whileHover="hover"
       whileTap="tap"
-      className="group relative w-full h-[300px] flex flex-col"
+      className="group relative w-full h-[320px] flex flex-col"
       onClick={() => onClick(item.id)}>
       {/* Card Body */}
       <motion.div
@@ -97,17 +98,10 @@ const GalleryCard = ({
               backgroundSize: '24px 24px',
             }}></div>
 
-          <div className="w-full h-full px-2 pt-6 pointer-events-none flex items-center justify-center">
-            <div className="w-full h-full flex items-center justify-center transform transition-transform duration-700 group-hover:scale-[1.02]">
-              <Infographic
-                options={{
-                  width: '100%',
-                  height: '100%',
-                  padding: 20,
-                  ...item,
-                }}
-              />
-            </div>
+          <div className="w-full h-full px-4 md:px-6 pt-6 pointer-events-none flex items-center justify-center">
+            <Infographic
+              options={{width: '100%', height: '100%', padding: 20, ...item}}
+            />
           </div>
 
           {/* 3. Hover Overlay Interaction */}
@@ -137,14 +131,15 @@ const GalleryCard = ({
 // ==========================================
 export default function GalleryPage() {
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const router = useRouter();
 
-  // 1. 计算分类
+  // 计算分类
   const allCategories = useMemo(() => {
     const cats = TEMPLATES.map((t) => getCategory(t.template));
     return uniq(cats).sort();
   }, []);
 
-  // 2. 过滤数据
+  // 过滤数据
   const filteredTemplates = useMemo(() => {
     if (activeFilters.length === 0) return TEMPLATES;
     return TEMPLATES.filter((t) =>
@@ -152,7 +147,7 @@ export default function GalleryPage() {
     );
   }, [activeFilters]);
 
-  // 3. 切换逻辑
+  // 切换逻辑
   const toggleFilter = (category: string) => {
     setActiveFilters((prev) =>
       prev.includes(category)
@@ -161,9 +156,9 @@ export default function GalleryPage() {
     );
   };
 
-  const handleCardClick = (id: string) => {
-    // 你的路由跳转逻辑
-    console.log('Navigating to:', id);
+  // 跳转到详情页
+  const handleCardClick = (template: string) => {
+    router.push(`/examples/example?template=${template}`);
   };
 
   return (
@@ -241,8 +236,12 @@ export default function GalleryPage() {
            GAP 设置大一点 (gap-10) 增加呼吸感
         */}
         <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-8 md:gap-12">
-          {filteredTemplates.map((item) => (
-            <GalleryCard key={item.id} item={item} onClick={handleCardClick} />
+          {filteredTemplates.map((item, index) => (
+            <GalleryCard
+              key={index}
+              item={item}
+              onClick={() => handleCardClick(item.template)}
+            />
           ))}
         </div>
       </main>
