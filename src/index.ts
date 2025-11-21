@@ -1,4 +1,4 @@
-import pkg from '../package.json' assert { type: 'json' };
+import pkg from '../package.json';
 
 export const VERSION = pkg.version;
 export * from './designs';
