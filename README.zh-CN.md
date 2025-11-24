@@ -9,10 +9,10 @@
 <img src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*EdkXSojOxqsAAAAAQHAAAAgAemJ7AQ/original" width="256">
 
 [![npm version](https://img.shields.io/npm/v/@antv/infographic.svg)](https://www.npmjs.com/package/@antv/infographic)
-[![build status](https://img.shields.io/github/actions/workflow/status/antvis/infographic/ci.yml)](https://github.com/antvis/infographic/actions)
+[![build status](https://img.shields.io/github/actions/workflow/status/antvis/infographic/build.yml)](https://github.com/antvis/infographic/actions)
 [![license](https://img.shields.io/npm/l/@antv/infographic.svg)](./LICENSE)
 
-</div
+</div>
 
 **AntV Infographic** 是 AntV 推出的新一代**声明式信息图可视化引擎**。
 通过统一的语法与组件体系，你可以将结构化数据以优雅、灵活的方式渲染为高质量的信息图，让信息表达更高效，让数据叙事更简单。
