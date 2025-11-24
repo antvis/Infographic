@@ -1,5 +1,5 @@
 
-<img src="https://gw.alipayobjects.com/zos/antfincdn/R8sN%24GNdh6/language.svg" width="18"> [中文](./README/zh-CN.md) | English
+<img src="https://gw.alipayobjects.com/zos/antfincdn/R8sN%24GNdh6/language.svg" width="18"> [中文](./README.zh-CN.md) | English
 
 <div align="center">
 
