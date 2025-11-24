@@ -73,7 +73,8 @@ const GalleryCard = ({
       viewport={{once: true, margin: '-50px'}}
       whileHover="hover"
       whileTap="tap"
-      className="group relative w-full h-[320px] flex flex-col"
+      className="group relative w-full flex flex-col"
+      style={{aspectRatio: '23 / 16'}}
       onClick={() => onClick(item.template)}>
       {/* Card Body */}
       <motion.div
@@ -82,13 +83,13 @@ const GalleryCard = ({
           tap: {scale: 0.98, y: 0},
         }}
         transition={{type: 'spring', stiffness: 400, damping: 25}}
-        className="relative flex-1 bg-card dark:bg-card-dark rounded-[1.4rem] overflow-hidden border border-primary/10 dark:border-primary-dark/10 shadow-nav dark:shadow-nav-dark cursor-pointer transition-colors duration-300 ease-out"
+        className="relative flex-1 bg-wash dark:bg-card-dark rounded-[1.4rem] overflow-hidden border-2 border-primary/10 dark:border-primary-dark/10 group-hover:border-link/15 shadow-nav dark:shadow-nav-dark cursor-pointer transition-colors duration-300 ease-out"
         style={{transformStyle: 'preserve-3d'}}>
         {/* 1. 分类标签 */}
         <TypeTag label={type} />
 
         {/* 2. 内容展示区域 (Canvas) */}
-        <div className="w-full h-full relative flex items-center justify-center bg-gray-10/60 dark:bg-gray-90/60 overflow-hidden">
+        <div className="w-full h-full relative flex items-center justify-center overflow-hidden">
           <div
             className="absolute inset-0 opacity-[0.4]"
             style={{
@@ -104,22 +105,19 @@ const GalleryCard = ({
           </div>
 
           {/* 3. Hover Overlay Interaction */}
-          <div className="absolute inset-0 bg-gradient-to-t from-card/90 dark:from-card-dark/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-8">
+          <div className="absolute inset-0 bg-gradient-to-t from-wash/90 dark:from-card-dark/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-8">
             <motion.div
               variants={{
                 hover: {y: 0, opacity: 1},
                 initial: {y: 20, opacity: 0},
               }}
-              className="flex items-center gap-2 text-link dark:text-link-dark font-semibold text-sm bg-card dark:bg-card-dark px-6 py-3 rounded-full shadow-secondary-button-stroke dark:shadow-secondary-button-stroke-dark border border-primary/10 dark:border-primary-dark/10">
+              className="flex items-center gap-2 text-link dark:text-link-dark font-semibold text-sm bg-wash dark:bg-card-dark px-6 py-3 rounded-full shadow-secondary-button-stroke dark:shadow-secondary-button-stroke-dark border border-primary/10 dark:border-primary-dark/10">
               <Sparkles className="w-4 h-4" />
               <span>使用</span>
               <ArrowRight className="w-4 h-4 ml-1" />
             </motion.div>
           </div>
         </div>
-
-        {/* Active Border Glow */}
-        <div className="absolute inset-0 rounded-[1.4rem] border-2 border-transparent group-hover:border-link/10 transition-colors duration-300 pointer-events-none" />
       </motion.div>
     </motion.div>
   );
