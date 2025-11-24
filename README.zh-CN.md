@@ -1,11 +1,28 @@
-# AntV Infographic
+<img src="https://gw.alipayobjects.com/zos/antfincdn/R8sN%24GNdh6/language.svg" width="18"> 简体中文 | [English](/README.md)
 
-**AntV Infographic** 是 AntV 推出的新一代**声明式信息图可视化引擎**。
-通过统一的语法与组件体系，你可以将结构化数据以优雅、灵活的方式渲染为高质量的信息图，让信息表达更高效，让数据叙事更简单。
+<div align="center"> 
+
+# Infographic, bring words to life!
+
+🦋 新一代信息图可视化引擎，让文字信息栩栩如生！
+
+<img src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*EdkXSojOxqsAAAAAQHAAAAgAemJ7AQ/original" width="256">
 
 [![npm version](https://img.shields.io/npm/v/@antv/infographic.svg)](https://www.npmjs.com/package/@antv/infographic)
 [![build status](https://img.shields.io/github/actions/workflow/status/antvis/infographic/ci.yml)](https://github.com/antvis/infographic/actions)
 [![license](https://img.shields.io/npm/l/@antv/infographic.svg)](./LICENSE)
+
+</div
+
+**AntV Infographic** 是 AntV 推出的新一代**声明式信息图可视化引擎**。
+通过统一的语法与组件体系，你可以将结构化数据以优雅、灵活的方式渲染为高质量的信息图，让信息表达更高效，让数据叙事更简单。
+
+<div align="center">
+
+[Website](https://infographic.antv.vision) · [GitHub](https://github.com/antvis/infographic) · [Document](https://infographic.antv.vision/learn) · [Gallery](https://infographic.antv.vision/examples) · [AI Agent](https://infographic.antv.vision/ai)
+
+</div>
+
 
 ## ✨ 特性
 
@@ -44,22 +61,12 @@ const infographic = new Infographic({
 infographic.render();
 ```
 
-更多示例请参考文档站点。
+然后你可以在容器中看到信息图渲染出来。
 
-## 📚 文档
+![](https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*uvj8Qb26F1MAAAAARAAAAAgAemJ7AQ/fmt.webp)
 
-👉 完整文档与模板示例请访问：
-**[https://infographic.antv.vision](https://infographic.antv.vision)**
+更多示例请参考[文档站点](https://infographic.antv.vision/examples)。
 
-## 📄 许可证
-
-本项目基于 **MIT** 许可开源，详见 [LICENSE](./LICENSE)。
-
-## 🔗 相关链接
-
-- [AntV 官网](https://antv.antgroup.com/)
-- [GitHub 仓库](https://github.com/antvis/infographic)
-- [问题反馈 Issues](https://github.com/antvis/infographic/issues)
 
 ## 💬 社区与交流
 
@@ -68,3 +75,12 @@ infographic.render();
 - 欢迎参与贡献，一起完善 AntV Infographic！
 
 如有任何建议，欢迎在 GitHub 上与我们交流！欢迎 Star ⭐ 支持我们。
+
+- [AntV 官网](https://antv.antgroup.com/)
+- [GitHub 仓库](https://github.com/antvis/infographic)
+- [问题反馈 Issues](https://github.com/antvis/infographic/issues)
+
+
+## 📄 许可证
+
+本项目基于 **MIT** 许可开源，详见 [LICENSE](./LICENSE)。

@@ -1,7 +1,7 @@
 {
   "name": "@antv/infographic",
-  "version": "0.0.1-beta.8",
-  "description": "AntV Infographic generator and visualization library",
+  "version": "0.1.0",
+  "description": "An Infographic Generation and Rendering Framework, bring words to life!",
   "keywords": [
     "antv",
     "infographic",

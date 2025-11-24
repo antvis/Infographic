@@ -1,4 +1,4 @@
-name: CI
+name: build
 
 on:
   push:
@@ -12,23 +12,23 @@ jobs:
   lint-and-build:
     runs-on: macos-latest
     steps:
-      - name: Checkout
+      - name: ⤵️ Checkout
         uses: actions/checkout@v3
 
-      - name: Install Node.js
+      - name: 🎉 Install Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 20
 
-      - name: Install Dependencies
+      - name: 📦 Install Dependencies
         run: npm install
 
-      - name: Build
+      - name: 🚀 Build
         run: npm run build
 
-      - name: Install site dependencies
+      - name: ⚛️ Install site dependencies
         run: npm --prefix site install
 
-      - name: Run CI
+      - name: ✅ Run continuous integration tests
         run: |
           npm run ci
