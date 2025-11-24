@@ -16,7 +16,7 @@
 
 </div>
 
-**AntV Infographic** is a next-generation **declarative infographic visualization engine** from AntV.
+**AntV Infographic** is a next-generation <ins>declarative infographic visualization engine and framework</ins> from AntV.
 With unified syntax and component architecture, you can render structured data into high-quality infographics in an elegant and flexible way, making information presentation more efficient and data storytelling simpler.
 
 <div align="center">
