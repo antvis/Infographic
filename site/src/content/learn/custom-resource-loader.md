@@ -4,9 +4,15 @@ title: 自定义资源加载器
 
 <Note>如果你不了解资源的概念，可以先阅读[资源](/learn/resources)一节</Note>
 
-如果你的信息图中需要使用图标或插图资源，且内置的资源协议无法满足需求，可以通过注册自定义资源加载器来支持更多类型的资源。
+当内置协议不足以满足资源来源时，可以注册自定义资源加载器，扩展图标、插图等的获取方式。
 
-使用 `registerResourceLoader` 函数注册，同时 `@antv/infographic` 提供了 `loadSVGResource` 工具函数来帮你快速地将 SVG 字符串加载为资源。
+实现流程很简单：
+
+1. 使用 `registerResourceLoader` 注册加载函数
+2. 在函数内解析协议、拉取资源
+3. 通过工具函数（如 `loadSVGResource`）返回标准资源对象
+
+`@antv/infographic` 还提供了 `loadSVGResource` 等工具函数，帮助将内容转换为框架可识别的资源。
 
 ## 简单示例 {#simple-example}
 

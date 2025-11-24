@@ -1,5 +1,5 @@
 ---
-title: 内置模版
+title: 内置主题
 ---
 
 AntV Infographic 内置了以下主题，并会在后续持续更新和扩展：
@@ -11,3 +11,5 @@ AntV Infographic 内置了以下主题，并会在后续持续更新和扩展：
 你可以通过 [getThemes](/reference/infographic-exports#get-themes) 方法获取完整的内置主题列表。
 
 也可以通过 [getTheme](/reference/infographic-exports#get-theme) 方法，根据主题 ID 获取主题的具体配置。
+
+需要自定义配色或风格时，可参考[自定义主题](/learn/custom-theme)进行扩展。

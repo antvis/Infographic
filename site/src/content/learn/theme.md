@@ -2,18 +2,17 @@
 title: 主题
 ---
 
-AntV Infographic 中主题提供以下能力：
+主题控制信息图的全局观感，提供能力包括：
 
-- 配置颜色及色板（如：主色、色板、背景色等）
-- 针对信息图中特定部分（如：文本、图形等）进行样式调整
-- 风格化配置
+- 配置主色、色板、背景等
+- 针对文本、图形等特定部位调样式
+- 应用风格化效果
 
-主题在配置中可以通过 `options.theme` 和 options.[themeConfig](/reference/infographic-types#theme-config) 进行配置，
-其中 `options.theme` 用于指定已经注册的主题名称，`options.themeConfig` 用于对主题进行更细粒度的配置和覆盖。
+可通过 `options.theme` 和 [options.themeConfig](/reference/infographic-types#theme-config) 进行配置：前者指定已注册主题名，后者做细粒度覆写。
 
 ## 主色及背景色 {#color-primary-and-bg}
 
-主题配置中 `colorPrimary` 和 `colorBg` 用于指定信息图的主色和背景色。主色通常用于数据项无关的装饰性元素，如图标、连接线等，当没有配置色板时，数据项会将主色作为默认颜色。
+`colorPrimary` / `colorBg` 决定主色与背景色。主色常用于装饰元素（如图标、连接线），未配置色板时也会作为数据项默认色。
 
 下面的示例中，使用了默认主色 <span style={{background: '#FF356A',color: '#fff', borderRadius: 4}}>&nbsp;#FF356A&nbsp;</span> ，背景色为白色。
 
@@ -60,7 +59,7 @@ AntV Infographic 中主题提供以下能力：
 
 ## 色板 {#palette}
 
-色板用于为数据项指定颜色集合，通常用于区分不同的数据类别。可以通过 `themeConfig.palette` 来配置色板。
+色板为数据项提供颜色集合，常用于区分类别。通过 `themeConfig.palette` 配置。
 
 色板类型定义见[Palette](/reference/infographic-types#palette)，其支持 `string`、`string[]` 和函数类型。
 
@@ -218,7 +217,7 @@ infographic.render();
 
 ## 风格化配置 {#stylize}
 
-风格化是指将信息图中的图形元素应用特定的视觉效果，以增强信息图的视觉吸引力和表达力。AntV Infographic 提供了一些内置的风格化类型，可以通过 `themeConfig.stylize` 进行配置。
+风格化为图形添加特定效果，强化视觉吸引力。通过 `themeConfig.stylize` 选择内置风格并传入参数。
 
 常用的风格化类型包括：
 

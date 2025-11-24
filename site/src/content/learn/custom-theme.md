@@ -2,9 +2,7 @@
 title: 自定义主题
 ---
 
-主题在 AntV Infographic 主要用于配置信息图的样式、风格等。
-
-如果你还不了解主题的概念，可以先阅读[核心概念-主题](/learn/theme)。
+主题用于配置信息图的全局样式与风格。如需概念回顾，请先阅读[核心概念-主题](/learn/theme)。
 
 ## 配置主题 {#配置主题}
 
@@ -19,7 +17,7 @@ const infographic = new Infographic({
 });
 ```
 
-> 具体的主题配置项可以参考[核心概念-主题](/learn/theme)。
+> 完整配置项参考[核心概念-主题](/learn/theme)。
 
 ## 注册主题 {#注册主题}
 
@@ -32,3 +30,5 @@ registerTheme('my-theme', {
   // 主题配置项
 });
 ```
+
+注册后即可在实例化时通过 `theme: 'my-theme'` 引用，配合 `themeConfig` 进一步调整。

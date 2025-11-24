@@ -2,19 +2,19 @@
 title: 设计
 ---
 
-**设计(Design)** 定义了信息图的视觉呈现方式,对应配置对象中的 `design` 字段。设计包含三个核心元素:
+**设计（Design）** 定义信息图的视觉呈现，对应配置对象中的 `design` 字段。它由三个核心元素组成：
 
-- 结构(**structure**): 定义信息图的布局和组织方式。
-- 标题(**title**): 定义信息图的标题样式设计。
-- 数据项(**items** / **items**): 定义信息图中各个数据项的视觉样式。
+- **结构（structure）**：布局与组织方式
+- **标题（title）**：标题样式设计
+- **数据项（item/items）**：数据单元的视觉样式
 
-**所有设计资产本质上都是 JSX 组件**，AntV Infographic 实现了一套 [JSX 渲染引擎](/reference/jsx)，支持通过 JSX 来描述设计资产，同时框架提供了内置的组件库，支持用户注册自定义组件来扩展设计。
+所有设计资产本质上都是 JSX 组件。框架提供 [JSX 渲染引擎](/reference/jsx) 及内置组件库，并支持注册自定义组件。
 
 ## 结构 {#structure}
 
-**结构**是信息图的视觉骨架，决定了信息图整体的布局，并承载了标题和数据项等其他设计元素，同时能够根据设计需求添加装饰性元素。
+结构是信息图的视觉骨架，决定整体布局并承载标题、数据项等设计元素，也可按需求加入装饰。
 
-结构通过在 AntV Infographic 中通过 `options.design.structure` 来进行配置，例如：
+通过 `options.design.structure` 配置结构，例如：
 
 ```js
 new Infographic({
@@ -29,9 +29,9 @@ new Infographic({
 });
 ```
 
-<Note>如果不需要额外配置结构，那么也可以简写为 `structure: 'list-row'`。</Note>
+<Note>无需额外参数时，可简写为 `structure: 'list-row'`。</Note>
 
-下面两图中采用了相同的数据项设计，但结构不同，图 1 采用了`list-grid`网格结构，右侧采用了`list-pyramid`金字塔形结构，从而呈现出不同的视觉效果。
+下图展示相同数据项在两种结构下的差异：左为 `list-grid` 网格，右为 `list-pyramid` 金字塔。
 
 <img
   src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*QQ4KTbYpHQ0AAAAASPAAAAgAemJ7AQ/fmt.webp"
@@ -44,15 +44,14 @@ new Infographic({
 />
 
 <Note>
-  由于结构设计的多样性，因此没有统一的配置项，而是通过注册不同的结构组件来实现。
-  框架内置了一些常用的结构组件，如果要了解如何使用这些组件，可以查阅[内置结构](/reference/built-in-structures)。
+  结构设计差异较大，没有统一配置项，可通过注册不同结构组件实现。内置结构见[内置结构](/reference/built-in-structures)。
 </Note>
 
 ## 标题 {#title}
 
-标题是一段文本，在信息图中起到引导和说明的作用。目前 AntV Infographic 提供了默认的标题，包含标题文本(`title`)和标题描述(`desc`)两部分，用户可以根据需求进行配置。
+标题用于引导与说明。默认标题包含文本 `title` 与描述 `desc`，可按需配置。
 
-标题的设计通过 `options.design.title` 来进行配置，具体的标题内容则是通过 `options.data.title` 和 `options.data.desc` 来进行配置，例如：
+标题样式通过 `options.design.title` 配置，具体文案通过 `options.data.title` 与 `options.data.desc` 传入：
 
 ```js
 new Infographic({
@@ -73,13 +72,11 @@ new Infographic({
 });
 ```
 
-> AntV Infographic 后续会推出更多的标题设计，敬请期待！
+> 更多标题设计会持续增加。
 
 ## 数据项 {#item}
 
-**数据项组件**用于展示具体的数据内容,是信息图中的最小可视化单元。
-
-细心的你可以发现，`options.design` 支持配置 `item` 和 `items` 两种形式，绝大多数情况下，我们使用 `item` 来配置数据项设计，使用方式和`结构`类似，例如：
+数据项组件用于展示具体内容，是信息图的最小可视化单元。`options.design` 支持 `item` 与 `items` 两种形式，常用 `item` 配置单一数据项设计：
 
 ```js
 new Infographic({
@@ -94,10 +91,10 @@ new Infographic({
 ```
 
 <Note>
-  如果不需要额外配置数据项，那么也可以简写为 `item: 'simple-horizontal-arrow'`。
+  无需额外参数时，可简写为 `item: 'simple-horizontal-arrow'`。
 </Note>
 
-对于一些特殊的结构设计，尤其是层级结构设计，可能需要对不同层级的数据项使用不同的设计，这时就可以使用 `items` 来进行配置，例如：
+在层级结构等场景，可用 `items` 为不同层级设置不同设计：
 
 ```js
 new Infographic({
@@ -119,10 +116,9 @@ new Infographic({
 ```
 
 <Note>
-  当同时配置了 `item` 和 `items` 时，`items` 的优先级更高，会覆盖 `item`
-  的配置。
+  同时存在 `item` 与 `items` 时，`items` 优先级更高。
 </Note>
 
-下图中展示了两种方案对比，一级数据项采用了圆形设计(`circle-node`)，二级数据项采用了圆角矩形+文本的设计(`pill-badge`)。
+下图为两种层级设计示例：一级数据项使用 `circle-node`，二级使用圆角矩形文本 `pill-badge`。
 
 <img src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*ig8OSZC9GywAAAAAdyAAAAgAemJ7AQ/fmt.avif" />

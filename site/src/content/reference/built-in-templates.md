@@ -1,9 +1,9 @@
 ---
-title: 内置模版
+title: 内置模板
 ---
 
-AntV Infographic 内置了相当多的信息图模版，你可以在[示例](/examples)页面中查看和使用这些模版，帮助你快速创建信息图表。
+AntV Infographic 内置了多种信息图模板，可在[示例](/examples)页面直接试用，快速生成成品。
 
-你可以通过 [getTemplates](/reference/infographic-exports#get-templates) 方法获取完整的内置模版列表。
+使用 [getTemplates](/reference/infographic-exports#get-templates) 获取完整模板列表，或通过 [getTemplate](/reference/infographic-exports#get-template) 按 ID 获取配置。
 
-也可以通过 [getTemplate](/reference/infographic-exports#get-template) 方法，根据模版 ID 获取模版的具体配置。
+若需自定义，可结合 [registerTemplate](/reference/infographic-exports#register-template) 注册自己的模板。

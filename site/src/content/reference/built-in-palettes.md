@@ -1,5 +1,5 @@
 ---
-title: 内置模版
+title: 内置色板
 ---
 
 AntV Infographic 内置了以下色板，并会在后续持续更新和扩展：

@@ -104,29 +104,7 @@
     },
     {
       "title": "参与贡献",
-      "path": "/learn/contributing",
-      "routes": [
-        {
-          "title": "项目介绍",
-          "path": "/learn/project-introduction"
-        },
-        {
-          "title": "开源计划",
-          "path": "/learn/os-plan"
-        },
-        {
-          "title": "贡献指南",
-          "path": "/learn/contribution-guide"
-        },
-        {
-          "title": "代码规范",
-          "path": "/learn/code-standards"
-        },
-        {
-          "title": "提交 PR",
-          "path": "/learn/submit-pr"
-        }
-      ]
+      "path": "/learn/contributing"
     }
   ]
 }

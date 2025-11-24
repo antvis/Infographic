@@ -72,19 +72,19 @@ function FullBleed({children}) {
 const features = [
   {
     title: '信息图语法',
-    detail: '基于信息图视觉特点设计信息图语法，覆盖布局、元素、主题等内容',
+    detail: '贴合信息图特性的声明式语法，涵盖布局、元素、主题',
   },
   {
     title: 'JSX 定制开发',
-    detail: '基于 JSX 作为设计资产开发语言，直观、可复用、开发灵活',
+    detail: '以 JSX 描述设计资产，直观可复用，灵活扩展',
   },
   {
     title: '风格化渲染',
-    detail: '一套模版多种视觉效果，支持手绘、纹理、渐变等风格',
+    detail: '一套模板多种风格，支持手绘、纹理、渐变等效果',
   },
   {
     title: '可视化编辑',
-    detail: '支持添加、删除数据项；添加图形、文本标注，所见即所得',
+    detail: '可交互增删数据项，添加图形与标注，所见即所得',
   },
 ];
 
@@ -143,8 +143,8 @@ export function HomeContent() {
           <Center>
             <Header>声明式信息图渲染框架</Header>
             <Para>
-              AntV Infographic 通过<Code>声明式</Code>
-              的方式描述信息图，让数据叙事更简单、更优雅、更高效。
+              <Code>声明式</Code>{' '}
+              配置描述信息图，让数据叙事更简单、更优雅、更高效。
             </Para>
           </Center>
           <FullBleed>
@@ -167,7 +167,8 @@ export function HomeContent() {
           </FullBleed>
           <Center>
             <Para>
-              内置丰富信息图模版，开箱即用。从 0 到 1 创建信息图，从未如此简单。
+              100+ 内置模板与组件，开箱可用；从 0 到 1
+              构建信息图，从未如此轻松。
             </Para>
           </Center>
         </Section>
@@ -176,18 +177,14 @@ export function HomeContent() {
           <Center>
             <Header>AI 轻松生成专业信息图</Header>
             <Para>
-              从文本到信息图，让 AI 理解你的内容，智能推荐最佳可视化方案。
-              通过大语言模型自动抽取关键信息，生成专业配置，一键渲染精美信息图。
+              让 AI 理解文本，抽取关键信息并生成配置，一键渲染专业信息图。
             </Para>
           </Center>
           <FullBleed>
             <AIInfographicFlow />
           </FullBleed>
           <Center>
-            <Para>
-              无需设计经验，AI 帮你完成从内容理解到可视化呈现的全流程。
-              让数据和信息以更直观、更专业的方式传达。
-            </Para>
+            <Para>无需设计经验，AI 完成从内容理解到可视化呈现的全流程。</Para>
             <div className="mt-5">
               <ButtonLink
                 href={'/ai'}
@@ -225,8 +222,7 @@ export function HomeContent() {
           <Center>
             <Header>在线体验</Header>
             <Para>
-              在代码编辑器中尝试创建你的第一个信息图。通过简洁的配置语法，
-              快速实现数据可视化。支持实时预览，即改即见效果。
+              在在线编辑器中创建你的第一张信息图。用简洁配置快速完成可视化，实时预览即改即见。
             </Para>
           </Center>
           <FullBleed>
@@ -234,8 +230,7 @@ export function HomeContent() {
           </FullBleed>
           <Center>
             <Para>
-              无需复杂的安装配置，在浏览器中即可开始创作。
-              丰富的示例模板助你快速上手，轻松打造专业级信息图作品。
+              无需安装，在浏览器即可创作。丰富示例助你快速上手，轻松打造专业信息图。
             </Para>
             <div className="flex justify-start w-full lg:justify-center">
               <CTA color="gray" icon="framework" href="/examples">
@@ -250,9 +245,7 @@ export function HomeContent() {
             <div className="max-w-3xl lg:max-w-7xl gap-5 flex flex-col lg:flex-row lg:px-5">
               <div className="w-full lg:w-6/12 max-w-3xl flex flex-col items-start justify-start lg:ps-5 lg:pe-10">
                 <Header>持续演进，拥抱未来</Header>
-                <Para>
-                  我们的目标是“让信息图成为 AI 时代的视觉语言基础设施”
-                </Para>
+                <Para>目标：让信息图成为 AI 时代的视觉语言基础设施</Para>
                 <div className="order-last pt-5 w-full">
                   <div className="flex flex-row justify-between items-center gap-3 mt-5 lg:-mt-2 w-full">
                     <p className="uppercase tracking-wide font-bold text-sm text-tertiary dark:text-tertiary-dark flex flex-row gap-2 items-center">

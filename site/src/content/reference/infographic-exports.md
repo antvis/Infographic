@@ -239,7 +239,7 @@ registerResourceLoader(async (config) => {
 function loadSVGResource(data: string): SVGSymbolElement | null;
 ```
 
-## 模版 {#template}
+## 模板 {#template}
 
 ### registerTemplate {#register-template}
 

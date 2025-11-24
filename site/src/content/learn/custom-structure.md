@@ -2,7 +2,7 @@
 title: 自定义结构
 ---
 
-由于结构开发较为复杂，AntV Infographic 为[结构](/learn/design#structure)提供了专门的 AI 提示词（`Prompt`），你可以使用大语言模型（如 Claude、GPT-4 等）快速生成高质量的设计资产代码。
+结构开发相对复杂，AntV Infographic 为[结构](/learn/design#structure)准备了专用 AI 提示词，便于使用大模型（Claude、GPT-4 等）快速生成高质量代码。
 
 ## 开发提示词 {#development-prompt}
 
@@ -68,3 +68,5 @@ src/designs/structures/MyStructure.tsx
 2. **AI 自动读取提示词并生成代码**
 
 3. **AI 可以直接创建文件并添加到导出**
+
+无论采用哪种方式，提交前都请在 Dev 环境验证布局与交互是否符合预期。

@@ -4,13 +4,15 @@ title: 快速开始
 
 ## 安装 {#安装}
 
-AntV Infographic 提供了 [npm 包](https://www.npmjs.com/package/@antv/infographic)，可通过以下方式进行安装：
+通过 npm 安装 [@antv/infographic](https://www.npmjs.com/package/@antv/infographic)：
 
-<TerminalBlock>npm install @antv/infographic --save</TerminalBlock>
+```bash
+npm install @antv/infographic --save
+```
 
 ## 使用 {#使用}
 
-下面是一个简单的示例，展示如何使用 AntV Infographic 创建一个基本的信息图：
+下面的示例展示如何实例化并渲染一张列表型信息图：
 
 <CodeRunner>
 
@@ -36,18 +38,18 @@ infographic.render();
 
 </CodeRunner>
 
-上面的例子中我们从 `@antv/infographic` 包中导入了 `Infographic` 类，在实例化阶段传入了配置项，包括：
+关键配置说明：
 
-- `container`：指定渲染容器的选择器。
-- `width` 和 `height`：设置信息图的宽度和高度。
-- `template`：选择内置信息图的模板。
-- `data`：提供渲染所需的数据。
+- `container`：渲染容器的选择器或节点
+- `width` / `height`：信息图宽高，可用百分比或像素
+- `template`：内置模板 ID
+- `data`：用于渲染的标题与数据项
 
 然后调用 `render` 方法进行渲染。
 
 ### 在 HTML 中使用 {#在-html-中使用}
 
-要在 HTML 中直接使用 AntV Infographic，可以通过 CDN 引入相关脚本和样式：
+也可以通过 CDN 直接在 HTML 中引入：
 
 ```html
 <!DOCTYPE html>
@@ -82,7 +84,7 @@ infographic.render();
 
 ### 在 React 中使用 {#在-react-中使用}
 
-如果你使用 React，可以通过以下方式集成 AntV Infographic：
+在 React 中，可在 `useEffect` 中创建实例并挂载到 `ref`：
 
 ```jsx
 import React, {useEffect, useRef} from 'react';

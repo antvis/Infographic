@@ -1,4 +1,3 @@
-
 <img src="https://gw.alipayobjects.com/zos/antfincdn/R8sN%24GNdh6/language.svg" width="18"> [中文](./README.zh-CN.md) | English
 
 <div align="center">
@@ -10,7 +9,6 @@
 [![npm version](https://img.shields.io/npm/v/@antv/infographic.svg)](https://www.npmjs.com/package/@antv/infographic)
 [![build status](https://img.shields.io/github/actions/workflow/status/antvis/infographic/build.yml)](https://github.com/antvis/infographic/actions)
 [![license](https://img.shields.io/npm/l/@antv/infographic.svg)](./LICENSE)
-
 
 <img src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*EdkXSojOxqsAAAAAQHAAAAgAemJ7AQ/original" width="256">
 
@@ -25,23 +23,21 @@ With unified syntax and component architecture, you can render structured data i
 
 </div>
 
-
 ## ✨ Features
 
-- 📦 **Ready to Use**: Built-in 100+ infographic templates, data item components, and layouts for quickly building professional infographics
-- 🎨 **Theme System**: Supports hand-drawn (rough) style, gradients, patterns, multiple preset themes, and deep customization
-- 🧩 **Component Architecture**: Data items, structural layouts, and rendering units are fully componentized for flexible composition and extension
-- 📐 **High-Quality SVG Output**: SVG-based rendering by default, ensuring visual quality and editability
+- 📦 **Ready to use**: 100+ built-in templates, data-item components, and layouts to assemble infographics in minutes
+- 🎨 **Themeable**: Hand-drawn (rough), gradients, patterns, multiple presets, and deep customization
+- 🧩 **Composable**: Structures, items, and render units are fully componentized for flexible extension
 - 🎯 **Declarative Configuration**: Simple and clear configuration approach, ideal for AI generation, machine understanding, and automated workflows
-- 🤖 **AI-Friendly**: Complete JSON Schema definitions enable large language models to automatically generate usable configurations
 
+- 🤖 **AI-friendly**: Declarative config with JSON Schema, ideal for AI generation and automated workflows
+- 📐 **High-quality SVG**: Default SVG output for crisp visuals and easy editing/export
 
 ## 🚀 Installation
 
 ```bash
 npm install @antv/infographic
 ```
-
 
 ## 📝 Quick Start
 
@@ -65,12 +61,11 @@ const infographic = new Infographic({
 infographic.render();
 ```
 
-Then you can see the infographic rendered in the container.
+Render the infographic in the target container.
 
 ![](https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*uvj8Qb26F1MAAAAARAAAAAgAemJ7AQ/fmt.webp)
 
 For more examples, please refer to the [documentation](https://infographic.antv.vision/examples) site.
-
 
 ## 💬 Community & Communication
 
@@ -83,7 +78,6 @@ If you have any suggestions, feel free to communicate with us on GitHub! Star �
 - [AntV Official Website](https://antv.antgroup.com/)
 - [GitHub Repository](https://github.com/antvis/infographic)
 - [Issue Tracker](https://github.com/antvis/infographic/issues)
-
 
 ## 📄 License
 

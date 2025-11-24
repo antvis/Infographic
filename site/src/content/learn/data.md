@@ -2,9 +2,9 @@
 title: 数据
 ---
 
-AntV Infographic 设计了一种灵活且易用的数据配置方式，它能够简单的表达**一维数据**和**层级数据**，并支持一定程度的扩展性。后续我们会完善对于**关系数据**等复杂数据结构的支持。
+AntV Infographic 的数据配置既简单又灵活，内置支持**一维数据**与**层级数据**，并预留扩展空间；后续会补充对**关系数据**等复杂结构的支持。
 
-以下为数据的类型定义：
+数据类型定义：
 
 ```ts
 export interface Data {
@@ -25,11 +25,11 @@ export interface ItemDatum {
 }
 ```
 
-其中 `Data` 包含标题、描述和数据项列表，并支持扩展其他字段。`ItemDatum` 列表支持配置图标、标题、描述、数值、插图和子项等字段，也支持扩展其他字段。完整的数据说明请查阅[Data](/reference/infographic-types#data)
+`Data` 包含标题、描述、数据项列表，并允许扩展字段；`ItemDatum` 支持图标、标题、描述、数值、插图、子项等字段，同样可扩展。完整说明见 [Data](/reference/infographic-types#data)。
 
 ## 一维数据/列表数据 {#flat-data}
 
-下面是一个简单的一维数据示例：
+一维数据示例：
 
 ```js
 new Infographic({
@@ -55,7 +55,7 @@ new Infographic({
 
 ## 层级数据 {#hierarchical-data}
 
-当需要表达层级结构数据时，可以通过 `children` 字段进行嵌套，例如：
+层级数据可通过 `children` 递归嵌套：
 
 ```js
 new Infographic({
@@ -90,9 +90,9 @@ new Infographic({
 
 <Note>
   #### 数据使用请注意以下事项： {#数据使用请注意以下事项}
-  
-  - 并非所有结构和数据项设计都会消费传入的全部数据字段，这取决于其具体实现，通常多余的字段不会有影响，但缺失数据字段可能会导致渲染效果异常。使用前请查阅具体的[结构](/reference/built-in-structures)和[数据项](/reference/built-in-items)设计说明
-  - 扩展字段需要在自定义结构或数据项中进行访问并映射到视觉元素
-  - 数据中关于资源的使用请阅读[资源](/learn/resources)
+
+  - 结构/数据项未必消费全部字段；缺失必需字段可能影响渲染，使用前请查阅[结构](/reference/built-in-structures)与[数据项](/reference/built-in-items)说明
+  - 扩展字段需在自定义结构或数据项中手动访问并映射
+  - 使用资源字段前请阅读[资源](/learn/resources)
 
 </Note>

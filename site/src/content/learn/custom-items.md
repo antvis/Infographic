@@ -2,7 +2,7 @@
 title: 自定义数据项
 ---
 
-由于数据项开发较为复杂，AntV Infographic 为[数据项](/learn/design#item)提供了专门的 AI 提示词（`Prompt`），你可以使用大语言模型（如 Claude、GPT-4 等）快速生成高质量的设计资产代码。
+数据项开发同样有一定复杂度，AntV Infographic 为[数据项](/learn/design#item)准备了专用 AI 提示词，便于用大模型快速生成代码。
 
 ## 开发提示词 {#development-prompt}
 
@@ -17,4 +17,4 @@ title: 自定义数据项
 - positionH/V 处理
 - 常见问题和最佳实践
 
-> 使用方法与[自定义结构](/learn/custom-structure)类似。
+> 使用方法与[自定义结构](/learn/custom-structure)类似，生成后请在 Dev 环境验证效果。

@@ -2,7 +2,7 @@
 title: 自定义字体
 ---
 
-如果想在信息图中使用自定义字体，可以通过以下步骤实现：
+想在信息图中使用品牌或特色字体，可按以下步骤：
 
 1. 部署字体或者使用已有字体资源，部署方式可参考：[字体分包部署与使用](https://chinese-font.netlify.app/zh-cn/post/deploy_to_cdn)
 2. 使用 [registerFont](/reference/infographic-exports#register-font) 注册字体。
@@ -38,3 +38,5 @@ const infographic = new Infographic({
   },
 });
 ```
+
+建议确保字体 CDN 支持跨域与缓存，这样渲染更稳定、加载更快。

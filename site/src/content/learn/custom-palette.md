@@ -27,3 +27,5 @@ const infographic = new Infographic({
   },
 });
 ```
+
+自定义色板适用于品牌配色或特定业务配色，注册后即可在 `themeConfig.palette` 中按名称使用。
