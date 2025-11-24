@@ -17,7 +17,6 @@ import Intro from './Intro';
 import {LanguagesContext} from './LanguagesContext';
 import Link from './Link';
 import {PackageImport} from './PackageImport';
-import TerminalBlock from './TerminalBlock';
 import type {Toc, TocItem} from './TocContext';
 import {TocContext} from './TocContext';
 
@@ -514,7 +513,6 @@ export const MDXComponents = {
   RSCBadge,
   PackageImport,
   ReadBlogPost,
-  TerminalBlock,
   CodeStep,
   YouTubeIframe,
   ErrorDecoder,
