@@ -72,7 +72,7 @@ const Divider = () => (
   <hr className="my-6 block border-b border-t-0 border-border dark:border-border-dark" />
 );
 const Wip = ({children}: {children: React.ReactNode}) => (
-  <ExpandableCallout type="wip">{children}</ExpandableCallout>
+  <ExpandableCallout type="warning">{children}</ExpandableCallout>
 );
 const Warning = ({children}: {children: React.ReactNode}) => (
   <ExpandableCallout type="warning">{children}</ExpandableCallout>

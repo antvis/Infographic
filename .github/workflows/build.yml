@@ -26,9 +26,14 @@ jobs:
       - name: 🚀 Build
         run: npm run build
 
-      - name: ⚛️ Install site dependencies
-        run: npm --prefix site install
-
       - name: ✅ Run continuous integration tests
         run: |
           npm run ci
+
+      - name: 💡 Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage/coverage-final.json
+          flags: infographic
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

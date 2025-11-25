@@ -2,10 +2,7 @@ name: Deploy Site
 
 on:
   push:
-    branches:
-      - main
-      - dev
-  workflow_dispatch:
+  pull_request:
 
 permissions:
   contents: write

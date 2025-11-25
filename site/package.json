@@ -110,5 +110,6 @@
   "lint-staged": {
     "*.{js,ts,jsx,tsx,css}": "npm run prettier",
     "src/**/*.md": "npm run fix-headings"
-  }
+  },
+  "repository": "git@github.com:antvis/Infographic.git"
 }

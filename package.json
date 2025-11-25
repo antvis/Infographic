@@ -133,5 +133,6 @@
       "limit": "500 Kb",
       "path": "dist/infographic.min.js"
     }
-  ]
+  ],
+  "repository": "git@github.com:antvis/Infographic.git"
 }
