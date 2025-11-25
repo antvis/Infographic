@@ -28,7 +28,7 @@ export function parseSVG<T extends SVGElement = SVGSVGElement>(
 
 export function setAttributes(element: SVGElement, attrs: Record<string, any>) {
   Object.entries(attrs).forEach(([key, value]) => {
-    if (value === null) {
+    if (value === null || value === undefined) {
       element.removeAttribute(key);
     } else {
       element.setAttribute(key, value);
@@ -44,7 +44,10 @@ export function getAttributes(
   return attrs.reduce(
     (acc, attr) => {
       const value = element.getAttribute(attr);
-      if (!ignoreEmpty || (value !== null && value !== '')) {
+      if (
+        !ignoreEmpty ||
+        (value !== null && value !== '' && value !== undefined)
+      ) {
         acc[attr] = value;
       }
       return acc;
@@ -84,21 +87,4 @@ export function getOrCreateDefs(
   if (defsId) newDefs.id = defsId;
   svg.prepend(newDefs);
   return newDefs;
-}
-
-export function getSizeBaseVal(svg: SVGSVGElement): [number, number] {
-  try {
-    const width = svg.width.baseVal.value || 0;
-    const height = svg.height.baseVal.value || 0;
-    return [width, height];
-  } catch (error) {
-    const viewBox = svg.getAttribute('viewBox');
-    if (viewBox) {
-      const [x, y, width, height] = viewBox.split(' ').map(Number);
-      return [width - x, height - y];
-    }
-
-    console.error('Error getting size baseVal from SVG:', error);
-    return [0, 0];
-  }
 }

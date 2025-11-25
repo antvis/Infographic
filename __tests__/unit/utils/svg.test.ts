@@ -1,9 +1,8 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   createElement,
   getAttributes,
   getOrCreateDefs,
-  getSizeBaseVal,
   parseSVG,
   removeAttributes,
   setAttributes,
@@ -186,84 +185,6 @@ describe('svg', () => {
       const defs = getOrCreateDefs(svg, 'custom-defs');
 
       expect(defs.id).toBe('custom-defs');
-    });
-  });
-
-  describe('getSizeBaseVal', () => {
-    it('should get size from width and height baseVal', () => {
-      const svg = createElement<SVGSVGElement>('svg');
-      Object.defineProperty(svg, 'width', {
-        value: { baseVal: { value: 300 } },
-      });
-      Object.defineProperty(svg, 'height', {
-        value: { baseVal: { value: 200 } },
-      });
-
-      const [width, height] = getSizeBaseVal(svg);
-      expect(width).toBe(300);
-      expect(height).toBe(200);
-    });
-
-    it('should fallback to viewBox when baseVal throws error', () => {
-      const svg = createElement<SVGSVGElement>('svg');
-      svg.setAttribute('viewBox', '0 0 400 300');
-
-      Object.defineProperty(svg, 'width', {
-        get() {
-          throw new Error('baseVal error');
-        },
-      });
-
-      const consoleSpy = vi
-        .spyOn(console, 'error')
-        .mockImplementation(() => {});
-
-      const [width, height] = getSizeBaseVal(svg);
-      expect(width).toBe(400);
-      expect(height).toBe(300);
-
-      consoleSpy.mockRestore();
-    });
-
-    it('should handle viewBox with offset', () => {
-      const svg = createElement<SVGSVGElement>('svg');
-      svg.setAttribute('viewBox', '10 20 400 300');
-
-      Object.defineProperty(svg, 'width', {
-        get() {
-          throw new Error('baseVal error');
-        },
-      });
-
-      const consoleSpy = vi
-        .spyOn(console, 'error')
-        .mockImplementation(() => {});
-
-      const [width, height] = getSizeBaseVal(svg);
-      expect(width).toBe(390);
-      expect(height).toBe(280);
-
-      consoleSpy.mockRestore();
-    });
-
-    it('should return [0, 0] when both baseVal and viewBox fail', () => {
-      const svg = createElement<SVGSVGElement>('svg');
-
-      Object.defineProperty(svg, 'width', {
-        get() {
-          throw new Error('baseVal error');
-        },
-      });
-
-      const consoleSpy = vi
-        .spyOn(console, 'error')
-        .mockImplementation(() => {});
-
-      const [width, height] = getSizeBaseVal(svg);
-      expect(width).toBe(0);
-      expect(height).toBe(0);
-
-      consoleSpy.mockRestore();
     });
   });
 });
