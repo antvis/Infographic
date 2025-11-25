@@ -26,6 +26,9 @@ jobs:
       - name: 🚀 Build
         run: npm run build
 
+      - name: ⚛️ Install site dependencies
+        run: npm --prefix site install
+
       - name: ✅ Run continuous integration tests
         run: |
           npm run ci
