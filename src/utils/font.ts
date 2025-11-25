@@ -1,4 +1,4 @@
-import type { FontWeightName } from './types';
+import type { FontWeightName } from '../types';
 
 export function decodeFontFamily(font: string) {
   return font.trim().replace(/["']/g, '');

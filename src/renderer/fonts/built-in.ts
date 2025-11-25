@@ -1,4 +1,4 @@
-import { Font } from './types';
+import type { Font } from '../../types';
 
 const BASE_FONT_URL = 'https://assets.antv.antgroup.com';
 

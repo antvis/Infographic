@@ -4,12 +4,12 @@ import type { DynamicAttributes } from '../../themes';
 import type { TextAttributes } from '../../types';
 import {
   createTextElement,
+  encodeFontFamily,
   getAttributes,
   getDatumByIndexes,
   getItemIndexes,
   setAttributes,
 } from '../../utils';
-import { encodeFontFamily } from '../fonts';
 import { parseDynamicAttributes } from '../utils';
 
 export function renderText(
@@ -34,7 +34,6 @@ export function renderText(
     );
   }
 
-  renderedText.setAttribute('id', node.getAttribute('id')!);
   return renderedText;
 }
 

@@ -1,5 +1,6 @@
 export * from './color';
 export * from './data';
+export * from './font';
 export * from './get-types';
 export * from './icon';
 export * from './item';

@@ -1,4 +1,4 @@
-export { getFontURLs, getWoff2BaseURL, loadFont,loadFonts } from './loader';
+export { getFontURLs, getWoff2BaseURL, loadFont, loadFonts } from './loader';
 export {
   DEFAULT_FONT,
   getFont,
@@ -6,8 +6,6 @@ export {
   registerFont,
   setDefaultFont,
 } from './registry';
-export type * from './types';
-export { decodeFontFamily, encodeFontFamily } from './utils';
 
 import { BUILT_IN_FONTS } from './built-in';
 import { registerFont } from './registry';

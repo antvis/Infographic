@@ -1,5 +1,5 @@
-import type { Font } from './types';
-import { decodeFontFamily, encodeFontFamily } from './utils';
+import type { Font } from '../../types';
+import { decodeFontFamily, encodeFontFamily } from '../../utils';
 
 const FONT_REGISTRY: Map<string, Font> = new Map();
 
