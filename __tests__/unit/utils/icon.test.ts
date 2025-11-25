@@ -35,11 +35,11 @@ describe('icon utils', () => {
   it('updates href, attributes, and computed color', () => {
     const icon = createIconElement('start');
 
-    updateIconElement(icon, 'next', { stroke: '#0f0' });
+    updateIconElement(icon, 'next', { fill: '#0f0' });
 
     expect(resource.getResourceHref).toHaveBeenCalledWith('next');
     expect(icon.getAttribute('href')).toBe('#next');
-    expect(icon.getAttribute('stroke')).toBe('#0f0');
+    expect(icon.getAttribute('fill')).toBe('#0f0');
     expect(icon.style.color).toBe('rgb(0, 255, 0)');
   });
 
