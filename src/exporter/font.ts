@@ -1,5 +1,6 @@
-import type { FontFace as CSSFontFace, Declaration } from 'css';
-import { parse } from 'css';
+import type { FontFace as CSSFontFace, Declaration, Stylesheet } from 'css';
+// @ts-expect-error ignore
+import parse from 'css/lib/parse';
 import { getFontURLs, getWoff2BaseURL } from '../renderer';
 import {
   createElement,
@@ -123,7 +124,7 @@ export async function parseFontFamily(fontFamily: string) {
     urls.map(async (url) => {
       const css = await fetch(url)
         .then((res) => res.text())
-        .then((text) => parse(text))
+        .then((text) => parse(text) as Stylesheet)
         .catch(() => {
           console.error(`Failed to fetch or parse font CSS: ${url}`);
           return null;
