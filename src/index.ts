@@ -61,8 +61,6 @@ export type {
 } from './jsx';
 export type { InfographicOptions, ParsedInfographicOptions } from './options';
 export type {
-  Font,
-  FontWeightName,
   GradientConfig,
   IRenderer,
   LinearGradient,
@@ -79,4 +77,10 @@ export type {
 } from './renderer';
 export type { ParsedTemplateOptions, TemplateOptions } from './templates';
 export type { ThemeColors, ThemeConfig, ThemeSeed } from './themes';
-export type { Data, ImageResource, ItemDatum } from './types';
+export type {
+  Data,
+  Font,
+  FontWeightName,
+  ImageResource,
+  ItemDatum,
+} from './types';
