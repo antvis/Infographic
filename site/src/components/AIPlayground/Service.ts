@@ -1,6 +1,32 @@
 import {SYSTEM_PROMPT} from './Prompt';
 import {AIModelConfig, AIProvider} from './types';
 
+export async function fetchModels(
+  provider: AIProvider,
+  baseURL: string,
+  apiKey: string
+): Promise<string[]> {
+  const normalizedBase = baseURL.replace(/\/$/, '');
+  try {
+    switch (provider) {
+      case 'openai':
+      case 'deepseek':
+      case 'xai':
+      case 'qwen':
+        return fetchOpenAIModels(normalizedBase, apiKey);
+      case 'anthropic':
+        return fetchAnthropicModels(normalizedBase, apiKey);
+      case 'google':
+        return fetchGoogleModels(normalizedBase, apiKey);
+      default:
+        return [];
+    }
+  } catch (err) {
+    console.warn('Fetch models failed:', err);
+    return [];
+  }
+}
+
 export async function testAIConfig(config: AIModelConfig): Promise<boolean> {
   const response = await callAI(
     config,
@@ -27,7 +53,10 @@ export async function sendMessageStream(
 ) {
   try {
     const stream = await callAI(config, messages, true);
-    if (!stream) throw new Error('未能获取流式响应');
+    if (!stream) {
+      onError(new Error('Failed to get streaming response'));
+      return;
+    }
 
     const reader = stream.getReader();
     const decoder = new TextDecoder();
@@ -59,7 +88,11 @@ export async function sendMessageStream(
     }
   } catch (error: any) {
     console.error('Send message stream failed:', error);
-    onError(error);
+    onError(
+      error instanceof Error
+        ? error
+        : new Error('Failed to get streaming response')
+    );
   }
 }
 
@@ -68,30 +101,41 @@ async function callAI(
   messages: Array<{role: 'user' | 'assistant' | 'system'; content: string}>,
   stream = true
 ): Promise<any> {
-  const {provider, baseURL, apiKey, model} = config;
-  const messagesWithSystem = [
-    {role: 'system' as const, content: SYSTEM_PROMPT},
-    ...messages,
-  ];
+  try {
+    const {provider, baseURL, apiKey, model} = config;
+    const messagesWithSystem = [
+      {role: 'system' as const, content: SYSTEM_PROMPT},
+      ...messages,
+    ];
 
-  switch (provider) {
-    case 'openai':
-    case 'deepseek':
-    case 'xai':
-    case 'qwen':
-      return callOpenAICompatible(
-        baseURL,
-        apiKey,
-        model,
-        messagesWithSystem,
-        stream
-      );
-    case 'anthropic':
-      return callAnthropic(baseURL, apiKey, model, messagesWithSystem, stream);
-    case 'google':
-      return callGoogle(baseURL, apiKey, model, messagesWithSystem, stream);
-    default:
-      throw new Error(`不支持的提供商: ${provider}`);
+    switch (provider) {
+      case 'openai':
+      case 'deepseek':
+      case 'xai':
+      case 'qwen':
+        return callOpenAICompatible(
+          baseURL,
+          apiKey,
+          model,
+          messagesWithSystem,
+          stream
+        );
+      case 'anthropic':
+        return callAnthropic(
+          baseURL,
+          apiKey,
+          model,
+          messagesWithSystem,
+          stream
+        );
+      case 'google':
+        return callGoogle(baseURL, apiKey, model, messagesWithSystem, stream);
+      default:
+        return null;
+    }
+  } catch (error) {
+    console.warn('Call AI failed:', error);
+    return null;
   }
 }
 
@@ -102,25 +146,48 @@ async function callOpenAICompatible(
   messages: Array<{role: string; content: string}>,
   stream: boolean
 ) {
-  const response = await fetch(`${baseURL}/chat/completions`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({model, messages, stream}),
-  });
+  try {
+    const response = await fetch(`${baseURL}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({model, messages, stream}),
+    });
 
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(
-      error.message || `HTTP ${response.status}: ${response.statusText}`
-    );
+    if (!response.ok) {
+      return null;
+    }
+
+    if (stream) return response.body;
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content || '';
+  } catch (error) {
+    console.warn('OpenAI compatible call failed:', error);
+    return null;
   }
+}
 
-  if (stream) return response.body;
-  const data = await response.json();
-  return data.choices?.[0]?.message?.content || '';
+async function fetchOpenAIModels(baseURL: string, apiKey: string) {
+  try {
+    const response = await fetch(`${baseURL}/models`, {
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+      },
+    });
+    if (!response.ok) {
+      return [];
+    }
+    const data = await response.json();
+    const list = Array.isArray(data?.data) ? data.data : [];
+    return list
+      .map((item: any) => item?.id)
+      .filter((id: any): id is string => typeof id === 'string');
+  } catch (error) {
+    console.warn('OpenAI models fetch failed:', error);
+    return [];
+  }
 }
 
 async function callAnthropic(
@@ -130,35 +197,63 @@ async function callAnthropic(
   messages: Array<{role: string; content: string}>,
   stream: boolean
 ) {
-  const systemMessage = messages.find((m) => m.role === 'system');
-  const conversationMessages = messages.filter((m) => m.role !== 'system');
+  try {
+    const systemMessage = messages.find((m) => m.role === 'system');
+    const conversationMessages = messages.filter((m) => m.role !== 'system');
 
-  const response = await fetch(`${baseURL}/messages`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-    },
-    body: JSON.stringify({
-      model,
-      messages: conversationMessages,
-      system: systemMessage?.content,
-      stream,
-      max_tokens: 4096,
-    }),
-  });
+    const response = await fetch(`${baseURL}/messages`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model,
+        messages: conversationMessages,
+        system: systemMessage?.content,
+        stream,
+        max_tokens: 4096,
+      }),
+    });
 
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(
-      error.message || `HTTP ${response.status}: ${response.statusText}`
-    );
+    if (!response.ok) {
+      return null;
+    }
+
+    if (stream) return response.body;
+    const data = await response.json();
+    return data.content?.[0]?.text || '';
+  } catch (error) {
+    console.warn('Anthropic call failed:', error);
+    return null;
   }
+}
 
-  if (stream) return response.body;
-  const data = await response.json();
-  return data.content?.[0]?.text || '';
+async function fetchAnthropicModels(baseURL: string, apiKey: string) {
+  try {
+    const response = await fetch(`${baseURL}/models`, {
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      },
+    });
+    if (!response.ok) {
+      return [];
+    }
+    const data = await response.json();
+    const list = Array.isArray(data?.data)
+      ? data.data
+      : Array.isArray(data?.models)
+      ? data.models
+      : [];
+    return list
+      .map((item: any) => item?.id)
+      .filter((id: any): id is string => typeof id === 'string');
+  } catch (error) {
+    console.warn('Anthropic models fetch failed:', error);
+    return [];
+  }
 }
 
 async function callGoogle(
@@ -168,38 +263,65 @@ async function callGoogle(
   messages: Array<{role: string; content: string}>,
   stream: boolean
 ) {
-  const contents = messages
-    .filter((m) => m.role !== 'system')
-    .map((m) => ({
-      role: m.role === 'assistant' ? 'model' : 'user',
-      parts: [{text: m.content}],
-    }));
-  const systemInstruction = messages.find((m) => m.role === 'system')?.content;
-  const endpoint = stream ? 'streamGenerateContent' : 'generateContent';
-  const response = await fetch(`${baseURL}/models/${model}:${endpoint}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-goog-api-key': apiKey,
-    },
-    body: JSON.stringify({
-      contents,
-      systemInstruction: systemInstruction
-        ? {parts: [{text: systemInstruction}]}
-        : undefined,
-    }),
-  });
+  try {
+    const contents = messages
+      .filter((m) => m.role !== 'system')
+      .map((m) => ({
+        role: m.role === 'assistant' ? 'model' : 'user',
+        parts: [{text: m.content}],
+      }));
+    const systemInstruction = messages.find(
+      (m) => m.role === 'system'
+    )?.content;
+    const endpoint = stream ? 'streamGenerateContent' : 'generateContent';
+    const response = await fetch(`${baseURL}/models/${model}:${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-goog-api-key': apiKey,
+      },
+      body: JSON.stringify({
+        contents,
+        systemInstruction: systemInstruction
+          ? {parts: [{text: systemInstruction}]}
+          : undefined,
+      }),
+    });
 
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(
-      error.message || `HTTP ${response.status}: ${response.statusText}`
-    );
+    if (!response.ok) {
+      return null;
+    }
+
+    if (stream) return response.body;
+    const data = await response.json();
+    return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  } catch (error) {
+    console.warn('Google call failed:', error);
+    return null;
   }
+}
 
-  if (stream) return response.body;
-  const data = await response.json();
-  return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+async function fetchGoogleModels(baseURL: string, apiKey: string) {
+  const separator = baseURL.includes('?') ? '&' : '?';
+  try {
+    const response = await fetch(`${baseURL}/models${separator}key=${apiKey}`);
+    if (!response.ok) {
+      return [];
+    }
+    const data = await response.json();
+    const list = Array.isArray(data?.models) ? data.models : [];
+    return list
+      .map((item: any) => {
+        const name = item?.name;
+        if (typeof name !== 'string') return null;
+        const segments = name.split('/');
+        return segments[segments.length - 1] || name;
+      })
+      .filter((id: any): id is string => typeof id === 'string');
+  } catch (error) {
+    console.warn('Google models fetch failed:', error);
+    return [];
+  }
 }
 
 function extractContentFromResponse(provider: AIProvider, data: any): string {

@@ -18,67 +18,42 @@ export const PROVIDER_OPTIONS: Array<{
   value: AIProvider;
   label: string;
   baseUrl: string;
-  models: string[];
   logo?: string;
 }> = [
   {
     value: 'openai',
     label: 'OpenAI',
     baseUrl: 'https://api.openai.com/v1',
-    models: [
-      'gpt-5-chat',
-      'gpt-5',
-      'gpt-5-mini',
-      'gpt-4.1',
-      'gpt-4.1-mini',
-      'o4-mini',
-      'gpt-4o',
-      'gpt-4o-mini',
-      'gpt-4-turbo',
-      'o3-mini',
-      'o1',
-      'o1-mini',
-    ],
     logo: '/images/openai.svg',
   },
   {
     value: 'anthropic',
     label: 'Anthropic',
     baseUrl: 'https://api.anthropic.com/v1',
-    models: [
-      'claude-sonnet-4-5',
-      'claude-opus-4-1-20250805',
-      'claude-sonnet-4-20250514',
-      'claude-3-7-sonnet-20250219',
-    ],
     logo: '/images/claude.svg',
   },
   {
     value: 'google',
     label: 'Google',
     baseUrl: 'https://generativelanguage.googleapis.com/v1',
-    models: ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.5-pro'],
     logo: '/images/gemini.svg',
   },
   {
     value: 'xai',
     label: 'xAI',
     baseUrl: 'https://api.x.ai/v1',
-    models: ['grok-beta'],
     logo: '/images/xai.svg',
   },
   {
     value: 'deepseek',
     label: 'DeepSeek',
     baseUrl: 'https://api.deepseek.com/v1',
-    models: ['deepseek-chat', 'deepseek-reasoner'],
     logo: '/images/deepseek.svg',
   },
   {
     value: 'qwen',
     label: 'Qwen',
     baseUrl: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
-    models: ['qwen3-max', 'qwen3-235b-a22b', 'qwen3-coder-plus'],
     logo: '/images/qwen.svg',
   },
 ];

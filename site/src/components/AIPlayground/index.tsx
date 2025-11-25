@@ -16,6 +16,20 @@ import {
 import {formatJSON} from './helpers';
 import {AIConfig, AIModelConfig, ChatMessage} from './types';
 
+const createId = () => {
+  try {
+    if (
+      typeof crypto !== 'undefined' &&
+      typeof crypto.randomUUID === 'function'
+    ) {
+      return crypto.randomUUID();
+    }
+  } catch {
+    /* ignore */
+  }
+  return `id-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+};
+
 export function AIPageContent() {
   const [prompt, setPrompt] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -88,7 +102,7 @@ export function AIPageContent() {
     if (last.role === 'user') {
       recoveredPendingRef.current = true;
       const errorAssistant: ChatMessage = {
-        id: crypto.randomUUID(),
+        id: createId(),
         role: 'assistant',
         text: '上次请求未完成，已标记为失败',
         isError: true,
@@ -131,7 +145,7 @@ export function AIPageContent() {
     if (!content) return;
 
     const newUser: ChatMessage = {
-      id: crypto.randomUUID(),
+      id: createId(),
       role: 'user',
       text: content,
     };
@@ -180,7 +194,7 @@ export function AIPageContent() {
       }
 
       const newAssistant: ChatMessage = {
-        id: crypto.randomUUID(),
+        id: createId(),
         role: 'assistant',
         text: parsedConfig ? '已生成配置' : assistantContent,
         summary: parsedConfig ? undefined : undefined,
@@ -204,7 +218,7 @@ export function AIPageContent() {
       }
     } catch (error) {
       const newAssistant: ChatMessage = {
-        id: crypto.randomUUID(),
+        id: createId(),
         role: 'assistant',
         text:
           error instanceof Error

@@ -1,5 +1,5 @@
 import {InfographicOptions} from '@antv/infographic';
-import {AnimatePresence, motion} from 'framer-motion';
+import {motion} from 'framer-motion';
 import {useEffect, useRef, useState} from 'react';
 import {IconErrorCircle} from '../Icon/IconErrorCircle';
 import {
@@ -108,132 +108,113 @@ export function ChatPanel({
             </div>
           ) : (
             <div className="space-y-4 pr-1">
-              <AnimatePresence initial={false}>
-                {history.map((item, index) => {
-                  const isError = item.status === 'error';
-                  const disabledByRequest =
-                    isGenerating && item.status !== 'pending';
-                  const disabled =
-                    disabledByRequest ||
-                    item.status === 'pending' ||
-                    (!item.config && !isError);
-                  const showError = item.status === 'error';
-                  const isExpanded = expandedId === item.id;
+              {history.map((item) => {
+                const isError = item.status === 'error';
+                const disabledByRequest =
+                  isGenerating && item.status !== 'pending';
+                const disabled =
+                  disabledByRequest ||
+                  item.status === 'pending' ||
+                  (!item.config && !isError);
+                const showError = item.status === 'error';
+                const isExpanded = expandedId === item.id;
 
-                  return (
-                    <motion.button
-                      key={item.id}
-                      layout
-                      initial={{opacity: 0, y: 12}}
-                      animate={{opacity: 1, y: 0}}
-                      exit={{opacity: 0, y: -12}}
-                      transition={{
-                        duration: 0.35,
-                        ease: 'easeOut',
-                        delay: Math.min(index * 0.04, 0.22),
-                      }}
-                      onClick={() =>
-                        isError
-                          ? undefined
-                          : handleCardClick(item.id, item.config, disabled)
-                      }
-                      disabled={disabled || isError}
-                      whileHover={
-                        !disabled && !isError ? {y: -2, scale: 1.01} : undefined
-                      }
-                      whileTap={
-                        !disabled && !isError ? {scale: 0.98, y: 0} : undefined
-                      }
-                      className={`group relative w-full rounded-2xl border text-left disabled:cursor-not-allowed transition-all duration-300 ease-out px-4 py-4 ${
-                        disabled
-                          ? 'border-border dark:border-border-dark bg-card dark:bg-card-dark opacity-60'
-                          : isExpanded
-                          ? 'border-link/70 dark:border-link-dark/60 bg-wash dark:bg-wash-dark shadow-[0_20px_55px_-30px_rgba(64,99,164,0.65)] -translate-y-0.5'
-                          : 'border-border dark:border-border-dark bg-wash dark:bg-wash-dark hover:border-link/40 dark:hover:border-link-dark/50'
-                      }`}>
-                      <div className="flex items-start gap-3">
-                        <div className="flex-1 min-w-0">
-                          <div
-                            className={`overflow-hidden transition-[max-height] duration-400 ease-out ${
-                              isExpanded ? 'max-h-64' : 'max-h-[24px]'
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() =>
+                      isError
+                        ? undefined
+                        : handleCardClick(item.id, item.config, disabled)
+                    }
+                    disabled={disabled || isError}
+                    className={`group relative w-full rounded-2xl border text-left disabled:cursor-not-allowed transition-all duration-300 ease-out px-4 py-4 ${
+                      disabled
+                        ? 'border-border dark:border-border-dark bg-card dark:bg-card-dark opacity-60'
+                        : isExpanded
+                        ? 'border-link/70 dark:border-link-dark/60 bg-wash dark:bg-wash-dark shadow-[0_18px_45px_-30px_rgba(22,35,70,0.32),0_12px_32px_-22px_rgba(77,116,202,0.55),0_0_0_1px_rgba(255,255,255,0.35)] dark:shadow-[0_18px_48px_-30px_rgba(0,0,0,0.55),0_12px_32px_-22px_rgba(120,150,220,0.5),0_0_0_1px_rgba(255,255,255,0.06)] -translate-y-0.5'
+                        : 'border-border dark:border-border-dark bg-wash dark:bg-wash-dark hover:border-link/40 dark:hover:border-link-dark/50'
+                    }`}>
+                    <div className="flex items-start gap-3">
+                      <div className="flex-1 min-w-0">
+                        <div
+                          className={`overflow-hidden transition-[max-height] duration-200 ease-in-out ${
+                            isExpanded ? 'max-h-[260px]' : 'max-h-[24px]'
+                          }`}>
+                          <p
+                            className={`text-[13px] leading-relaxed text-secondary dark:text-secondary-dark ${
+                              isExpanded ? '' : 'line-clamp-1'
                             }`}>
-                            <p
-                              className={`text-[13px] leading-relaxed text-secondary dark:text-secondary-dark transition-[opacity,transform] duration-400 ${
-                                isExpanded
-                                  ? 'line-clamp-none opacity-100 translate-y-0'
-                                  : 'line-clamp-1 opacity-90 translate-y-[1px]'
-                              }`}>
-                              {item.summary || item.text}
-                            </p>
-                          </div>
+                            {item.summary || item.text}
+                          </p>
                         </div>
+                      </div>
 
-                        <div className="flex-shrink-0 flex items-center gap-2 self-center">
-                          {item.status === 'pending' && (
+                      <div className="flex-shrink-0 flex items-center gap-2 self-center">
+                        {item.status === 'pending' && (
+                          <svg
+                            className="w-4 h-4 text-tertiary dark:text-tertiary-dark animate-spin"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="9"
+                              stroke="currentColor"
+                              strokeWidth="3"
+                            />
+                            <path
+                              className="opacity-80"
+                              fill="currentColor"
+                              d="M12 3a9 9 0 00-9 9h3a6 6 0 016-6V3z"
+                            />
+                          </svg>
+                        )}
+
+                        {showError ? (
+                          <>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onRetry(item.text);
+                              }}
+                              className="inline-flex items-center justify-center h-7 px-2 rounded-full border border-red-50/50 dark:border-red-50/40 text-[11px] font-semibold text-red-500 dark:text-red-400 bg-red-50/10 dark:bg-red-50/10 hover:bg-red-50/20 dark:hover:bg-red-50/20">
+                              重试
+                            </button>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span className="inline-flex">
+                                  <IconErrorCircle className="w-4 h-4 text-red-500 dark:text-red-400" />
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent side="top" align="end">
+                                生成失败，请检查 API Key 或网络连接
+                              </TooltipContent>
+                            </Tooltip>
+                          </>
+                        ) : (
+                          !disabled && (
                             <svg
-                              className="w-4 h-4 text-tertiary dark:text-tertiary-dark animate-spin"
+                              className="w-4 h-4 text-link dark:text-link-dark transition-all duration-200 group-hover:translate-x-0.5"
                               fill="none"
                               viewBox="0 0 24 24"
                               stroke="currentColor">
-                              <circle
-                                className="opacity-25"
-                                cx="12"
-                                cy="12"
-                                r="9"
-                                stroke="currentColor"
-                                strokeWidth="3"
-                              />
                               <path
-                                className="opacity-80"
-                                fill="currentColor"
-                                d="M12 3a9 9 0 00-9 9h3a6 6 0 016-6V3z"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M9 5l7 7-7 7"
                               />
                             </svg>
-                          )}
-
-                          {showError ? (
-                            <>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onRetry(item.text);
-                                }}
-                                className="inline-flex items-center justify-center h-7 px-2 rounded-full border border-red-50/50 dark:border-red-50/40 text-[11px] font-semibold text-red-500 dark:text-red-400 bg-red-50/10 dark:bg-red-50/10 hover:bg-red-50/20 dark:hover:bg-red-50/20">
-                                重试
-                              </button>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <span className="inline-flex">
-                                    <IconErrorCircle className="w-4 h-4 text-red-500 dark:text-red-400" />
-                                  </span>
-                                </TooltipTrigger>
-                                <TooltipContent side="top" align="end">
-                                  生成失败，请检查 API Key 或网络连接
-                                </TooltipContent>
-                              </Tooltip>
-                            </>
-                          ) : (
-                            !disabled && (
-                              <svg
-                                className="w-4 h-4 text-link dark:text-link-dark transition-all duration-200 group-hover:translate-x-0.5"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M9 5l7 7-7 7"
-                                />
-                              </svg>
-                            )
-                          )}
-                        </div>
+                          )
+                        )}
                       </div>
-                    </motion.button>
-                  );
-                })}
-              </AnimatePresence>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>

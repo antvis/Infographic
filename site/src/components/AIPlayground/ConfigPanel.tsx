@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import {useEffect, useMemo, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Dialog, DialogContent, DialogTitle} from '../ui/dialog';
 import {
   Select,
@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from '../ui/select';
 import {DEFAULT_CONFIG, PROVIDER_OPTIONS} from './constants';
+import {fetchModels} from './Service';
 import {AIConfig} from './types';
 
 export function ConfigPanel({
@@ -23,31 +24,72 @@ export function ConfigPanel({
   onSave: (config: AIConfig) => void;
 }) {
   const [draft, setDraft] = useState<AIConfig>(value);
-  const providerPreset = useMemo(
-    () => PROVIDER_OPTIONS.find((item) => item.value === draft.provider),
-    [draft.provider]
+
+  const [models, setModels] = useState<string[]>(
+    draft.model ? [draft.model] : []
   );
+  const [loadingModels, setLoadingModels] = useState(false);
 
   const handlePresetSelect = (next: string) => {
     const preset = PROVIDER_OPTIONS.find((item) => item.value === next);
     if (!preset) return;
-    setDraft((prev) => ({
-      provider: preset.value,
-      baseUrl: preset.baseUrl,
-      model: preset.models[0] || prev.model,
-      apiKey: prev.apiKey,
-    }));
+    setDraft((prev) => {
+      const keepModel = prev.provider === preset.value ? prev.model : '';
+      setModels(keepModel ? [keepModel] : []);
+      return {
+        provider: preset.value,
+        baseUrl: preset.baseUrl,
+        model: keepModel,
+        apiKey: prev.apiKey,
+      };
+    });
   };
 
   useEffect(() => {
-    if (open) {
-      const safeProvider =
-        PROVIDER_OPTIONS.find((item) => item.value === value.provider)?.value ||
-        PROVIDER_OPTIONS[0]?.value;
-      handlePresetSelect(safeProvider);
-      setDraft((prev) => ({...prev, apiKey: value.apiKey}));
-    }
+    if (!open) return;
+    const safeProvider =
+      PROVIDER_OPTIONS.find((item) => item.value === value.provider)?.value ||
+      PROVIDER_OPTIONS[0]?.value ||
+      DEFAULT_CONFIG.provider;
+    const preset = PROVIDER_OPTIONS.find((item) => item.value === safeProvider);
+    setDraft({
+      provider: safeProvider,
+      baseUrl: value.baseUrl || preset?.baseUrl || DEFAULT_CONFIG.baseUrl,
+      model: value.model,
+      apiKey: value.apiKey,
+    });
+    setModels(value.model ? [value.model] : []);
   }, [open, value]);
+
+  useEffect(() => {
+    if (!open) return;
+    if (!draft.baseUrl || !draft.apiKey) {
+      setModels(draft.model ? [draft.model] : []);
+      setLoadingModels(false);
+      return;
+    }
+    let cancelled = false;
+    const load = async () => {
+      setLoadingModels(true);
+      const list = await fetchModels(
+        draft.provider,
+        draft.baseUrl,
+        draft.apiKey
+      );
+      if (cancelled) return;
+      const cached = draft.model ? [draft.model] : [];
+      const nextList = list.length ? list : cached;
+      setModels(nextList);
+      if (!nextList.includes(draft.model) && nextList.length) {
+        setDraft((prev) => ({...prev, model: nextList[0]}));
+      }
+      setLoadingModels(false);
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [draft.provider, draft.baseUrl, draft.apiKey, open, draft.model]);
 
   return (
     <Dialog open={open} onOpenChange={(next) => !next && onClose()}>
@@ -108,27 +150,6 @@ export function ConfigPanel({
             </div>
 
             <div className="space-y-2 text-base">
-              <label className="block text-sm font-semibold">模型</label>
-              <Select
-                value={draft.model}
-                onValueChange={(next) => setDraft({...draft, model: next})}>
-                <SelectTrigger>
-                  <SelectValue placeholder="选择模型" />
-                </SelectTrigger>
-                <SelectContent>
-                  {(providerPreset?.models?.length
-                    ? providerPreset.models
-                    : [draft.model || '自定义']
-                  ).map((item) => (
-                    <SelectItem key={item} value={item}>
-                      {item}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2 text-base">
               <label className="block text-sm font-semibold">API Key</label>
               <input
                 value={draft.apiKey}
@@ -137,6 +158,32 @@ export function ConfigPanel({
                 placeholder="sk-..."
                 type="password"
               />
+            </div>
+
+            <div className="space-y-2 text-base">
+              <label className="block text-sm font-semibold">模型</label>
+              <Select
+                value={draft.model}
+                disabled={loadingModels}
+                onValueChange={(next) => setDraft({...draft, model: next})}>
+                <SelectTrigger>
+                  <SelectValue placeholder="选择模型" />
+                </SelectTrigger>
+                <SelectContent>
+                  {(models.length ? models : [draft.model || '自定义']).map(
+                    (item) => (
+                      <SelectItem key={item} value={item}>
+                        {item}
+                      </SelectItem>
+                    )
+                  )}
+                </SelectContent>
+              </Select>
+              {loadingModels ? (
+                <p className="text-xs text-secondary dark:text-secondary-dark">
+                  正在获取模型列表…
+                </p>
+              ) : null}
             </div>
           </div>
 

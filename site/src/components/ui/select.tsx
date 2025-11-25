@@ -37,12 +37,12 @@ export const SelectContent = forwardRef<
         ref={ref}
         position={position}
         className={cn(
-          'z-50 min-w-[8rem] overflow-hidden rounded-xl border border-border dark:border-border-dark bg-white dark:bg-gray-800 text-sm shadow-xl',
+          'z-50 min-w-[8rem] overflow-hidden rounded-xl border border-border dark:border-border-dark bg-white dark:bg-gray-800 text-sm shadow-xl max-h-[320px]',
           'data-[state=open]:animate-in data-[state=open]:fade-in data-[state=closed]:fade-out',
           className
         )}
         {...props}>
-        <SelectPrimitive.Viewport className="p-1">
+        <SelectPrimitive.Viewport className="p-1 max-h-[320px] overflow-y-auto">
           {children}
         </SelectPrimitive.Viewport>
       </SelectPrimitive.Content>
