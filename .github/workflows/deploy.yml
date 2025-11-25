@@ -41,6 +41,7 @@ jobs:
         run: npm run build:site
 
       - name: Deploy to GitHub Pages
+        # Only deploy to GitHub Pages when the push is to the main or dev branch
         if: github.event_name == 'push' &&
           (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')
         uses: peaceiris/actions-gh-pages@v4
