@@ -43,7 +43,7 @@ describe('ref', () => {
 
       expect(parseDataURI).toHaveBeenCalledWith('data:image/png;base64,abc123');
       expect(getSimpleHash).toHaveBeenCalledWith(JSON.stringify(mockConfig));
-      expect(result).toBe('12345');
+      expect(result).toBe('rsc-12345');
     });
 
     it('should generate hash for ResourceConfig object', () => {
@@ -58,7 +58,7 @@ describe('ref', () => {
 
       expect(parseDataURI).not.toHaveBeenCalled();
       expect(getSimpleHash).toHaveBeenCalledWith(JSON.stringify(config));
-      expect(result).toBe('67890');
+      expect(result).toBe('rsc-67890');
     });
 
     it('should return null for null ResourceConfig', () => {
@@ -87,7 +87,7 @@ describe('ref', () => {
 
       const result = getResourceHref('data:image/png;base64,def456');
 
-      expect(result).toBe('#abc123');
+      expect(result).toBe('#rsc-abc123');
     });
 
     it('should work with ResourceConfig object', () => {
@@ -100,7 +100,7 @@ describe('ref', () => {
 
       const result = getResourceHref(config);
 
-      expect(result).toBe('#xyz789');
+      expect(result).toBe('#rsc-xyz789');
     });
   });
 });
