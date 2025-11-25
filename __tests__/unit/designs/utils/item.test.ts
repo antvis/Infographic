@@ -59,6 +59,6 @@ describe('getItemComponent', () => {
     expect(getItemComponent(components, 5)).toBe(First);
 
     const empty = [] as any;
-    expect(getItemComponent(empty)()).toBeNull();
+    expect(getItemComponent(empty)({})).toBeNull();
   });
 });

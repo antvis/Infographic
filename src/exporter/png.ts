@@ -19,7 +19,7 @@ export async function exportToPNGString(
 
       const ctx = canvas.getContext('2d');
       if (!ctx) {
-        reject(new Error('无法获取 canvas 上下文'));
+        reject(new Error('Failed to get canvas context'));
         return;
       }
 
@@ -47,7 +47,7 @@ export async function exportToPNGString(
       };
 
       img.onerror = function (error) {
-        reject(new Error('图像加载失败: ' + error));
+        reject(new Error('Image load failed: ' + error));
       };
 
       img.src = svgURL;

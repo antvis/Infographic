@@ -69,12 +69,18 @@ export class Infographic {
     return getTypes({ structure, items });
   }
 
+  /**
+   * Export the infographic to data URL
+   * @param options Export option
+   * @returns Data URL string of the exported infographic
+   * @description This method need to be called after `render()` and in a browser environment.
+   */
   async toDataURL(options?: ExportOptions): Promise<string> {
     if (!this.node) {
       throw new Error('Infographic is not rendered yet.');
     }
     if (options?.type === 'svg') {
-      return await exportToSVGString(this.node);
+      return await exportToSVGString(this.node, options);
     }
     return await exportToPNGString(this.node, options);
   }

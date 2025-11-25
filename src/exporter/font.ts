@@ -124,7 +124,10 @@ export async function parseFontFamily(fontFamily: string) {
       const css = await fetch(url)
         .then((res) => res.text())
         .then((text) => parse(text))
-        .catch(() => null);
+        .catch(() => {
+          console.error(`Failed to fetch or parse font CSS: ${url}`);
+          return null;
+        });
 
       css?.stylesheet?.rules.forEach((rule) => {
         if (rule.type === 'font-face') {
