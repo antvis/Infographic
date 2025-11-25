@@ -6,7 +6,7 @@ title: 信息图语法
 
 信息图语法受到 AntV G2、G6 的图形语法启发，并结合[信息图理论](/learn/infographic-theory)和[设计原则](/learn/infographic-design)。它的目标是让你专注于内容和视觉，不必陷入底层细节。
 
-我们将信息图表示为：<b><i>信息图 = 信息结构 + 图形表意</i></b>
+我们将信息图表示为：<Math>信息图 = 信息结构 + 图形表意</Math>
 
 <img
   src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*Ir9aTL5mKQYAAAAARVAAAAgAemJ7AQ/original"

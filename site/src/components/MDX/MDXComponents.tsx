@@ -1,7 +1,6 @@
-import cn from 'classnames';
 import type {HTMLAttributes} from 'react';
 import * as React from 'react';
-import {Children, useContext, useMemo} from 'react';
+import {useContext, useMemo} from 'react';
 
 import ButtonLink from 'components/ButtonLink';
 import {finishedTranslations} from 'utils/finishedTranslations';
@@ -20,35 +19,11 @@ import {PackageImport} from './PackageImport';
 import type {Toc, TocItem} from './TocContext';
 import {TocContext} from './TocContext';
 
-import {IconExperimental} from 'components/Icon/IconExperimental';
-import {IconCanary} from '../Icon/IconCanary';
 import ErrorDecoder from './ErrorDecoder';
 import {
   CodeRunner,
   InfographicBlock as Infographic,
 } from './InfographicPlayground';
-
-function CodeStep({children, step}: {children: any; step: number}) {
-  return (
-    <span
-      data-step={step}
-      className={cn(
-        'code-step bg-opacity-10 dark:bg-opacity-20 relative rounded px-[6px] py-[1.5px] border-b-[2px] border-opacity-60',
-        {
-          'bg-blue-40 border-blue-40 text-blue-60 dark:text-blue-30':
-            step === 1,
-          'bg-yellow-40 border-yellow-40 text-yellow-60 dark:text-yellow-30':
-            step === 2,
-          'bg-purple-40 border-purple-40 text-purple-60 dark:text-purple-30':
-            step === 3,
-          'bg-green-40 border-green-40 text-green-60 dark:text-green-30':
-            step === 4,
-        }
-      )}>
-      {children}
-    </span>
-  );
-}
 
 const P = (p: HTMLAttributes<HTMLParagraphElement>) => (
   <p className="whitespace-pre-wrap my-4" {...p} />
@@ -71,85 +46,13 @@ const UL = (p: HTMLAttributes<HTMLUListElement>) => (
 const Divider = () => (
   <hr className="my-6 block border-b border-t-0 border-border dark:border-border-dark" />
 );
-const Wip = ({children}: {children: React.ReactNode}) => (
-  <ExpandableCallout type="warning">{children}</ExpandableCallout>
-);
+
 const Warning = ({children}: {children: React.ReactNode}) => (
   <ExpandableCallout type="warning">{children}</ExpandableCallout>
 );
-const Deprecated = ({children}: {children: React.ReactNode}) => (
-  <ExpandableCallout type="deprecated">{children}</ExpandableCallout>
-);
+
 const Note = ({children}: {children: React.ReactNode}) => (
   <ExpandableCallout type="note">{children}</ExpandableCallout>
-);
-
-const Canary = ({children}: {children: React.ReactNode}) => (
-  <ExpandableCallout type="canary">{children}</ExpandableCallout>
-);
-
-const RC = ({children}: {children: React.ReactNode}) => (
-  <ExpandableCallout type="rc">{children}</ExpandableCallout>
-);
-
-const Experimental = ({children}: {children: React.ReactNode}) => (
-  <ExpandableCallout type="experimental">{children}</ExpandableCallout>
-);
-
-const NextMajor = ({children}: {children: React.ReactNode}) => (
-  <ExpandableCallout type="major">{children}</ExpandableCallout>
-);
-
-const RSC = ({children}: {children: React.ReactNode}) => (
-  <ExpandableCallout type="rsc">{children}</ExpandableCallout>
-);
-
-const CanaryBadge = ({title}: {title: string}) => (
-  <span
-    title={title}
-    className={
-      'text-base font-display px-1 py-0.5 font-bold bg-gray-10 dark:bg-gray-60 text-gray-60 dark:text-gray-10 rounded'
-    }>
-    <IconCanary
-      size="s"
-      className={'inline me-1 mb-0.5 text-sm text-gray-60 dark:text-gray-10'}
-    />
-    Canary only
-  </span>
-);
-
-const ExperimentalBadge = ({title}: {title: string}) => (
-  <span
-    title={title}
-    className={
-      'text-base font-display px-1 py-0.5 font-bold bg-gray-10 dark:bg-gray-60 text-gray-60 dark:text-gray-10 rounded'
-    }>
-    <IconExperimental
-      size="s"
-      className={'inline me-1 mb-0.5 text-sm text-gray-60 dark:text-gray-10'}
-    />
-    Experimental only
-  </span>
-);
-
-const NextMajorBadge = ({title}: {title: string}) => (
-  <span
-    title={title}
-    className={
-      'text-base font-display px-2 py-0.5 font-bold bg-blue-10 dark:bg-blue-60 text-gray-60 dark:text-gray-10 rounded'
-    }>
-    React 19
-  </span>
-);
-
-const RSCBadge = ({title}: {title: string}) => (
-  <span
-    title={title}
-    className={
-      'text-base font-display px-2 py-0.5 font-bold bg-blue-10 dark:bg-blue-50 text-gray-60 dark:text-gray-10 rounded'
-    }>
-    RSC
-  </span>
 );
 
 const Blockquote = ({children, ...props}: HTMLAttributes<HTMLQuoteElement>) => {
@@ -195,15 +98,6 @@ function LearnMore({
   );
 }
 
-function ReadBlogPost({path}: {path: string}) {
-  return (
-    <ButtonLink className="mt-1" label="Read Post" href={path} type="primary">
-      Read Post
-      <IconNavArrow displayDirection="end" className="inline ms-1" />
-    </ButtonLink>
-  );
-}
-
 function Math({children}: {children: any}) {
   return (
     <span
@@ -225,129 +119,6 @@ function MathI({children}: {children: any}) {
       }}>
       {children}
     </span>
-  );
-}
-
-function AuthorCredit({
-  author = 'Rachel Lee Nabors',
-  authorLink = 'https://nearestnabors.com/',
-}: {
-  author: string;
-  authorLink: string;
-}) {
-  return (
-    <div className="sr-only group-hover:not-sr-only group-focus-within:not-sr-only hover:sr-only">
-      <p className="bg-card dark:bg-card-dark text-center text-sm text-secondary dark:text-secondary-dark leading-tight p-2 rounded-lg absolute start-1/2 -top-4 -translate-x-1/2 -translate-y-full group-hover:flex group-hover:opacity-100 after:content-[''] after:absolute after:start-1/2 after:top-[95%] after:-translate-x-1/2 after:border-8 after:border-x-transparent after:border-b-transparent after:border-t-card after:dark:border-t-card-dark opacity-0 transition-opacity duration-300">
-        <cite>
-          Illustrated by{' '}
-          {authorLink ? (
-            <a
-              target="_blank"
-              rel="noreferrer"
-              className="text-link dark:text-link-dark"
-              href={authorLink}>
-              {author}
-            </a>
-          ) : (
-            author
-          )}
-        </cite>
-      </p>
-    </div>
-  );
-}
-
-const IllustrationContext = React.createContext<{
-  isInBlock?: boolean;
-}>({
-  isInBlock: false,
-});
-
-function Illustration({
-  caption,
-  src,
-  alt,
-  author,
-  authorLink,
-}: {
-  caption: string;
-  src: string;
-  alt: string;
-  author: string;
-  authorLink: string;
-}) {
-  const {isInBlock} = React.useContext(IllustrationContext);
-
-  return (
-    <div className="relative group before:absolute before:-inset-y-16 before:inset-x-0 my-16 mx-0 2xl:mx-auto max-w-4xl 2xl:max-w-6xl">
-      <figure className="my-8 flex justify-center">
-        <img
-          src={src}
-          alt={alt}
-          style={{maxHeight: 300}}
-          className="rounded-lg"
-        />
-        {caption ? (
-          <figcaption className="text-center leading-tight mt-4">
-            {caption}
-          </figcaption>
-        ) : null}
-      </figure>
-      {!isInBlock && <AuthorCredit author={author} authorLink={authorLink} />}
-    </div>
-  );
-}
-
-const isInBlockTrue = {isInBlock: true};
-
-function IllustrationBlock({
-  sequential,
-  author,
-  authorLink,
-  children,
-}: {
-  author: string;
-  authorLink: string;
-  sequential: boolean;
-  children: any;
-}) {
-  const imageInfos = Children.toArray(children).map(
-    (child: any) => child.props
-  );
-  const images = imageInfos.map((info, index) => (
-    <figure key={index}>
-      <div className="bg-white rounded-lg p-4 flex-1 flex xl:p-6 justify-center items-center my-4">
-        <img
-          className="text-primary"
-          src={info.src}
-          alt={info.alt}
-          height={info.height}
-        />
-      </div>
-      {info.caption ? (
-        <figcaption className="text-secondary dark:text-secondary-dark text-center leading-tight mt-4">
-          {info.caption}
-        </figcaption>
-      ) : null}
-    </figure>
-  ));
-  return (
-    <IllustrationContext value={isInBlockTrue}>
-      <div className="relative group before:absolute before:-inset-y-16 before:inset-x-0 my-16 mx-0 2xl:mx-auto max-w-4xl 2xl:max-w-6xl">
-        {sequential ? (
-          <ol className="mdx-illustration-block flex">
-            {images.map((x: any, i: number) => (
-              <li className="flex-1" key={i}>
-                {x}
-              </li>
-            ))}
-          </ol>
-        ) : (
-          <div className="mdx-illustration-block">{images}</div>
-        )}
-        <AuthorCredit author={author} authorLink={authorLink} />
-      </div>
-    </IllustrationContext>
   );
 }
 
@@ -436,21 +207,6 @@ function LanguageList({progress}: {progress: TranslationProgress}) {
   );
 }
 
-function YouTubeIframe(props: any) {
-  return (
-    <div className="relative h-0 overflow-hidden pt-[56.25%]">
-      <iframe
-        className="absolute inset-0 w-full h-full"
-        frameBorder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowFullScreen
-        title="YouTube video player"
-        {...props}
-      />
-    </div>
-  );
-}
-
 function Image(props: any) {
   const {alt, ...rest} = props;
   return <img alt={alt} className="max-w-[calc(min(700px,100%))]" {...rest} />;
@@ -489,12 +245,8 @@ export const MDXComponents = {
     return <div className="max-w-4xl ms-0 2xl:mx-auto">{children}</div>;
   },
   Warning,
-  Deprecated,
-  Wip,
   Infographic,
   CodeRunner,
-  Illustration,
-  IllustrationBlock,
   Intro,
   InlineToc,
   LanguageList,
@@ -502,19 +254,7 @@ export const MDXComponents = {
   Math,
   MathI,
   Note,
-  RC,
-  Canary,
-  Experimental,
-  ExperimentalBadge,
-  CanaryBadge,
-  NextMajor,
-  NextMajorBadge,
-  RSC,
-  RSCBadge,
   PackageImport,
-  ReadBlogPost,
-  CodeStep,
-  YouTubeIframe,
   ErrorDecoder,
 };
 
