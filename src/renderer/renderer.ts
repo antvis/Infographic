@@ -1,9 +1,7 @@
 import type { ParsedInfographicOptions } from '../options';
-import type { ParsedPadding } from '../types';
 import {
   getDatumByIndexes,
   getItemIndexes,
-  getSizeBaseVal,
   isBtnsGroup,
   isDesc,
   isGroup,
@@ -19,6 +17,7 @@ import {
   isTitle,
   parsePadding,
   setAttributes,
+  setSVGPadding,
 } from '../utils';
 import {
   renderBackground,
@@ -211,72 +210,5 @@ function setView(svg: SVGSVGElement, options: ParsedInfographicOptions) {
     svg.setAttribute('viewBox', viewBox);
   } else if (padding !== undefined) {
     setSVGPadding(svg, parsePadding(padding));
-  }
-}
-
-interface SVGPaddingOptions {
-  /** 是否保持宽高比 (默认: true) */
-  preserveAspectRatio?: boolean;
-}
-
-function setSVGPadding(
-  svg: SVGSVGElement,
-  padding: ParsedPadding,
-  options: SVGPaddingOptions = {},
-): boolean {
-  const { preserveAspectRatio = false } = options;
-
-  if (!svg.isConnected) return false;
-
-  try {
-    const bbox = svg.getBBox();
-
-    // 检查包围盒是否有效
-    if (bbox.width === 0 || bbox.height === 0) {
-      return false;
-    }
-    const [widthBaseVal, heightBaseVal] = getSizeBaseVal(svg);
-    const svgWidth = widthBaseVal || svg.clientWidth || 0;
-    const svgHeight = heightBaseVal || svg.clientHeight || 0;
-
-    const parentElement = svg.parentElement;
-    const effectiveWidth =
-      svgWidth || (parentElement ? parentElement.clientWidth : 300);
-    const effectiveHeight =
-      svgHeight || (parentElement ? parentElement.clientHeight : 150);
-
-    let viewBoxPadding: number[];
-
-    if (effectiveWidth > 0 && effectiveHeight > 0) {
-      const scaleX = bbox.width / effectiveWidth;
-      const scaleY = bbox.height / effectiveHeight;
-
-      if (preserveAspectRatio) {
-        const scale = Math.max(scaleX, scaleY);
-        viewBoxPadding = padding.map((p) => p * scale);
-      } else {
-        viewBoxPadding = [
-          padding[0] * scaleY,
-          padding[1] * scaleX,
-          padding[2] * scaleY,
-          padding[3] * scaleX,
-        ];
-      }
-    } else {
-      viewBoxPadding = [...padding];
-    }
-
-    const newViewBox = [
-      bbox.x - viewBoxPadding[3],
-      bbox.y - viewBoxPadding[0],
-      bbox.width + viewBoxPadding[1] + viewBoxPadding[3],
-      bbox.height + viewBoxPadding[0] + viewBoxPadding[2],
-    ].join(' ');
-
-    svg.setAttribute('viewBox', newViewBox);
-
-    return true;
-  } catch {
-    return false;
   }
 }

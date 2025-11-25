@@ -1,3 +1,8 @@
+import {
+  ExportOptions,
+  exportToPNGString,
+  exportToSVGString,
+} from '../exporter';
 import { renderSVG } from '../jsx';
 import {
   InfographicOptions,
@@ -8,6 +13,8 @@ import { Renderer } from '../renderer';
 import { getTypes, parseSVG } from '../utils';
 
 export class Infographic {
+  private node: SVGSVGElement | null = null;
+
   private parsedOptions: ParsedInfographicOptions;
 
   constructor(private options: InfographicOptions) {
@@ -22,8 +29,8 @@ export class Infographic {
     const template = this.compose();
     const renderer = new Renderer(this.parsedOptions, template);
 
-    const infographic = renderer.render();
-    container.replaceChildren(infographic);
+    this.node = renderer.render();
+    container.replaceChildren(this.node);
   }
 
   /**
@@ -60,5 +67,20 @@ export class Infographic {
     const structure = design.structure.composites || [];
     const items = design.items.map((it) => it.composites || []);
     return getTypes({ structure, items });
+  }
+
+  async toDataURL(options?: ExportOptions): Promise<string> {
+    if (!this.node) {
+      throw new Error('Infographic is not rendered yet.');
+    }
+    if (options?.type === 'svg') {
+      return await exportToSVGString(this.node);
+    }
+    return await exportToPNGString(this.node, options);
+  }
+
+  destroy() {
+    this.node?.remove();
+    this.node = null;
   }
 }

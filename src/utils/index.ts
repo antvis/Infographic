@@ -10,3 +10,4 @@ export * from './recognizer';
 export * from './svg';
 export * from './text';
 export * from './uuid';
+export * from './viewbox';

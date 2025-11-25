@@ -74,6 +74,7 @@
     "singleQuote": true
   },
   "dependencies": {
+    "css": "^3.0.0",
     "culori": "^4.0.2",
     "d3": "^7.9.0",
     "lodash-es": "^4.17.21",
@@ -89,6 +90,7 @@
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.3.0",
     "@size-limit/file": "^11.2.0",
+    "@types/css": "^0.0.38",
     "@types/culori": "^4.0.1",
     "@types/d3": "^7.4.3",
     "@types/lodash-es": "^4.17.12",
