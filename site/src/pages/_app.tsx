@@ -1,12 +1,17 @@
 import {AppProps} from 'next/app';
+import {useRouter} from 'next/router';
+import Script from 'next/script';
 import {useEffect} from 'react';
 import {ContentReloader} from '../components/ContentReloader';
 import '../components/ResourceLoader';
+import {GA_MEASUREMENT_ID, pageview} from '../utils/analytics';
 
 import '../styles/index.css';
 import '../styles/sandpack.css';
 
 export default function MyApp({Component, pageProps}: AppProps) {
+  const router = useRouter();
+
   useEffect(() => {
     // Taken from StackOverflow. Trying to detect both Safari desktop and mobile.
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
@@ -22,8 +27,37 @@ export default function MyApp({Component, pageProps}: AppProps) {
     }
   }, []);
 
+  useEffect(() => {
+    const handleRouteChange = (url: string) => {
+      pageview(url);
+    };
+
+    router.events.on('routeChangeComplete', handleRouteChange);
+    router.events.on('hashChangeComplete', handleRouteChange);
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+      router.events.off('hashChangeComplete', handleRouteChange);
+    };
+  }, [router.events]);
+
   return (
     <>
+      <Script
+        strategy="afterInteractive"
+        src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+      />
+      <Script
+        id="gtag-init"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){window.dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_MEASUREMENT_ID}', { page_path: window.location.pathname });
+          `,
+        }}
+      />
       {process.env.NODE_ENV === 'development' && <ContentReloader />}
       <Component {...pageProps} />
     </>

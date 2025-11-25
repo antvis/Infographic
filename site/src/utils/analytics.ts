@@ -1,22 +1,18 @@
-let buffer: Array<any> = [];
-let galite: null | Function = null;
-let galitePromise: null | Promise<any> = null;
+export const GA_MEASUREMENT_ID = 'G-B1WK5GQW0V';
 
-export function ga(...args: any[]): void {
-  if (typeof galite === 'function') {
-    galite.apply(null, args);
-    return;
-  }
-  buffer.push(args);
-  if (!galitePromise) {
-    // @ts-ignore
-    galitePromise = import('ga-lite').then((mod) => {
-      galite = mod.default;
-      galitePromise = null;
-      buffer.forEach((args) => {
-        mod.default.apply(null, args);
-      });
-      buffer = [];
-    });
+declare global {
+  interface Window {
+    dataLayer?: Record<string, unknown>[];
+    gtag?: (...args: unknown[]) => void;
   }
 }
+
+export const pageview = (url: string) => {
+  if (typeof window === 'undefined' || typeof window.gtag !== 'function') {
+    return;
+  }
+
+  window.gtag('config', GA_MEASUREMENT_ID, {
+    page_path: url,
+  });
+};
