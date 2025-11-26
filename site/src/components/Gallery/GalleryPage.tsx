@@ -83,7 +83,7 @@ const GalleryCard = ({
           tap: {scale: 0.98, y: 0},
         }}
         transition={{type: 'spring', stiffness: 400, damping: 25}}
-        className="relative flex-1 bg-wash dark:bg-card-dark rounded-[1.4rem] overflow-hidden border-2 border-primary/10 dark:border-primary-dark/10 group-hover:border-link/15 shadow-nav dark:shadow-nav-dark cursor-pointer transition-colors duration-300 ease-out"
+        className="relative flex-1 bg-wash dark:bg-card-dark rounded-[.5rem] overflow-hidden border border-primary/12 dark:border-primary-dark/15 group-hover:border-link/25 shadow-nav dark:shadow-nav-dark cursor-pointer transition-colors duration-300 ease-out"
         style={{transformStyle: 'preserve-3d'}}>
         {/* 1. 分类标签 */}
         <TypeTag label={type} />
@@ -233,7 +233,7 @@ export default function GalleryPage() {
 
       {/* Grid Area */}
       <main className="px-5 sm:px-12 pb-24 max-w-7xl mx-auto relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-8 md:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2 md:gap-4 lg:gap-6">
           {filteredTemplates.map((item, index) => (
             <GalleryCard
               key={index}

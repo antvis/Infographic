@@ -8,7 +8,7 @@ export const IconChevron = memo<
      * `start` and `end` are relative to the current locale.
      * for example, in LTR, `start` is left and `end` is right.
      */
-    displayDirection: 'start' | 'end' | 'right' | 'left' | 'up' | 'down';
+    displayDirection?: 'start' | 'end' | 'right' | 'left' | 'up' | 'down';
   }
 >(function IconChevron({className, displayDirection}) {
   const classes = cn(

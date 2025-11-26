@@ -5,9 +5,31 @@ import {HighlightStyle} from '@codemirror/language';
 import {highlightTree, tags} from '@lezer/highlight';
 import cn from 'classnames';
 import rangeParser from 'parse-numeric-range';
-import {CodeBlockHeader, useCopyableCode, useLanguageLabel} from './shared';
+import {
+  CodeBlockHeader,
+  shouldShowCopyButton,
+  useCopyableCode,
+  useLanguageLabel,
+} from './shared';
 
 import {CustomTheme} from '../Sandpack/Themes';
+
+export interface CodeBlockProps {
+  children: React.ReactNode & {
+    props: {
+      className?: string;
+      children?: string;
+      meta?: string;
+    };
+  };
+  className?: string;
+  isFromPackageImport?: boolean;
+  noMargin?: boolean;
+  noMarkers?: boolean;
+  noShadow?: boolean;
+  onLineHover?: (lineNumber: number | null) => void;
+  showCopy?: boolean;
+}
 
 interface InlineHighlight {
   step: number;
@@ -23,29 +45,23 @@ const cssLang = css();
 const htmlLang = html();
 
 const CodeBlock = function CodeBlock({
-  children: {
-    props: {className = 'language-js', children: code = '', meta},
-  },
+  children,
   onLineHover,
   noMargin,
   noShadow,
-}: {
-  children: React.ReactNode & {
-    props: {
-      className: string;
-      children?: string;
-      meta?: string;
-    };
-  };
-  className?: string;
-  noMargin?: boolean;
-  noShadow?: boolean;
-  onLineHover?: (lineNumber: number | null) => void;
-}) {
+  showCopy,
+}: CodeBlockProps) {
+  const {
+    className = 'language-js',
+    children: codeProp = '',
+    meta,
+  } = (children as any)?.props ?? {};
+  let code: string = typeof codeProp === 'string' ? codeProp : '';
   code = code.trimEnd();
   let lang = jsxLang;
   const languageLabel = useLanguageLabel(className);
   const {copied, handleCopy} = useCopyableCode(code);
+  const showCopyButton = showCopy ?? shouldShowCopyButton(meta);
   if (className === 'language-css') {
     lang = cssLang;
   } else if (className === 'language-html') {
@@ -228,6 +244,7 @@ const CodeBlock = function CodeBlock({
         languageLabel={languageLabel}
         copied={copied}
         onCopy={handleCopy}
+        showCopy={showCopyButton}
       />
       <div className="sp-wrapper">
         <div className="sp-stack">

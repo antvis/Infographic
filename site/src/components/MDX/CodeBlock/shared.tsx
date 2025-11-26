@@ -31,11 +31,13 @@ export function CodeBlockHeader({
   languageLabel,
   copied,
   onCopy,
+  showCopy = true,
 }: {
   className?: string;
   languageLabel: string;
   copied: boolean;
-  onCopy: () => void;
+  onCopy?: () => void;
+  showCopy?: boolean;
 }) {
   return (
     <div
@@ -47,15 +49,17 @@ export function CodeBlockHeader({
       <span className="font-mono text-xs uppercase tracking-wide opacity-80">
         {languageLabel}
       </span>
-      <button
-        className={cn(
-          'inline-flex items-center gap-2 text-xs font-medium rounded-md px-3 py-1 transition-colors',
-          'bg-gray-10 text-secondary hover:bg-gray-20 dark:bg-gray-70 dark:text-primary-dark dark:hover:bg-gray-60'
-        )}
-        onClick={onCopy}>
-        <IconCopy className="h-3.5 w-3.5" />
-        {copied ? 'Copied' : 'Copy'}
-      </button>
+      {showCopy ? (
+        <button
+          className={cn(
+            'inline-flex items-center gap-2 text-xs font-medium rounded-md px-3 py-1 transition-colors',
+            'bg-gray-10 text-secondary hover:bg-gray-20 dark:bg-gray-70 dark:text-primary-dark dark:hover:bg-gray-60'
+          )}
+          onClick={onCopy}>
+          <IconCopy className="h-3.5 w-3.5" />
+          {copied ? 'Copied' : 'Copy'}
+        </button>
+      ) : null}
     </div>
   );
 }
@@ -63,4 +67,9 @@ export function CodeBlockHeader({
 function getLanguageLabel(languageClassName?: string) {
   if (!languageClassName) return 'Code';
   return languageClassName.replace('language-', '').toUpperCase();
+}
+
+export function shouldShowCopyButton(meta?: string) {
+  if (!meta) return true;
+  return !/(^|\s)(?:no-?copy|copy=false)(\s|$)/i.test(meta);
 }

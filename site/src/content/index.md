@@ -4,4 +4,4 @@ title: AntV Infographic
 permalink: index.html
 ---
 
-{/* See HomeContent.js */}
+{/* See HomeContent.tsx */}
