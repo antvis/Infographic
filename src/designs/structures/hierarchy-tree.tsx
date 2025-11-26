@@ -9,7 +9,6 @@ import {
   Polygon,
 } from '../../jsx';
 import { Data } from '../../types';
-import { getDatumByIndexes } from '../../utils';
 import {
   BtnAdd,
   BtnRemove,
@@ -176,19 +175,28 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
   };
 
   // 内置工具方法：计算各层节点边界
-  const computeLevelBounds = (maxLevels: number) => {
+  const computeLevelBounds = (rootNode: d3.HierarchyNode<any>) => {
     let maxWidth = 0,
       maxHeight = 0;
     const levelBounds = new Map<number, any>();
+    const sampleDatumByLevel = new Map<number, any>();
 
-    for (let level = 0; level < maxLevels; level++) {
+    // 记录每个深度遇到的首个节点，用于计算该层的尺寸
+    rootNode.each((node) => {
+      if (!sampleDatumByLevel.has(node.depth)) {
+        sampleDatumByLevel.set(node.depth, node.data);
+      }
+    });
+
+    for (let level = 0; level < rootNode.height + 1; level++) {
       const ItemComponent = getItemComponent(Items, level);
-      const indexes = Array(level + 1).fill(0);
+      const sampleDatum = sampleDatumByLevel.get(level) ?? {};
+      const indexes = sampleDatum._originalIndex ?? Array(level + 1).fill(0);
       const bounds = getElementBounds(
         <ItemComponent
           indexes={indexes}
           data={data}
-          datum={getDatumByIndexes(items, indexes)}
+          datum={sampleDatum}
           positionH="center"
         />,
       );
@@ -529,9 +537,7 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
   // 构建和布局
   const hierarchyData = buildHierarchyData(items);
   const root = d3.hierarchy(hierarchyData);
-  const { levelBounds, maxWidth, maxHeight } = computeLevelBounds(
-    root.height + 1,
-  );
+  const { levelBounds, maxWidth, maxHeight } = computeLevelBounds(root);
 
   const treeLayout = d3
     .tree<any>()
