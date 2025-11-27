@@ -13,26 +13,27 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: ⤵️ Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: 🎉 Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
 
       - name: 📦 Install Dependencies
         run: npm install
 
+      - name: ⚛️ Install site dependencies
+        run: | 
+          npm --prefix site install
+
       - name: 🚀 Build
-        run: npm run build
+        run: |
+          npm run build
+          npm run build:site
 
       - name: ✅ Run continuous integration tests
         run: npm run ci
-
-      - name: ⚛️ Install site dependencies and build site
-        run: | 
-          npm --prefix site install
-          npm run build:site
 
       - name: 💡 Upload coverage to Codecov
         uses: codecov/codecov-action@v5
