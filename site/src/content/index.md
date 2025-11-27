@@ -1,6 +1,6 @@
 ---
 id: home
-title: AntV Infographic, an infographic generation and rendering framework, bring words to life!
+title: AntV Infographic: An infographic generation and rendering framework that brings words to life.
 permalink: index.html
 ---
 
