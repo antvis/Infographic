@@ -1,4 +1,4 @@
-import { createElement } from '../../utils';
+import { createElement, getElementByRole } from '../../utils';
 import { ElementTypeEnum } from '../constants';
 
 export function renderBackground(
@@ -7,7 +7,7 @@ export function renderBackground(
 ): void {
   const container = svg.parentElement;
   if (container) container.style.backgroundColor = background || 'none';
-  const element = svg.querySelector('#background');
+  const element = getElementByRole(svg, ElementTypeEnum.Background);
 
   if (!background) {
     return element?.remove();

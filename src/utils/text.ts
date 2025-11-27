@@ -1,5 +1,4 @@
 import camelCase from 'lodash-es/camelCase';
-import { ElementTypeEnum } from '../constants';
 import { TextAlignment } from '../renderer';
 import type { TextAttributes, TextElement } from '../types';
 import { encodeFontFamily } from './font';
@@ -36,7 +35,6 @@ export function createTextElement(
       width,
       height,
       overflow: 'visible',
-      'data-element-type': ElementTypeEnum.Text,
     },
   );
   foreignObject.appendChild(span);

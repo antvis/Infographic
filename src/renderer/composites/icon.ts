@@ -51,6 +51,7 @@ function createIcon(
       'height',
       'fill',
       'stroke',
+      'data-element-type',
     ]),
     ...attrs,
   });

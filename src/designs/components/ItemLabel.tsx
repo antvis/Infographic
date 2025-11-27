@@ -1,3 +1,4 @@
+import { ElementTypeEnum } from '../../constants';
 import type { TextProps } from '../../jsx';
 import { Text } from '../../jsx';
 
@@ -24,7 +25,7 @@ export const ItemLabel = ({ indexes, children, ...props }: ItemLabelProps) => {
     <Text
       {...finalProps}
       data-indexes={indexes}
-      data-element-type="item-label"
+      data-element-type={ElementTypeEnum.ItemLabel}
     />
   );
 };
