@@ -26,12 +26,13 @@ jobs:
       - name: 🚀 Build
         run: npm run build
 
-      - name: ⚛️ Install site dependencies
-        run: npm --prefix site install
-
       - name: ✅ Run continuous integration tests
-        run: |
-          npm run ci
+        run: npm run ci
+
+      - name: ⚛️ Install site dependencies and build site
+        run: | 
+          npm --prefix site install
+          npm run build:site
 
       - name: 💡 Upload coverage to Codecov
         uses: codecov/codecov-action@v5
