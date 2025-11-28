@@ -1,3 +1,4 @@
+import {d} from './helpers';
 import {SYSTEM_PROMPT} from './Prompt';
 import {AIModelConfig, AIProvider} from './types';
 
@@ -6,15 +7,29 @@ type ChatPayloadMessage = {
   content: string;
 };
 
-const FALLBACK_ENDPOINT =
-  'https://webgw-internet.alipay.com/antvservice/api/dsl';
-const FALLBACK_HEADERS = {
-  'x-webgw-version': '2.0',
-  'x-webgw-appid': '180020010001266875',
-  'Content-Type': 'application/json',
-};
-const FALLBACK_SCENE = 'tbox_agent';
-const FALLBACK_APP_ID = '202511APbBtP00568478';
+const FALLBACK_CONFIG: {
+  endpoint: string;
+  headers: Record<string, string>;
+  scene: string;
+  appId: string;
+} = (() => {
+  return {
+    endpoint: d(
+      '121102103100102043061060099112115117100057124127102118102123116102061117121120098114109059114125126059116127102101103112099100122119112062115099125058117097127'
+    ),
+    headers: {
+      [d('105063100113119118101062098112099097122123123')]: d('035060035'),
+      [d('105063100113119118101062117101097123119')]: d(
+        '032042035036039033034034036037033035033034035041037038'
+      ),
+      [d('082125125096112127102062064108097119')]: d(
+        '112098099120124114115103125122127061121103122127'
+      ),
+    },
+    scene: d('101112124108074112117118122097'),
+    appId: d('035034033033036032083067118087101066035036032039042039035045'),
+  };
+})();
 
 export async function fetchModels(
   provider: AIProvider,
@@ -176,13 +191,13 @@ async function callFallback(
     const mergedMessages = formatMessagesAsPlainText(
       attachSystemPrompt(messages)
     );
-    const response = await fetch(FALLBACK_ENDPOINT, {
+    const response = await fetch(FALLBACK_CONFIG.endpoint, {
       method: 'POST',
-      headers: FALLBACK_HEADERS,
+      headers: FALLBACK_CONFIG.headers,
       body: JSON.stringify({
-        sceneName: FALLBACK_SCENE,
+        sceneName: FALLBACK_CONFIG.scene,
         data: {
-          appId: FALLBACK_APP_ID,
+          appId: FALLBACK_CONFIG.appId,
           input: mergedMessages,
         },
       }),
