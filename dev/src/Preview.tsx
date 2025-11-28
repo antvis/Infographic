@@ -330,6 +330,7 @@ export const Preview = () => {
               padding: 20,
               theme,
               themeConfig,
+              editable: true,
             }}
           />
         </Card>
