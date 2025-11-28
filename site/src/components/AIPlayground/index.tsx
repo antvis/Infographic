@@ -14,7 +14,7 @@ import {
   STORAGE_KEYS,
 } from './constants';
 import {formatJSON} from './helpers';
-import {AIConfig, AIModelConfig, ChatMessage} from './types';
+import {AIConfig, AIModelConfig, AIProvider, ChatMessage} from './types';
 
 const createId = () => {
   try {
@@ -30,10 +30,15 @@ const createId = () => {
   return `id-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 };
 
+type Config = Record<AIProvider, AIConfig>;
+
 export function AIPageContent() {
   const [prompt, setPrompt] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [config, setConfig] = useState<AIConfig>(DEFAULT_CONFIG);
+  const [configMap, setConfigMap] = useState<Config>({
+    [DEFAULT_CONFIG.provider]: DEFAULT_CONFIG,
+  } as Config);
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [previewOptions, setPreviewOptions] =
@@ -56,21 +61,22 @@ export function AIPageContent() {
     const savedInfographic = localStorage.getItem(STORAGE_KEYS.infographic);
     if (savedConfig) {
       try {
-        const parsed = {...DEFAULT_CONFIG, ...JSON.parse(savedConfig)};
-        const safeProvider =
-          PROVIDER_OPTIONS.find((item) => item.value === parsed.provider)
-            ?.value ||
-          PROVIDER_OPTIONS[0]?.value ||
+        const parsed = JSON.parse(savedConfig);
+        const {configs, currentProvider} = normalizeStoredConfigs(parsed);
+        setConfigMap(configs);
+        let targetProvider: AIProvider | undefined = undefined;
+        if (currentProvider && configs[currentProvider]) {
+          targetProvider = currentProvider;
+        } else if (configs[DEFAULT_CONFIG.provider]) {
+          targetProvider = DEFAULT_CONFIG.provider;
+        }
+        const fallbackProvider =
+          targetProvider ||
+          (Object.keys(configs)[0] as AIProvider | undefined) ||
           DEFAULT_CONFIG.provider;
-        setConfig({
-          ...parsed,
-          provider: safeProvider,
-          baseUrl:
-            parsed.baseUrl ||
-            PROVIDER_OPTIONS.find((i) => i.value === safeProvider)?.baseUrl ||
-            DEFAULT_CONFIG.baseUrl,
-        });
+        setConfig(configs[fallbackProvider] || DEFAULT_CONFIG);
       } catch {
+        setConfigMap({[DEFAULT_CONFIG.provider]: DEFAULT_CONFIG} as Config);
         setConfig(DEFAULT_CONFIG);
       }
     }
@@ -121,8 +127,14 @@ export function AIPageContent() {
 
   useEffect(() => {
     if (!mounted) return;
-    localStorage.setItem(STORAGE_KEYS.config, JSON.stringify(config));
-  }, [config, mounted]);
+    localStorage.setItem(
+      STORAGE_KEYS.config,
+      JSON.stringify({
+        currentProvider: config.provider,
+        configs: configMap,
+      })
+    );
+  }, [config, configMap, mounted]);
 
   useEffect(() => {
     if (!mounted) return;
@@ -138,7 +150,6 @@ export function AIPageContent() {
   }, [previewOptions, mounted]);
 
   const effectivePreview = previewOptions || FALLBACK_OPTIONS;
-  const isReady = !!config.apiKey;
 
   const handleSend = async (value?: string) => {
     const content = (value ?? prompt).trim();
@@ -154,10 +165,6 @@ export function AIPageContent() {
     setIsGenerating(true);
 
     try {
-      if (!config.apiKey) {
-        throw new Error('API Key 不存在');
-      }
-
       const modelConfig: AIModelConfig = {
         provider: config.provider,
         baseURL: config.baseUrl.replace(/\/$/, ''),
@@ -223,7 +230,7 @@ export function AIPageContent() {
         text:
           error instanceof Error
             ? error.message
-            : '生成失败，请检查网络或 Key 配置。',
+            : '生成失败，请检查网络或稍后重试。',
         isError: true,
         config: previewOptions || undefined,
       };
@@ -385,7 +392,7 @@ export function AIPageContent() {
                     d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                   />
                 </svg>
-                {isReady ? '修改配置' : '配置模型服务'}
+                配置模型服务
               </motion.button>
               <motion.button
                 whileHover={{y: -2, scale: 1.01}}
@@ -469,12 +476,81 @@ export function AIPageContent() {
       <ConfigPanel
         open={isConfigOpen}
         value={config}
+        savedConfigs={configMap}
         onClose={() => setIsConfigOpen(false)}
         onSave={(value) => {
+          setConfigMap((prev) => ({
+            ...prev,
+            [value.provider]: value,
+          }));
           setConfig(value);
           setIsConfigOpen(false);
         }}
       />
     </Page>
   );
+}
+
+function isAIProvider(value: any): value is AIProvider {
+  return PROVIDER_OPTIONS.some((item) => item.value === value);
+}
+
+function normalizeConfig(
+  partial: Partial<AIConfig> | null,
+  provider?: AIProvider
+): AIConfig {
+  const safeProvider =
+    (partial?.provider && isAIProvider(partial.provider)
+      ? partial.provider
+      : undefined) ||
+    provider ||
+    DEFAULT_CONFIG.provider;
+  const preset = PROVIDER_OPTIONS.find((item) => item.value === safeProvider);
+  return {
+    provider: safeProvider,
+    baseUrl: partial?.baseUrl || preset?.baseUrl || '',
+    model: partial?.model || '',
+    apiKey: partial?.apiKey || '',
+  };
+}
+
+function normalizeStoredConfigs(raw: any): {
+  configs: Record<AIProvider, AIConfig>;
+  currentProvider?: AIProvider;
+} {
+  const configs: Record<AIProvider, AIConfig> = {} as Record<
+    AIProvider,
+    AIConfig
+  >;
+
+  const tryAdd = (cfg: any) => {
+    if (!cfg || typeof cfg !== 'object') return;
+    const providerCandidate = isAIProvider(cfg.provider)
+      ? cfg.provider
+      : undefined;
+    const normalized = normalizeConfig(cfg, providerCandidate);
+    configs[normalized.provider] = normalized;
+  };
+
+  if (raw && typeof raw === 'object') {
+    if ('configs' in raw && raw.configs && typeof raw.configs === 'object') {
+      Object.entries(raw.configs).forEach(([key, value]) => {
+        const provider = isAIProvider(key) ? key : undefined;
+        const merged = {...(value as any), provider: provider || undefined};
+        tryAdd(merged);
+      });
+    } else if ('provider' in raw) {
+      tryAdd(raw);
+    }
+  }
+
+  if (!Object.keys(configs).length) {
+    configs[DEFAULT_CONFIG.provider] = DEFAULT_CONFIG;
+  }
+
+  const currentProvider = isAIProvider(raw?.currentProvider)
+    ? raw.currentProvider
+    : undefined;
+
+  return {configs, currentProvider};
 }

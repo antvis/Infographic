@@ -1,6 +1,21 @@
 import {SYSTEM_PROMPT} from './Prompt';
 import {AIModelConfig, AIProvider} from './types';
 
+type ChatPayloadMessage = {
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+};
+
+const FALLBACK_ENDPOINT =
+  'https://webgw-internet.alipay.com/antvservice/api/dsl';
+const FALLBACK_HEADERS = {
+  'x-webgw-version': '2.0',
+  'x-webgw-appid': '180020010001266875',
+  'Content-Type': 'application/json',
+};
+const FALLBACK_SCENE = 'tbox_agent';
+const FALLBACK_APP_ID = '202511APbBtP00568478';
+
 export async function fetchModels(
   provider: AIProvider,
   baseURL: string,
@@ -28,6 +43,10 @@ export async function fetchModels(
 }
 
 export async function testAIConfig(config: AIModelConfig): Promise<boolean> {
+  if (config.provider === 'antv') {
+    const response = await callFallback([{role: 'user', content: '你好'}]);
+    return !!response;
+  }
   const response = await callAI(
     config,
     [{role: 'user', content: '你好'}],
@@ -38,20 +57,34 @@ export async function testAIConfig(config: AIModelConfig): Promise<boolean> {
 
 export async function sendMessage(
   config: AIModelConfig,
-  messages: Array<{role: 'user' | 'assistant' | 'system'; content: string}>
+  messages: ChatPayloadMessage[]
 ): Promise<string> {
-  const result = await callAI(config, messages, false);
+  const shouldUseFallback = config.provider === 'antv' || !config.apiKey;
+  const result = shouldUseFallback
+    ? await callFallback(messages)
+    : await callAI(config, messages, false);
   return typeof result === 'string' ? result : '';
 }
 
 export async function sendMessageStream(
   config: AIModelConfig,
-  messages: Array<{role: 'user' | 'assistant' | 'system'; content: string}>,
+  messages: ChatPayloadMessage[],
   onChunk: (text: string) => void,
   onComplete: () => void,
   onError: (error: Error) => void
 ) {
   try {
+    if (config.provider === 'antv' || !config.apiKey) {
+      const fallbackText = await callFallback(messages);
+      if (fallbackText) {
+        onChunk(fallbackText);
+        onComplete();
+      } else {
+        onError(new Error('Failed to get response'));
+      }
+      return;
+    }
+
     const stream = await callAI(config, messages, true);
     if (!stream) {
       onError(new Error('Failed to get streaming response'));
@@ -98,15 +131,12 @@ export async function sendMessageStream(
 
 async function callAI(
   config: AIModelConfig,
-  messages: Array<{role: 'user' | 'assistant' | 'system'; content: string}>,
+  messages: ChatPayloadMessage[],
   stream = true
 ): Promise<any> {
   try {
     const {provider, baseURL, apiKey, model} = config;
-    const messagesWithSystem = [
-      {role: 'system' as const, content: SYSTEM_PROMPT},
-      ...messages,
-    ];
+    const messagesWithSystem = attachSystemPrompt(messages);
 
     switch (provider) {
       case 'openai':
@@ -135,6 +165,40 @@ async function callAI(
     }
   } catch (error) {
     console.warn('Call AI failed:', error);
+    return null;
+  }
+}
+
+async function callFallback(
+  messages: ChatPayloadMessage[]
+): Promise<string | null> {
+  try {
+    const mergedMessages = formatMessagesAsPlainText(
+      attachSystemPrompt(messages)
+    );
+    const response = await fetch(FALLBACK_ENDPOINT, {
+      method: 'POST',
+      headers: FALLBACK_HEADERS,
+      body: JSON.stringify({
+        sceneName: FALLBACK_SCENE,
+        data: {
+          appId: FALLBACK_APP_ID,
+          input: mergedMessages,
+        },
+      }),
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const data = await response.json();
+    if (!data?.success) {
+      return null;
+    }
+    return typeof data.data === 'string' ? data.data : null;
+  } catch (error) {
+    console.warn('Fallback call failed:', error);
     return null;
   }
 }
@@ -341,4 +405,16 @@ function extractContentFromResponse(provider: AIProvider, data: any): string {
     default:
       return '';
   }
+}
+
+function attachSystemPrompt(
+  messages: ChatPayloadMessage[]
+): ChatPayloadMessage[] {
+  return [{role: 'system', content: SYSTEM_PROMPT}, ...messages];
+}
+
+function formatMessagesAsPlainText(messages: ChatPayloadMessage[]): string {
+  return messages
+    .map((message) => `${message.role}: ${message.content}`)
+    .join('\n\n');
 }

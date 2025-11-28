@@ -10,6 +10,7 @@ export type ChatMessage = {
 };
 
 export type AIProvider =
+  | 'antv'
   | 'openai'
   | 'anthropic'
   | 'google'

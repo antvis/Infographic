@@ -8,9 +8,9 @@ export const STORAGE_KEYS = {
 };
 
 export const DEFAULT_CONFIG: AIConfig = {
-  provider: 'openai',
-  baseUrl: 'https://api.openai.com/v1',
-  model: 'gpt-4o-mini',
+  provider: 'antv',
+  baseUrl: '',
+  model: '',
   apiKey: '',
 };
 
@@ -20,6 +20,12 @@ export const PROVIDER_OPTIONS: Array<{
   baseUrl: string;
   logo?: string;
 }> = [
+  {
+    value: 'antv',
+    label: 'AntV',
+    baseUrl: '',
+    logo: '/images/antv.svg',
+  },
   {
     value: 'openai',
     label: 'OpenAI',

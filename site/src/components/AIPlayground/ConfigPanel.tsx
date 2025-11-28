@@ -10,16 +10,18 @@ import {
 } from '../ui/select';
 import {DEFAULT_CONFIG, PROVIDER_OPTIONS} from './constants';
 import {fetchModels} from './Service';
-import {AIConfig} from './types';
+import {AIConfig, AIProvider} from './types';
 
 export function ConfigPanel({
   open,
   onClose,
   value,
+  savedConfigs,
   onSave,
 }: {
   open: boolean;
   value: AIConfig;
+  savedConfigs: Record<AIProvider, AIConfig>;
   onClose: () => void;
   onSave: (config: AIConfig) => void;
 }) {
@@ -29,20 +31,25 @@ export function ConfigPanel({
     draft.model ? [draft.model] : []
   );
   const [loadingModels, setLoadingModels] = useState(false);
+  const isAntv = draft.provider === 'antv';
 
   const handlePresetSelect = (next: string) => {
-    const preset = PROVIDER_OPTIONS.find((item) => item.value === next);
+    const provider = next as AIProvider;
+    const preset = PROVIDER_OPTIONS.find((item) => item.value === provider);
     if (!preset) return;
-    setDraft((prev) => {
-      const keepModel = prev.provider === preset.value ? prev.model : '';
-      setModels(keepModel ? [keepModel] : []);
-      return {
-        provider: preset.value,
-        baseUrl: preset.baseUrl,
-        model: keepModel,
-        apiKey: prev.apiKey,
-      };
-    });
+    const stored = savedConfigs[provider];
+    const baseUrl = (stored && stored.baseUrl) || preset.baseUrl || '';
+    const nextConfig: AIConfig =
+      stored && stored.provider === provider
+        ? {...stored, baseUrl}
+        : {
+            provider,
+            baseUrl,
+            model: '',
+            apiKey: '',
+          };
+    setDraft(nextConfig);
+    setModels(nextConfig.model ? [nextConfig.model] : []);
   };
 
   useEffect(() => {
@@ -63,7 +70,7 @@ export function ConfigPanel({
 
   useEffect(() => {
     if (!open) return;
-    if (!draft.baseUrl || !draft.apiKey) {
+    if (isAntv || !draft.baseUrl || !draft.apiKey) {
       setModels(draft.model ? [draft.model] : []);
       setLoadingModels(false);
       return;
@@ -89,7 +96,7 @@ export function ConfigPanel({
     return () => {
       cancelled = true;
     };
-  }, [draft.provider, draft.baseUrl, draft.apiKey, open, draft.model]);
+  }, [draft.provider, draft.baseUrl, draft.apiKey, open, draft.model, isAntv]);
 
   return (
     <Dialog open={open} onOpenChange={(next) => !next && onClose()}>
@@ -139,52 +146,68 @@ export function ConfigPanel({
               </Select>
             </div>
 
-            <div className="space-y-2 text-base">
-              <label className="block text-sm font-semibold">Base URL</label>
-              <input
-                value={draft.baseUrl}
-                onChange={(e) => setDraft({...draft, baseUrl: e.target.value})}
-                className="w-full rounded-xl border border-border dark:border-border-dark bg-wash dark:bg-wash-dark px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary text-base"
-                placeholder="https://api.openai.com/v1"
-              />
-            </div>
-
-            <div className="space-y-2 text-base">
-              <label className="block text-sm font-semibold">API Key</label>
-              <input
-                value={draft.apiKey}
-                onChange={(e) => setDraft({...draft, apiKey: e.target.value})}
-                className="w-full rounded-xl border border-border dark:border-border-dark bg-wash dark:bg-wash-dark px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary text-base"
-                placeholder="sk-..."
-                type="password"
-              />
-            </div>
-
-            <div className="space-y-2 text-base">
-              <label className="block text-sm font-semibold">模型</label>
-              <Select
-                value={draft.model}
-                disabled={loadingModels}
-                onValueChange={(next) => setDraft({...draft, model: next})}>
-                <SelectTrigger>
-                  <SelectValue placeholder="选择模型" />
-                </SelectTrigger>
-                <SelectContent>
-                  {(models.length ? models : [draft.model || '自定义']).map(
-                    (item) => (
-                      <SelectItem key={item} value={item}>
-                        {item}
-                      </SelectItem>
-                    )
-                  )}
-                </SelectContent>
-              </Select>
-              {loadingModels ? (
-                <p className="text-xs text-secondary dark:text-secondary-dark">
-                  正在获取模型列表…
+            {isAntv ? (
+              <div className="space-y-2 text-base rounded-xl border border-dashed border-border dark:border-border-dark bg-wash dark:bg-wash-dark px-4 py-3">
+                <p className="text-sm text-secondary dark:text-secondary-dark">
+                  正在使用 AntV 内置服务，无需额外配置。
                 </p>
-              ) : null}
-            </div>
+              </div>
+            ) : (
+              <>
+                <div className="space-y-2 text-base">
+                  <label className="block text-sm font-semibold">
+                    Base URL
+                  </label>
+                  <input
+                    value={draft.baseUrl}
+                    onChange={(e) =>
+                      setDraft({...draft, baseUrl: e.target.value})
+                    }
+                    className="w-full rounded-xl border border-border dark:border-border-dark bg-wash dark:bg-wash-dark px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary text-base"
+                    placeholder="https://api.openai.com/v1"
+                  />
+                </div>
+
+                <div className="space-y-2 text-base">
+                  <label className="block text-sm font-semibold">API Key</label>
+                  <input
+                    value={draft.apiKey}
+                    onChange={(e) =>
+                      setDraft({...draft, apiKey: e.target.value})
+                    }
+                    className="w-full rounded-xl border border-border dark:border-border-dark bg-wash dark:bg-wash-dark px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary text-base"
+                    placeholder="sk-..."
+                    type="password"
+                  />
+                </div>
+
+                <div className="space-y-2 text-base">
+                  <label className="block text-sm font-semibold">模型</label>
+                  <Select
+                    value={draft.model}
+                    disabled={loadingModels}
+                    onValueChange={(next) => setDraft({...draft, model: next})}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="选择模型" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(models.length ? models : [draft.model || '自定义']).map(
+                        (item) => (
+                          <SelectItem key={item} value={item}>
+                            {item}
+                          </SelectItem>
+                        )
+                      )}
+                    </SelectContent>
+                  </Select>
+                  {loadingModels ? (
+                    <p className="text-xs text-secondary dark:text-secondary-dark">
+                      正在获取模型列表…
+                    </p>
+                  ) : null}
+                </div>
+              </>
+            )}
           </div>
 
           <div className="flex items-center gap-3">
