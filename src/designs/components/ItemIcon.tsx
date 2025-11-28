@@ -1,3 +1,4 @@
+import { ElementTypeEnum } from '../../constants';
 import type { RectProps } from '../../jsx';
 import { Ellipse, Group, Rect } from '../../jsx';
 
@@ -44,7 +45,7 @@ export const ItemIconCircle = (props: ItemIconProps & { colorBg?: string }) => {
       {...restProps}
       width={size}
       height={size}
-      data-element-type="item-icon-group"
+      data-element-type={ElementTypeEnum.ItemIconGroup}
     >
       <Ellipse
         width={size}
@@ -55,7 +56,7 @@ export const ItemIconCircle = (props: ItemIconProps & { colorBg?: string }) => {
       <Rect
         {...iconProps}
         data-indexes={indexes}
-        data-element-type="item-icon"
+        data-element-type={ElementTypeEnum.ItemIcon}
       />
     </Group>
   );

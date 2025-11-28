@@ -1,3 +1,4 @@
+import { ElementTypeEnum } from '../../constants';
 import type { RectProps } from '../../jsx';
 import { Rect } from '../../jsx';
 
@@ -13,9 +14,9 @@ export const Illus = ({ indexes, ...props }: IllusProps) => {
 
   if (indexes) {
     finalProps['data-indexes'] = indexes;
-    finalProps['data-element-type'] = 'item-illus';
+    finalProps['data-element-type'] = ElementTypeEnum.ItemsIllus;
   } else {
-    finalProps['data-element-type'] = 'illus';
+    finalProps['data-element-type'] = ElementTypeEnum.Illus;
   }
 
   return <Rect {...finalProps} />;

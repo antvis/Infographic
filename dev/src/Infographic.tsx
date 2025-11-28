@@ -23,6 +23,7 @@ export const Infographic = ({ options }: { options: InfographicOptions }) => {
   useEffect(() => {
     if (!options) return;
     if (!ref.current) return;
+    if (instanceRef.current) return;
 
     const instance = new Renderer({
       container: ref.current,
@@ -37,7 +38,6 @@ export const Infographic = ({ options }: { options: InfographicOptions }) => {
       },
       ...options,
     });
-
     instance.render();
     instanceRef.current = instance;
   }, [options]);

@@ -1,3 +1,4 @@
+import { ElementTypeEnum } from '../../constants';
 import type { RectProps } from '../../jsx';
 import { Rect } from '../../jsx';
 
@@ -13,7 +14,7 @@ export const BtnAdd = (props: BtnProps) => {
     width: 20,
     height: 20,
     'data-indexes': indexes,
-    'data-element-type': 'btn-add',
+    'data-element-type': ElementTypeEnum.BtnAdd,
   };
   return <Rect {...defaultProps} {...restProps} />;
 };
@@ -26,7 +27,7 @@ export const BtnRemove = (props: BtnProps) => {
     width: 20,
     height: 20,
     'data-indexes': indexes,
-    'data-element-type': 'btn-remove',
+    'data-element-type': ElementTypeEnum.BtnRemove,
   };
   return <Rect {...defaultProps} {...restProps} />;
 };

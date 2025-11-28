@@ -32,23 +32,19 @@ export function applyRoughStyle(
   if (volume.hasAttribute('transform')) {
     volume.removeAttribute('transform');
   }
-  volume.classList.add('rough-volume');
+  volume.dataset.elementType = 'rough-volume';
   g.appendChild(volume);
 
   const result = createRoughShape(rc, node, config);
   if (result) {
     const { element, svgAttributes } = result;
-    element.classList.add('rough-element');
+    element.dataset.elementType = 'rough-element';
     element.style.pointerEvents = 'none';
     applySVGAttributes(element, svgAttributes);
     g.appendChild(element);
   }
 
-  if (node.id) {
-    g.id = node.id;
-    volume.setAttribute('id', `${node.id}-volume`);
-    if (result?.element) result.element.setAttribute('id', `${node.id}-rough`);
-  }
+  if (node.id) g.id = node.id;
 
   const classList = Array.from(node.classList);
   classList.forEach((cls) => {

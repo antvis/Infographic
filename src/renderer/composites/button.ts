@@ -4,7 +4,6 @@ import {
   parseSVG,
   setAttributes,
 } from '../../utils';
-import { ElementTypeEnum } from '../constants';
 
 const ADD_ICON_ID = 'btn-add-icon';
 const REMOVE_ICON_ID = 'btn-remove-icon';
@@ -62,7 +61,6 @@ function renderButtonIcon(node: SVGElement, name: string) {
     id,
     class: 'btn-group',
     transform: `translate(${x}, ${y})`,
-    'data-element-type': ElementTypeEnum.Button,
   });
 
   const dataItems = node.getAttribute('data-items');

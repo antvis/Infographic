@@ -1,3 +1,4 @@
+import { ElementTypeEnum } from '../../constants';
 import type { TextProps } from '../../jsx';
 import { Text } from '../../jsx';
 
@@ -32,7 +33,7 @@ export const ItemValue = ({
     <Text
       {...finalProps}
       data-indexes={indexes}
-      data-element-type="item-value"
+      data-element-type={ElementTypeEnum.ItemValue}
     />
   );
 };

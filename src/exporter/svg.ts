@@ -1,4 +1,11 @@
-import { createElement, getViewBox, setAttributes, traverse } from '../utils';
+import { ElementTypeEnum } from '../constants';
+import {
+  createElement,
+  getElementByRole,
+  getViewBox,
+  setAttributes,
+  traverse,
+} from '../utils';
 import { embedFonts } from './font';
 import type { SVGExportOptions } from './types';
 
@@ -44,10 +51,11 @@ async function embedIcons(svg: SVGSVGElement) {
   });
 }
 
+const iconRole = 'icon-defs';
 function getDefs(svg: SVGSVGElement) {
-  const defs = svg.querySelector('defs[id="icon-defs"]');
+  const defs = getElementByRole(svg, iconRole);
   if (defs) return defs;
-  const _defs = createElement('defs', { id: 'icon-defs' });
+  const _defs = createElement('defs', { id: iconRole });
   svg.prepend(_defs);
   return _defs;
 }
@@ -61,10 +69,10 @@ function cleanSVG(svg: SVGSVGElement) {
 }
 
 function removeBtnGroup(svg: SVGSVGElement) {
-  const btnGroup = svg.querySelector('[data-element-type=btns-group]');
+  const btnGroup = getElementByRole(svg, ElementTypeEnum.BtnsGroup);
   btnGroup?.remove();
 
-  const btnIconDefs = svg.querySelector('#btn-icon-defs');
+  const btnIconDefs = getElementByRole(svg, 'btn-icon-defs');
   btnIconDefs?.remove();
 }
 
