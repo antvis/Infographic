@@ -119,21 +119,30 @@ export function ChatPanel({
                 const showError = item.status === 'error';
                 const isExpanded = expandedId === item.id;
 
+                const handleSelect = () => {
+                  if (isError || disabled) return;
+                  handleCardClick(item.id, item.config, disabled);
+                };
+
                 return (
-                  <button
+                  <div
                     key={item.id}
-                    onClick={() =>
-                      isError
-                        ? undefined
-                        : handleCardClick(item.id, item.config, disabled)
-                    }
-                    disabled={disabled || isError}
-                    className={`group relative w-full rounded-2xl border text-left disabled:cursor-not-allowed transition-all duration-300 ease-out px-4 py-4 ${
-                      disabled
-                        ? 'border-border dark:border-border-dark bg-card dark:bg-card-dark opacity-60'
+                    role="button"
+                    tabIndex={disabled || isError ? -1 : 0}
+                    aria-disabled={disabled || isError}
+                    onKeyDown={(e) => {
+                      if ((e.key === 'Enter' || e.key === ' ') && !disabled) {
+                        e.preventDefault();
+                        handleSelect();
+                      }
+                    }}
+                    onClick={handleSelect}
+                    className={`group relative w-full rounded-2xl border text-left transition-all duration-300 ease-out px-4 py-4 ${
+                      disabled || isError
+                        ? 'border-border dark:border-border-dark bg-card dark:bg-card-dark opacity-60 cursor-not-allowed'
                         : isExpanded
-                        ? 'border-link/70 dark:border-link-dark/60 bg-wash dark:bg-wash-dark shadow-[0_18px_45px_-30px_rgba(22,35,70,0.32),0_12px_32px_-22px_rgba(77,116,202,0.55),0_0_0_1px_rgba(255,255,255,0.35)] dark:shadow-[0_18px_48px_-30px_rgba(0,0,0,0.55),0_12px_32px_-22px_rgba(120,150,220,0.5),0_0_0_1px_rgba(255,255,255,0.06)] -translate-y-0.5'
-                        : 'border-border dark:border-border-dark bg-wash dark:bg-wash-dark hover:border-link/40 dark:hover:border-link-dark/50'
+                        ? 'border-link/70 dark:border-link-dark/60 bg-wash dark:bg-wash-dark shadow-[0_18px_45px_-30px_rgba(22,35,70,0.32),0_12px_32px_-22px_rgba(77,116,202,0.55),0_0_0_1px_rgba(255,255,255,0.35)] dark:shadow-[0_18px_48px_-30px_rgba(0,0,0,0.55),0_12px_32px_-22px_rgba(120,150,220,0.5),0_0_0_1px_rgba(255,255,255,0.06)] -translate-y-0.5 cursor-pointer'
+                        : 'border-border dark:border-border-dark bg-wash dark:bg-wash-dark hover:border-link/40 dark:hover:border-link-dark/50 cursor-pointer'
                     }`}>
                     <div className="flex items-start gap-3">
                       <div className="flex-1 min-w-0">
@@ -180,6 +189,7 @@ export function ChatPanel({
                                 e.stopPropagation();
                                 onRetry(item.text);
                               }}
+                              type="button"
                               className="inline-flex items-center justify-center h-7 px-2 rounded-full border border-red-50/50 dark:border-red-50/40 text-[11px] font-semibold text-red-500 dark:text-red-400 bg-red-50/10 dark:bg-red-50/10 hover:bg-red-50/20 dark:hover:bg-red-50/20">
                               重试
                             </button>
@@ -212,7 +222,7 @@ export function ChatPanel({
                         )}
                       </div>
                     </div>
-                  </button>
+                  </div>
                 );
               })}
             </div>
