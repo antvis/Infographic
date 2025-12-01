@@ -1,7 +1,14 @@
 import {
-  ExportOptions,
+  ClickSelect,
+  DblClickEditText,
+  Editor,
+  SelectHighlight,
+  type IEditor,
+} from '../editor';
+import {
   exportToPNGString,
   exportToSVGString,
+  type ExportOptions,
 } from '../exporter';
 import { renderSVG } from '../jsx';
 import {
@@ -12,13 +19,30 @@ import {
 import { Renderer } from '../renderer';
 import { getTypes, parseSVG } from '../utils';
 
+const DEFAULT_OPTIONS: Partial<InfographicOptions> = {
+  plugins: [],
+  interactions: [
+    new DblClickEditText(),
+    new ClickSelect(),
+    new SelectHighlight(),
+  ],
+};
+
 export class Infographic {
+  rendered: boolean = false;
+
   private node: SVGSVGElement | null = null;
+
+  private editor?: IEditor;
 
   private parsedOptions: ParsedInfographicOptions;
 
   constructor(private options: InfographicOptions) {
-    this.parsedOptions = parseOptions(this.options);
+    this.parsedOptions = parseOptions({ ...DEFAULT_OPTIONS, ...this.options });
+  }
+
+  getOptions() {
+    return this.options;
   }
 
   /**
@@ -28,9 +52,13 @@ export class Infographic {
     const { container } = this.parsedOptions;
     const template = this.compose();
     const renderer = new Renderer(this.parsedOptions, template);
-
     this.node = renderer.render();
     container.replaceChildren(this.node);
+    if (this.options.editable) {
+      this.editor = new Editor(this.node, this.parsedOptions);
+    }
+
+    this.rendered = true;
   }
 
   /**
@@ -83,6 +111,14 @@ export class Infographic {
       return await exportToSVGString(this.node, options);
     }
     return await exportToPNGString(this.node, options);
+  }
+
+  on(event: string, listener: (...args: any[]) => void) {
+    this.editor?.on(event, listener);
+  }
+
+  off(event: string, listener: (...args: any[]) => void) {
+    this.editor?.off(event, listener);
   }
 
   destroy() {

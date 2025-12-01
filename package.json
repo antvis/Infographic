@@ -99,6 +99,7 @@
     "@vitest/coverage-v8": "^3.2.4",
     "csstype": "^3.2.2",
     "eslint": "^9.35.0",
+    "eventemitter3": "^5.0.1",
     "globals": "^16.4.0",
     "gzip-size": "^7.0.0",
     "husky": "^9.1.7",
