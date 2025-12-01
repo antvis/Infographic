@@ -334,8 +334,10 @@ export function AIPageContent() {
       retryingId && history.some((item) => item.id === retryingId)
         ? retryingId
         : null;
+    let requestId: string;
 
     if (targetId) {
+      requestId = targetId;
       setHistory((prev) =>
         prev.map((item) =>
           item.id === targetId
@@ -350,23 +352,22 @@ export function AIPageContent() {
             : item
         )
       );
-      setPrompt('');
-      setRetryingId(null);
-      await requestInfographic(content, targetId);
     } else {
-      if (retryingId) {
-        setRetryingId(null);
-      }
       const newRecord = toHistoryRecord({
         id: createId(),
         text: content,
         status: 'pending',
       });
+      requestId = newRecord.id;
       setHistory((prev) => [...prev, newRecord]);
-      setPrompt('');
-
-      await requestInfographic(content, newRecord.id);
     }
+
+    setPrompt('');
+    if (retryingId) {
+      setRetryingId(null);
+    }
+
+    await requestInfographic(content, requestId);
   };
 
   const handleCopy = async (text: string) => {
