@@ -52,6 +52,7 @@ function alignToFlex(
     display: 'flex',
     flexWrap: 'wrap',
     wordBreak: 'break-word',
+    whiteSpace: 'pre-wrap',
   };
   switch (horizontal) {
     case 'LEFT':
