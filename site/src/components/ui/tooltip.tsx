@@ -19,6 +19,7 @@ export const TooltipContent = forwardRef<
         className={cn(
           'z-[2000] overflow-hidden rounded-lg bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-3 py-2 text-xs shadow-lg',
           'transition-all duration-150 data-[state=closed]:opacity-0 data-[state=open]:opacity-100',
+          'max-w-[300px]',
           'data-[side=top]:translate-y-[-2px] data-[side=bottom]:translate-y-[2px]',
           className
         )}

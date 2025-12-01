@@ -1,7 +1,7 @@
 import {InfographicOptions} from '@antv/infographic';
 import {Page} from 'components/Layout/Page';
 import {AnimatePresence, motion} from 'framer-motion';
-import {useEffect, useMemo, useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {IconStarTwinkle} from '../Icon/IconStarTwinkle';
 import {ChatPanel} from './ChatPanel';
 import {ConfigPanel} from './ConfigPanel';
@@ -14,7 +14,7 @@ import {
   STORAGE_KEYS,
 } from './constants';
 import {formatJSON} from './helpers';
-import {AIConfig, AIModelConfig, AIProvider, ChatMessage} from './types';
+import type {AIConfig, AIModelConfig, AIProvider, ChatMessage} from './types';
 
 const createId = () => {
   try {
@@ -32,9 +32,100 @@ const createId = () => {
 
 type Config = Record<AIProvider, AIConfig>;
 
+type HistoryRecord = {
+  id: string;
+  title: string;
+  text: string;
+  status: 'pending' | 'ready' | 'error';
+  error?: string;
+  config?: Partial<InfographicOptions>;
+};
+
+const createTitle = (text: string) =>
+  text.length > 18 ? `${text.slice(0, 18)}…` : text || '待输入';
+
+const toHistoryRecord = (input: {
+  id: string;
+  text: string;
+  status: 'pending' | 'ready' | 'error';
+  error?: string;
+  config?: Partial<InfographicOptions>;
+}): HistoryRecord => ({
+  id: input.id,
+  text: input.text,
+  status: input.status,
+  error: input.error,
+  config: input.config,
+  title: createTitle(input.text),
+});
+
+const normalizeLegacyMessages = (raw: ChatMessage[]): HistoryRecord[] => {
+  const records: HistoryRecord[] = [];
+  let pendingUser: ChatMessage | null = null;
+
+  for (const msg of raw) {
+    if (msg.role === 'user') {
+      pendingUser = msg;
+    } else if (msg.role === 'assistant' && pendingUser) {
+      records.push(
+        toHistoryRecord({
+          id: pendingUser.id,
+          text: pendingUser.text,
+          status: msg.isError ? 'error' : 'ready',
+          error: msg.error,
+          config: msg.config,
+        })
+      );
+      pendingUser = null;
+    }
+  }
+
+  if (pendingUser) {
+    records.push(
+      toHistoryRecord({
+        id: pendingUser.id,
+        text: pendingUser.text,
+        status: 'pending',
+      })
+    );
+  }
+
+  return records;
+};
+
+const normalizeStoredHistory = (raw: any): HistoryRecord[] => {
+  if (!Array.isArray(raw)) return [];
+  if (raw.some((item) => item && typeof item === 'object' && 'role' in item)) {
+    return normalizeLegacyMessages(raw as ChatMessage[]);
+  }
+
+  const normalized: HistoryRecord[] = [];
+  for (const item of raw) {
+    if (!item || typeof item !== 'object') continue;
+    const text = typeof item.text === 'string' ? item.text : '';
+    const status =
+      item.status === 'ready' || item.status === 'error'
+        ? item.status
+        : 'pending';
+    normalized.push(
+      toHistoryRecord({
+        id: typeof item.id === 'string' ? item.id : createId(),
+        text,
+        status,
+        error: typeof item.error === 'string' ? item.error : undefined,
+        config:
+          item.config && typeof item.config === 'object'
+            ? (item.config as Partial<InfographicOptions>)
+            : undefined,
+      })
+    );
+  }
+  return normalized;
+};
+
 export function AIPageContent() {
   const [prompt, setPrompt] = useState('');
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [history, setHistory] = useState<HistoryRecord[]>([]);
   const [config, setConfig] = useState<AIConfig>(DEFAULT_CONFIG);
   const [configMap, setConfigMap] = useState<Config>({
     [DEFAULT_CONFIG.provider]: DEFAULT_CONFIG,
@@ -48,6 +139,7 @@ export function AIPageContent() {
   const [lastJSON, setLastJSON] = useState('');
   const [copyHint, setCopyHint] = useState('');
   const [mounted, setMounted] = useState(false);
+  const [retryingId, setRetryingId] = useState<string | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const copyTimerRef = useRef<NodeJS.Timeout | null>(null);
   const recoveredPendingRef = useRef(false);
@@ -82,9 +174,10 @@ export function AIPageContent() {
     }
     if (savedMessages) {
       try {
-        setMessages(JSON.parse(savedMessages));
+        const parsed = JSON.parse(savedMessages);
+        setHistory(normalizeStoredHistory(parsed));
       } catch {
-        setMessages([]);
+        setHistory([]);
       }
     }
     if (savedInfographic) {
@@ -103,27 +196,23 @@ export function AIPageContent() {
 
   useEffect(() => {
     if (!mounted || recoveredPendingRef.current || isGenerating) return;
-    if (messages.length === 0) return;
-    const last = messages[messages.length - 1];
-    if (last.role === 'user') {
+    if (history.length === 0) return;
+    const last = history[history.length - 1];
+    if (last.status === 'pending') {
       recoveredPendingRef.current = true;
-      const errorAssistant: ChatMessage = {
-        id: createId(),
-        role: 'assistant',
-        text: '上次请求未完成，已标记为失败',
-        isError: true,
-        config: previewOptions || undefined,
-      };
-      setMessages((prev) => [...prev, errorAssistant]);
+      setHistory((prev) => {
+        const next = [...prev];
+        next[next.length - 1] = {...last, status: 'error', error: '请求未完成'};
+        return next;
+      });
       if (previewOptions) {
         setLastJSON(formatJSON(previewOptions));
       } else {
         setLastJSON('');
       }
-      setPreviewError('上次请求未完成，已标记为失败');
       setActiveTab('preview');
     }
-  }, [messages, mounted, isGenerating, previewOptions]);
+  }, [history, mounted, isGenerating, previewOptions]);
 
   useEffect(() => {
     if (!mounted) return;
@@ -138,8 +227,8 @@ export function AIPageContent() {
 
   useEffect(() => {
     if (!mounted) return;
-    localStorage.setItem(STORAGE_KEYS.messages, JSON.stringify(messages));
-  }, [messages, mounted]);
+    localStorage.setItem(STORAGE_KEYS.messages, JSON.stringify(history));
+  }, [history, mounted]);
 
   useEffect(() => {
     if (!mounted || !previewOptions) return;
@@ -151,18 +240,15 @@ export function AIPageContent() {
 
   const effectivePreview = previewOptions || FALLBACK_OPTIONS;
 
-  const handleSend = async (value?: string) => {
-    const content = (value ?? prompt).trim();
-    if (!content) return;
-
-    const newUser: ChatMessage = {
-      id: createId(),
-      role: 'user',
-      text: content,
-    };
-    setMessages((prev) => [...prev, newUser]);
-    setPrompt('');
+  const requestInfographic = async (content: string, userId: string) => {
     setIsGenerating(true);
+    setHistory((prev) =>
+      prev.map((item) =>
+        item.id === userId
+          ? {...item, status: 'pending', error: undefined, config: undefined}
+          : item
+      )
+    );
 
     try {
       const modelConfig: AIModelConfig = {
@@ -182,65 +268,104 @@ export function AIPageContent() {
         },
       ];
 
-      const assistantContent =
-        (await sendMessage(modelConfig, payloadMessages)) ||
-        '无法解析模型返回内容';
+      const resMsg = await sendMessage(modelConfig, payloadMessages);
       let parsedConfig: Partial<InfographicOptions> | null = null;
       let parseError = '';
 
       try {
-        const match = assistantContent.match(/```(?:json)?\s*([\s\S]*?)```/);
-        const candidate = match ? match[1] : assistantContent;
+        const match = resMsg.match(/```(?:json)?\s*([\s\S]*?)```/);
+        const candidate = match ? match[1] : resMsg;
         const raw = JSON.parse(candidate);
         parsedConfig =
           raw && typeof raw === 'object' && 'config' in raw
             ? (raw as {config: Partial<InfographicOptions>}).config
             : (raw as Partial<InfographicOptions>);
       } catch (err) {
-        parseError = err instanceof Error ? err.message : '解析失败';
+        if (resMsg.includes('{')) {
+          parseError = '无法解析模型返回内容';
+        } else {
+          parseError = resMsg;
+        }
       }
 
-      const newAssistant: ChatMessage = {
-        id: createId(),
-        role: 'assistant',
-        text: parsedConfig ? '已生成配置' : assistantContent,
-        summary: parsedConfig ? undefined : undefined,
-        isError: !parsedConfig,
-        config: parsedConfig || undefined,
-      };
-
-      setMessages((prev) => [...prev, newAssistant]);
+      setHistory((prev) =>
+        prev.map((item) =>
+          item.id === userId
+            ? {
+                ...item,
+                status: parsedConfig ? 'ready' : 'error',
+                error: parsedConfig ? undefined : parseError,
+                config: parsedConfig || undefined,
+              }
+            : item
+        )
+      );
 
       if (parsedConfig) {
         setPreviewOptions(parsedConfig);
         setPreviewError(null);
         setLastJSON(formatJSON(parsedConfig));
         setActiveTab('preview');
-      } else {
-        const fallbackText =
-          parseError ||
-          (typeof assistantContent === 'string' ? assistantContent : '');
-        setLastJSON(fallbackText);
-        setPreviewError(parseError || null);
       }
     } catch (error) {
-      const newAssistant: ChatMessage = {
-        id: createId(),
-        role: 'assistant',
-        text:
-          error instanceof Error
-            ? error.message
-            : '生成失败，请检查网络或稍后重试。',
-        isError: true,
-        config: previewOptions || undefined,
-      };
-      setMessages((prev) => [...prev, newAssistant]);
-      if (previewOptions) {
-        setLastJSON(formatJSON(previewOptions));
-      }
+      const message =
+        error instanceof Error && error.message
+          ? error.message
+          : '生成失败，请检查网络或稍后重试。';
+
+      setHistory((prev) =>
+        prev.map((item) =>
+          item.id === userId
+            ? {...item, status: 'error', error: message, config: undefined}
+            : item
+        )
+      );
     } finally {
       setIsGenerating(false);
       inputRef.current?.focus();
+    }
+  };
+
+  const handleSend = async (value?: string) => {
+    const content = (value ?? prompt).trim();
+    if (!content) return;
+
+    const targetId =
+      retryingId && history.some((item) => item.id === retryingId)
+        ? retryingId
+        : null;
+
+    if (targetId) {
+      setHistory((prev) =>
+        prev.map((item) =>
+          item.id === targetId
+            ? {
+                ...item,
+                text: content,
+                title: createTitle(content),
+                status: 'pending',
+                error: undefined,
+                config: undefined,
+              }
+            : item
+        )
+      );
+      setPrompt('');
+      setRetryingId(null);
+      await requestInfographic(content, targetId);
+    } else {
+      if (retryingId) {
+        setRetryingId(null);
+      }
+      const newRecord = toHistoryRecord({
+        id: createId(),
+        text: content,
+        status: 'pending',
+      });
+      setHistory((prev) => [...prev, newRecord]);
+      setPrompt('');
+
+      await requestInfographic(content, newRecord.id);
     }
   };
 
@@ -257,7 +382,8 @@ export function AIPageContent() {
   };
 
   const handleClear = () => {
-    setMessages([]);
+    setHistory([]);
+    setRetryingId(null);
     setPreviewOptions(null);
     setLastJSON('');
     setPreviewError(null);
@@ -267,46 +393,7 @@ export function AIPageContent() {
     }
   };
 
-  const historyItems = useMemo(() => {
-    const items: Array<{
-      id: string;
-      title: string;
-      text: string;
-      status: 'pending' | 'ready' | 'error';
-      summary?: string;
-      config?: Partial<InfographicOptions>;
-    }> = [];
-    let pendingUser: ChatMessage | any = null;
-    messages.forEach((m) => {
-      if (m.role === 'user') {
-        pendingUser = m;
-      } else if (m.role === 'assistant' && pendingUser) {
-        items.push({
-          id: pendingUser.id,
-          title:
-            pendingUser.text.slice(0, 18) +
-            (pendingUser.text.length > 18 ? '…' : ''),
-          text: pendingUser.text,
-          status: m.isError ? 'error' : 'ready',
-          summary: m.summary,
-          config: m.config,
-        });
-        pendingUser = null;
-      }
-    });
-    if (pendingUser) {
-      items.push({
-        id: pendingUser.id,
-        title:
-          pendingUser.text.length > 18
-            ? pendingUser.text.slice(0, 18) + '…'
-            : pendingUser.text || '待输入',
-        text: pendingUser.text,
-        status: 'pending',
-      });
-    }
-    return items;
-  }, [messages]);
+  const historyItems = history;
 
   const handleSelectHistory = (config?: Partial<InfographicOptions>) => {
     if (!config) return;
@@ -316,8 +403,13 @@ export function AIPageContent() {
     setActiveTab('preview');
   };
 
-  const handleRetry = (text: string) => {
-    handleSend(text);
+  const handleRetry = (id: string, text: string) => {
+    const target = history.find((item) => item.id === id);
+    if (!target) return;
+
+    setPrompt(text);
+    setRetryingId(id);
+    inputRef.current?.focus();
   };
 
   const handleJsonChange = (value: string) => {
@@ -328,6 +420,14 @@ export function AIPageContent() {
       setPreviewError(null);
     } catch (err) {
       setPreviewError(err instanceof Error ? err.message : 'JSON 解析失败');
+    }
+  };
+
+  const handleDelete = (id: string) => {
+    setHistory((prev) => prev.filter((item) => item.id !== id));
+    if (retryingId === id) {
+      setRetryingId(null);
+      setPrompt('');
     }
   };
 
@@ -363,7 +463,7 @@ export function AIPageContent() {
               </h1>
             </div>
 
-            <p className="text-lg lg:text-xl text-secondary dark:text-secondary-dark max-w-3xl leading-relaxed">
+            <p className="text-lg lg:text-xl text-secondary dark:text-secondary-dark max-w-3xl leading-relaxed select-none">
               将你在日常写作、汇报或其他文字工作中遇到的内容粘贴到这里，AI
               会理解语境并为你生成相匹配的信息图方案
             </p>
@@ -437,6 +537,7 @@ export function AIPageContent() {
                 history={historyItems}
                 onSelectHistory={handleSelectHistory}
                 onRetry={handleRetry}
+                onDelete={handleDelete}
                 panelClassName={PANEL_HEIGHT_CLASS}
               />
 

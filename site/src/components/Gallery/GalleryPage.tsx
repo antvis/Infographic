@@ -171,7 +171,7 @@ export default function GalleryPage() {
               Gallery
             </span>
           </h1>
-          <p className="text-lg lg:text-xl text-secondary dark:text-secondary-dark max-w-3xl leading-relaxed">
+          <p className="text-lg lg:text-xl text-secondary dark:text-secondary-dark max-w-3xl leading-relaxed select-none">
             探索我们精选的信息图模板库，高保真设计、灵活可定制，可即插即用地投入你的应用。
           </p>
         </motion.div>

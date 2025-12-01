@@ -19,6 +19,7 @@ export function ChatPanel({
   history,
   onSelectHistory,
   onRetry,
+  onDelete,
   panelClassName = 'min-h-[520px] h-[640px] max-h-[75vh]',
 }: {
   prompt: string;
@@ -31,11 +32,12 @@ export function ChatPanel({
     title: string;
     text: string;
     status: 'pending' | 'ready' | 'error';
-    summary?: string;
+    error?: string;
     config?: Partial<InfographicOptions>;
   }>;
   onSelectHistory: (config?: Partial<InfographicOptions>) => void;
-  onRetry: (text: string) => void;
+  onRetry: (id: string, text: string) => void;
+  onDelete: (id: string) => void;
   panelClassName?: string;
 }) {
   const historyRef = useRef<HTMLDivElement>(null);
@@ -118,6 +120,8 @@ export function ChatPanel({
                   (!item.config && !isError);
                 const showError = item.status === 'error';
                 const isExpanded = expandedId === item.id;
+                const errorMessage =
+                  item.error || '生成失败，请检查 API Key 或网络连接';
 
                 const handleSelect = () => {
                   if (isError || disabled) return;
@@ -137,14 +141,16 @@ export function ChatPanel({
                       }
                     }}
                     onClick={handleSelect}
-                    className={`group relative w-full rounded-2xl border text-left transition-all duration-300 ease-out px-4 py-4 ${
+                    className={`group relative w-full rounded-2xl border text-left transition-all duration-300 ease-out ${
+                      showError ? 'px-3 py-3' : 'px-4 py-4'
+                    } ${
                       disabled || isError
                         ? 'border-border dark:border-border-dark bg-card dark:bg-card-dark opacity-60 cursor-not-allowed'
                         : isExpanded
                         ? 'border-link/70 dark:border-link-dark/60 bg-wash dark:bg-wash-dark shadow-[0_18px_45px_-30px_rgba(22,35,70,0.32),0_12px_32px_-22px_rgba(77,116,202,0.55),0_0_0_1px_rgba(255,255,255,0.35)] dark:shadow-[0_18px_48px_-30px_rgba(0,0,0,0.55),0_12px_32px_-22px_rgba(120,150,220,0.5),0_0_0_1px_rgba(255,255,255,0.06)] -translate-y-0.5 cursor-pointer'
                         : 'border-border dark:border-border-dark bg-wash dark:bg-wash-dark hover:border-link/40 dark:hover:border-link-dark/50 cursor-pointer'
                     }`}>
-                    <div className="flex items-start gap-3">
+                    <div className="flex items-center gap-3">
                       <div className="flex-1 min-w-0">
                         <div
                           className={`overflow-hidden transition-[max-height] duration-200 ease-in-out ${
@@ -154,7 +160,7 @@ export function ChatPanel({
                             className={`text-[13px] leading-relaxed text-secondary dark:text-secondary-dark ${
                               isExpanded ? '' : 'line-clamp-1'
                             }`}>
-                            {item.summary || item.text}
+                            {item.text}
                           </p>
                         </div>
                       </div>
@@ -187,10 +193,10 @@ export function ChatPanel({
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                onRetry(item.text);
+                                onRetry(item.id, item.text);
                               }}
                               type="button"
-                              className="inline-flex items-center justify-center h-7 px-2 rounded-full border border-red-50/50 dark:border-red-50/40 text-[11px] font-semibold text-red-500 dark:text-red-400 bg-red-50/10 dark:bg-red-50/10 hover:bg-red-50/20 dark:hover:bg-red-50/20">
+                              className="inline-flex items-center justify-center h-7 px-2 text-[11px] font-semibold text-red-500 dark:text-red-400 hover:underline">
                               重试
                             </button>
                             <Tooltip>
@@ -200,9 +206,31 @@ export function ChatPanel({
                                 </span>
                               </TooltipTrigger>
                               <TooltipContent side="top" align="end">
-                                生成失败，请检查 API Key 或网络连接
+                                <div className="whitespace-pre-wrap break-words text-xs leading-relaxed max-w-xs">
+                                  {errorMessage}
+                                </div>
                               </TooltipContent>
                             </Tooltip>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onDelete(item.id);
+                              }}
+                              type="button"
+                              aria-label="删除记录"
+                              className="inline-flex items-center justify-center h-8 w-8 text-tertiary dark:text-tertiary-dark hover:text-primary dark:hover:text-primary-dark transition-colors">
+                              <svg
+                                className="w-3.5 h-3.5"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round">
+                                <path d="M6 6l12 12" />
+                                <path d="M6 18L18 6" />
+                              </svg>
+                            </button>
                           </>
                         ) : (
                           !disabled && (

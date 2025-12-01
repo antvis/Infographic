@@ -4,7 +4,7 @@ export type ChatMessage = {
   id: string;
   role: 'user' | 'assistant' | 'system';
   text: string;
-  summary?: string;
+  error?: string;
   isError?: boolean;
   config?: Partial<InfographicOptions>;
 };
@@ -33,6 +33,5 @@ export type AIModelConfig = {
 };
 
 export type ParsedAIResponse = {
-  summary?: string;
   config?: Partial<InfographicOptions>;
 };

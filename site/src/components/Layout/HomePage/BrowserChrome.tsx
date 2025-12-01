@@ -20,6 +20,7 @@ interface BrowserChromeProps {
   hasFullscreen?: boolean;
   onRestart?: () => void;
   error?: string | null;
+  errorTitle?: string;
   toolbarContent?: ReactNode;
   hideDefaultActions?: boolean;
 }
@@ -43,6 +44,7 @@ export function BrowserChrome({
   hasFullscreen = false,
   onRestart,
   error,
+  errorTitle,
   toolbarContent,
   hideDefaultActions = false,
 }: BrowserChromeProps) {
@@ -198,8 +200,10 @@ export function BrowserChrome({
                     </TooltipTrigger>
                     <TooltipContent side="bottom" className="max-w-xs">
                       <div className="space-y-1">
-                        <div className="font-semibold">JSON 语法错误</div>
-                        <div className="font-mono text-[11px] break-words">
+                        {errorTitle && (
+                          <div className="font-semibold">{errorTitle}</div>
+                        )}
+                        <div className="font-mono text-[11px] break-words whitespace-pre-wrap leading-relaxed">
                           {error}
                         </div>
                       </div>
