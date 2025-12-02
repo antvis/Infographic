@@ -155,7 +155,10 @@ export default function GalleryPage() {
   };
 
   return (
-    <div className="relative isolate min-h-screen bg-wash dark:bg-wash-dark text-primary dark:text-primary-dark selection:bg-link/20 selection:dark:bg-link-dark/20">
+    <div className="relative isolate overflow-hidden min-h-screen bg-wash dark:bg-wash-dark text-primary dark:text-primary-dark selection:bg-link/20 selection:dark:bg-link-dark/20">
+      {/* Background decorations */}
+      <div className="pointer-events-none absolute -left-32 -top-40 h-96 w-96 rounded-full bg-gradient-to-br from-link/20 via-link/5 to-transparent blur-3xl" />
+      <div className="pointer-events-none absolute -right-32 top-20 h-96 w-96 rounded-full bg-gradient-to-br from-purple-40/15 via-transparent to-link/5 blur-3xl" />
 
       {/* Header Area */}
       <div className="pt-20 pb-12 px-5 sm:px-12 max-w-7xl mx-auto text-center md:text-left relative z-10">
@@ -176,7 +179,7 @@ export default function GalleryPage() {
       </div>
 
       {/* Filter Bar Area */}
-      <div className="sticky top-16 z-40 bg-wash/80 dark:bg-wash-dark/80 backdrop-blur-xl border-b border-primary/5 dark:border-primary-dark/5 py-4 mb-8 transition-all">
+      <div className="sticky top-16 z-40 dark:bg-wash-dark/80 backdrop-blur-xl border-b border-primary/5 dark:border-primary-dark/5 py-4 mb-8 transition-all">
         <motion.div
           initial={{opacity: 0, y: 20}}
           animate={{opacity: 1, y: 0}}
