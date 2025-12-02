@@ -4,3 +4,4 @@ export type * from './element';
 export type * from './font';
 export type * from './padding';
 export type * from './resource';
+export type * from './text';

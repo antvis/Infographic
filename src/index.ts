@@ -71,9 +71,6 @@ export type {
   RadialGradient,
   RoughConfig,
   StylizeConfig,
-  TextAlignment,
-  TextHorizontalAlign,
-  TextVerticalAlign,
 } from './renderer';
 export type { ParsedTemplateOptions, TemplateOptions } from './templates';
 export type { ThemeColors, ThemeConfig, ThemeSeed } from './themes';
@@ -83,4 +80,7 @@ export type {
   FontWeightName,
   ImageResource,
   ItemDatum,
+  TextAlignment,
+  TextHorizontalAlign,
+  TextVerticalAlign,
 } from './types';

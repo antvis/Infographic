@@ -1,6 +1,5 @@
 import camelCase from 'lodash-es/camelCase';
-import { TextAlignment } from '../renderer';
-import type { TextAttributes, TextElement } from '../types';
+import type { TextAlignment, TextAttributes, TextElement } from '../types';
 import { encodeFontFamily } from './font';
 import { createElement } from './svg';
 
