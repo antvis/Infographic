@@ -64,12 +64,12 @@ module.exports = {
       },
       fontFamily: {
         display: [
-          'Optimistic Display',
+          'Alibaba PuHuiTi',
           '-apple-system',
           ...defaultTheme.fontFamily.sans,
         ],
         text: [
-          'Optimistic Text',
+          'Alibaba PuHuiTi',
           '-apple-system',
           ...defaultTheme.fontFamily.sans,
         ],
