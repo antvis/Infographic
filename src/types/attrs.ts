@@ -1,3 +1,5 @@
+import { TextHorizontalAlign, TextVerticalAlign } from './text';
+
 export type NumericalValue = number | string | undefined;
 export type TextualValue = string | undefined;
 
@@ -10,21 +12,21 @@ export type BaseAttributes = {
 };
 
 export type IconAttributes = {
-  id?: NumericalValue;
-  class?: NumericalValue;
+  id?: TextualValue;
+  class?: TextualValue;
   x?: NumericalValue;
   y?: NumericalValue;
   width?: NumericalValue;
   height?: NumericalValue;
-  href?: NumericalValue;
-  fill?: NumericalValue;
+  href?: TextualValue;
+  fill?: TextualValue;
   'fill-opacity'?: NumericalValue;
   opacity?: NumericalValue;
 };
 
 export type TextAttributes = {
-  id?: NumericalValue;
-  class?: NumericalValue;
+  id?: TextualValue;
+  class?: TextualValue;
   x?: NumericalValue;
   y?: NumericalValue;
   width?: NumericalValue;
@@ -37,11 +39,14 @@ export type TextAttributes = {
   'font-variant'?: NumericalValue;
   'letter-spacing'?: NumericalValue;
   'line-height'?: NumericalValue;
-  fill?: NumericalValue;
-  stroke?: NumericalValue;
+  fill?: TextualValue;
+  stroke?: TextualValue;
   'stroke-width'?: NumericalValue;
-  'text-anchor'?: NumericalValue;
-  'dominant-baseline'?: NumericalValue;
+  'text-anchor'?: TextualValue;
+  'dominant-baseline'?: TextualValue;
+  // extend for alignment
+  'horizontal-align'?: TextHorizontalAlign;
+  'vertical-align'?: TextVerticalAlign;
 };
 
 export type ShapeAttributes = {
@@ -51,8 +56,8 @@ export type ShapeAttributes = {
   'fill-rule'?: 'nonzero' | 'evenodd' | 'inherit' | undefined;
   stroke?: TextualValue;
   'stroke-width'?: NumericalValue;
-  'stroke-linecap'?: NumericalValue;
-  'stroke-linejoin'?: NumericalValue;
+  'stroke-linecap'?: TextualValue;
+  'stroke-linejoin'?: TextualValue;
   'stroke-dasharray'?: NumericalValue;
   'stroke-dashoffset'?: NumericalValue;
   'stroke-opacity'?: NumericalValue;
