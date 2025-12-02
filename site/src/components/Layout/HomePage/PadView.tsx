@@ -15,11 +15,7 @@ export function PadView({
   width,
   height,
 }: PadViewProps) {
-  const [isMobile, setIsMobile] = useState(() =>
-    typeof window !== 'undefined'
-      ? window.matchMedia('(max-width: 768px)').matches
-      : false
-  );
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
