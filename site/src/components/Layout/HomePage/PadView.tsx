@@ -15,8 +15,29 @@ export function PadView({
   width,
   height,
 }: PadViewProps) {
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined'
+      ? window.matchMedia('(max-width: 768px)').matches
+      : false
+  );
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mediaQuery = window.matchMedia('(max-width: 768px)');
+    const handleChange = () => setIsMobile(mediaQuery.matches);
+    handleChange();
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
   const contentStyle: React.CSSProperties = {};
-  if (minHeight) contentStyle.minHeight = minHeight;
+  if (minHeight) {
+    const minHeightValue =
+      typeof minHeight === 'number' ? `${minHeight}px` : minHeight;
+    contentStyle.minHeight = isMobile
+      ? `min(${minHeightValue}, 70vw)`
+      : minHeight;
+  }
   if (minWidth) contentStyle.minWidth = minWidth;
   if (width) contentStyle.width = width;
   if (height) contentStyle.height = height;
@@ -27,7 +48,7 @@ export function PadView({
       style={width ? {maxWidth: width} : {maxWidth: '80rem'}}>
       <div className="p-3 lg:p-4 bg-gray-95 dark:bg-black rounded-2xl shadow-nav dark:shadow-nav-dark transition-colors duration-500">
         <div
-          className="bg-gradient-right dark:bg-gradient-right-dark px-4 sm:px-6 lg:px-8 pb-16 lg:pb-12 rounded-lg overflow-hidden transition-colors duration-500"
+          className="bg-gradient-right dark:bg-gradient-right-dark px-4 sm:px-6 lg:px-8 pb-10 sm:pb-12 rounded-lg overflow-hidden transition-colors duration-500"
           style={
             Object.keys(contentStyle).length > 0 ? contentStyle : undefined
           }>

@@ -292,8 +292,8 @@ export function ChatPanel({
             placeholder="提供你的数据，我会帮你生成信息图"
             className="w-full bg-transparent outline-none resize-none text-[15px] leading-relaxed text-primary dark:text-primary-dark placeholder:text-tertiary dark:placeholder:text-tertiary-dark py-3.5 px-4"
           />
-          <div className="flex items-center justify-between px-4 pb-3.5 pt-0">
-            <div className="flex items-center gap-2 text-xs text-tertiary dark:text-tertiary-dark">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between px-4 pb-3.5 pt-0">
+            <div className="flex items-center gap-2 text-xs text-tertiary dark:text-tertiary-dark sm:max-w-[65%]">
               <svg
                 className="w-3.5 h-3.5 flex-shrink-0"
                 fill="none"
@@ -313,7 +313,7 @@ export function ChatPanel({
             <button
               onClick={() => onSend()}
               disabled={isGenerating || !prompt.trim()}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-link to-link/90 dark:from-link-dark dark:to-link-dark/90 text-white hover:from-link/90 hover:to-link/80 dark:hover:from-link-dark/90 dark:hover:to-link-dark/80 text-[13px] font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-link/25 dark:shadow-link-dark/25 active:scale-[.97] transition-all duration-200 disabled:active:scale-100">
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-link to-link/90 dark:from-link-dark dark:to-link-dark/90 text-white hover:from-link/90 hover:to-link/80 dark:hover:from-link-dark/90 dark:hover:to-link-dark/80 text-[13px] font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-link/25 dark:shadow-link-dark/25 active:scale-[.97] transition-all duration-200 disabled:active:scale-100 w-full sm:w-auto justify-center whitespace-nowrap">
               {isGenerating ? (
                 <>
                   <svg

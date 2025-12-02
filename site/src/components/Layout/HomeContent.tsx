@@ -148,7 +148,7 @@ export function HomeContent(): JSX.Element {
           <div className="pointer-events-none absolute -left-32 -top-40 h-96 w-96 rounded-full bg-gradient-to-br from-link/20 via-link/5 to-transparent blur-3xl" />
           <div className="pointer-events-none absolute -right-32 top-20 h-96 w-96 rounded-full bg-gradient-to-br from-purple-40/15 via-transparent to-link/5 blur-3xl" />
 
-          <div className="mx-5 mt-12 lg:mt-24 mb-20 lg:mb-32 flex flex-col justify-center relative z-10">
+          <div className="mx-5 mt-4 lg:mt-12 mb-8 lg:mb-16 flex flex-col justify-center relative z-10">
             <Logo
               className={cn(
                 'mt-4 mb-3 text-brand dark:text-brand-dark w-24 lg:w-28 self-center text-sm me-0 flex origin-center transition-all ease-in-out'

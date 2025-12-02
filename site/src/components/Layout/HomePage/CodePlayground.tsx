@@ -191,7 +191,7 @@ function CodePlaygroundInner({
                 spec.json
               </span>
             </div>
-            <div className="bg-white dark:bg-card-dark sp-layout !block flex-1 min-h-0 rounded-b-2xl overflow-hidden">
+            <div className="bg-white dark:bg-card-dark sp-layout !block flex-1 min-h-0 rounded-b-2xl overflow-auto">
               <div className="sp-stack h-full">
                 <div className="sp-code-editor h-full [&_.cm-editor]:h-full [&_.cm-scroller]:h-full">
                   <CodeEditor

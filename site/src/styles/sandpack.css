@@ -100,7 +100,6 @@ html.dark .sp-wrapper {
 
   border-bottom-left-radius: 0.5rem;
   border-bottom-right-radius: 0.5rem;
-  overflow: initial;
 
   gap: 1px;
 }
@@ -121,7 +120,7 @@ html.dark .sp-wrapper {
 
 .sandpack .sp-layout > .sp-stack {
   flex: 1 1 0px;
-  height: var(--sp-layout-height);
+  /* height: var(--sp-layout-height); */
 }
 
 /**
@@ -492,7 +491,7 @@ html.dark .sandpack--playground .sp-overlay {
   min-width: 431px;
   /* No min height on mobile because we know code in advance. */
   /* Max height is needed to avoid too long files. */
-  max-height: 40vh;
+  /* max-height: 40vh; */
 }
 
 .sandpack .sp-layout > .sp-stack:nth-child(2) {
