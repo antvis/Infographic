@@ -1,5 +1,5 @@
 import camelCase from 'lodash-es/camelCase';
-import type { TextAlignment, TextAttributes, TextElement } from '../types';
+import type { TextAttributes, TextElement } from '../types';
 import { encodeFontFamily } from './font';
 import { createElement } from './svg';
 
@@ -21,8 +21,13 @@ export function createTextElement(
   }
 
   // 以下属性需要完成包围盒测量后再设置
-  const { id, x, y, 'text-alignment': textAlignment = 'LEFT TOP' } = attributes;
-  const [horizontal, vertical] = getTextAlignment(textAlignment);
+  const {
+    id,
+    x,
+    y,
+    'data-horizontal-align': horizontal,
+    'data-vertical-align': vertical,
+  } = attributes;
   Object.assign(span.style, alignToFlex(horizontal, vertical));
 
   const foreignObject = createElement<SVGForeignObjectElement>(
@@ -92,7 +97,8 @@ function getTextStyle(attributes: TextAttributes) {
     y,
     width,
     height,
-    ['text-alignment']: textAlignment,
+    ['data-horizontal-align']: horizontalAlign, // omit
+    ['data-vertical-align']: verticalAlign, // omit
     ['font-size']: fontSize,
     ['letter-spacing']: letterSpacing,
     ['line-height']: lineHeight,
@@ -136,13 +142,4 @@ function measureTextSpan(span: HTMLSpanElement) {
   else document.body.removeChild(span);
   span.style.visibility = 'visible';
   return rect;
-}
-
-function getTextAlignment(alignment: string): TextAlignment {
-  if (!alignment) {
-    return ['LEFT', 'TOP'];
-  }
-
-  const [horizontal = 'CENTER', vertical = 'MIDDLE'] = alignment.split(' ');
-  return [horizontal, vertical] as TextAlignment;
 }

@@ -80,7 +80,6 @@ export type {
   FontWeightName,
   ImageResource,
   ItemDatum,
-  TextAlignment,
   TextHorizontalAlign,
   TextVerticalAlign,
 } from './types';

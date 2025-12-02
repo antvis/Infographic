@@ -31,7 +31,6 @@ export type TextAttributes = {
   y?: NumericalValue;
   width?: NumericalValue;
   height?: NumericalValue;
-  'text-alignment'?: TextualValue;
   'font-family'?: TextualValue;
   'font-size'?: NumericalValue;
   'font-weight'?: NumericalValue;
@@ -45,8 +44,8 @@ export type TextAttributes = {
   'text-anchor'?: TextualValue;
   'dominant-baseline'?: TextualValue;
   // extend for alignment
-  'horizontal-align'?: TextHorizontalAlign;
-  'vertical-align'?: TextVerticalAlign;
+  'data-horizontal-align'?: TextHorizontalAlign;
+  'data-vertical-align'?: TextVerticalAlign;
 };
 
 export type ShapeAttributes = {

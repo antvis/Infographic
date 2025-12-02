@@ -88,7 +88,8 @@ function layoutText(textContent: string, text: SVGTextElement): SVGElement {
     y,
     width,
     height,
-    'text-alignment': text.dataset.textAlignment || 'LEFT TOP',
+    'data-horizontal-align': text.dataset.horizontalAlign || 'LEFT',
+    'data-vertical-align': text.dataset.verticalAlign || 'TOP',
   });
 
   const element = createTextElement(textContent, attributes as any);
