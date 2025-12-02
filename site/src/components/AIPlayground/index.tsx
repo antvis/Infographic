@@ -442,7 +442,6 @@ export function AIPageContent() {
         {/* Background decorations */}
         <div className="pointer-events-none absolute -left-32 -top-40 h-96 w-96 rounded-full bg-gradient-to-br from-link/20 via-link/5 to-transparent blur-3xl" />
         <div className="pointer-events-none absolute -right-32 top-20 h-96 w-96 rounded-full bg-gradient-to-br from-purple-40/15 via-transparent to-link/5 blur-3xl" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-border dark:via-border-dark to-transparent" />
 
         <div className="relative mx-auto max-w-7xl px-5 sm:px-12 py-12 lg:py-16 flex flex-col gap-12">
           {/* Header Section */}
