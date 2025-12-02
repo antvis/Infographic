@@ -42,6 +42,10 @@ export const Infographic = ({ options }: { options: InfographicOptions }) => {
 
     instance.render();
     instanceRef.current = instance;
+
+    return () => {
+      instance.destroy();
+    };
   }, [options]);
 
   return <div ref={ref} style={{ width: '100%', height: '100%' }}></div>;

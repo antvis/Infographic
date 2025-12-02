@@ -18,4 +18,5 @@ export interface IStateManager {
   addItemDatum(indexes: number[], datum: ItemDatum | ItemDatum[]): void;
   updateItemDatum(indexes: number[], datum: Partial<ItemDatum>): void;
   removeItemDatum(indexes: number[], count?: number): void;
+  destroy(): void;
 }

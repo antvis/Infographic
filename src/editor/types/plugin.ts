@@ -2,6 +2,7 @@ import type { ICommandManager } from './command';
 import type { IEditor } from './editor';
 
 export interface IPluginManager {
+  init(editor: IEditor, command: ICommandManager, plugins?: Plugin[]): void;
   getPlugin<T extends Plugin>(name: string): T | undefined;
   getPlugins(): ReadonlyMap<string, Plugin>;
   registerPlugin(plugin: Plugin): void;

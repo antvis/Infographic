@@ -76,4 +76,6 @@ export class StateManager implements IStateManager {
       ],
     } satisfies StateChangePayload);
   }
+
+  destroy(): void {}
 }

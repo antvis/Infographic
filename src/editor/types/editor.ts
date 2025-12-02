@@ -3,4 +3,5 @@ export interface IEditor {
   emit(event: string | symbol, ...args: any[]): boolean;
   off(event: string | symbol, listener: (...args: any[]) => void): this;
   getDocument(): SVGSVGElement;
+  destroy(): void;
 }

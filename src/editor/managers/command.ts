@@ -59,4 +59,8 @@ export class CommandManager implements ICommandManager {
   getHistorySize(): number {
     return this.undoStack.length;
   }
+
+  destroy() {
+    this.clear();
+  }
 }

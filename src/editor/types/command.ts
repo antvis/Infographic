@@ -11,6 +11,7 @@ export interface ICommandManager {
   canUndo(): boolean;
   canRedo(): boolean;
   getHistorySize(): number;
+  destroy(): void;
 }
 
 export interface Command {
