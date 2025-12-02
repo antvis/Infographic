@@ -130,11 +130,13 @@ export const Seo = withRouter(
           rel="preload"
           href="https://assets.antv.antgroup.com/AlibabaPuHuiTi-Regular/result.css"
           as="style"
+          crossOrigin="anonymous"
         />
         <link
           rel="preload"
           href="https://assets.antv.antgroup.com/AlibabaPuHuiTi-Bold/result.css"
           as="style"
+          crossOrigin="anonymous"
         />
         {children}
       </Head>
