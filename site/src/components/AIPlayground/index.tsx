@@ -436,7 +436,7 @@ export function AIPageContent() {
     <Page
       toc={[]}
       routeTree={{title: 'AI', path: '/ai', routes: []}}
-      meta={{title: 'AI 在线体验'}}
+      meta={{title: 'AI 生成信息图'}}
       section="ai">
       <div className="relative isolate overflow-hidden bg-wash dark:bg-wash-dark">
         {/* Background decorations */}

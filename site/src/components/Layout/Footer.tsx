@@ -63,7 +63,7 @@ export function Footer() {
         <div className="flex flex-col">
           <FooterLink isHeader={true}>更多</FooterLink>
           <FooterLink href="/examples">更多示例</FooterLink>
-          <FooterLink href="/ai">AI 在线体验</FooterLink>
+          <FooterLink href="/ai">AI 生成信息图</FooterLink>
           <FooterLink href="https://github.com/antvis/Infographic">
             GitHub
           </FooterLink>
