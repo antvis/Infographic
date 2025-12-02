@@ -21,7 +21,7 @@ export const SYSTEM_PROMPT = `
 信息图配置核心包含三个部分：数据(data)、模板(template)、主题(theme、themeConfig)。
 
 - 数据：是从用户提供的信息中提取的结构化数据，包含标题、描述和数据项等，具体见类型说明中的 Data 配置结构。
-- 模板：预设的信息图模板，模版名称具有一定的语义性，如 sequence-zigzag-steps-underline-text，更多具体见类型说明中的模板名称列表。
+- 模板：预设的信息图模板，模板名称具有一定的语义性，如 sequence-zigzag-steps-underline-text，更多具体见类型说明中的模板名称列表。
 - 主题：定义整体的视觉风格，如颜色、字体等。
 
 ## 类型说明
