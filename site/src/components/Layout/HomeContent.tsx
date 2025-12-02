@@ -194,7 +194,7 @@ export function HomeContent(): JSX.Element {
             <Header>声明式信息图渲染框架</Header>
             <Para>
               <Code>声明式</Code>{' '}
-              配置描述信息图，让数据叙事更简单、更优雅、更高效。
+              配置描述信息图，让数据叙事更简单、更优雅、更高效
             </Para>
           </Center>
           <FullBleed>
@@ -217,8 +217,7 @@ export function HomeContent(): JSX.Element {
           </FullBleed>
           <Center>
             <Para>
-              100+ 内置模板与组件，开箱可用；从 0 到 1
-              构建信息图，从未如此轻松。
+              100+ 内置模板与组件，开箱可用；从 0 到 1 构建信息图，从未如此轻松
             </Para>
           </Center>
         </Section>
@@ -227,14 +226,14 @@ export function HomeContent(): JSX.Element {
           <Center>
             <Header>AI 轻松生成专业信息图</Header>
             <Para>
-              让 AI 理解文本，抽取关键信息并生成配置，一键渲染专业信息图。
+              让 AI 理解文本，抽取关键信息并生成配置，一键渲染专业信息图
             </Para>
           </Center>
           <FullBleed>
             <AIInfographicFlow />
           </FullBleed>
           <Center>
-            <Para>无需设计经验，AI 完成从内容理解到可视化呈现的全流程。</Para>
+            <Para>无需设计经验，AI 完成从内容理解到可视化呈现的全流程</Para>
             <div className="mt-5">
               <ButtonLink
                 href={'/ai'}
@@ -272,7 +271,7 @@ export function HomeContent(): JSX.Element {
           <Center>
             <Header>在线体验</Header>
             <Para>
-              在在线编辑器中创建你的第一张信息图。用简洁配置快速完成可视化，实时预览即改即见。
+              在线编辑器中创建你的第一张信息图。用简洁配置快速完成可视化，实时预览即改即见
             </Para>
           </Center>
           <FullBleed>
@@ -280,7 +279,7 @@ export function HomeContent(): JSX.Element {
           </FullBleed>
           <Center>
             <Para>
-              无需安装，在浏览器即可创作。丰富示例助你快速上手，轻松打造专业信息图。
+              无需安装，在浏览器即可创作。丰富示例助你快速上手，轻松打造专业信息图
             </Para>
             <div className="flex justify-start w-full lg:justify-center">
               <CTA color="gray" icon="framework" href="/examples">

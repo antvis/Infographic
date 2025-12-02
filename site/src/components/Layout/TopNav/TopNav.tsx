@@ -256,7 +256,7 @@ export default function TopNav({
               <div className="flex flex-column justify-center items-center">
                 <NextLink
                   href="/"
-                  className=" flex py-2 flex-column justify-center items-center text-gray-50 dark:text-gray-30 hover:text-link hover:dark:text-link-dark hover:underline text-base ms-1 cursor-pointer">
+                  className=" flex py-2 flex-column justify-center items-center text-gray-50 dark:text-gray-30 hover:text-link hover:dark:text-link-dark hover:no-underline text-lg font-bold ms-1 cursor-pointer">
                   AntV Infographic
                 </NextLink>
               </div>
