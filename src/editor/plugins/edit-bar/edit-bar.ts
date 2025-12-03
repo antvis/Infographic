@@ -16,7 +16,7 @@ import type {
   SelectionChangePayload,
 } from '../../types';
 import { getElementViewportBounds, getScreenCTM } from '../../utils';
-import { FontAlign, FontFamily, FontSize } from './edit-items';
+import { FontAlign, FontColor, FontFamily, FontSize } from './edit-items';
 
 export interface EditBarOptions {
   style?: Partial<CSSStyleDeclaration>;
@@ -135,7 +135,7 @@ export class EditBar implements Plugin {
 
   protected getTextEditItems(text: TextElement): EditItem[] {
     const { attributes = {} } = getTextElementProps(text);
-    return [FontSize, FontAlign, FontFamily].map((item) =>
+    return [FontColor, FontSize, FontAlign, FontFamily].map((item) =>
       item([text], attributes, this.relies.command),
     );
   }
@@ -144,7 +144,7 @@ export class EditBar implements Plugin {
     const attrs = getCommonAttrs(
       selection.map((text) => getTextElementProps(text).attributes || {}),
     );
-    return [FontSize, FontAlign, FontFamily].map((item) =>
+    return [FontColor, FontSize, FontAlign, FontFamily].map((item) =>
       item(selection, attrs, this.relies.command),
     );
   }
