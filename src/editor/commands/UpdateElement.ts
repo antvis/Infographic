@@ -1,7 +1,6 @@
 import type { Element } from '../../types';
 import {
   getAttributes,
-  getIconResourceConfig,
   getTextElementProps,
   isEditableText,
   isIconElement,
@@ -17,26 +16,28 @@ export class UpdateElementCommand implements Command {
     private element: Element,
     private modified: Partial<ElementProps>,
   ) {
+    const modifiedAttrKeys = Object.keys(modified.attributes || {});
+    const originalAttributes = getAttributes(element, modifiedAttrKeys, false);
+
+    const assignModifiedAttributes = (attrs?: Record<string, any>) => {
+      if (!attrs) return;
+      modifiedAttrKeys.forEach((key) => {
+        if (key in attrs) originalAttributes[key] = attrs[key];
+      });
+    };
+
     const original = {
       ...modified,
-      attributes: getAttributes(
-        element,
-        Object.keys(modified.attributes || {}),
-        false,
-      ),
+      attributes: originalAttributes,
     };
 
     if (isEditableText(element)) {
-      const { textContent, attributes } = getTextElementProps(element);
-      if (textContent !== undefined) Object.assign(original, { textContent });
-      if (attributes) Object.assign(original.attributes, attributes);
+      const { attributes } = getTextElementProps(element);
+      assignModifiedAttributes(attributes);
     } else if (isIconElement(element)) {
       const entity = getIconEntity(element);
       if (!entity) return;
-      Object.assign(original.attributes, {
-        config: getIconResourceConfig(entity),
-      });
-      Object.assign(original.attributes, getIconAttrs(element));
+      assignModifiedAttributes(getIconAttrs(element));
     }
     // TODO illus
 
