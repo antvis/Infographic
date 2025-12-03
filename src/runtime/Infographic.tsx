@@ -1,10 +1,4 @@
-import {
-  ClickSelect,
-  DblClickEditText,
-  Editor,
-  SelectHighlight,
-  type IEditor,
-} from '../editor';
+import { Editor, type IEditor } from '../editor';
 import {
   exportToPNGString,
   exportToSVGString,
@@ -18,15 +12,7 @@ import {
 } from '../options';
 import { Renderer } from '../renderer';
 import { getTypes, parseSVG } from '../utils';
-
-const DEFAULT_OPTIONS: Partial<InfographicOptions> = {
-  plugins: [],
-  interactions: [
-    new DblClickEditText(),
-    new ClickSelect(),
-    new SelectHighlight(),
-  ],
-};
+import { DEFAULT_OPTIONS } from './options';
 
 export class Infographic {
   rendered: boolean = false;
@@ -122,6 +108,7 @@ export class Infographic {
   }
 
   destroy() {
+    this.editor?.destroy();
     this.node?.remove();
     this.node = null;
   }
