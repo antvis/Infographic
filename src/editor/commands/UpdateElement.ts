@@ -46,13 +46,13 @@ export class UpdateElementCommand implements Command {
 
   async apply(state: IStateManager) {
     updateElement(this.element, this.modified);
-    state.updateBuiltInElement(this.element, this.modified);
+    state.updateElement(this.element, this.modified);
   }
 
   async undo(state: IStateManager) {
     if (this.original) {
       updateElement(this.element, this.original);
-      state.updateBuiltInElement(this.element, this.original);
+      state.updateElement(this.element, this.original);
     }
   }
 

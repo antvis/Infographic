@@ -1,22 +1,25 @@
-import type { Data, ItemDatum } from '../../types';
-import { getDatumByIndexes } from '../../utils';
+import { ElementTypeEnum } from '../../constants';
+import type { Data, Element, ItemDatum } from '../../types';
+import { getDatumByIndexes, getElementRole } from '../../utils';
 import type {
+  ElementProps,
   ICommandManager,
   IEditor,
   IStateManager,
   StateChangePayload,
+  StateManagerInitOptions,
 } from '../types';
-import { getChildrenDataByIndexes } from '../utils';
+import { getChildrenDataByIndexes, getIndexesFromElement } from '../utils';
 
 export class StateManager implements IStateManager {
   editor!: IEditor;
   command!: ICommandManager;
   data!: Data;
 
-  init(editor: IEditor, command: ICommandManager, data: Data) {
-    this.editor = editor;
-    this.command = command;
-    this.data = data;
+  init(options: StateManagerInitOptions) {
+    this.editor = options.editor;
+    this.command = options.command;
+    this.data = options.data;
   }
 
   addItemDatum(indexes: number[], datum: ItemDatum | ItemDatum[]): void {
@@ -33,7 +36,8 @@ export class StateManager implements IStateManager {
       changes: [
         {
           op: 'add',
-          path: indexes,
+          path: 'items',
+          indexes,
           value: arr,
         },
       ],
@@ -43,14 +47,14 @@ export class StateManager implements IStateManager {
   updateItemDatum(indexes: number[], datum: Partial<ItemDatum>): void {
     const item = getDatumByIndexes(this.data, indexes);
     Object.assign(item, datum);
-
     this.editor.emit('data:update:item', { indexes, datum });
     this.editor.emit('data:change', {
       type: 'data:change',
       changes: [
         {
           op: 'update',
-          path: indexes,
+          path: 'items',
+          indexes,
           value: datum,
         },
       ],
@@ -70,8 +74,74 @@ export class StateManager implements IStateManager {
       changes: [
         {
           op: 'remove',
-          path: indexes,
+          path: 'items',
+          indexes,
           value: datum,
+        },
+      ],
+    } satisfies StateChangePayload);
+  }
+
+  updateData(key: string, value: any) {
+    (this.data as any)[key] = value;
+    this.editor.emit('data:update:data', { key, value });
+    this.editor.emit('data:change', {
+      type: 'data:change',
+      changes: [
+        {
+          op: 'update',
+          path: key,
+          value,
+        },
+      ],
+    } satisfies StateChangePayload);
+  }
+
+  updateElement(element: Element, props: Partial<ElementProps>): void {
+    this.updateBuiltInElement(element, props);
+  }
+
+  /**
+   * 不包含文本内容、图标类型更新
+   */
+  private updateBuiltInElement(element: Element, props: Partial<ElementProps>) {
+    const { attributes = {} } = props;
+    const role = getElementRole(element);
+    const isItemText =
+      ElementTypeEnum.ItemIcon === role ||
+      ElementTypeEnum.ItemLabel === role ||
+      ElementTypeEnum.ItemDesc === role ||
+      ElementTypeEnum.ItemValue === role ||
+      ElementTypeEnum.ItemsIllus === role;
+
+    if (isItemText) {
+      const datum = getDatumByIndexes(
+        this.data,
+        getIndexesFromElement(element),
+      );
+
+      datum.attributes ||= {};
+      Object.assign(datum.attributes, attributes);
+    } else if (
+      ElementTypeEnum.Title === role ||
+      ElementTypeEnum.Desc === role ||
+      ElementTypeEnum.Illus === role
+    ) {
+      this.data.attributes ||= {};
+      this.data.attributes[role] ||= {};
+      Object.assign(this.data.attributes[role], attributes);
+    }
+
+    this.editor.emit('data:update:attrs', { element, props });
+    this.editor.emit('data:change', {
+      type: 'data:change',
+      changes: [
+        {
+          op: 'update',
+          role,
+          indexes: isItemText ? getIndexesFromElement(element) : undefined,
+          path: isItemText ? 'items' : 'attributes',
+          value: props,
         },
       ],
     } satisfies StateChangePayload);

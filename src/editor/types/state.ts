@@ -1,4 +1,4 @@
-import type { Data, ItemDatum } from '../../types';
+import type { Data, Element, ItemDatum } from '../../types';
 import type { ICommandManager } from './command';
 import type { IEditor } from './editor';
 import type { ElementProps } from './shape';
@@ -22,7 +22,7 @@ export interface IStateManager {
   updateItemDatum(indexes: number[], datum: Partial<ItemDatum>): void;
   removeItemDatum(indexes: number[], count?: number): void;
   updateData(key: string, value: any): void;
-  updateBuiltInElement(element: Element, props: Partial<ElementProps>): void;
+  updateElement(element: Element, props: Partial<ElementProps>): void;
   destroy(): void;
 }
 
