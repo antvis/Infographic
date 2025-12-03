@@ -22,18 +22,30 @@ const DEFAULT_COLOR = '#1f1f1f';
 const DEFAULT_SWATCHES = [
   '#000000',
   '#1f1f1f',
+  '#434343',
   '#595959',
   '#8c8c8c',
   '#bfbfbf',
+  '#d9d9d9',
+  '#f0f0f0',
   '#ffffff',
   '#1677ff',
+  '#2f54eb',
+  '#91caff',
   '#13c2c2',
+  '#36cfc9',
   '#52c41a',
+  '#73d13d',
   '#fadb14',
+  '#ffd666',
+  '#fa8c16',
   '#fa541c',
   '#f5222d',
+  '#ff7875',
   '#eb2f96',
+  '#ffadd2',
   '#722ed1',
+  '#9254de',
   'rgba(0, 0, 0, 0.65)',
   'rgba(255, 255, 255, 0.85)',
 ];
@@ -128,6 +140,9 @@ function ensureColorPickerStyles() {
   injectStyleOnce(
     COLOR_PICKER_STYLE_ID,
     `
+.${COLOR_PICKER_CLASS} .pcr-app {
+  width: 100%;
+}
 .${COLOR_PICKER_CLASS} .pcr-button {
   display: none;
 }
@@ -145,7 +160,7 @@ function ensureColorPickerStyles() {
 }
 .${COLOR_PICKER_CLASS} .${COLOR_PICKER_APP_CLASS} .pcr-swatches {
   grid-template-columns: repeat(auto-fit, 26px);
-  gap: 6px;
+  gap: 2px;
 }
 .${COLOR_PICKER_CLASS} .${COLOR_PICKER_APP_CLASS} .pcr-swatches > button {
   width: 24px;
@@ -162,11 +177,12 @@ function ensureColorPickerStyles() {
   border: none;
 }
 .${COLOR_PICKER_CLASS} .${COLOR_PICKER_APP_CLASS} .pcr-interaction {
+  font-size: 14px;
   padding: 4px 10px 10px;
   justify-content: space-between;
 }
 .${COLOR_PICKER_CLASS} .${COLOR_PICKER_APP_CLASS} .pcr-interaction .pcr-result {
-  flex: 1 1 140px;
+
 }
 .${COLOR_PICKER_CLASS} .${COLOR_PICKER_APP_CLASS} .pcr-interaction .pcr-type {
     flex: 1;
