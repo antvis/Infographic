@@ -1,3 +1,4 @@
+export * from './attrs';
 export * from './color';
 export * from './data';
 export * from './element';
