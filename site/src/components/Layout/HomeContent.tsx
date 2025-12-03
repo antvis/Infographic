@@ -163,14 +163,6 @@ export function HomeContent(): JSX.Element {
             </p>
             <div className="mt-5 self-center flex gap-2 w-full sm:w-auto flex-col sm:flex-row">
               <ButtonLink
-                href={'/learn'}
-                type="secondary"
-                size="lg"
-                className="w-full sm:w-auto justify-center"
-                label="快速开始">
-                快速开始
-              </ButtonLink>
-              <ButtonLink
                 href={'/ai'}
                 type="primary"
                 size="lg"
@@ -178,6 +170,14 @@ export function HomeContent(): JSX.Element {
                 label="AI Infographic">
                 <IconStarTwinkle className="w-6 h-6" />
                 <span className="font-semibold">AI Infographic</span>
+              </ButtonLink>
+              <ButtonLink
+                href={'/learn'}
+                type="secondary"
+                size="lg"
+                className="w-full sm:w-auto justify-center"
+                label="快速开始">
+                快速开始
               </ButtonLink>
               <ExternalLink
                 href="https://github.com/antvis/infographic"
