@@ -1,3 +1,6 @@
+/**
+ * 基本图形类型枚举
+ */
 export const enum ShapeTypeEnum {
   Group = 'group',
   Text = 'text',
@@ -9,4 +12,5 @@ export const enum ShapeTypeEnum {
   Polygon = 'polygon',
   Path = 'path',
   Image = 'image',
+  Icon = 'icon',
 }

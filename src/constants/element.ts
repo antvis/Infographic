@@ -1,3 +1,6 @@
+/**
+ * Infographic 抽象元素类型枚举
+ */
 export const enum ElementTypeEnum {
   Background = 'background',
   IconGroup = 'icon-group',

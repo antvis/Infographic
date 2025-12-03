@@ -25,23 +25,4 @@ export interface TextProps extends BaseShapeProps {
   attributes: TextAttributes;
 }
 
-export interface GroupProps extends BaseShapeProps {
-  type: ShapeTypeEnum.Group;
-  children: ID[];
-}
-
-export type ShapeProps = GeometryProps | TextProps;
-
-export type DocumentElement = {
-  id: ID;
-  data: ShapeProps;
-};
-
-export type DocumentSnapshot = {
-  elements: Record<ID, ShapeProps>;
-};
-
-export type Vector2D = {
-  x: number;
-  y: number;
-};
+export type ElementProps = GeometryProps | TextProps;
