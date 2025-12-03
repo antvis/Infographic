@@ -6,12 +6,7 @@ import {
   isEditableText,
 } from '../../utils';
 import { UpdateTextCommand } from '../commands';
-import type {
-  ICommandManager,
-  IEditor,
-  IInteractionManager,
-  Interaction,
-} from '../types';
+import type { Interaction, InteractionInitOptions } from '../types';
 import { ClickHandler, getEventTarget } from '../utils';
 
 export class DblClickEditText implements Interaction {
@@ -19,11 +14,7 @@ export class DblClickEditText implements Interaction {
 
   private clickHandler?: ClickHandler;
 
-  init(
-    editor: IEditor,
-    command: ICommandManager,
-    interaction: IInteractionManager,
-  ) {
+  init({ editor, command, interaction }: InteractionInitOptions) {
     this.clickHandler = new ClickHandler(editor.getDocument()).onDoubleClick(
       (event) => {
         if (!interaction.isActive()) return;

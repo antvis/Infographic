@@ -1,13 +1,18 @@
 import { BatchCommand } from '../commands';
-import type { Command, ICommandManager, IStateManager } from '../types';
+import type {
+  Command,
+  CommandManagerInitOptions,
+  ICommandManager,
+  IStateManager,
+} from '../types';
 
 export class CommandManager implements ICommandManager {
   private state!: IStateManager;
   private undoStack: Command[] = [];
   private redoStack: Command[] = [];
 
-  init(state: IStateManager) {
-    this.state = state;
+  init(options: CommandManagerInitOptions) {
+    this.state = options.state;
   }
 
   execute(command: Command) {

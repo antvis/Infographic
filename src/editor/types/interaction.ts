@@ -4,11 +4,7 @@ import type { Selection } from './selection';
 
 export interface Interaction {
   name: string;
-  init(
-    editor: IEditor,
-    command: ICommandManager,
-    interaction: IInteractionManager,
-  ): void;
+  init(options: InteractionInitOptions): void;
   destroy(): void;
 }
 
@@ -39,4 +35,16 @@ export interface IInteractionManager {
   ): Promise<void>;
   appendTransientElement<T extends SVGElement>(element: T): T;
   destroy(): void;
+}
+
+export interface InteractionInitOptions {
+  editor: IEditor;
+  command: ICommandManager;
+  interaction: IInteractionManager;
+}
+
+export interface InteractionManagerInitOptions {
+  editor: IEditor;
+  command: ICommandManager;
+  interactions?: Interaction[];
 }

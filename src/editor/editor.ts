@@ -30,15 +30,31 @@ export class Editor extends EventEmitter implements IEditor {
     }
     document.style.userSelect = 'none';
 
-    this.command = new CommandManager();
-    this.state = new StateManager();
-    this.plugin = new PluginManager();
-    this.interaction = new InteractionManager();
+    const command = new CommandManager();
+    const state = new StateManager();
+    const plugin = new PluginManager();
+    const interaction = new InteractionManager();
 
-    this.command.init(this.state);
-    this.state.init(this, this.command, options.data);
-    this.plugin.init(this, this.command, options.plugins);
-    this.interaction.init(this, this.command, options.interactions);
+    command.init({ state });
+    state.init({ editor: this, command, data: options.data });
+    plugin.init(
+      {
+        editor: this,
+        command: command,
+        state: state,
+      },
+      options.plugins,
+    );
+    interaction.init({
+      editor: this,
+      command,
+      interactions: options.interactions,
+    });
+
+    this.command = command;
+    this.state = state;
+    this.plugin = plugin;
+    this.interaction = interaction;
   }
 
   getDocument() {

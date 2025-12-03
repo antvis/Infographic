@@ -5,6 +5,7 @@ import type {
   IEditor,
   IInteractionManager,
   Interaction,
+  InteractionInitOptions,
   Selection,
 } from '../types';
 import { getElementViewportBounds } from '../utils';
@@ -27,11 +28,7 @@ export class SelectHighlight implements Interaction {
   private highlightMasks: SVGRectElement[] = [];
   private combinedBoundsMask?: SVGRectElement;
 
-  init(
-    editor: IEditor,
-    command: ICommandManager,
-    interaction: IInteractionManager,
-  ) {
+  init({ editor, command, interaction }: InteractionInitOptions) {
     this.editor = editor;
     this.command = command;
     this.interaction = interaction;

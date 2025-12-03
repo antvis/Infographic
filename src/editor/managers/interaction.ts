@@ -9,6 +9,7 @@ import type {
   IEditor,
   IInteractionManager,
   Interaction,
+  InteractionManagerInitOptions,
   Selection,
   SelectionChangePayload,
   SelectMode,
@@ -26,19 +27,19 @@ export class InteractionManager implements IInteractionManager {
   private concurrentInteractions: Set<Interaction> = new Set();
   private selection: Set<Selection[number]> = new Set();
 
-  init(
-    editor: IEditor,
-    command: ICommandManager,
-    interactions: Interaction[] = [],
-  ) {
-    this.editor = editor;
-    this.command = command;
-    this.interactions = interactions;
+  init(options: InteractionManagerInitOptions) {
+    this.editor = options.editor;
+    this.command = options.command;
+    this.interactions = options.interactions || [];
     document.addEventListener('click', this.handleClick);
 
-    interactions.forEach((interaction) => {
+    this.interactions.forEach((interaction) => {
       this.extensions.register(interaction.name, interaction);
-      interaction.init(editor, command, this);
+      interaction.init({
+        editor: this.editor,
+        command: this.command,
+        interaction: this,
+      });
       this.editor.emit('interaction:registered', interaction);
     });
   }

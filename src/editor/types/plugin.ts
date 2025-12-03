@@ -1,8 +1,22 @@
 import type { ICommandManager } from './command';
 import type { IEditor } from './editor';
+import { IStateManager } from './state';
+
+export interface PluginManagerInitOptions {
+  editor: IEditor;
+  command: ICommandManager;
+  state: IStateManager;
+}
+
+export interface PluginInitOptions {
+  editor: IEditor;
+  command: ICommandManager;
+  plugin: IPluginManager;
+  state: IStateManager;
+}
 
 export interface IPluginManager {
-  init(editor: IEditor, command: ICommandManager, plugins?: Plugin[]): void;
+  init(options: PluginManagerInitOptions, plugins?: Plugin[]): void;
   getPlugin<T extends Plugin>(name: string): T | undefined;
   getPlugins(): ReadonlyMap<string, Plugin>;
   registerPlugin(plugin: Plugin): void;
@@ -12,6 +26,6 @@ export interface IPluginManager {
 
 export interface Plugin {
   name: string;
-  init(editor: IEditor, command: ICommandManager, plugin: IPluginManager): void;
+  init(options: PluginInitOptions): void;
   destroy(): void;
 }

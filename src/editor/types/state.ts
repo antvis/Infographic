@@ -17,11 +17,17 @@ export interface StateChange {
 }
 
 export interface IStateManager {
-  init(editor: IEditor, command: ICommandManager, data: Data): void;
+  init(options: StateManagerInitOptions): void;
   addItemDatum(indexes: number[], datum: ItemDatum | ItemDatum[]): void;
   updateItemDatum(indexes: number[], datum: Partial<ItemDatum>): void;
   removeItemDatum(indexes: number[], count?: number): void;
   updateData(key: string, value: any): void;
   updateBuiltInElement(element: Element, props: Partial<ElementProps>): void;
   destroy(): void;
+}
+
+export interface StateManagerInitOptions {
+  editor: IEditor;
+  command: ICommandManager;
+  data: Data;
 }
