@@ -42,7 +42,7 @@ export const Infographic = ({ options }: { options: InfographicOptions }) => {
 
     instance.render();
     instanceRef.current = instance;
-
+    Object.assign(window, { infographic: instance });
     return () => {
       instance.destroy();
     };
