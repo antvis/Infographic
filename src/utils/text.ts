@@ -1,49 +1,70 @@
 import camelCase from 'lodash-es/camelCase';
-import type { TextAttributes, TextElement } from '../types';
-import { encodeFontFamily } from './font';
-import { createElement } from './svg';
+import { TextProps } from '../editor';
+import type {
+  TextAttributes,
+  TextElement,
+  TextHorizontalAlign,
+  TextVerticalAlign,
+} from '../types';
+import { decodeFontFamily, encodeFontFamily } from './font';
+import { isForeignObjectElement } from './recognizer';
+import { createElement, setAttributes } from './svg';
+
+export function getTextEntity(text: SVGElement): HTMLSpanElement | null {
+  if (!isForeignObjectElement(text)) return null;
+  return text.querySelector('span');
+}
 
 export function createTextElement(
   textContent: string,
   attributes: TextAttributes,
 ): TextElement {
-  const span = document.createElement('span');
+  const entity = document.createElement('span');
+  const foreignObject = createElement<SVGForeignObjectElement>('foreignObject');
+  foreignObject.appendChild(entity);
+  updateTextElement(foreignObject, { textContent, attributes });
+  return foreignObject;
+}
 
-  span.textContent = textContent;
-  Object.assign(span.style, getTextStyle(attributes));
+export function updateTextElement(
+  text: TextElement,
+  props: Partial<TextProps>,
+) {
+  const { textContent, attributes } = props;
+  if (textContent !== undefined) {
+    setTextContent(text, textContent);
+  }
+  if (!attributes) return;
 
+  const entity = getTextEntity(text);
   let { width, height } = attributes;
 
-  if (!width || !height) {
-    const rect = measureTextSpan(span);
-    if (!width) width = String(rect.width);
-    if (!height) height = String(rect.height);
+  const textAttrs: TextAttributes = {};
+
+  if (entity) {
+    Object.assign(entity.style, getTextStyle(attributes));
+
+    if (!width || !height) {
+      const rect = measureTextSpan(entity);
+      if (!width && !text.hasAttribute('width')) width = String(rect.width);
+      if (!height && !text.hasAttribute('height')) height = String(rect.height);
+    }
+
+    // 以下属性需要完成包围盒测量后再设置
+    const {
+      'data-horizontal-align': horizontal,
+      'data-vertical-align': vertical,
+    } = attributes;
+    Object.assign(entity.style, alignToFlex(horizontal, vertical));
   }
 
-  // 以下属性需要完成包围盒测量后再设置
-  const {
-    id,
-    x,
-    y,
-    'data-horizontal-align': horizontal,
-    'data-vertical-align': vertical,
-  } = attributes;
-  Object.assign(span.style, alignToFlex(horizontal, vertical));
-
-  const foreignObject = createElement<SVGForeignObjectElement>(
-    'foreignObject',
-    {
-      id,
-      x,
-      y,
-      width,
-      height,
-      overflow: 'visible',
-    },
-  );
-  foreignObject.appendChild(span);
-
-  return foreignObject;
+  const { id, x, y } = attributes;
+  if (id) textAttrs.id = id;
+  if (x !== undefined) textAttrs.x = String(x);
+  if (y !== undefined) textAttrs.y = String(y);
+  if (width !== undefined) textAttrs.width = String(width);
+  if (height !== undefined) textAttrs.height = String(height);
+  setAttributes(text, textAttrs);
 }
 
 function alignToFlex(
@@ -91,7 +112,7 @@ function alignToFlex(
   return style;
 }
 
-function getTextStyle(attributes: TextAttributes) {
+export function getTextStyle(attributes: TextAttributes) {
   const {
     x,
     y,
@@ -111,10 +132,11 @@ function getTextStyle(attributes: TextAttributes) {
   } = attributes;
 
   const style: Record<string, any> = {
-    color: fill,
     overflow: 'visible',
     // userSelect: 'none',
   };
+
+  if (fill) style.color = fill;
 
   Object.entries(restAttrs).forEach(([key, value]) => {
     style[camelCase(key)] = value;
@@ -142,4 +164,77 @@ function measureTextSpan(span: HTMLSpanElement) {
   else document.body.removeChild(span);
   span.style.visibility = 'visible';
   return rect;
+}
+
+export function getTextContent(text: TextElement): string {
+  return getTextEntity(text)?.innerText || '';
+}
+
+export function setTextContent(text: TextElement, content: string): void {
+  const entity = getTextEntity(text);
+  if (entity) {
+    entity.innerText = content;
+  }
+}
+
+export function getTextElementProps(text: TextElement): Partial<TextProps> {
+  const entity = getTextEntity(text);
+  if (!entity) return {};
+
+  const {
+    color,
+    fontSize,
+    fontFamily,
+    justifyContent,
+    alignContent,
+    fontWeight,
+  } = entity.style;
+
+  const [horizontal, vertical] = flexToAlign(justifyContent, alignContent);
+
+  const attrs: TextAttributes = {
+    'data-horizontal-align': horizontal,
+    'data-vertical-align': vertical,
+  };
+
+  if (fontFamily) attrs['font-family'] = decodeFontFamily(fontFamily);
+  if (fontWeight) attrs['font-weight'] = fontWeight;
+  if (fontSize) attrs['font-size'] = String(parseInt(fontSize));
+  if (color) attrs['fill'] = color;
+
+  return { attributes: attrs, textContent: getTextContent(text) };
+}
+
+function flexToAlign(
+  justifyContent: string | null | undefined,
+  alignContent: string | null | undefined,
+): [TextHorizontalAlign, TextVerticalAlign] {
+  let horizontal: TextHorizontalAlign = 'LEFT';
+  let vertical: TextVerticalAlign = 'TOP';
+
+  switch (justifyContent) {
+    case 'flex-start':
+      horizontal = 'LEFT';
+      break;
+    case 'center':
+      horizontal = 'CENTER';
+      break;
+    case 'flex-end':
+      horizontal = 'RIGHT';
+      break;
+  }
+
+  switch (alignContent) {
+    case 'flex-start':
+      vertical = 'TOP';
+      break;
+    case 'center':
+      vertical = 'MIDDLE';
+      break;
+    case 'flex-end':
+      vertical = 'BOTTOM';
+      break;
+  }
+
+  return [horizontal, vertical];
 }

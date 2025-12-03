@@ -8,6 +8,7 @@ export * from './item';
 export * from './join';
 export * from './padding';
 export * from './recognizer';
+export * from './style';
 export * from './svg';
 export * from './text';
 export * from './uuid';

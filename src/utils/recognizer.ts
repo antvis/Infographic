@@ -1,3 +1,8 @@
+import { COMPONENT_ROLE, ElementTypeEnum } from '../constants';
+import { Element, GeometryElement, TextElement } from '../types';
+import { getElementByRole, getElementRole } from './element';
+import { getTextEntity } from './text';
+
 const is = (element: SVGElement, role: string) => {
   return element?.dataset?.elementType === role;
 };
@@ -28,3 +33,66 @@ export const isRoughElement = (element: SVGElement) =>
   is(element, 'rough-element');
 export const isRoughVolume = (element: SVGElement) =>
   is(element, 'rough-volume');
+
+export function isForeignObjectElement(
+  element: any,
+): element is SVGForeignObjectElement {
+  return element.tagName === 'foreignObject';
+}
+
+export function isTextEntity(element: any): element is HTMLSpanElement {
+  return element.tagName === 'SPAN';
+}
+
+export function isEditableText(node: SVGElement): node is TextElement {
+  const role = getElementRole(node);
+  return [
+    ElementTypeEnum.Title,
+    ElementTypeEnum.Desc,
+    ElementTypeEnum.ItemLabel,
+    ElementTypeEnum.ItemDesc,
+  ].includes(role);
+}
+
+export function isEditingText(element: SVGElement | null): boolean {
+  if (!element) return false;
+  if (!isEditableText(element)) return false;
+
+  const span = getTextEntity(element);
+  if (!span) return false;
+  return span.hasAttribute('contenteditable');
+}
+
+export function isGeometryElement(
+  element: Element,
+): element is GeometryElement {
+  const tagName = element.tagName.toLowerCase();
+  return [
+    'rect',
+    'circle',
+    'ellipse',
+    'line',
+    'polygon',
+    'polyline',
+    'path',
+  ].includes(tagName);
+}
+
+export function isIconElement(element: Element) {
+  return isItemIcon(element) || isItemIconGroup(element);
+}
+
+/**
+ * 对于编辑器插件、交互挂载的DOM元素，识别其是否为信息图组件的一部分
+ * 在元素中操作时不会触发编辑器的取消激活行为
+ */
+export function isInfographicComponent(element: HTMLElement): boolean {
+  let current: HTMLElement | null = element;
+  while (current) {
+    if (getElementByRole(current, COMPONENT_ROLE)) {
+      return true;
+    }
+    current = current.parentElement;
+  }
+  return false;
+}

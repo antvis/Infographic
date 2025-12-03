@@ -1,12 +1,13 @@
 import { Element, IconElement, TextElement } from '../../types';
 import {
   isEditArea,
+  isForeignObjectElement,
   isItemIcon,
   isItemIconGroup,
   isRoughElement,
   isRoughVolume,
+  isTextEntity,
 } from '../../utils';
-import { isForeignObjectElement, isSpanElement } from './recognize';
 
 export function getEventTarget(element: SVGElement | null): Element | null {
   if (!element) return null;
@@ -56,7 +57,7 @@ const getRoughEventTarget = (element: SVGElement): Element | null => {
 };
 
 const getTextEventTarget = (element: SVGElement): TextElement | null => {
-  if (isSpanElement(element) && isForeignObjectElement(element.parentElement)) {
+  if (isTextEntity(element) && isForeignObjectElement(element.parentElement)) {
     return element.parentElement as unknown as TextElement;
   }
   return null;
