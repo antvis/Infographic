@@ -17,6 +17,7 @@ import {IconGitHub} from 'components/Icon/IconGitHub';
 import {Logo} from 'components/Logo';
 import BlogCard from 'components/MDX/BlogCard';
 import CodeBlock from 'components/MDX/CodeBlock';
+import { IconStarTwinkle } from 'components/Icon/IconStarTwinkle';
 import ButtonLink from '../ButtonLink';
 import {AIInfographicFlow} from './HomePage/AIInfographicFlow';
 import {CodePlayground} from './HomePage/CodePlayground';
@@ -163,19 +164,20 @@ export function HomeContent(): JSX.Element {
             <div className="mt-5 self-center flex gap-2 w-full sm:w-auto flex-col sm:flex-row">
               <ButtonLink
                 href={'/learn'}
-                type="primary"
+                type="secondary"
                 size="lg"
                 className="w-full sm:w-auto justify-center"
                 label="快速开始">
                 快速开始
               </ButtonLink>
               <ButtonLink
-                href={'/reference'}
-                type="secondary"
+                href={'/ai'}
+                type="primary"
                 size="lg"
                 className="w-full sm:w-auto justify-center"
-                label="参考文档">
-                参考文档
+                label="AI Infographic">
+                <IconStarTwinkle className="w-6 h-6" />
+                <span className="font-semibold">AI Infographic</span>
               </ButtonLink>
               <ExternalLink
                 href="https://github.com/antvis/infographic"
