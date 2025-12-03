@@ -1,4 +1,9 @@
-import { createElement, getElementByRole, setElementRole } from '../../utils';
+import {
+  createElement,
+  getElementByRole,
+  isInfographicComponent,
+  setElementRole,
+} from '../../utils';
 import type {
   ICommandManager,
   IEditor,
@@ -119,8 +124,18 @@ export class InteractionManager implements IInteractionManager {
 
   private handleClick = (event: MouseEvent) => {
     const doc = this.editor.getDocument();
-    const target = event.target as Node;
-    if (doc.contains(target)) this.activate();
+    const target = event.target;
+
+    if (!target) {
+      this.deactivate();
+      return;
+    }
+    // 点击画布 SVG 或者标记为组件的元素
+    if (
+      doc.contains(target as Node) ||
+      isInfographicComponent(target as HTMLElement)
+    )
+      this.activate();
     else this.deactivate();
   };
 
