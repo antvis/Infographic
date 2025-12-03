@@ -1,4 +1,4 @@
-import type { Element } from '../../types';
+import type { Element, IconElement } from '../../types';
 import {
   getAttributes,
   getTextElementProps,
@@ -7,7 +7,7 @@ import {
   updateTextElement,
 } from '../../utils';
 import type { Command, ElementProps, IStateManager, TextProps } from '../types';
-import { getIconAttrs, getIconEntity } from '../utils';
+import { getIconAttrs, getIconEntity, updateIconElement } from '../utils';
 
 export class UpdateElementCommand implements Command {
   private original?: Partial<ElementProps>;
@@ -69,5 +69,7 @@ export class UpdateElementCommand implements Command {
 function updateElement(element: Element, props: Partial<ElementProps>) {
   if (isEditableText(element)) {
     updateTextElement(element, props as TextProps);
+  } else if (isIconElement(element)) {
+    updateIconElement(element as IconElement, undefined, props.attributes);
   }
 }

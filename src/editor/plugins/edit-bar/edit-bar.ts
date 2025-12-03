@@ -1,6 +1,6 @@
 import { COMPONENT_ROLE } from '../../../constants';
 import { getCombinedBounds } from '../../../jsx';
-import { TextElement } from '../../../types';
+import { IconElement, TextElement } from '../../../types';
 import {
   getCommonAttrs,
   getTextElementProps,
@@ -15,8 +15,18 @@ import type {
   Selection,
   SelectionChangePayload,
 } from '../../types';
-import { getElementViewportBounds, getScreenCTM } from '../../utils';
-import { FontAlign, FontColor, FontFamily, FontSize } from './edit-items';
+import {
+  getElementViewportBounds,
+  getIconAttrs,
+  getScreenCTM,
+} from '../../utils';
+import {
+  FontAlign,
+  FontColor,
+  FontFamily,
+  FontSize,
+  IconColor,
+} from './edit-items';
 
 export interface EditBarOptions {
   style?: Partial<CSSStyleDeclaration>;
@@ -150,21 +160,29 @@ export class EditBar implements Plugin {
   }
 
   protected getIconEditItems(selection: Selection): EditItem[] {
-    return [];
+    const attrs = getIconAttrs(selection[0] as IconElement);
+    return [IconColor].map((item) =>
+      item(selection, attrs, this.relies.command),
+    );
   }
   protected getIconCollectionEditItems(selection: Selection): EditItem[] {
+    const attrs = getCommonAttrs(
+      selection.map((icon) => getIconAttrs(icon as IconElement)),
+    );
+    return [IconColor].map((item) =>
+      item(selection, attrs, this.relies.command),
+    );
+  }
+
+  protected getGeometryEditItems(_selection: Selection): EditItem[] {
     return [];
   }
 
-  protected getGeometryEditItems(selection: Selection): EditItem[] {
+  protected getGeometryCollectionEditItems(_selection: Selection): EditItem[] {
     return [];
   }
 
-  protected getGeometryCollectionEditItems(selection: Selection): EditItem[] {
-    return [];
-  }
-
-  protected getElementCollectionEditItems(selection: Selection): EditItem[] {
+  protected getElementCollectionEditItems(_selection: Selection): EditItem[] {
     return [];
   }
 

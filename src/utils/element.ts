@@ -1,4 +1,5 @@
 import { ElementTypeEnum } from '../constants';
+import { isIconElement } from './recognizer';
 
 export function setElementRole(
   element: SVGElement | HTMLElement,
@@ -17,6 +18,7 @@ export function getElementByRole(
 export function getElementRole(
   element: SVGElement | HTMLElement,
 ): ElementTypeEnum {
+  if (isIconElement(element as any)) return ElementTypeEnum.ItemIcon;
   return (
     (element.getAttribute('data-element-type') as ElementTypeEnum) ||
     ElementTypeEnum.Unknown

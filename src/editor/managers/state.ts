@@ -1,6 +1,6 @@
 import { ElementTypeEnum } from '../../constants';
 import type { Data, Element, ItemDatum } from '../../types';
-import { getDatumByIndexes, getElementRole } from '../../utils';
+import { getDatumByIndexes, getElementRole, isIconElement } from '../../utils';
 import type {
   ElementProps,
   ICommandManager,
@@ -107,19 +107,17 @@ export class StateManager implements IStateManager {
   private updateBuiltInElement(element: Element, props: Partial<ElementProps>) {
     const { attributes = {} } = props;
     const role = getElementRole(element);
-    const isItemText =
-      ElementTypeEnum.ItemIcon === role ||
+    const isItemElement =
+      isIconElement(element) ||
       ElementTypeEnum.ItemLabel === role ||
       ElementTypeEnum.ItemDesc === role ||
       ElementTypeEnum.ItemValue === role ||
       ElementTypeEnum.ItemsIllus === role;
-
-    if (isItemText) {
+    if (isItemElement) {
       const datum = getDatumByIndexes(
         this.data,
         getIndexesFromElement(element),
       );
-
       const key = role.replace('item-', '');
       datum.attributes ||= {};
       datum.attributes[key] ||= {};
@@ -141,8 +139,8 @@ export class StateManager implements IStateManager {
         {
           op: 'update',
           role,
-          indexes: isItemText ? getIndexesFromElement(element) : undefined,
-          path: isItemText ? 'items' : 'attributes',
+          indexes: isItemElement ? getIndexesFromElement(element) : undefined,
+          path: isItemElement ? 'items' : 'attributes',
           value: props,
         },
       ],
