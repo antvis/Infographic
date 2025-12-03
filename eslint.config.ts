@@ -18,7 +18,10 @@ export default tseslint.config([
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
+          argsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
           ignoreRestSiblings: true,
+          varsIgnorePattern: '^_',
         },
       ],
       'react-refresh/only-export-components': 'off',
