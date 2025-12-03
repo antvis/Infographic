@@ -1,4 +1,5 @@
 import type { TextElement } from '../../types';
+import { getTextContent, getTextEntity, isEditableText } from '../../utils';
 import { UpdateTextCommand } from '../commands';
 import type {
   ICommandManager,
@@ -6,12 +7,7 @@ import type {
   IInteractionManager,
   Interaction,
 } from '../types';
-import {
-  ClickHandler,
-  getEventTarget,
-  getTextSpan,
-  isEditableText,
-} from '../utils';
+import { ClickHandler, getEventTarget } from '../utils';
 
 export class DblClickEditText implements Interaction {
   name = 'dblclick-edit-text';
@@ -32,14 +28,14 @@ export class DblClickEditText implements Interaction {
           if (!target) return;
           if (isEditableText(target)) {
             interaction.select([target], 'replace');
-
+            const originalText = getTextContent(target);
             const text = await new Promise<string>((resolve) => {
               editText(target, {
                 onBlur: resolve,
               });
             });
 
-            command.execute(new UpdateTextCommand(target, text));
+            command.execute(new UpdateTextCommand(target, text, originalText));
           }
         });
       },
@@ -60,38 +56,38 @@ const EDITOR_STYLE_ID = 'infographic-inline-text-editor-style';
 const EDITOR_BASE_CLASS = 'infographic-inline-text-editor';
 
 function editText(text: TextElement, options?: EditTextOptions) {
-  const span = getTextSpan(text);
-  if (!span) return;
+  const entity = getTextEntity(text);
+  if (!entity) return;
 
   ensureEditorStyles(text.ownerDocument || document);
-  new InlineTextEditor(span, options).start();
+  new InlineTextEditor(entity, options).start();
 }
 
 class InlineTextEditor {
   constructor(
-    private span: HTMLSpanElement,
+    private entity: HTMLSpanElement,
     private options?: EditTextOptions,
   ) {}
 
   start() {
-    this.span.setAttribute('contenteditable', 'true');
-    this.span.classList.add(EDITOR_BASE_CLASS);
-    this.span.focus();
+    this.entity.setAttribute('contenteditable', 'true');
+    this.entity.classList.add(EDITOR_BASE_CLASS);
+    this.entity.focus();
     this.placeCaretAtEnd();
     this.attachListeners();
   }
 
   private attachListeners() {
-    this.span.addEventListener('paste', this.handlePaste);
-    this.span.addEventListener('keydown', this.handleKeydown);
-    this.span.addEventListener('input', this.handleInput);
-    this.span.addEventListener('blur', this.handleBlur, { once: true });
+    this.entity.addEventListener('paste', this.handlePaste);
+    this.entity.addEventListener('keydown', this.handleKeydown);
+    this.entity.addEventListener('input', this.handleInput);
+    this.entity.addEventListener('blur', this.handleBlur, { once: true });
   }
 
   private detachListeners() {
-    this.span.removeEventListener('paste', this.handlePaste);
-    this.span.removeEventListener('keydown', this.handleKeydown);
-    this.span.removeEventListener('input', this.handleInput);
+    this.entity.removeEventListener('paste', this.handlePaste);
+    this.entity.removeEventListener('keydown', this.handleKeydown);
+    this.entity.removeEventListener('input', this.handleInput);
   }
 
   private handlePaste = (event: ClipboardEvent) => {
@@ -113,8 +109,8 @@ class InlineTextEditor {
   };
 
   private handleBlur = () => {
-    this.span.removeAttribute('contenteditable');
-    this.span.classList.remove(EDITOR_BASE_CLASS);
+    this.entity.removeAttribute('contenteditable');
+    this.entity.classList.remove(EDITOR_BASE_CLASS);
     this.normalizeSpanContent();
     this.options?.onBlur?.(this.getText());
     this.detachListeners();
@@ -148,14 +144,14 @@ class InlineTextEditor {
 
   private normalizeSpanContent() {
     if (
-      this.span.childNodes.length === 1 &&
-      this.span.firstChild?.nodeType === Node.TEXT_NODE
+      this.entity.childNodes.length === 1 &&
+      this.entity.firstChild?.nodeType === Node.TEXT_NODE
     ) {
       return;
     }
 
     const plainText = this.getText();
-    this.span.textContent = plainText;
+    this.entity.textContent = plainText;
   }
 
   private placeCaretAtEnd() {
@@ -163,7 +159,7 @@ class InlineTextEditor {
     if (!selection) return;
 
     const range = document.createRange();
-    range.selectNodeContents(this.span);
+    range.selectNodeContents(this.entity);
     range.collapse(false);
 
     selection.removeAllRanges();
@@ -171,7 +167,7 @@ class InlineTextEditor {
   }
 
   private getText() {
-    return this.span.textContent || '';
+    return this.entity.textContent || '';
   }
 }
 

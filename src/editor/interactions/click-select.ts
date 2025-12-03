@@ -1,10 +1,11 @@
+import { isEditingText } from '../../utils';
 import type {
   ICommandManager,
   IEditor,
   IInteractionManager,
   Interaction,
 } from '../types';
-import { ClickHandler, getEventTarget, isEditingText } from '../utils';
+import { ClickHandler, getEventTarget } from '../utils';
 export class ClickSelect implements Interaction {
   name = 'click-select';
 
