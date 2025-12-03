@@ -1,7 +1,7 @@
 import type { TextElement } from '../../types';
-import { getElementRole } from '../../utils';
+import { getElementRole, getTextContent, setTextContent } from '../../utils';
 import type { Command, IStateManager } from '../types';
-import { getIndexesFromElement, getTextContent } from '../utils';
+import { getIndexesFromElement } from '../utils';
 
 export class UpdateTextCommand implements Command {
   private originalText: string;
@@ -10,16 +10,21 @@ export class UpdateTextCommand implements Command {
   constructor(
     private element: TextElement,
     newText: string,
+    originalText?: string,
   ) {
-    this.originalText = getTextContent(element);
+    this.originalText = originalText ?? getTextContent(element);
     this.modifiedText = newText;
   }
 
   async apply(state: IStateManager) {
+    if (this.originalText === this.modifiedText) return;
+    setTextContent(this.element, this.modifiedText);
     updateItemText(state, this.element, this.modifiedText);
   }
 
   async undo(state: IStateManager) {
+    if (this.originalText === this.modifiedText) return;
+    setTextContent(this.element, this.originalText);
     updateItemText(state, this.element, this.originalText);
   }
 
@@ -27,8 +32,8 @@ export class UpdateTextCommand implements Command {
     return {
       type: 'update-text',
       elementId: this.element.id,
-      originalText: this.originalText,
-      modifiedText: this.modifiedText,
+      original: this.originalText,
+      modified: this.modifiedText,
     };
   }
 }
@@ -39,8 +44,11 @@ function updateItemText(
   text: string,
 ) {
   const role = getElementRole(element);
-  if (!role.startsWith('item-')) return;
-  const key = role.replace('item-', '');
-  const indexes = getIndexesFromElement(element);
-  state.updateItemDatum(indexes, { [key]: text });
+  if (role.startsWith('item-')) {
+    const key = role.replace('item-', '');
+    const indexes = getIndexesFromElement(element);
+    state.updateItemDatum(indexes, { [key]: text });
+  } else {
+    state.updateData(role, text);
+  }
 }
