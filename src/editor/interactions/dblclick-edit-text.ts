@@ -1,5 +1,10 @@
 import type { TextElement } from '../../types';
-import { getTextContent, getTextEntity, isEditableText } from '../../utils';
+import {
+  getTextContent,
+  getTextEntity,
+  injectStyleOnce,
+  isEditableText,
+} from '../../utils';
 import { UpdateTextCommand } from '../commands';
 import type {
   ICommandManager,
@@ -59,7 +64,7 @@ function editText(text: TextElement, options?: EditTextOptions) {
   const entity = getTextEntity(text);
   if (!entity) return;
 
-  ensureEditorStyles(text.ownerDocument || document);
+  ensureEditorStyles();
   new InlineTextEditor(entity, options).start();
 }
 
@@ -171,12 +176,10 @@ class InlineTextEditor {
   }
 }
 
-function ensureEditorStyles(doc: Document) {
-  if (doc.getElementById(EDITOR_STYLE_ID)) return;
-
-  const style = doc.createElement('style');
-  style.id = EDITOR_STYLE_ID;
-  style.textContent = `
+function ensureEditorStyles() {
+  injectStyleOnce(
+    EDITOR_STYLE_ID,
+    `
 .${EDITOR_BASE_CLASS} {
   margin: 0;
   padding: 0;
@@ -188,7 +191,6 @@ function ensureEditorStyles(doc: Document) {
 .${EDITOR_BASE_CLASS}::selection {
   background-color: #b3d4fc;
 }
-`;
-
-  doc.head.appendChild(style);
+`,
+  );
 }
