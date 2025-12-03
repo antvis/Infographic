@@ -150,7 +150,9 @@ export function getTextStyle(attributes: TextAttributes) {
         : +lineHeight;
   if (letterSpacing) style.letterSpacing = `${letterSpacing}px`;
   if (strokeWidth) style.strokeWidth = `${strokeWidth}px`;
-  if (fontFamily) style.fontFamily = encodeFontFamily(fontFamily);
+  style.fontFamily = fontFamily
+    ? encodeFontFamily(fontFamily)
+    : fontFamily || '';
 
   return style;
 }
