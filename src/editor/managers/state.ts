@@ -120,8 +120,10 @@ export class StateManager implements IStateManager {
         getIndexesFromElement(element),
       );
 
+      const key = role.replace('item-', '');
       datum.attributes ||= {};
-      Object.assign(datum.attributes, attributes);
+      datum.attributes[key] ||= {};
+      Object.assign(datum.attributes[key], attributes);
     } else if (
       ElementTypeEnum.Title === role ||
       ElementTypeEnum.Desc === role ||
