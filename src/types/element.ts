@@ -1,6 +1,6 @@
 export type GeometryElement = SVGGraphicsElement;
 export type TextElement = SVGForeignObjectElement;
-export type IconElement = SVGUseElement;
+export type IconElement = SVGUseElement | SVGGElement;
 export type ButtonElement = SVGUseElement;
 export type IllusElement = SVGGElement;
 export type IllusEntity = SVGUseElement;

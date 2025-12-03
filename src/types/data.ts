@@ -7,6 +7,7 @@ export interface ItemDatum {
   value?: number;
   illus?: string | ResourceConfig;
   children?: ItemDatum[];
+  attributes?: Record<string, object>;
   [key: string]: any;
 }
 
@@ -15,5 +16,6 @@ export interface Data {
   desc?: string;
   items: ItemDatum[];
   illus?: Record<string, string | ResourceConfig>;
+  attributes?: Record<string, object>;
   [key: string]: any;
 }
