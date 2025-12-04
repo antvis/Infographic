@@ -68,7 +68,7 @@ infographic.render();
 
 Render the infographic in the target container.
 
-![](https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*uvj8Qb26F1MAAAAARAAAAAgAemJ7AQ/fmt.webp)
+<img src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*uvj8Qb26F1MAAAAARAAAAAgAemJ7AQ/fmt.webp" width="480" alt="AntV Infographic DEMO">
 
 For more examples, please refer to the [documentation](https://infographic.antv.vision/examples) site.
 

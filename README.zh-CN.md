@@ -67,7 +67,7 @@ infographic.render();
 
 然后你可以在容器中看到信息图渲染出来。
 
-![](https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*uvj8Qb26F1MAAAAARAAAAAgAemJ7AQ/fmt.webp)
+<img src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*uvj8Qb26F1MAAAAARAAAAAgAemJ7AQ/fmt.webp" width="480" alt="AntV Infographic DEMO">
 
 更多示例请参考[文档站点](https://infographic.antv.vision/examples)。
 
