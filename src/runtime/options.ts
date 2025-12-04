@@ -1,4 +1,5 @@
 import {
+  BrushSelect,
   ClickSelect,
   DblClickEditText,
   EditBar,
@@ -11,6 +12,7 @@ import { InfographicOptions } from '../options';
 const createDefaultPlugins = () => [new EditBar(), new ResizeElement()];
 const createDefaultInteractions = () => [
   new DblClickEditText(),
+  new BrushSelect(),
   new ClickSelect(),
   new HotkeyHistory(),
   new SelectHighlight(),

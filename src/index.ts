@@ -4,6 +4,7 @@ export const VERSION = pkg.version;
 export * from './designs';
 export { getItemProps, getThemeColors } from './designs/utils';
 export {
+  BrushSelect,
   ClickSelect,
   DblClickEditText,
   HotkeyHistory,
