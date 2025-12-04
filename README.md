@@ -30,9 +30,9 @@ With unified syntax and component architecture, you can render structured data i
 
 - 📦 **Ready to use**: 100+ built-in templates, data-item components, and layouts to assemble infographics in minutes
 - 🎨 **Themeable**: Hand-drawn (rough), gradients, patterns, multiple presets, and deep customization
+- 🧑🏻‍💻 **Built-in editor**: built-in editor for AI-generated infographics, allowing for further customization and refinement
 - 🧩 **Composable**: Structures, items, and render units are fully componentized for flexible extension
 - 🎯 **Declarative Configuration**: Simple and clear configuration approach, ideal for AI generation, machine understanding, and automated workflows
-
 - 🤖 **AI-friendly**: Declarative config with JSON Schema, ideal for AI generation and automated workflows
 - 📐 **High-quality SVG**: Default SVG output for crisp visuals and easy editing/export
 
@@ -59,6 +59,8 @@ const infographic = new Infographic({
       { label: 'Step 3', desc: 'Complete' },
     ],
   },
+  // Enable editing with the built-in editor
+  editable: true,
 });
 
 infographic.render();
