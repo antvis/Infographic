@@ -143,7 +143,7 @@ export function PreviewPanel({
                     {previewOptions && (
                       <Infographic
                         ref={infographicRef}
-                        options={{editable: true, ...previewOptions }}
+                        options={{editable: true, ...previewOptions}}
                       />
                     )}
                   </div>
