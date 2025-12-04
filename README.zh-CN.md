@@ -8,6 +8,7 @@
 
 [![npm version](https://img.shields.io/npm/v/@antv/infographic.svg)](https://www.npmjs.com/package/@antv/infographic)
 [![build status](https://img.shields.io/github/actions/workflow/status/antvis/infographic/build.yml)](https://github.com/antvis/infographic/actions)
+![Visitors](https://hitscounter.dev/api/hit?url=https://github.com/antvis/Infographic&label=Visitors&icon=graph-up&color=%23dc3545&message=&style=flat&tz=UTC)
 [![license](https://img.shields.io/npm/l/@antv/infographic.svg)](./LICENSE)
 
 <img src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*EdkXSojOxqsAAAAAQHAAAAgAemJ7AQ/original" width="256">
