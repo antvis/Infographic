@@ -306,14 +306,14 @@ export function ChatPanel({
                   d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <span className="leading-tight">
+              <span className="leading-tight select-none">
                 明确图表类型、数据来源、配色/风格，会生成得更准
               </span>
             </div>
             <button
               onClick={() => onSend()}
               disabled={isGenerating || !prompt.trim()}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-link to-link/90 dark:from-link-dark dark:to-link-dark/90 text-white hover:from-link/90 hover:to-link/80 dark:hover:from-link-dark/90 dark:hover:to-link-dark/80 text-[13px] font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-link/25 dark:shadow-link-dark/25 active:scale-[.97] transition-all duration-200 disabled:active:scale-100 w-full sm:w-auto justify-center whitespace-nowrap">
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-link to-link/90 dark:from-link-dark dark:to-link-dark/90 text-white hover:from-link/90 hover:to-link/80 dark:hover:from-link-dark/90 dark:hover:to-link-dark/80 text-[13px] font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-link/25 dark:shadow-link-dark/25 active:scale-[.97] transition-all duration-200 disabled:active:scale-100 w-full sm:w-auto justify-center whitespace-nowrap select-none">
               {isGenerating ? (
                 <>
                   <svg

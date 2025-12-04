@@ -14,10 +14,10 @@ import {VERSION} from '@antv/infographic';
 import {ExternalLink} from 'components/ExternalLink';
 import {IconChevron} from 'components/Icon/IconChevron';
 import {IconGitHub} from 'components/Icon/IconGitHub';
+import {IconStarTwinkle} from 'components/Icon/IconStarTwinkle';
 import {Logo} from 'components/Logo';
 import BlogCard from 'components/MDX/BlogCard';
 import CodeBlock from 'components/MDX/CodeBlock';
-import { IconStarTwinkle } from 'components/Icon/IconStarTwinkle';
 import ButtonLink from '../ButtonLink';
 import {AIInfographicFlow} from './HomePage/AIInfographicFlow';
 import {CodePlayground} from './HomePage/CodePlayground';
@@ -108,7 +108,7 @@ function Para({children}: BasicProps) {
 
 function Center({children}: BasicProps) {
   return (
-    <div className="px-5 lg:px-0 max-w-4xl lg:text-center text-white text-opacity-80 flex flex-col items-center justify-center">
+    <div className="px-5 lg:px-0 max-w-4xl lg:text-center text-white text-opacity-80 flex flex-col items-center justify-center select-none">
       {children}
     </div>
   );
@@ -149,7 +149,7 @@ export function HomeContent(): JSX.Element {
           <div className="pointer-events-none absolute -left-32 -top-40 h-96 w-96 rounded-full bg-gradient-to-br from-link/20 via-link/5 to-transparent blur-3xl" />
           <div className="pointer-events-none absolute -right-32 top-20 h-96 w-96 rounded-full bg-gradient-to-br from-purple-40/15 via-transparent to-link/5 blur-3xl" />
 
-          <div className="mx-5 mt-4 lg:mt-12 mb-8 lg:mb-16 flex flex-col justify-center relative z-10">
+          <div className="mx-5 mt-4 lg:mt-12 mb-8 lg:mb-16 flex flex-col justify-center relative z-10 select-none">
             <Logo
               className={cn(
                 'mt-4 mb-3 text-brand dark:text-brand-dark w-24 lg:w-28 self-center text-sm me-0 flex origin-center transition-all ease-in-out'
@@ -168,7 +168,11 @@ export function HomeContent(): JSX.Element {
                 size="lg"
                 className="w-full sm:w-auto justify-center"
                 label="AI Infographic">
-                <IconStarTwinkle className="w-6 h-6" />
+                <IconStarTwinkle
+                  className="w-6 h-6"
+                  animation={false}
+                  monochromeColor="#fff"
+                />
                 <span className="font-semibold">AI Infographic</span>
               </ButtonLink>
               <ButtonLink
@@ -292,11 +296,11 @@ export function HomeContent(): JSX.Element {
         </Section>
 
         <Section background="right-card">
-          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row px-5">
+          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row px-5 select-none">
             <div className="max-w-3xl lg:max-w-7xl gap-5 flex flex-col lg:flex-row lg:px-5">
               <div className="w-full lg:w-6/12 max-w-3xl flex flex-col items-start justify-start lg:ps-5 lg:pe-10">
                 <Header>持续演进，拥抱未来</Header>
-                <Para>目标：让信息图成为 AI 时代的视觉语言基础设施</Para>
+                <Para>愿景：让信息图成为 AI 时代的视觉语言基础设施</Para>
                 <div className="order-last pt-5 w-full">
                   <div className="flex flex-row justify-between items-center gap-3 mt-5 lg:-mt-2 w-full">
                     <p className="uppercase tracking-wide font-bold text-sm text-tertiary dark:text-tertiary-dark flex flex-row gap-2 items-center">
@@ -347,7 +351,7 @@ export function HomeContent(): JSX.Element {
         </Section>
 
         <Section background="left-card">
-          <div className="mt-20 px-5 lg:px-0 mb-6 max-w-4xl text-center text-opacity-80">
+          <div className="mt-20 px-5 lg:px-0 mb-6 max-w-4xl text-center text-opacity-80 select-none">
             <Logo className="text-brand dark:text-brand-dark w-24 lg:w-28 mb-10 lg:mb-8 mt-12 h-auto mx-auto self-start" />
             <Header>
               欢迎使用 <br className="hidden lg:inline" />

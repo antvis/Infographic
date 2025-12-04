@@ -10,7 +10,7 @@ export function Footer() {
   const socialLinkClasses = 'hover:text-primary dark:text-primary-dark';
   return (
     <footer className={cn('text-secondary dark:text-secondary-dark')}>
-      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-x-12 gap-y-8 max-w-7xl mx-auto">
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-x-12 gap-y-8 max-w-7xl mx-auto select-none">
         <div className="col-span-2 md:col-span-1 justify-items-start mt-3.5">
           <ExternalLink aria-label="AntV" className="flex items-center gap-2">
             <Logo

@@ -166,7 +166,7 @@ export default function GalleryPage() {
           initial={{opacity: 0, y: 20}}
           animate={{opacity: 1, y: 0}}
           transition={{duration: 0.6}}>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight mb-6 text-primary dark:text-primary-dark">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight mb-6 text-primary dark:text-primary-dark select-none">
             Infographic{' '}
             <span className="bg-gradient-to-r from-link to-purple-40 bg-clip-text text-transparent">
               Gallery
