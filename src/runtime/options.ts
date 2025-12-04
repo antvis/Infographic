@@ -19,6 +19,7 @@ const createDefaultInteractions = () => [
 ];
 
 export const DEFAULT_OPTIONS: Partial<InfographicOptions> = {
+  padding: 0,
   get plugins() {
     return createDefaultPlugins();
   },

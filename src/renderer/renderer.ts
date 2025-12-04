@@ -204,7 +204,7 @@ function setSVG(svg: SVGSVGElement, options: ParsedInfographicOptions) {
 }
 
 function setView(svg: SVGSVGElement, options: ParsedInfographicOptions) {
-  const { padding = 20, viewBox } = options;
+  const { padding = 0, viewBox } = options;
 
   if (viewBox) {
     svg.setAttribute('viewBox', viewBox);
