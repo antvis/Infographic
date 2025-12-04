@@ -59,7 +59,6 @@ export class PluginManager implements IPluginManager {
   destroy(): void {
     this.extensions.getAll().forEach((plugin) => {
       this.unregisterPlugin(plugin.name);
-      plugin.destroy();
       this.emitter.emit('plugin:destroyed', plugin);
     });
     this.extensions.destroy();

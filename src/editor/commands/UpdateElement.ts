@@ -9,9 +9,14 @@ import {
   updateIconElement,
   updateTextElement,
 } from '../../utils';
-import type { Command, ElementProps, IStateManager, TextProps } from '../types';
+import type {
+  ElementProps,
+  ICommand,
+  IStateManager,
+  TextProps,
+} from '../types';
 
-export class UpdateElementCommand implements Command {
+export class UpdateElementCommand implements ICommand {
   private original?: Partial<ElementProps>;
 
   constructor(

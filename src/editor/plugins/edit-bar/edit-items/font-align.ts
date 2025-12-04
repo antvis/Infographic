@@ -4,7 +4,7 @@ import type {
   TextVerticalAlign,
 } from '../../../../types';
 import { injectStyleOnce } from '../../../../utils';
-import { BatchCommand, UpdateElementCommand } from '../../../commands';
+import { UpdateElementCommand } from '../../../commands';
 import {
   AlignBottom,
   AlignCenter,
@@ -77,7 +77,7 @@ export const FontAlign: EditItem<TextAttributes> = (
 
     if (!Object.keys(attributes).length) return;
 
-    const command = new BatchCommand(
+    commander.executeBatch(
       selection.map(
         (text) =>
           new UpdateElementCommand(text, {
@@ -85,7 +85,6 @@ export const FontAlign: EditItem<TextAttributes> = (
           }),
       ),
     );
-    commander.execute(command);
   });
 
   return Popover({
