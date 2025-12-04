@@ -80,12 +80,13 @@ describe('InteractionManager', () => {
       interactions: [],
     });
 
-    (manager as any).handleClick({ target: svg } as MouseEvent);
+    const mockEvent = { target: svg } as unknown as MouseEvent;
+    (manager as any).handleClick(mockEvent);
     expect(manager.isActive()).toBe(true);
 
     (manager as any).handleClick({
       target: document.createElement('div'),
-    } as MouseEvent);
+    } as unknown as MouseEvent);
     expect(manager.isActive()).toBe(false);
   });
 

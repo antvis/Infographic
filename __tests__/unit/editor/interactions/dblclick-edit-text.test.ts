@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { DblClickEditText } from '../../../../src/editor/interactions/dblclick-edit-text';
 
 const clickHandlerMock = {
+  _cb: undefined as ((e: MouseEvent) => void) | undefined,
   onDoubleClick: vi.fn(function (this: any, cb: (e: MouseEvent) => void) {
     (this as any)._cb = cb;
     return this;
@@ -35,7 +36,7 @@ vi.mock('../../../../src/editor/commands', () => {
     undo: vi.fn(),
     serialize: vi.fn(),
   }));
-  return { UpdateTextCommand, updateTextCommandMock: UpdateTextCommand };
+  return { UpdateTextCommand };
 });
 
 describe('DblClickEditText', () => {
@@ -66,15 +67,16 @@ describe('DblClickEditText', () => {
       interaction: interaction as any,
     });
 
-    clickHandlerMock._cb?.({ target: text } as MouseEvent);
+    const mockEvent = { target: text } as unknown as MouseEvent;
+    clickHandlerMock._cb?.(mockEvent);
     span.dispatchEvent(new FocusEvent('blur'));
     await Promise.resolve();
 
     expect(select).toHaveBeenCalledWith([text], 'replace');
-    const { updateTextCommandMock } = await import(
+    const { UpdateTextCommand } = await import(
       '../../../../src/editor/commands'
     );
-    expect(updateTextCommandMock).toHaveBeenCalledWith(
+    expect(UpdateTextCommand).toHaveBeenCalledWith(
       text,
       'original',
       'original',

@@ -13,20 +13,20 @@ const createCommand = (label: string, order: string[] = []): ICommand => ({
 });
 
 describe('CommandManager', () => {
-  it('executes commands and manages undo/redo stacks', () => {
+  it('executes commands and manages undo/redo stacks', async () => {
     const state = {} as any;
     const commandManager = new CommandManager();
     const order: string[] = [];
     const command = createCommand('one', order);
 
     commandManager.init({ state });
-    commandManager.execute(command);
+    await commandManager.execute(command);
 
     expect(command.apply).toHaveBeenCalledWith(state);
     expect(commandManager.canUndo()).toBe(true);
     expect(commandManager.canRedo()).toBe(false);
 
-    commandManager.undo();
+    await commandManager.undo();
     expect(command.undo).toHaveBeenCalledWith(state);
     expect(commandManager.canRedo()).toBe(true);
 
@@ -44,7 +44,7 @@ describe('CommandManager', () => {
     const commandManager = new CommandManager();
 
     commandManager.init({ state });
-    commandManager.executeBatch([commandA, commandB]);
+    await commandManager.executeBatch([commandA, commandB]);
     await Promise.resolve();
 
     expect(order).toEqual(['apply-a', 'apply-b']);

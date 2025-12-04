@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { ClickSelect } from '../../../../src/editor/interactions/click-select';
 
 const clickHandlerMock = {
+  _cb: undefined as ((e: MouseEvent) => void) | undefined,
   onClick: vi.fn(function (this: any, cb: (e: MouseEvent) => void) {
     (this as any)._cb = cb;
     return this;
@@ -46,15 +47,16 @@ describe('ClickSelect interaction', () => {
       'http://www.w3.org/2000/svg',
       'rect',
     );
-    clickHandlerMock._cb?.({ target } as MouseEvent);
+    const mockEvent = { target } as unknown as MouseEvent;
+    clickHandlerMock._cb?.(mockEvent);
     expect(interaction.select).toHaveBeenCalledWith([target], 'replace');
 
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Shift' }));
-    clickHandlerMock._cb?.({ target } as MouseEvent);
+    clickHandlerMock._cb?.(mockEvent);
     expect(interaction.select).toHaveBeenCalledWith([target], 'add');
 
     document.dispatchEvent(new KeyboardEvent('keyup', { key: 'Shift' }));
-    clickHandlerMock._cb?.({ target } as MouseEvent);
+    clickHandlerMock._cb?.(mockEvent);
     expect(interaction.select).toHaveBeenCalledWith([target], 'replace');
 
     instance.destroy();
