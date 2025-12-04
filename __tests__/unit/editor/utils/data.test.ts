@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { getChildrenDataByIndexes } from '../../../../src/editor/utils/data';
+import {
+  buildItemPath,
+  getChildrenDataByIndexes,
+} from '../../../../src/editor/utils/data';
 import type { Data } from '../../../../src/types';
 
 describe('editor/utils/data', () => {
@@ -19,5 +22,14 @@ describe('editor/utils/data', () => {
     const nextLevel = getChildrenDataByIndexes(data, [1, 0]);
     expect(nextLevel).toEqual([]);
     expect(data.items[1].children).toEqual([{ label: 'c', children: [] }]);
+  });
+
+  it('builds lodash-style paths from indexes', () => {
+    expect(buildItemPath([])).toBe('data.items');
+    expect(buildItemPath([1])).toBe('data.items[1]');
+    expect(buildItemPath([1, 2])).toBe('data.items[1].children[2]');
+    expect(buildItemPath([0, 1, 3], 'root')).toBe(
+      'root[0].children[1].children[3]',
+    );
   });
 });

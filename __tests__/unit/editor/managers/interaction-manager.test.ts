@@ -29,6 +29,7 @@ describe('InteractionManager', () => {
   let svg: SVGSVGElement;
   let editor: any;
   let commander: any;
+  let state: any;
 
   beforeEach(() => {
     emitter = createEmitter();
@@ -36,6 +37,7 @@ describe('InteractionManager', () => {
     document.body.appendChild(svg);
     editor = { getDocument: () => svg };
     commander = {};
+    state = {};
   });
 
   it('registers interactions and tracks selection lifecycle', () => {
@@ -49,6 +51,7 @@ describe('InteractionManager', () => {
       emitter,
       editor,
       commander,
+      state,
       interactions: [interaction as any],
     });
 
@@ -77,6 +80,7 @@ describe('InteractionManager', () => {
       emitter,
       editor,
       commander,
+      state,
       interactions: [],
     });
 
@@ -92,7 +96,7 @@ describe('InteractionManager', () => {
 
   it('runs exclusive interactions only when active', async () => {
     const manager = new InteractionManager();
-    manager.init({ emitter, editor, commander, interactions: [] });
+    manager.init({ state, emitter, editor, commander, interactions: [] });
 
     const run = vi.fn();
     await manager.executeExclusiveInteraction({ name: 'x' } as any, run);
@@ -105,7 +109,7 @@ describe('InteractionManager', () => {
 
   it('appends transient elements under dedicated container', () => {
     const manager = new InteractionManager();
-    manager.init({ emitter, editor, commander, interactions: [] });
+    manager.init({ emitter, editor, commander, state, interactions: [] });
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
 
     const appended = manager.appendTransientElement(rect);

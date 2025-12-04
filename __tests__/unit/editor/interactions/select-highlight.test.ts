@@ -67,6 +67,7 @@ describe('SelectHighlight', () => {
       emitter: emitter as any,
       editor: { getDocument: () => svg } as any,
       commander: {} as any,
+      state: {} as any,
       interaction: interaction as any,
     });
 

@@ -64,6 +64,7 @@ describe('DblClickEditText', () => {
       emitter,
       editor: { getDocument: () => svg } as any,
       commander: commander as any,
+      state: {} as any,
       interaction: interaction as any,
     });
 

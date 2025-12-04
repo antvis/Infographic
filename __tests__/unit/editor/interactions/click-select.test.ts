@@ -35,11 +35,13 @@ describe('ClickSelect interaction', () => {
       clearSelection: vi.fn(),
       executeExclusiveInteraction: async (_: any, fn: any) => fn(),
     };
+    const state = {} as any;
     const instance = new ClickSelect();
     instance.init({
       emitter,
       editor: { getDocument: () => svg } as any,
       commander: {} as any,
+      state,
       interaction: interaction as any,
     });
 
