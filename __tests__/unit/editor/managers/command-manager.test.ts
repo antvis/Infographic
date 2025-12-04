@@ -2,16 +2,15 @@ import { describe, expect, it, vi } from 'vitest';
 import { ICommand } from '../../../../src/editor';
 import { CommandManager } from '../../../../src/editor/managers/command';
 
-const createCommand = (label: string, order: string[] = []) =>
-  ({
-    apply: vi.fn(async () => {
-      order.push(`apply-${label}`);
-    }),
-    undo: vi.fn(async () => {
-      order.push(`undo-${label}`);
-    }),
-    serialize: vi.fn(() => ({ type: label })),
-  }) as ICommand;
+const createCommand = (label: string, order: string[] = []): ICommand => ({
+  apply: vi.fn(async () => {
+    order.push(`apply-${label}`);
+  }),
+  undo: vi.fn(async () => {
+    order.push(`undo-${label}`);
+  }),
+  serialize: vi.fn(() => ({ type: label })),
+});
 
 describe('CommandManager', () => {
   it('executes commands and manages undo/redo stacks', () => {

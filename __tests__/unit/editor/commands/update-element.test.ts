@@ -1,6 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 import { UpdateElementCommand } from '../../../../src/editor/commands/UpdateElement';
 import type { IStateManager } from '../../../../src/editor/types';
+import { TextElement } from '../../../../src/types';
+import { createElement } from '../../../../src/utils';
 
 vi.mock('../../../../src/utils', async () => {
   const actual = await vi.importActual<any>('../../../../src/utils');
@@ -23,10 +25,7 @@ describe('UpdateElementCommand', () => {
     const state: IStateManager = {
       updateElement: vi.fn(),
     } as any;
-    const element = document.createElementNS(
-      'http://www.w3.org/2000/svg',
-      'foreignObject',
-    ) as any;
+    const element = createElement<TextElement>('foreignObject');
 
     const command = new UpdateElementCommand(
       element,
