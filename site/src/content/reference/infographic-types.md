@@ -68,6 +68,28 @@ SVG 容器上的附加配置，允许为根节点设置样式、属性与标识�
 | id         | `string`                                      | 否   | 元素 id  |
 | className  | `string`                                      | 否   | 元素类名 |
 
+## ExportOptions {#export-options}
+
+导出为 SVG 或 PNG 的参数联合类型。
+
+```ts
+type ExportOptions = SVGExportOptions | PNGExportOptions;
+```
+
+### SVGExportOptions {#svg-export-options}
+
+| 属性            | 类型      | 必填   | 说明                         |
+| --------------- | --------- | ------ | ---------------------------- |
+| type            | `'svg'`   | **是** | 导出类型标识                 |
+| embedResources  | `boolean` | 否     | 是否内嵌远程资源，默认 `true` |
+
+### PNGExportOptions {#png-export-options}
+
+| 属性   | 类型     | 必填   | 说明                                           |
+| ------ | -------- | ------ | ---------------------------------------------- |
+| type   | `'png'`  | **是** | 导出类型标识                                   |
+| dpr    | `number` | 否     | 导出时的设备像素比，默认使用浏览器 `devicePixelRatio` |
+
 ## DesignOptions {#design-options}
 
 设计配置项
@@ -315,6 +337,65 @@ interface Font {
 | stroke-width      | `number \| string` | 否   | 描边宽度     |
 | text-anchor       | `number \| string` | 否   | 文本锚点     |
 | dominant-baseline | `number \| string` | 否   | 基线对齐     |
+
+## ElementProps {#element-props}
+
+编辑模式下可追加的图形元素定义，既支持基础图形也支持文本。
+
+```ts
+type ElementProps = GeometryProps | TextProps;
+
+interface GeometryProps {
+  type:
+    | 'rectangle'
+    | 'circle'
+    | 'ellipse'
+    | 'line'
+    | 'polyline'
+    | 'polygon'
+    | 'path'
+    | 'image';
+  attributes: Record<string, any>;
+}
+
+interface TextProps {
+  type: 'text';
+  textContent: string;
+  attributes: TextAttributes;
+}
+```
+
+## IPlugin {#plugin}
+
+编辑器插件接口，便于扩展编辑能力。
+
+```ts
+interface IPlugin {
+  name: string;
+  init(options: {
+    emitter: any;
+    editor: any;
+    commander: any;
+    plugin: any;
+    state: any;
+  }): void;
+  destroy(): void;
+}
+```
+
+`init` 会收到编辑器上下文（事件、命令、状态等），在 `destroy` 中清理绑定与副作用。
+
+## IInteraction {#interaction}
+
+交互扩展接口，用于处理选中、拖拽等用户行为。
+
+```ts
+interface IInteraction {
+  name: string;
+  init(options: {emitter: any; editor: any; commander: any; interaction: any}): void;
+  destroy(): void;
+}
+```
 
 ## ResourceConfig {#resource-config}
 

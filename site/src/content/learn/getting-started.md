@@ -26,6 +26,7 @@ const infographic = new Infographic({
   container: '#container',
   width: '100%',
   height: '100%',
+  editable: true,
   design: {
     title: {
       type: 'default',
@@ -80,6 +81,7 @@ infographic.render();
 代码说明：
 
 - **资源加载器**：通过 `registerResourceLoader` 从 Iconify 按需拉取 SVG。
+- **编辑器**：设置 `editable: true` 启用交互式编辑功能。
 - **设计**：`design` 字段自定义标题、结构与数据项类型及参数。
 - **主题**：切换暗色主题并用 `themeConfig` 配置色板、字体、风格化。
 - **数据**：传入标题与数据项（标签、描述、时间、图标）。
