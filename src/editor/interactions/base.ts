@@ -4,6 +4,7 @@ import type {
   IEditor,
   IInteraction,
   IInteractionManager,
+  IStateManager,
   InteractionInitOptions,
 } from '../types';
 
@@ -13,6 +14,7 @@ export abstract class Interaction implements IInteraction {
   protected emitter!: IEventEmitter;
   protected editor!: IEditor;
   protected commander!: ICommandManager;
+  protected state!: IStateManager;
   protected interaction!: IInteractionManager;
 
   init(options: InteractionInitOptions) {

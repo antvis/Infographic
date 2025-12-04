@@ -11,6 +11,7 @@ import type {
   IInteraction,
   IInteractionManager,
   InteractionManagerInitOptions,
+  IStateManager,
   Selection,
   SelectionChangePayload,
   SelectMode,
@@ -22,6 +23,7 @@ export class InteractionManager implements IInteractionManager {
   private emitter!: IEventEmitter;
   private editor!: IEditor;
   private commander!: ICommandManager;
+  private state!: IStateManager;
   private interactions: IInteraction[] = [];
 
   private active = false;
@@ -39,6 +41,7 @@ export class InteractionManager implements IInteractionManager {
         emitter: this.emitter,
         editor: this.editor,
         commander: this.commander,
+        state: this.state,
         interaction: this,
       });
       this.emitter.emit('interaction:registered', interaction);

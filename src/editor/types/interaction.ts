@@ -2,6 +2,7 @@ import type { IEventEmitter } from '../../types';
 import type { ICommandManager } from './command';
 import type { IEditor } from './editor';
 import type { Selection } from './selection';
+import type { IStateManager } from './state';
 
 export interface IInteraction {
   name: string;
@@ -42,6 +43,7 @@ export interface InteractionInitOptions {
   emitter: IEventEmitter;
   editor: IEditor;
   commander: ICommandManager;
+  state: IStateManager;
   interaction: IInteractionManager;
 }
 
@@ -49,5 +51,6 @@ export interface InteractionManagerInitOptions {
   emitter: IEventEmitter;
   editor: IEditor;
   commander: ICommandManager;
+  state: IStateManager;
   interactions?: IInteraction[];
 }
