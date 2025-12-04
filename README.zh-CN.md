@@ -86,7 +86,7 @@ infographic.render();
 | data        | `Data`                  | **是** | 数据                                   | [Data](/reference/infographic-types#data)                    |
 | theme       | `string`                | 否     | 主题                                   | -                                                |
 | themeConfig | `ThemeConfig`           | 否     | 额外主题配置                           | [ThemeConfig](/reference/infographic-types#theme-config)     |
-| svg         | `SVGOptions`            | 否     | svg 容器上的配置                       | [SVGOptions](/reference/infographic-types#svg-options)       |
+| svg         | `SVGOptions`            | 否     | SVG 容器上的配置                       | [SVGOptions](/reference/infographic-types#svg-options)       |
 | editable    | `boolean`               | 否     | 是否开启编辑能力                        | -                                                     |
 
 更多配置项请查看 [配置项](https://infographic.antv.vision/reference/infographic-options)。
