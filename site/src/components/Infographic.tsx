@@ -1,14 +1,29 @@
 import {InfographicOptions, Infographic as Renderer} from '@antv/infographic';
 import {useTheme} from 'hooks/useTheme';
-import {useEffect, useMemo, useRef} from 'react';
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+} from 'react';
 
-export function Infographic(props: {options: Partial<InfographicOptions>}) {
-  const ref = useRef<HTMLDivElement>(null);
+export type InfographicHandle = {
+  copyToClipboard: () => Promise<boolean>;
+};
+
+export const Infographic = forwardRef<
+  InfographicHandle,
+  {options: Partial<InfographicOptions>}
+>((props, ref) => {
+  const containerRef = useRef<HTMLDivElement>(null);
   const instanceRef = useRef<Renderer | null>(null);
   const theme = useTheme();
   const isDark = useMemo(() => theme === 'dark', [theme]);
+
   useEffect(() => {
-    if (ref.current) {
+    if (containerRef.current) {
       const options = {...props.options};
 
       if (isDark) {
@@ -18,7 +33,7 @@ export function Infographic(props: {options: Partial<InfographicOptions>}) {
       }
       try {
         const instance = new Renderer({
-          container: ref.current,
+          container: containerRef.current,
           ...options,
           svg: {
             style: {
@@ -41,21 +56,21 @@ export function Infographic(props: {options: Partial<InfographicOptions>}) {
     };
   }, [props.options, isDark]);
 
-  const handleCopy = async () => {
+  const handleCopy = useCallback(async () => {
     const instance = instanceRef.current;
     if (!instance) {
-      return;
+      return false;
     }
 
     try {
       const dataUrl = await instance.toDataURL();
       if (!dataUrl) {
-        return;
+        return false;
       }
 
       const clipboard = navigator?.clipboard;
       if (!clipboard) {
-        return;
+        return false;
       }
 
       if ('write' in clipboard && typeof ClipboardItem !== 'undefined') {
@@ -64,11 +79,32 @@ export function Infographic(props: {options: Partial<InfographicOptions>}) {
         await clipboard.write([new ClipboardItem({[blob.type]: blob})]);
       } else if ('writeText' in clipboard) {
         await clipboard.writeText(dataUrl);
+      } else {
+        return false;
       }
+
+      return true;
     } catch (e) {
       console.error('Infographic copy error', e);
+      return false;
     }
-  };
+  }, []);
 
-  return <div className="w-full h-full" ref={ref} onDoubleClick={handleCopy} />;
-}
+  useImperativeHandle(
+    ref,
+    () => ({
+      copyToClipboard: handleCopy,
+    }),
+    [handleCopy]
+  );
+
+  return (
+    <div
+      className="w-full h-full"
+      ref={containerRef}
+      onDoubleClick={handleCopy}
+    />
+  );
+});
+
+Infographic.displayName = 'Infographic';

@@ -1,11 +1,11 @@
 import {InfographicOptions} from '@antv/infographic';
 import {IconCodeBlock} from 'components/Icon/IconCodeBlock';
 import {IconCopy} from 'components/Icon/IconCopy';
-import {Infographic} from 'components/Infographic';
+import {Infographic, type InfographicHandle} from 'components/Infographic';
 import {BrowserChrome} from 'components/Layout/HomePage/BrowserChrome';
 import {CodeEditor} from 'components/MDX/CodeEditor';
 import {AnimatePresence, motion} from 'framer-motion';
-import {useMemo} from 'react';
+import {useCallback, useMemo, useRef} from 'react';
 import {formatJSON} from './helpers';
 
 type TabKey = 'preview' | 'json';
@@ -28,9 +28,18 @@ export function PreviewPanel({
   json: string;
   onJsonChange: (value: string) => void;
   error: string | null;
-  onCopy: () => void;
+  onCopy?: (hint: string) => void;
   panelClassName?: string;
 }) {
+  const infographicRef = useRef<InfographicHandle | null>(null);
+
+  const handleCopy = useCallback(async () => {
+    const success = (await infographicRef.current?.copyToClipboard()) || false;
+    if (success && onCopy) {
+      onCopy('已复制图片');
+    }
+  }, [onCopy]);
+
   const navButtons = useMemo(
     () => (
       <div className="flex items-center gap-2 text-xs px-2">
@@ -75,14 +84,14 @@ export function PreviewPanel({
           <IconCodeBlock className="h-4 w-4" aria-hidden="true" />
         </button>
         <button
-          onClick={onCopy}
+          onClick={handleCopy}
           className="inline-flex items-center justify-center h-7 w-7 rounded-full bg-[#ebecef] hover:bg-[#d3d7de] text-tertiary dark:text-tertiary-dark dark:bg-gray-70 dark:hover:bg-gray-60">
-          <span className="sr-only">复制配置</span>
+          <span className="sr-only">复制图片</span>
           <IconCopy className="h-4 w-4" aria-hidden="true" />
         </button>
       </div>
     ),
-    [activeTab, onCopy, onTabChange]
+    [activeTab, handleCopy, onTabChange]
   );
 
   return (
@@ -131,7 +140,12 @@ export function PreviewPanel({
                     )}
                   </AnimatePresence>
                   <div className="relative h-full w-full p-4 lg:p-6">
-                    {previewOptions && <Infographic options={previewOptions} />}
+                    {previewOptions && (
+                      <Infographic
+                        ref={infographicRef}
+                        options={previewOptions}
+                      />
+                    )}
                   </div>
                 </motion.div>
               ) : (

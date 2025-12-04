@@ -370,16 +370,10 @@ export function AIPageContent() {
     await requestInfographic(content, requestId);
   };
 
-  const handleCopy = async (text: string) => {
-    if (!text) return;
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopyHint('已复制');
-      if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
-      copyTimerRef.current = setTimeout(() => setCopyHint(''), 1500);
-    } catch {
-      // ignore
-    }
+  const handleCopyHint = (hint: string) => {
+    if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+    setCopyHint(hint);
+    copyTimerRef.current = setTimeout(() => setCopyHint(''), 1500);
   };
 
   const handleClear = () => {
@@ -451,7 +445,7 @@ export function AIPageContent() {
             transition={{duration: 0.6, ease: 'easeOut'}}
             className="max-w-4xl space-y-6">
             <div>
-              <h1 className="flex items-center gap-3 text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight text-primary dark:text-primary-dark">
+              <h1 className="flex items-center gap-3 text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight text-primary dark:text-primary-dark select-none">
                 <IconStarTwinkle className="w-10 h-10 md:w-12 md:h-12 text-link dark:text-link-dark" />
                 <span>
                   AI
@@ -551,9 +545,7 @@ export function AIPageContent() {
                   onJsonChange={handleJsonChange}
                   error={previewError}
                   panelClassName={PANEL_HEIGHT_CLASS}
-                  onCopy={() =>
-                    handleCopy(lastJSON || formatJSON(effectivePreview))
-                  }
+                  onCopy={handleCopyHint}
                 />
               }
             </div>
