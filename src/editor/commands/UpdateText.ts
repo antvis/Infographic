@@ -1,9 +1,9 @@
 import type { TextElement } from '../../types';
 import { getElementRole, getTextContent, setTextContent } from '../../utils';
-import type { Command, IStateManager } from '../types';
+import type { ICommand, IStateManager } from '../types';
 import { getIndexesFromElement } from '../utils';
 
-export class UpdateTextCommand implements Command {
+export class UpdateTextCommand implements ICommand {
   private originalText: string;
   private modifiedText: string;
 

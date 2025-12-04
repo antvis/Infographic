@@ -2,8 +2,8 @@ import type { IStateManager } from './state';
 
 export interface ICommandManager {
   init(options: CommandManagerInitOptions): void;
-  execute(command: Command): void;
-  executeBatch(commands: Command[]): void;
+  execute(command: ICommand): void;
+  executeBatch(commands: ICommand[]): void;
   undo(): void;
   redo(): void;
   serialize(): any[];
@@ -14,7 +14,7 @@ export interface ICommandManager {
   destroy(): void;
 }
 
-export interface Command {
+export interface ICommand {
   apply(state: IStateManager): Promise<void>;
   undo(state: IStateManager): Promise<void>;
   serialize(): any;

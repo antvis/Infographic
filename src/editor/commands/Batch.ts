@@ -1,7 +1,7 @@
-import type { Command, IStateManager } from '../types';
+import type { ICommand, IStateManager } from '../types';
 
-export class BatchCommand implements Command {
-  constructor(private commands: Command[]) {}
+export class BatchCommand implements ICommand {
+  constructor(private commands: ICommand[]) {}
 
   async apply(state: IStateManager) {
     for (const command of this.commands) {

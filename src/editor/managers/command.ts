@@ -1,27 +1,27 @@
 import { BatchCommand } from '../commands';
 import type {
-  Command,
   CommandManagerInitOptions,
+  ICommand,
   ICommandManager,
   IStateManager,
 } from '../types';
 
 export class CommandManager implements ICommandManager {
   private state!: IStateManager;
-  private undoStack: Command[] = [];
-  private redoStack: Command[] = [];
+  private undoStack: ICommand[] = [];
+  private redoStack: ICommand[] = [];
 
   init(options: CommandManagerInitOptions) {
     Object.assign(this, options);
   }
 
-  execute(command: Command) {
+  execute(command: ICommand) {
     command.apply(this.state);
     this.undoStack.push(command);
     this.redoStack = [];
   }
 
-  executeBatch(commands: Command[]) {
+  executeBatch(commands: ICommand[]) {
     if (commands.length === 0) return;
 
     const batchCommand = new BatchCommand(commands);
