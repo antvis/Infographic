@@ -6,6 +6,7 @@ import {
   HotkeyHistory,
   ResizeElement,
   SelectHighlight,
+  ZoomWheel,
 } from '../editor';
 import { InfographicOptions } from '../options';
 
@@ -15,6 +16,7 @@ const createDefaultInteractions = () => [
   new BrushSelect(),
   new ClickSelect(),
   new HotkeyHistory(),
+  new ZoomWheel(),
   new SelectHighlight(),
 ];
 

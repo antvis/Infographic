@@ -10,6 +10,7 @@ export {
   HotkeyHistory,
   Interaction,
   SelectHighlight,
+  ZoomWheel,
 } from './editor/interactions';
 export { EditBar, Plugin, ResizeElement } from './editor/plugins';
 export {
