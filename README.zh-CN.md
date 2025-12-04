@@ -58,7 +58,7 @@ const infographic = new Infographic({
       { label: '步骤 3', desc: '完成' },
     ],
   },
-  // Enable editing with the built-in editor
+  // 开启内置编辑器
   editable: true,
 });
 
