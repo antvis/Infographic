@@ -1,10 +1,11 @@
-import type { Data, Element, IEventEmitter, ItemDatum } from '../../types';
+import type { ParsedInfographicOptions } from '../../options';
+import type { Element, IEventEmitter, ItemDatum } from '../../types';
 import type { ICommandManager } from './command';
 import type { IEditor } from './editor';
 import type { ElementProps } from './shape';
 
 export interface StateChangePayload {
-  type: 'data:change';
+  type: 'options:change';
   changes: StateChange[];
 }
 
@@ -23,6 +24,8 @@ export interface IStateManager {
   removeItemDatum(indexes: number[], count?: number): void;
   updateData(key: string, value: any): void;
   updateElement(element: Element, props: Partial<ElementProps>): void;
+  updateOptions(options: ParsedInfographicOptions): void;
+  getOptions(): ParsedInfographicOptions;
   destroy(): void;
 }
 
@@ -30,5 +33,19 @@ export interface StateManagerInitOptions {
   emitter: IEventEmitter;
   editor: IEditor;
   commander: ICommandManager;
-  data: Data;
+  options?: ParsedInfographicOptions;
 }
+
+export interface StateEventPayloadMap {
+  'options:change': StateChangePayload;
+  'options:data:item:add': {
+    indexes: number[];
+    datum: ItemDatum | ItemDatum[];
+  };
+  'options:data:item:update': { indexes: number[]; datum: Partial<ItemDatum> };
+  'options:data:item:remove': { indexes: number[]; datum: ItemDatum[] };
+  'options:data:update': { key: string; value: any };
+  'options:element:update': { element: Element; props: Partial<ElementProps> };
+}
+
+export type StateEventName = keyof StateEventPayloadMap;
