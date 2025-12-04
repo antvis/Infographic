@@ -1,2 +1,3 @@
+export { Plugin } from './base';
 export * from './edit-bar';
-export * from './resize-element';
+export { ResizeElement } from './resize-element';

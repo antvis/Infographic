@@ -1,8 +1,9 @@
+import type { IEventEmitter } from '../../types';
 import type { ICommandManager } from './command';
 import type { IEditor } from './editor';
 import type { Selection } from './selection';
 
-export interface Interaction {
+export interface IInteraction {
   name: string;
   init(options: InteractionInitOptions): void;
   destroy(): void;
@@ -26,11 +27,11 @@ export interface IInteractionManager {
   isSelected(item: Selection[number]): boolean;
   clearSelection(): void;
   executeExclusiveInteraction(
-    instance: Interaction,
+    instance: IInteraction,
     callback: () => Promise<void>,
   ): Promise<void>;
   executeConcurrentInteraction(
-    instance: Interaction,
+    instance: IInteraction,
     callback: () => Promise<void>,
   ): Promise<void>;
   appendTransientElement<T extends SVGElement>(element: T): T;
@@ -38,13 +39,15 @@ export interface IInteractionManager {
 }
 
 export interface InteractionInitOptions {
+  emitter: IEventEmitter;
   editor: IEditor;
-  command: ICommandManager;
+  commander: ICommandManager;
   interaction: IInteractionManager;
 }
 
 export interface InteractionManagerInitOptions {
+  emitter: IEventEmitter;
   editor: IEditor;
-  command: ICommandManager;
-  interactions?: Interaction[];
+  commander: ICommandManager;
+  interactions?: IInteraction[];
 }

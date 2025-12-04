@@ -1,3 +1,4 @@
+import EventEmitter from 'eventemitter3';
 import { Editor, type IEditor } from '../editor';
 import {
   exportToPNGString,
@@ -11,11 +12,14 @@ import {
   parseOptions,
 } from '../options';
 import { Renderer } from '../renderer';
+import { IEventEmitter } from '../types';
 import { getTypes, parseSVG } from '../utils';
 import { DEFAULT_OPTIONS } from './options';
 
 export class Infographic {
   rendered: boolean = false;
+
+  private emitter: IEventEmitter = new EventEmitter();
 
   private node: SVGSVGElement | null = null;
 
@@ -41,10 +45,11 @@ export class Infographic {
     this.node = renderer.render();
     container.replaceChildren(this.node);
     if (this.options.editable) {
-      this.editor = new Editor(this.node, this.parsedOptions);
+      this.editor = new Editor(this.emitter, this.node, this.parsedOptions);
     }
 
     this.rendered = true;
+    this.emitter.emit('rendered', { node: this.node, options: this.options });
   }
 
   /**
@@ -100,16 +105,19 @@ export class Infographic {
   }
 
   on(event: string, listener: (...args: any[]) => void) {
-    this.editor?.on(event, listener);
+    this.emitter.on(event, listener);
   }
 
   off(event: string, listener: (...args: any[]) => void) {
-    this.editor?.off(event, listener);
+    this.emitter.off(event, listener);
   }
 
   destroy() {
     this.editor?.destroy();
     this.node?.remove();
     this.node = null;
+    this.rendered = false;
+    this.emitter.emit('destroyed');
+    this.emitter.removeAllListeners();
   }
 }

@@ -1,5 +1,5 @@
-import EventEmitter from 'eventemitter3';
 import type { ParsedInfographicOptions } from '../options';
+import type { IEventEmitter } from '../types';
 import {
   CommandManager,
   InteractionManager,
@@ -13,45 +13,46 @@ import type {
   IStateManager,
 } from './types';
 
-export class Editor extends EventEmitter implements IEditor {
+export class Editor implements IEditor {
   state: IStateManager;
-  command: ICommandManager;
+  commander: ICommandManager;
   plugin: IPluginManager;
   interaction: InteractionManager;
 
   constructor(
+    private emitter: IEventEmitter,
     private document: SVGSVGElement,
     private options: ParsedInfographicOptions,
   ) {
-    super();
-
     if (!document.isConnected) {
       throw new Error('The provided document is not connected to the DOM.');
     }
     document.style.userSelect = 'none';
 
-    const command = new CommandManager();
+    const commander = new CommandManager();
     const state = new StateManager();
     const plugin = new PluginManager();
     const interaction = new InteractionManager();
 
-    command.init({ state });
-    state.init({ editor: this, command, data: options.data });
+    commander.init({ state });
+    state.init({ emitter, editor: this, commander, data: options.data });
     plugin.init(
       {
+        emitter,
         editor: this,
-        command: command,
-        state: state,
+        commander,
+        state,
       },
       options.plugins,
     );
     interaction.init({
+      emitter,
       editor: this,
-      command,
+      commander,
       interactions: options.interactions,
     });
 
-    this.command = command;
+    this.commander = commander;
     this.state = state;
     this.plugin = plugin;
     this.interaction = interaction;
@@ -65,8 +66,7 @@ export class Editor extends EventEmitter implements IEditor {
     this.document.style.userSelect = '';
     this.interaction.destroy();
     this.plugin.destroy();
-    this.command.destroy();
+    this.commander.destroy();
     this.state.destroy();
-    this.removeAllListeners();
   }
 }

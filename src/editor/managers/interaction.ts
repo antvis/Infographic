@@ -1,3 +1,4 @@
+import type { IEventEmitter } from '../../types';
 import {
   createElement,
   getElementByRole,
@@ -7,8 +8,8 @@ import {
 import type {
   ICommandManager,
   IEditor,
+  IInteraction,
   IInteractionManager,
-  Interaction,
   InteractionManagerInitOptions,
   Selection,
   SelectionChangePayload,
@@ -17,30 +18,30 @@ import type {
 import { Extension } from '../utils';
 
 export class InteractionManager implements IInteractionManager {
-  private extensions = new Extension<Interaction>();
+  private extensions = new Extension<IInteraction>();
+  private emitter!: IEventEmitter;
   private editor!: IEditor;
-  private command!: ICommandManager;
-  private interactions!: Interaction[];
+  private commander!: ICommandManager;
+  private interactions: IInteraction[] = [];
 
   private active = false;
-  private running: Interaction | null = null;
-  private concurrentInteractions: Set<Interaction> = new Set();
+  private running: IInteraction | null = null;
+  private concurrentInteractions: Set<IInteraction> = new Set();
   private selection: Set<Selection[number]> = new Set();
 
   init(options: InteractionManagerInitOptions) {
-    this.editor = options.editor;
-    this.command = options.command;
-    this.interactions = options.interactions || [];
+    Object.assign(this, options);
     document.addEventListener('click', this.handleClick);
 
     this.interactions.forEach((interaction) => {
       this.extensions.register(interaction.name, interaction);
       interaction.init({
+        emitter: this.emitter,
         editor: this.editor,
-        command: this.command,
+        commander: this.commander,
         interaction: this,
       });
-      this.editor.emit('interaction:registered', interaction);
+      this.emitter.emit('interaction:registered', interaction);
     });
   }
 
@@ -96,7 +97,7 @@ export class InteractionManager implements IInteractionManager {
       removed,
       mode,
     };
-    this.editor.emit('selection:change', payload);
+    this.emitter.emit('selection:change', payload);
   }
 
   getSelection() {
@@ -120,7 +121,7 @@ export class InteractionManager implements IInteractionManager {
       mode: 'replace',
     };
 
-    this.editor.emit('selection:change', payload);
+    this.emitter.emit('selection:change', payload);
   }
 
   private handleClick = (event: MouseEvent) => {
@@ -142,21 +143,21 @@ export class InteractionManager implements IInteractionManager {
 
   private activate() {
     this.active = true;
-    this.editor.emit('activated');
+    this.emitter.emit('activated');
   }
 
   private deactivate() {
     this.active = false;
     this.running = null;
     this.clearSelection();
-    this.editor.emit('deactivated');
+    this.emitter.emit('deactivated');
   }
 
   /**
    * 执行互斥交互操作（同一时间只能有一个互斥交互在进行）
    */
   async executeExclusiveInteraction(
-    instance: Interaction,
+    instance: IInteraction,
     callback: () => Promise<void>,
   ) {
     // 如果未激活或已有互斥交互在运行，则拒绝执行
@@ -165,15 +166,15 @@ export class InteractionManager implements IInteractionManager {
     this.running = instance;
 
     try {
-      this.editor.emit('interaction:started', instance);
+      this.emitter.emit('interaction:started', instance);
       await callback();
-      this.editor.emit('interaction:ended', instance);
+      this.emitter.emit('interaction:ended', instance);
     } catch (error) {
       console.error(
         `Error occurred during exclusive interaction "${instance.name}":`,
         error,
       );
-      this.editor.emit('interaction:error', instance, error);
+      this.emitter.emit('interaction:error', instance, error);
     } finally {
       this.running = null;
     }
@@ -183,7 +184,7 @@ export class InteractionManager implements IInteractionManager {
    * 执行协同交互操作（允许多个协同交互同时进行）
    */
   async executeConcurrentInteraction(
-    instance: Interaction,
+    instance: IInteraction,
     callback: () => Promise<void>,
   ) {
     if (!this.active) return;
@@ -191,15 +192,15 @@ export class InteractionManager implements IInteractionManager {
     this.concurrentInteractions.add(instance);
 
     try {
-      this.editor.emit('interaction:started', instance);
+      this.emitter.emit('interaction:started', instance);
       await callback();
-      this.editor.emit('interaction:ended', instance);
+      this.emitter.emit('interaction:ended', instance);
     } catch (error) {
       console.error(
         `Error occurred during concurrent interaction "${instance.name}":`,
         error,
       );
-      this.editor.emit('interaction:error', instance, error);
+      this.emitter.emit('interaction:error', instance, error);
     } finally {
       this.concurrentInteractions.delete(instance);
     }
@@ -226,7 +227,7 @@ export class InteractionManager implements IInteractionManager {
   destroy() {
     this.extensions.forEach((interaction) => {
       interaction.destroy();
-      this.editor.emit('interaction:destroyed', interaction);
+      this.emitter.emit('interaction:destroyed', interaction);
     });
     this.extensions.destroy();
 

@@ -1,5 +1,5 @@
 import { ElementTypeEnum } from '../../constants';
-import type { Data, Element, ItemDatum } from '../../types';
+import type { Data, Element, IEventEmitter, ItemDatum } from '../../types';
 import { getDatumByIndexes, getElementRole, isIconElement } from '../../utils';
 import type {
   ElementProps,
@@ -12,14 +12,13 @@ import type {
 import { getChildrenDataByIndexes, getIndexesFromElement } from '../utils';
 
 export class StateManager implements IStateManager {
+  emitter!: IEventEmitter;
   editor!: IEditor;
   command!: ICommandManager;
   data!: Data;
 
   init(options: StateManagerInitOptions) {
-    this.editor = options.editor;
-    this.command = options.command;
-    this.data = options.data;
+    Object.assign(this, options);
   }
 
   addItemDatum(indexes: number[], datum: ItemDatum | ItemDatum[]): void {
@@ -30,8 +29,8 @@ export class StateManager implements IStateManager {
     const list = getChildrenDataByIndexes(this.data, pre);
     list.splice(last, 0, ...arr);
 
-    this.editor.emit('data:add:item', { indexes, datum });
-    this.editor.emit('data:change', {
+    this.emitter.emit('data:add:item', { indexes, datum });
+    this.emitter.emit('data:change', {
       type: 'data:change',
       changes: [
         {
@@ -47,8 +46,8 @@ export class StateManager implements IStateManager {
   updateItemDatum(indexes: number[], datum: Partial<ItemDatum>): void {
     const item = getDatumByIndexes(this.data, indexes);
     Object.assign(item, datum);
-    this.editor.emit('data:update:item', { indexes, datum });
-    this.editor.emit('data:change', {
+    this.emitter.emit('data:update:item', { indexes, datum });
+    this.emitter.emit('data:change', {
       type: 'data:change',
       changes: [
         {
@@ -68,8 +67,8 @@ export class StateManager implements IStateManager {
     const list = getChildrenDataByIndexes(this.data, pre);
     const datum = list.splice(last, count);
 
-    this.editor.emit('data:remove:item', { indexes, datum });
-    this.editor.emit('data:change', {
+    this.emitter.emit('data:remove:item', { indexes, datum });
+    this.emitter.emit('data:change', {
       type: 'data:change',
       changes: [
         {
@@ -84,8 +83,8 @@ export class StateManager implements IStateManager {
 
   updateData(key: string, value: any) {
     (this.data as any)[key] = value;
-    this.editor.emit('data:update:data', { key, value });
-    this.editor.emit('data:change', {
+    this.emitter.emit('data:update:data', { key, value });
+    this.emitter.emit('data:change', {
       type: 'data:change',
       changes: [
         {
@@ -132,8 +131,8 @@ export class StateManager implements IStateManager {
       Object.assign(this.data.attributes[role], attributes);
     }
 
-    this.editor.emit('data:update:attrs', { element, props });
-    this.editor.emit('data:change', {
+    this.emitter.emit('data:update:attrs', { element, props });
+    this.emitter.emit('data:change', {
       type: 'data:change',
       changes: [
         {

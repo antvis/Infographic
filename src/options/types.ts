@@ -1,5 +1,5 @@
 import type { DesignOptions, ParsedDesignsOptions } from '../designs';
-import type { ElementProps, Interaction, Plugin } from '../editor';
+import type { ElementProps, IInteraction, IPlugin } from '../editor';
 import type { ThemeConfig } from '../themes';
 import type { Data, Padding } from '../types';
 
@@ -28,9 +28,9 @@ export interface InfographicOptions {
   /** 启用编辑 */
   editable?: boolean;
   /** 启用插件 */
-  plugins?: Plugin[];
+  plugins?: IPlugin[];
   /** 启用交互 */
-  interactions?: Interaction[];
+  interactions?: IInteraction[];
   /** 用于向画布添加图形 */
   elements?: ElementProps[];
 }
@@ -49,8 +49,8 @@ export interface ParsedInfographicOptions {
   svg?: SVGOptions;
 
   editable?: boolean;
-  plugins?: Plugin[];
-  interactions?: Interaction[];
+  plugins?: IPlugin[];
+  interactions?: IInteraction[];
   shapes?: ElementProps[];
 }
 

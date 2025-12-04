@@ -12,7 +12,7 @@ export class CommandManager implements ICommandManager {
   private redoStack: Command[] = [];
 
   init(options: CommandManagerInitOptions) {
-    this.state = options.state;
+    Object.assign(this, options);
   }
 
   execute(command: Command) {

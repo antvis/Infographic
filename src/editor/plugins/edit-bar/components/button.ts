@@ -3,7 +3,7 @@ import type { Icon } from './icons';
 
 export type Button = HTMLButtonElement & IconButtonHandle;
 
-interface IconButtonProps {
+export interface IconButtonProps {
   icon: Icon;
   onClick?: () => void;
   activate?: boolean;

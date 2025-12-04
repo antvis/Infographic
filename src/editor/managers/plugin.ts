@@ -1,41 +1,50 @@
+import { IEventEmitter } from '../../types';
 import type {
+  ICommandManager,
+  IEditor,
+  IPlugin,
   IPluginManager,
-  Plugin,
+  IStateManager,
   PluginInitOptions,
   PluginManagerInitOptions,
 } from '../types';
 import { Extension } from '../utils';
 
 export class PluginManager implements IPluginManager {
-  private extensions = new Extension<Plugin>();
+  private extensions = new Extension<IPlugin>();
 
-  private options!: PluginManagerInitOptions;
+  private emitter!: IEventEmitter;
+  private editor!: IEditor;
+  private commander!: ICommandManager;
+  private state!: IStateManager;
 
-  init(relies: PluginManagerInitOptions, plugins: Plugin[] = []) {
-    this.options = relies;
+  init(options: PluginManagerInitOptions, plugins: IPlugin[] = []) {
+    Object.assign(this, options);
+
     plugins.forEach((plugin) => {
       this.registerPlugin(plugin);
     });
   }
 
-  getPlugin<T extends Plugin>(name: string): T | undefined {
+  getPlugin<T extends IPlugin>(name: string): T | undefined {
     return this.extensions.get(name) as T | undefined;
   }
 
-  getPlugins(): ReadonlyMap<string, Plugin> {
+  getPlugins(): ReadonlyMap<string, IPlugin> {
     return this.extensions.getAll();
   }
 
-  registerPlugin(plugin: Plugin): void {
+  registerPlugin(plugin: IPlugin): void {
     this.extensions.register(plugin.name, plugin);
     const pluginInitOptions: PluginInitOptions = {
-      editor: this.options.editor,
-      command: this.options.command,
+      emitter: this.emitter,
+      editor: this.editor,
+      commander: this.commander,
       plugin: this,
-      state: this.options.state,
+      state: this.state,
     };
     plugin.init(pluginInitOptions);
-    this.options.editor.emit('plugin:registered', plugin);
+    this.emitter.emit('plugin:registered', plugin);
   }
 
   unregisterPlugin(name: string): void {
@@ -43,7 +52,7 @@ export class PluginManager implements IPluginManager {
     if (plugin) {
       plugin.destroy();
       this.extensions.unregister(name);
-      this.options.editor.emit('plugin:unregistered', plugin);
+      this.emitter.emit('plugin:unregistered', plugin);
     }
   }
 
@@ -51,7 +60,7 @@ export class PluginManager implements IPluginManager {
     this.extensions.getAll().forEach((plugin) => {
       this.unregisterPlugin(plugin.name);
       plugin.destroy();
-      this.options.editor.emit('plugin:destroyed', plugin);
+      this.emitter.emit('plugin:destroyed', plugin);
     });
     this.extensions.destroy();
   }

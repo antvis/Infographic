@@ -1,12 +1,16 @@
 import { isEditingText } from '../../utils';
-import type { Interaction, InteractionInitOptions } from '../types';
+import type { IInteraction, InteractionInitOptions } from '../types';
 import { ClickHandler, getEventTarget } from '../utils';
-export class ClickSelect implements Interaction {
+import { Interaction } from './base';
+export class ClickSelect extends Interaction implements IInteraction {
   name = 'click-select';
 
   private clickHandler?: ClickHandler;
 
-  init({ editor, interaction }: InteractionInitOptions) {
+  init(options: InteractionInitOptions) {
+    super.init(options);
+    const { editor, interaction } = this;
+
     this.clickHandler = new ClickHandler(editor.getDocument());
 
     const handleSelect = (event: MouseEvent) => {

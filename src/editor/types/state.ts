@@ -1,4 +1,4 @@
-import type { Data, Element, ItemDatum } from '../../types';
+import type { Data, Element, IEventEmitter, ItemDatum } from '../../types';
 import type { ICommandManager } from './command';
 import type { IEditor } from './editor';
 import type { ElementProps } from './shape';
@@ -27,7 +27,8 @@ export interface IStateManager {
 }
 
 export interface StateManagerInitOptions {
+  emitter: IEventEmitter;
   editor: IEditor;
-  command: ICommandManager;
+  commander: ICommandManager;
   data: Data;
 }

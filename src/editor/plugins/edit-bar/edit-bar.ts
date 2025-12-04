@@ -11,12 +11,13 @@ import {
   setElementRole,
 } from '../../../utils';
 import type {
-  Plugin,
+  IPlugin,
   PluginInitOptions,
   Selection,
   SelectionChangePayload,
 } from '../../types';
 import { getElementViewportBounds, getScreenCTM } from '../../utils';
+import { Plugin } from '../base';
 import {
   FontAlign,
   FontColor,
@@ -32,29 +33,26 @@ export interface EditBarOptions {
 
 type EditItem = HTMLElement;
 
-export class EditBar implements Plugin {
+export class EditBar extends Plugin implements IPlugin {
   name = 'edit-bar';
-  private relies!: PluginInitOptions;
   private container?: HTMLDivElement;
   private selection: Selection = [];
 
-  constructor(private options?: EditBarOptions) {}
+  constructor(private options?: EditBarOptions) {
+    super();
+  }
 
-  init(relies: PluginInitOptions) {
-    this.relies = relies;
-    this.relies.editor.on('selection:change', this.handleSelectionChanged);
-    this.relies.editor.on(
-      'selection:geometrychange',
-      this.handleGeometryChanged,
-    );
+  init(options: PluginInitOptions) {
+    super.init(options);
+    const { emitter } = options;
+    emitter.on('selection:change', this.handleSelectionChanged);
+    emitter.on('selection:geometrychange', this.handleGeometryChanged);
   }
 
   destroy() {
-    this.relies.editor.off('selection:change', this.handleSelectionChanged);
-    this.relies.editor.off(
-      'selection:geometrychange',
-      this.handleGeometryChanged,
-    );
+    const { emitter } = this;
+    emitter.off('selection:change', this.handleSelectionChanged);
+    emitter.off('selection:geometrychange', this.handleGeometryChanged);
     this.container?.remove();
   }
 
@@ -156,7 +154,7 @@ export class EditBar implements Plugin {
 
     this.container = container;
 
-    this.relies.editor.getDocument().parentNode?.appendChild(container);
+    this.editor.getDocument().parentNode?.appendChild(container);
 
     return container;
   }
@@ -164,7 +162,7 @@ export class EditBar implements Plugin {
   protected getTextEditItems(text: TextElement): EditItem[] {
     const { attributes = {} } = getTextElementProps(text);
     return [FontColor, FontSize, FontAlign, FontFamily].map((item) =>
-      item([text], attributes, this.relies.command),
+      item([text], attributes, this.commander),
     );
   }
 
@@ -173,23 +171,19 @@ export class EditBar implements Plugin {
       selection.map((text) => getTextElementProps(text).attributes || {}),
     );
     return [FontColor, FontSize, FontAlign, FontFamily].map((item) =>
-      item(selection, attrs, this.relies.command),
+      item(selection, attrs, this.commander),
     );
   }
 
   protected getIconEditItems(selection: Selection): EditItem[] {
     const attrs = getIconAttrs(selection[0] as IconElement);
-    return [IconColor].map((item) =>
-      item(selection, attrs, this.relies.command),
-    );
+    return [IconColor].map((item) => item(selection, attrs, this.commander));
   }
   protected getIconCollectionEditItems(selection: Selection): EditItem[] {
     const attrs = getCommonAttrs(
       selection.map((icon) => getIconAttrs(icon as IconElement)),
     );
-    return [IconColor].map((item) =>
-      item(selection, attrs, this.relies.command),
-    );
+    return [IconColor].map((item) => item(selection, attrs, this.commander));
   }
 
   protected getGeometryEditItems(_selection: Selection): EditItem[] {
@@ -207,7 +201,7 @@ export class EditBar implements Plugin {
   private placeEditBar(container: HTMLDivElement, selection: Selection) {
     if (selection.length === 0) return;
 
-    const svg = this.relies.editor.getDocument();
+    const svg = this.editor.getDocument();
     const combinedBounds = getCombinedBounds(
       selection.map((element) => getElementViewportBounds(svg, element)),
     );

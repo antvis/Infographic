@@ -7,11 +7,12 @@ import {
 } from '../../utils';
 import { UpdateElementCommand } from '../commands';
 import type {
-  Plugin,
+  IPlugin,
   PluginInitOptions,
   SelectionChangePayload,
 } from '../types';
 import { getElementViewportBounds } from '../utils';
+import { Plugin } from './base';
 
 type HandlePosition =
   | 'top-left'
@@ -30,10 +31,9 @@ type Rect = {
   height: number;
 };
 
-export class ResizeElement implements Plugin {
+export class ResizeElement extends Plugin implements IPlugin {
   name = 'resize-element';
 
-  private relies!: PluginInitOptions;
   private target: TextElement | null = null;
 
   private container?: SVGGElement;
@@ -49,17 +49,19 @@ export class ResizeElement implements Plugin {
   private lastRect?: Rect;
   private lastViewportRect?: Rect;
 
-  init(relies: PluginInitOptions) {
-    this.relies = relies;
-    relies.editor.on('selection:change', this.handleSelectionChange);
-    relies.editor.on('deactivated', this.handleDeactivate);
+  init(options: PluginInitOptions) {
+    super.init(options);
+    const { emitter } = options;
+    emitter.on('selection:change', this.handleSelectionChange);
+    emitter.on('deactivated', this.handleDeactivate);
   }
 
   destroy() {
     this.cancelDrag();
     this.removeContainer();
-    this.relies.editor.off('selection:change', this.handleSelectionChange);
-    this.relies.editor.off('deactivated', this.handleDeactivate);
+    const { emitter } = this;
+    emitter.off('selection:change', this.handleSelectionChange);
+    emitter.off('deactivated', this.handleDeactivate);
   }
 
   private handleSelectionChange = ({ next }: SelectionChangePayload) => {
@@ -142,7 +144,7 @@ export class ResizeElement implements Plugin {
       this.handles[index] = handle;
     });
 
-    this.relies.editor.getDocument().appendChild(container);
+    this.editor.getDocument().appendChild(container);
     this.container = container;
 
     return container;
@@ -280,7 +282,7 @@ export class ResizeElement implements Plugin {
     this.cancelDrag();
 
     if (changed && this.target && finalRect && original) {
-      this.relies.command.execute(
+      this.commander.execute(
         new UpdateElementCommand(
           this.target,
           { attributes: finalRect },
@@ -321,7 +323,7 @@ export class ResizeElement implements Plugin {
 
   private getViewportRect(element: TextElement): Rect {
     const { x, y, width, height } = getElementViewportBounds(
-      this.relies.editor.getDocument(),
+      this.editor.getDocument(),
       element,
     );
     return { x, y, width, height };
@@ -334,7 +336,7 @@ export class ResizeElement implements Plugin {
   ): DOMPoint {
     const matrix =
       element.getScreenCTM()?.inverse() ||
-      this.relies.editor.getDocument().getScreenCTM()?.inverse() ||
+      this.editor.getDocument().getScreenCTM()?.inverse() ||
       new DOMMatrix();
     return new DOMPoint(x, y).matrixTransform(matrix);
   }
@@ -453,7 +455,7 @@ export class ResizeElement implements Plugin {
 
   private emitSelectionGeometryChange() {
     if (this.target && this.lastViewportRect) {
-      this.relies.editor.emit('selection:geometrychange', {
+      this.emitter.emit('selection:geometrychange', {
         type: 'selection:geometrychange',
         target: this.target,
         rect: this.lastViewportRect,

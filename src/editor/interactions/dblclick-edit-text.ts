@@ -6,15 +6,18 @@ import {
   isEditableText,
 } from '../../utils';
 import { UpdateTextCommand } from '../commands';
-import type { Interaction, InteractionInitOptions } from '../types';
+import type { IInteraction, InteractionInitOptions } from '../types';
 import { ClickHandler, getEventTarget } from '../utils';
+import { Interaction } from './base';
 
-export class DblClickEditText implements Interaction {
+export class DblClickEditText extends Interaction implements IInteraction {
   name = 'dblclick-edit-text';
 
   private clickHandler?: ClickHandler;
 
-  init({ editor, command, interaction }: InteractionInitOptions) {
+  init(options: InteractionInitOptions) {
+    super.init(options);
+    const { editor, commander, interaction } = options;
     this.clickHandler = new ClickHandler(editor.getDocument()).onDoubleClick(
       (event) => {
         if (!interaction.isActive()) return;
@@ -31,7 +34,9 @@ export class DblClickEditText implements Interaction {
               });
             });
 
-            command.execute(new UpdateTextCommand(target, text, originalText));
+            commander.execute(
+              new UpdateTextCommand(target, text, originalText),
+            );
           }
         });
       },

@@ -1,14 +1,8 @@
 import { getCombinedBounds } from '../../jsx/utils/bounds';
 import { createElement, isEditableText, setAttributes } from '../../utils';
-import type {
-  ICommandManager,
-  IEditor,
-  IInteractionManager,
-  Interaction,
-  InteractionInitOptions,
-  Selection,
-} from '../types';
+import type { IInteraction, InteractionInitOptions, Selection } from '../types';
 import { getElementViewportBounds } from '../utils';
+import { Interaction } from './base';
 
 type SelectionChangePayload = {
   previous: Selection;
@@ -24,30 +18,25 @@ type SelectionGeometryChangePayload = {
   rect: { x: number; y: number; width: number; height: number };
 };
 
-export class SelectHighlight implements Interaction {
+export class SelectHighlight extends Interaction implements IInteraction {
   name = 'select-highlight';
-
-  private editor!: IEditor;
-  private command!: ICommandManager;
-  private interaction!: IInteractionManager;
 
   private highlightMasks: SVGRectElement[] = [];
   private combinedBoundsMask?: SVGRectElement;
 
-  init({ editor, command, interaction }: InteractionInitOptions) {
-    this.editor = editor;
-    this.command = command;
-    this.interaction = interaction;
-
-    editor.on('selection:change', this.handleSelectionChanged);
-    editor.on('selection:geometrychange', this.handleGeometryChanged);
-    this.highlightSelection(interaction.getSelection());
+  init(options: InteractionInitOptions) {
+    super.init(options);
+    const { emitter } = options;
+    emitter.on('selection:change', this.handleSelectionChanged);
+    emitter.on('selection:geometrychange', this.handleGeometryChanged);
+    this.highlightSelection(this.interaction.getSelection());
   }
 
   destroy() {
     this.clearMasks();
-    this.editor.off('selection:change', this.handleSelectionChanged);
-    this.editor.off('selection:geometrychange', this.handleGeometryChanged);
+    const { emitter } = this;
+    emitter.off('selection:change', this.handleSelectionChanged);
+    emitter.off('selection:geometrychange', this.handleGeometryChanged);
   }
 
   private handleSelectionChanged = ({ next }: SelectionChangePayload) => {
