@@ -17,6 +17,7 @@ const styles: StyleConfig[] = [
     name: '深色风格',
     options: {
       theme: 'dark',
+      editable: true,
       template: 'quadrant-quarter-circular',
       themeConfig: {
         palette: ['#1890ff', '#52c41a', '#fa8c16', '#722ed1'],
@@ -51,6 +52,7 @@ const styles: StyleConfig[] = [
   {
     name: '手绘风格',
     options: {
+      editable: true,
       template: 'sequence-roadmap-vertical-simple',
       themeConfig: {
         stylize: {type: 'rough'},
@@ -100,6 +102,7 @@ const styles: StyleConfig[] = [
   {
     name: '纹理效果',
     options: {
+      editable: true,
       template: 'list-grid-candy-card-lite',
       themeConfig: {
         palette: [

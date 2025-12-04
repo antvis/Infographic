@@ -5,7 +5,7 @@ export function QuickStartDemo() {
     <Infographic
       options={{
         height: 240,
-        // 数据
+        editable: true,
         data: {
           title: '互联网技术演进史',
           desc: '从Web 1.0到AI时代的关键里程碑',
@@ -63,6 +63,7 @@ export const QuickStartDemoCode = `import { Infographic } from '@antv/infographi
 const infographic = new Infographic({
   container: "#container",
   height: 240,
+  editable: true,
   data: {
     title: '互联网技术演进史',
     desc: '从Web 1.0到AI时代的关键里程碑',

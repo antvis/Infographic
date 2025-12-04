@@ -16,6 +16,7 @@ const PRESET_CONFIGS: ConfigOption[] = [
   {
     label: '金字塔型',
     options: {
+      editable: true,
       template: 'sequence-pyramid-simple',
       data: {
         title: '企业数字化转型层级',
@@ -57,6 +58,7 @@ const PRESET_CONFIGS: ConfigOption[] = [
   {
     label: '过程型',
     options: {
+      editable: true,
       theme: 'light',
       themeConfig: {
         palette: 'antv',
@@ -103,6 +105,7 @@ const PRESET_CONFIGS: ConfigOption[] = [
   {
     label: '统计图',
     options: {
+      editable: true,
       theme: 'light',
       themeConfig: {
         palette: [
