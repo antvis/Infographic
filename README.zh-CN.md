@@ -71,6 +71,26 @@ infographic.render();
 
 更多示例请参考[文档站点](https://infographic.antv.vision/examples)。
 
+## 🗂 配置
+
+实例化 `Infographic` 类时所需传入的 `InfographicOptions` 配置项，具体配置如下：
+
+| 属性        | 类型                    | 必填   | 说明                                   | 引用                                             |
+| ----------- | ----------------------- | ------ | -------------------------------------- | ------------------------------------------------ |
+| container   | `string \| HTMLElement` | 否     | 容器，可以是选择器或者 HTMLElement         | -                                                    |
+| width       | `number \| string`      | 否     | 宽度，支持数字（像素值）或者百分比形式        | -                                                       |
+| height      | `number \| string`      | 否     | 高度，支持数字（像素值）或者百分比形式        | -                                                        |
+| padding     | `Padding`               | 否     | 容器内边距                             | [Padding](/reference/infographic-types#padding)     |
+| template    | `string`                | 否     | 模板                                   | -                                                |
+| design      | `DesignOptions`         | 否     | 设计                                   | [DesignOptions](/reference/infographic-types#design-options) |
+| data        | `Data`                  | **是** | 数据                                   | [Data](/reference/infographic-types#data)                    |
+| theme       | `string`                | 否     | 主题                                   | -                                                |
+| themeConfig | `ThemeConfig`           | 否     | 额外主题配置                           | [ThemeConfig](/reference/infographic-types#theme-config)     |
+| svg         | `SVGOptions`            | 否     | svg 容器上的配置                       | [SVGOptions](/reference/infographic-types#svg-options)       |
+| editable    | `boolean`               | 否     | 是否开启编辑能力                        | -                                                     |
+
+更多配置项请查看 [配置项](https://infographic.antv.vision/reference/infographic-options)。
+
 ## 💬 社区与交流
 
 - 在 GitHub 提交你的问题或建议

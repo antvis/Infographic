@@ -72,6 +72,27 @@ Render the infographic in the target container.
 
 For more examples, please refer to the [documentation](https://infographic.antv.vision/examples) site.
 
+## 🗂 Configuration
+
+The `InfographicOptions` configuration item required when instantiating the Infographic class, see the information graph syntax for more information.
+
+| 属性        | 类型                    | 必填   | 说明                                      | 引用                                             |
+| ----------- | ----------------------- | ------ | -------------------------------------- | ------------------------------------------------ |
+| container   | `string \| HTMLElement` | N     | Container, can be selector or HTMLElement. | -                                                |
+| width       | `number \| string`      | N     | Width, support pixel value or percentage.  | -                                                |
+| height      | `number \| string`      | N     | Height, support pixel value or percentage. | -                                                |
+| padding     | `Padding`               | N     | Padding for container                      | [Padding](https://infographic.antv.vision/reference/infographic-types#padding)              |
+| template    | `string`                | N     | Template name                              | -                                                |
+| design      | `DesignOptions`         | N     | Design options                             | [DesignOptions](https://infographic.antv.vision/reference/infographic-types#design-options) |
+| data        | `Data`                  | **Y** | Data for Infographic                                   | [Data](https://infographic.antv.vision/reference/infographic-types#data)                    |
+| theme       | `string`                | N     | Theme name                                 | -                                                |
+| themeConfig | `ThemeConfig`           | N     | Theme configure options                    | [ThemeConfig](https://infographic.antv.vision/reference/infographic-types#theme-config)     |
+| svg         | `SVGOptions`            | N     | Options for SVG container                  | [SVGOptions](https://infographic.antv.vision/reference/infographic-types#svg-options)       |
+| editable    | `boolean`               | N     | Whethe editable?                           | [SVGOptions](https://infographic.antv.vision/reference/infographic-types#svg-options)       |
+
+For more details, please refer to the [Configuration](https://infographic.antv.vision/reference/infographic-options) section.
+
+
 ## 💬 Community & Communication
 
 - Submit your questions or suggestions on GitHub
