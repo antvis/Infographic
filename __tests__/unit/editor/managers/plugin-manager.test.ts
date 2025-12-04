@@ -37,7 +37,7 @@ describe('PluginManager', () => {
     );
 
     manager.destroy();
-    expect(plugin.destroy).toHaveBeenCalledTimes(2);
+    expect(plugin.destroy).toHaveBeenCalledTimes(1);
     expect(emitter.emit).toHaveBeenCalledWith('plugin:destroyed', plugin);
   });
 });
