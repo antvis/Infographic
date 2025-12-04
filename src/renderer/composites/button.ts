@@ -3,6 +3,7 @@ import {
   getAttributes,
   parseSVG,
   setAttributes,
+  setElementRole,
 } from '../../utils';
 
 const ADD_ICON_ID = 'btn-add-icon';
@@ -21,8 +22,10 @@ export function renderButtonsGroup(svg: SVGSVGElement, group: SVGGElement) {
   removeBtns.forEach(renderRemoveButton);
 }
 
+const btnIconDefRole = 'btn-icon-defs';
 function defineButtonIcon(svg: SVGSVGElement) {
-  const defs = createElement('defs', { id: 'btn-icon-defs' });
+  const defs = createElement('defs');
+  setElementRole(defs, btnIconDefRole);
 
   const addIconSymbol =
     parseSVG(`<symbol class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="200" height="200">

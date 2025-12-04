@@ -4,6 +4,7 @@ import {
   getElementByRole,
   getViewBox,
   setAttributes,
+  setElementRole,
   traverse,
 } from '../utils';
 import { embedFonts } from './font';
@@ -55,7 +56,8 @@ const iconRole = 'icon-defs';
 function getDefs(svg: SVGSVGElement) {
   const defs = getElementByRole(svg, iconRole);
   if (defs) return defs;
-  const _defs = createElement('defs', { id: iconRole });
+  const _defs = createElement('defs');
+  setElementRole(_defs, iconRole);
   svg.prepend(_defs);
   return _defs;
 }
