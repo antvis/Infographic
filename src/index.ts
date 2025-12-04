@@ -4,6 +4,13 @@ export const VERSION = pkg.version;
 export * from './designs';
 export { getItemProps, getThemeColors } from './designs/utils';
 export {
+  ClickSelect,
+  DblClickEditText,
+  Interaction,
+  SelectHighlight,
+} from './editor/interactions';
+export { EditBar, Plugin, ResizeElement } from './editor/plugins';
+export {
   Defs,
   Ellipse,
   Fragment,
@@ -39,6 +46,7 @@ export { getTemplate, getTemplates, registerTemplate } from './templates';
 export { getTheme, getThemes, registerTheme } from './themes';
 export { parseSVG } from './utils';
 
+export type { EditBarOptions } from './editor';
 export type {
   Bounds,
   ComponentType,
