@@ -15,31 +15,31 @@ export class CommandManager implements ICommandManager {
     Object.assign(this, options);
   }
 
-  execute(command: ICommand) {
-    command.apply(this.state);
+  async execute(command: ICommand) {
+    await command.apply(this.state);
     this.undoStack.push(command);
     this.redoStack = [];
   }
 
-  executeBatch(commands: ICommand[]) {
+  async executeBatch(commands: ICommand[]) {
     if (commands.length === 0) return;
 
     const batchCommand = new BatchCommand(commands);
-    this.execute(batchCommand);
+    await this.execute(batchCommand);
   }
 
-  undo() {
+  async undo() {
     const command = this.undoStack.pop();
     if (command) {
-      command.undo(this.state);
+      await command.undo(this.state);
       this.redoStack.push(command);
     }
   }
 
-  redo() {
+  async redo() {
     const command = this.redoStack.pop();
     if (command) {
-      command.apply(this.state);
+      await command.apply(this.state);
       this.undoStack.push(command);
     }
   }

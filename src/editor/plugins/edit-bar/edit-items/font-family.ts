@@ -5,7 +5,7 @@ import {
   encodeFontFamily,
   injectStyleOnce,
 } from '../../../../utils';
-import { BatchCommand, UpdateElementCommand } from '../../../commands';
+import { UpdateElementCommand } from '../../../commands';
 import { A, IconButton, Popover } from '../components';
 import type { EditItem } from './types';
 
@@ -41,7 +41,7 @@ export const FontFamily: EditItem<TextAttributes> = (
   const content = createFontList(options, selected, (value) => {
     if (selected === value) return;
     selected = value;
-    const command = new BatchCommand(
+    commander.executeBatch(
       selection.map(
         (text) =>
           new UpdateElementCommand(text, {
@@ -49,7 +49,6 @@ export const FontFamily: EditItem<TextAttributes> = (
           }),
       ),
     );
-    commander.execute(command);
   });
 
   const button = IconButton({ icon: A });

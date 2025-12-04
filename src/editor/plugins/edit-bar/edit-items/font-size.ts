@@ -1,6 +1,6 @@
 import type { TextAttributes } from '../../../../types';
 import { injectStyleOnce } from '../../../../utils';
-import { BatchCommand, UpdateElementCommand } from '../../../commands';
+import { UpdateElementCommand } from '../../../commands';
 import { Aa, IconButton, Popover } from '../components';
 import type { Button } from '../components/button';
 import type { Icon } from '../components/icons';
@@ -36,7 +36,7 @@ export const FontSize: EditItem<TextAttributes> = (
   const button = IconButton({ icon: Aa });
   const currentSize = normalizeFontSize(attrs['font-size']);
   const content = createFontSizeContent(currentSize, (size) => {
-    const command = new BatchCommand(
+    commander.executeBatch(
       selection.map(
         (text) =>
           new UpdateElementCommand(text, {
@@ -44,7 +44,6 @@ export const FontSize: EditItem<TextAttributes> = (
           }),
       ),
     );
-    commander.execute(command);
   });
 
   return Popover({

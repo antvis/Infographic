@@ -1,6 +1,6 @@
 import type { TextAttributes } from '../../../../types';
 import { hasColor, injectStyleOnce } from '../../../../utils';
-import { BatchCommand, UpdateElementCommand } from '../../../commands';
+import { UpdateElementCommand } from '../../../commands';
 import { ColorPicker, Popover } from '../components';
 import type { EditItem } from './types';
 
@@ -27,7 +27,7 @@ export const FontColor: EditItem<TextAttributes> = (
     value: color ?? DEFAULT_COLOR,
     onChange: (nextColor) => {
       setButtonColor(button, nextColor, false);
-      const command = new BatchCommand(
+      commander.executeBatch(
         selection.map(
           (text) =>
             new UpdateElementCommand(text, {
@@ -35,7 +35,6 @@ export const FontColor: EditItem<TextAttributes> = (
             }),
         ),
       );
-      commander.execute(command);
     },
   });
 

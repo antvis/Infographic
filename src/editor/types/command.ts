@@ -2,10 +2,10 @@ import type { IStateManager } from './state';
 
 export interface ICommandManager {
   init(options: CommandManagerInitOptions): void;
-  execute(command: ICommand): void;
-  executeBatch(commands: ICommand[]): void;
-  undo(): void;
-  redo(): void;
+  execute(command: ICommand): Promise<void>;
+  executeBatch(commands: ICommand[]): Promise<void>;
+  undo(): Promise<void>;
+  redo(): Promise<void>;
   serialize(): any[];
   clear(): void;
   canUndo(): boolean;

@@ -1,6 +1,6 @@
 import type { IconAttributes } from '../../../../types';
 import { hasColor, injectStyleOnce } from '../../../../utils';
-import { BatchCommand, UpdateElementCommand } from '../../../commands';
+import { UpdateElementCommand } from '../../../commands';
 import { ColorPicker, Popover } from '../components';
 import type { EditItem } from './types';
 
@@ -27,7 +27,7 @@ export const IconColor: EditItem<IconAttributes> = (
     value: color ?? DEFAULT_COLOR,
     onChange: (nextColor) => {
       setButtonColor(button, nextColor, false);
-      const command = new BatchCommand(
+      commander.executeBatch(
         selection.map(
           (icon) =>
             new UpdateElementCommand(icon, {
@@ -35,7 +35,6 @@ export const IconColor: EditItem<IconAttributes> = (
             }),
         ),
       );
-      commander.execute(command);
     },
   });
 
