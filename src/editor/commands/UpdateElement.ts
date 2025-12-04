@@ -1,13 +1,15 @@
 import type { Element, IconElement } from '../../types';
 import {
   getAttributes,
+  getIconAttrs,
+  getIconEntity,
   getTextElementProps,
   isEditableText,
   isIconElement,
+  updateIconElement,
   updateTextElement,
 } from '../../utils';
 import type { Command, ElementProps, IStateManager, TextProps } from '../types';
-import { getIconAttrs, getIconEntity, updateIconElement } from '../utils';
 
 export class UpdateElementCommand implements Command {
   private original?: Partial<ElementProps>;
@@ -15,33 +17,10 @@ export class UpdateElementCommand implements Command {
   constructor(
     private element: Element,
     private modified: Partial<ElementProps>,
+    original?: Partial<ElementProps>,
   ) {
-    const modifiedAttrKeys = Object.keys(modified.attributes || {});
-    const originalAttributes = getAttributes(element, modifiedAttrKeys, false);
-
-    const assignModifiedAttributes = (attrs?: Record<string, any>) => {
-      if (!attrs) return;
-      modifiedAttrKeys.forEach((key) => {
-        if (key in attrs) originalAttributes[key] = attrs[key];
-      });
-    };
-
-    const original = {
-      ...modified,
-      attributes: originalAttributes,
-    };
-
-    if (isEditableText(element)) {
-      const { attributes } = getTextElementProps(element);
-      assignModifiedAttributes(attributes);
-    } else if (isIconElement(element)) {
-      const entity = getIconEntity(element);
-      if (!entity) return;
-      assignModifiedAttributes(getIconAttrs(element));
-    }
-    // TODO illus
-
-    this.original = original;
+    const computedOriginal = getOriginalProps(element, modified);
+    this.original = mergeOriginalProps(computedOriginal, original);
   }
 
   async apply(state: IStateManager) {
@@ -72,4 +51,57 @@ function updateElement(element: Element, props: Partial<ElementProps>) {
   } else if (isIconElement(element)) {
     updateIconElement(element as IconElement, undefined, props.attributes);
   }
+}
+
+function getOriginalProps(
+  element: Element,
+  modified: Partial<ElementProps>,
+): Partial<ElementProps> | undefined {
+  const modifiedAttrKeys = Object.keys(modified.attributes || {});
+  const originalAttributes = getAttributes(element, modifiedAttrKeys, false);
+
+  const assignModifiedAttributes = (attrs?: Record<string, any>) => {
+    if (!attrs) return;
+    modifiedAttrKeys.forEach((key) => {
+      if (key in attrs) originalAttributes[key] = attrs[key];
+    });
+  };
+
+  const original = {
+    ...modified,
+    attributes: originalAttributes,
+  };
+
+  if (isEditableText(element)) {
+    const { attributes } = getTextElementProps(element);
+    assignModifiedAttributes(attributes);
+  } else if (isIconElement(element)) {
+    const entity = getIconEntity(element);
+    if (!entity) return;
+    assignModifiedAttributes(getIconAttrs(element));
+  }
+  // TODO illus
+
+  return original;
+}
+
+function mergeOriginalProps(
+  computed: Partial<ElementProps> | undefined,
+  provided: Partial<ElementProps> | undefined,
+): Partial<ElementProps> | undefined {
+  if (!computed) return provided;
+  if (!provided) return computed;
+
+  const mergedAttributes = {
+    ...(computed.attributes || {}),
+    ...(provided.attributes || {}),
+  };
+
+  return {
+    ...computed,
+    ...provided,
+    attributes: Object.keys(mergedAttributes).length
+      ? mergedAttributes
+      : undefined,
+  };
 }

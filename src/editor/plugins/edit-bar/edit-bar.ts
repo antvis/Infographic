@@ -3,6 +3,7 @@ import { getCombinedBounds } from '../../../jsx';
 import { IconElement, TextElement } from '../../../types';
 import {
   getCommonAttrs,
+  getIconAttrs,
   getTextElementProps,
   isEditableText,
   isGeometryElement,
@@ -15,11 +16,7 @@ import type {
   Selection,
   SelectionChangePayload,
 } from '../../types';
-import {
-  getElementViewportBounds,
-  getIconAttrs,
-  getScreenCTM,
-} from '../../utils';
+import { getElementViewportBounds, getScreenCTM } from '../../utils';
 import {
   FontAlign,
   FontColor,
