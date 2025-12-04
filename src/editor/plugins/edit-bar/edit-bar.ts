@@ -36,20 +36,30 @@ export class EditBar implements Plugin {
   name = 'edit-bar';
   private relies!: PluginInitOptions;
   private container?: HTMLDivElement;
+  private selection: Selection = [];
 
   constructor(private options?: EditBarOptions) {}
 
   init(relies: PluginInitOptions) {
     this.relies = relies;
     this.relies.editor.on('selection:change', this.handleSelectionChanged);
+    this.relies.editor.on(
+      'selection:geometrychange',
+      this.handleGeometryChanged,
+    );
   }
 
   destroy() {
     this.relies.editor.off('selection:change', this.handleSelectionChanged);
+    this.relies.editor.off(
+      'selection:geometrychange',
+      this.handleGeometryChanged,
+    );
     this.container?.remove();
   }
 
   private handleSelectionChanged = ({ next }: SelectionChangePayload) => {
+    this.selection = next;
     if (next.length === 0) {
       if (this.container) hideContainer(this.container);
       return;
@@ -60,6 +70,17 @@ export class EditBar implements Plugin {
 
     this.placeEditBar(container, next);
     showContainer(container);
+  };
+
+  private handleGeometryChanged = ({
+    target,
+  }: {
+    type: 'selection:geometrychange';
+    target: Selection[number];
+  }) => {
+    if (!this.selection.includes(target) || !this.container) return;
+    this.placeEditBar(this.container, this.selection);
+    showContainer(this.container);
   };
 
   protected getEditItems(selection: Selection) {

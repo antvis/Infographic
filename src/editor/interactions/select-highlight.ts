@@ -1,5 +1,5 @@
 import { getCombinedBounds } from '../../jsx/utils/bounds';
-import { createElement, setAttributes } from '../../utils';
+import { createElement, isEditableText, setAttributes } from '../../utils';
 import type {
   ICommandManager,
   IEditor,
@@ -18,6 +18,12 @@ type SelectionChangePayload = {
   mode: 'replace' | 'add' | 'remove' | 'toggle';
 };
 
+type SelectionGeometryChangePayload = {
+  type: 'selection:geometrychange';
+  target: Selection[number];
+  rect: { x: number; y: number; width: number; height: number };
+};
+
 export class SelectHighlight implements Interaction {
   name = 'select-highlight';
 
@@ -34,19 +40,34 @@ export class SelectHighlight implements Interaction {
     this.interaction = interaction;
 
     editor.on('selection:change', this.handleSelectionChanged);
+    editor.on('selection:geometrychange', this.handleGeometryChanged);
     this.highlightSelection(interaction.getSelection());
   }
 
   destroy() {
     this.clearMasks();
     this.editor.off('selection:change', this.handleSelectionChanged);
+    this.editor.off('selection:geometrychange', this.handleGeometryChanged);
   }
 
   private handleSelectionChanged = ({ next }: SelectionChangePayload) => {
     this.highlightSelection(next);
   };
 
+  private handleGeometryChanged = ({
+    target,
+  }: SelectionGeometryChangePayload) => {
+    if (this.interaction.isSelected(target)) {
+      this.highlightSelection(this.interaction.getSelection());
+    }
+  };
+
   private highlightSelection(selection: Selection) {
+    if (selection.length === 1 && isEditableText(selection[0])) {
+      this.clearMasks();
+      return;
+    }
+
     this.drawElementMasks(selection);
     this.drawCombinedBoundsMask(selection);
   }
