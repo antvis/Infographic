@@ -7,11 +7,18 @@ import {
 } from '../editor';
 import { InfographicOptions } from '../options';
 
+const createDefaultPlugins = () => [new EditBar(), new ResizeElement()];
+const createDefaultInteractions = () => [
+  new DblClickEditText(),
+  new ClickSelect(),
+  new SelectHighlight(),
+];
+
 export const DEFAULT_OPTIONS: Partial<InfographicOptions> = {
-  plugins: [new EditBar(), new ResizeElement()],
-  interactions: [
-    new DblClickEditText(),
-    new ClickSelect(),
-    new SelectHighlight(),
-  ],
+  get plugins() {
+    return createDefaultPlugins();
+  },
+  get interactions() {
+    return createDefaultInteractions();
+  },
 };
