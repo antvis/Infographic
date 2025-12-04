@@ -30,7 +30,7 @@ describe('CommandManager', () => {
     expect(command.undo).toHaveBeenCalledWith(state);
     expect(commandManager.canRedo()).toBe(true);
 
-    commandManager.redo();
+    await commandManager.redo();
     expect(command.apply).toHaveBeenCalledTimes(2);
     expect(order).toEqual(['apply-one', 'undo-one', 'apply-one']);
     expect(commandManager.canRedo()).toBe(false);
@@ -54,7 +54,7 @@ describe('CommandManager', () => {
       { type: 'batch', commands: [{ type: 'a' }, { type: 'b' }] },
     ]);
 
-    commandManager.undo();
+    await commandManager.undo();
     await Promise.resolve();
     expect(order).toEqual(['apply-a', 'apply-b', 'undo-b', 'undo-a']);
     expect(commandManager.serialize()).toEqual([]);
