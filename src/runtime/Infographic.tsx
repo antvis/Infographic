@@ -1,4 +1,5 @@
 import EventEmitter from 'eventemitter3';
+import { cloneDeep } from 'lodash-es';
 import { Editor, type IEditor } from '../editor';
 import {
   exportToPNGString,
@@ -25,9 +26,15 @@ export class Infographic {
 
   private editor?: IEditor;
 
+  private options: InfographicOptions;
   private parsedOptions: ParsedInfographicOptions;
 
-  constructor(private options: InfographicOptions) {
+  constructor(options: InfographicOptions) {
+    this.options = {
+      ...options,
+      data: cloneDeep(options.data),
+      elements: cloneDeep(options.elements || []),
+    };
     this.parsedOptions = parseOptions({ ...DEFAULT_OPTIONS, ...this.options });
   }
 
