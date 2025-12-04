@@ -20,7 +20,10 @@ export function createTextElement(
   attributes: TextAttributes,
 ): TextElement {
   const entity = document.createElement('span');
-  const foreignObject = createElement<SVGForeignObjectElement>('foreignObject');
+  const foreignObject = createElement<SVGForeignObjectElement>(
+    'foreignObject',
+    { overflow: 'visible' },
+  );
   foreignObject.appendChild(entity);
   updateTextElement(foreignObject, { textContent, attributes });
   return foreignObject;

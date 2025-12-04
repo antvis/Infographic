@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { createTextElement } from '../../../src/utils/text';
+import { getElementRole, setElementRole } from '../../../src/utils';
+import { createTextElement, getTextEntity } from '../../../src/utils/text';
 
 describe('text', () => {
   beforeEach(() => {
@@ -15,6 +16,7 @@ describe('text', () => {
         width: '100',
         height: '30',
       });
+      setElementRole(textElement, 'text');
 
       expect(textElement.tagName).toBe('foreignObject');
       expect(textElement.getAttribute('id')).toBe('test-text');
@@ -22,18 +24,18 @@ describe('text', () => {
       expect(textElement.getAttribute('y')).toBe('20');
       expect(textElement.getAttribute('width')).toBe('100');
       expect(textElement.getAttribute('height')).toBe('30');
-      expect(textElement.getAttribute('data-element-type')).toBe('text');
+      expect(getElementRole(textElement)).toBe('text');
     });
 
-    it('should create span child with text content', () => {
-      const textElement = createTextElement('Test Text', {
+    it('should create entity child with text content', () => {
+      const textElement = createTextElement('Test\nText', {
         width: '100',
         height: '30',
       });
 
-      const span = textElement.querySelector('span');
-      expect(span).toBeTruthy();
-      expect(span?.textContent).toBe('Test Text');
+      const entity = getTextEntity(textElement);
+      expect(entity).toBeTruthy();
+      expect(entity?.innerText).toBe('Test\nText');
     });
 
     it('should apply text styles to span', () => {
@@ -59,7 +61,8 @@ describe('text', () => {
       const leftAligned = createTextElement('Left', {
         width: '100',
         height: '30',
-        'text-alignment': 'LEFT CENTER',
+        'data-horizontal-align': 'LEFT',
+        'data-vertical-align': 'MIDDLE',
       });
       const leftSpan = leftAligned.querySelector('span') as HTMLSpanElement;
       expect(leftSpan.style.textAlign).toBe('left');
@@ -68,7 +71,8 @@ describe('text', () => {
       const centerAligned = createTextElement('Center', {
         width: '100',
         height: '30',
-        'text-alignment': 'CENTER CENTER',
+        'data-horizontal-align': 'CENTER',
+        'data-vertical-align': 'MIDDLE',
       });
       const centerSpan = centerAligned.querySelector('span') as HTMLSpanElement;
       expect(centerSpan.style.textAlign).toBe('center');
@@ -77,7 +81,8 @@ describe('text', () => {
       const rightAligned = createTextElement('Right', {
         width: '100',
         height: '30',
-        'text-alignment': 'RIGHT CENTER',
+        'data-horizontal-align': 'RIGHT',
+        'data-vertical-align': 'MIDDLE',
       });
       const rightSpan = rightAligned.querySelector('span') as HTMLSpanElement;
       expect(rightSpan.style.textAlign).toBe('right');
@@ -88,7 +93,8 @@ describe('text', () => {
       const topAligned = createTextElement('Top', {
         width: '100',
         height: '30',
-        'text-alignment': 'CENTER TOP',
+        'data-horizontal-align': 'CENTER',
+        'data-vertical-align': 'TOP',
       });
       const topSpan = topAligned.querySelector('span') as HTMLSpanElement;
       expect(topSpan.style.alignContent).toBe('flex-start');
@@ -97,7 +103,8 @@ describe('text', () => {
       const centerAligned = createTextElement('Center', {
         width: '100',
         height: '30',
-        'text-alignment': 'CENTER MIDDLE',
+        'data-horizontal-align': 'CENTER',
+        'data-vertical-align': 'MIDDLE',
       });
       const centerSpan = centerAligned.querySelector('span') as HTMLSpanElement;
       expect(centerSpan.style.alignContent).toBe('center');
@@ -106,24 +113,25 @@ describe('text', () => {
       const bottomAligned = createTextElement('Bottom', {
         width: '100',
         height: '30',
-        'text-alignment': 'CENTER BOTTOM',
+        'data-horizontal-align': 'CENTER',
+        'data-vertical-align': 'BOTTOM',
       });
       const bottomSpan = bottomAligned.querySelector('span') as HTMLSpanElement;
       expect(bottomSpan.style.alignContent).toBe('flex-end');
       expect(bottomSpan.style.alignItems).toBe('flex-end');
     });
 
-    it('should set default horizontal and vertical alignment', () => {
+    it('should not set default horizontal and vertical alignment', () => {
       const textElement = createTextElement('Default', {
         width: '100',
         height: '30',
       });
 
       const span = textElement.querySelector('span') as HTMLSpanElement;
-      expect(span.style.textAlign).toBe('left');
-      expect(span.style.justifyContent).toBe('flex-start');
-      expect(span.style.alignContent).toBe('flex-start');
-      expect(span.style.alignItems).toBe('flex-start');
+      expect(span.style.textAlign).toBe('');
+      expect(span.style.justifyContent).toBe('');
+      expect(span.style.alignContent).toBe('');
+      expect(span.style.alignItems).toBe('');
     });
 
     it('should apply common span styles', () => {

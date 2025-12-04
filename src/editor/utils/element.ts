@@ -1,6 +1,5 @@
 import type { Element } from '../../types';
-import { isIconElement } from '../../utils';
-import { getIconEntity } from './icon';
+import { getIconEntity, isIconElement } from '../../utils';
 
 export function getIndexesFromElement(element: Element): number[] {
   return (

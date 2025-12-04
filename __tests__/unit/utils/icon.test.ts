@@ -3,10 +3,12 @@ import { ElementTypeEnum } from '../../../src/constants';
 import * as resource from '../../../src/resource';
 import {
   createIconElement,
-  getIconElement,
+  getElementRole,
+  getIconEntity,
   isIconElement,
+  setElementRole,
   updateIconElement,
-} from '../../../src/utils/icon';
+} from '../../../src/utils';
 
 const hrefSpy = vi.spyOn(resource, 'getResourceHref');
 
@@ -24,10 +26,11 @@ describe('icon utils', () => {
 
   it('creates icon element with default color', () => {
     const icon = createIconElement('foo');
+    setElementRole(icon, ElementTypeEnum.ItemIcon);
 
     expect(resource.getResourceHref).toHaveBeenCalledWith('foo');
     expect(icon.tagName.toLowerCase()).toBe('use');
-    expect(icon.getAttribute('data-element-type')).toBe(ElementTypeEnum.Icon);
+    expect(getElementRole(icon)).toBe(ElementTypeEnum.ItemIcon);
     expect(icon.getAttribute('href')).toBe('#foo');
     expect(icon.style.color.toLowerCase()).toBe('currentcolor');
   });
@@ -51,20 +54,21 @@ describe('icon utils', () => {
   it('returns icon element from wrappers', () => {
     const icon = createIconElement('inner');
     const wrapper = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    wrapper.setAttribute('data-element-type', ElementTypeEnum.IconGroup);
+    setElementRole(wrapper, ElementTypeEnum.ItemIconGroup);
     wrapper.appendChild(icon);
 
-    expect(getIconElement(icon)).toBe(icon);
-    expect(getIconElement(wrapper)).toBe(icon);
+    expect(getIconEntity(icon)).toBe(icon);
+    expect(getIconEntity(wrapper)).toBe(icon);
 
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    expect(getIconElement(rect)).toBeNull();
+    expect(getIconEntity(rect)).toBeNull();
   });
 
   it('detects icon elements by data attribute', () => {
     const icon = createIconElement('id');
+    setElementRole(icon, ElementTypeEnum.ItemIcon);
     const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    group.setAttribute('data-element-type', ElementTypeEnum.IconGroup);
+    setElementRole(group, ElementTypeEnum.ItemIconGroup);
 
     expect(isIconElement(icon)).toBe(true);
     expect(isIconElement(group)).toBe(true);

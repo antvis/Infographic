@@ -3,7 +3,6 @@
  */
 export const enum ElementTypeEnum {
   Background = 'background',
-  IconGroup = 'icon-group',
   Title = 'title',
   Desc = 'desc',
   ItemsGroup = 'items-group',
