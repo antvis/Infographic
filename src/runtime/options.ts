@@ -2,6 +2,7 @@ import {
   ClickSelect,
   DblClickEditText,
   EditBar,
+  HotkeyHistory,
   ResizeElement,
   SelectHighlight,
 } from '../editor';
@@ -11,6 +12,7 @@ const createDefaultPlugins = () => [new EditBar(), new ResizeElement()];
 const createDefaultInteractions = () => [
   new DblClickEditText(),
   new ClickSelect(),
+  new HotkeyHistory(),
   new SelectHighlight(),
 ];
 

@@ -6,6 +6,7 @@ export { getItemProps, getThemeColors } from './designs/utils';
 export {
   ClickSelect,
   DblClickEditText,
+  HotkeyHistory,
   Interaction,
   SelectHighlight,
 } from './editor/interactions';
