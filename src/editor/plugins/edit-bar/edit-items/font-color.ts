@@ -44,7 +44,7 @@ export const FontColor: EditItem<TextAttributes> = (
     content: picker,
     placement: ['top', 'bottom'],
     offset: 12,
-    trigger: 'click',
+    trigger: 'hover',
     closeOnOutsideClick: true,
     open: false,
     padding: 0,
