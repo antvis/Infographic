@@ -14,6 +14,7 @@ export class ClickHandler {
   private startX = 0;
   private startY = 0;
   private skipClick = false;
+  private dragged = false;
 
   constructor(element: SVGSVGElement, options: ClickHandlerOptions = {}) {
     this.element = element;
@@ -56,6 +57,8 @@ export class ClickHandler {
     this.pointerId = event.pointerId;
     this.startX = event.clientX;
     this.startY = event.clientY;
+    this.dragged = false;
+    this.skipClick = false;
     window.addEventListener('pointermove', this.handlePointerMove, {
       passive: true,
     });
@@ -73,6 +76,7 @@ export class ClickHandler {
     const dy = event.clientY - this.startY;
     if (Math.hypot(dx, dy) > this.dragThreshold) {
       this.skipClick = true;
+      this.dragged = true;
     }
   };
 
@@ -82,6 +86,9 @@ export class ClickHandler {
       window.removeEventListener('pointermove', this.handlePointerMove);
       window.removeEventListener('pointerup', this.handlePointerUp);
       window.removeEventListener('pointercancel', this.handlePointerUp);
+      // Only allow click through if we did not detect a drag.
+      if (!this.dragged) this.skipClick = false;
+      this.dragged = false;
     }
   };
 
