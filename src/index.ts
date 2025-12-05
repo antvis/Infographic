@@ -7,6 +7,7 @@ export {
   BrushSelect,
   ClickSelect,
   DblClickEditText,
+  DragElement,
   HotkeyHistory,
   Interaction,
   SelectHighlight,
