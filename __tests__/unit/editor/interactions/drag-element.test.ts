@@ -45,8 +45,8 @@ vi.mock('../../../../src/utils', async () => {
   const actual = await vi.importActual<any>('../../../../src/utils');
   return {
     ...actual,
-    isEditableText: (...args: any[]) => isEditableTextMock(...args),
-    isEditingText: (...args: any[]) => isEditingTextMock(...args),
+    isEditableText: () => isEditableTextMock(),
+    isEditingText: () => isEditingTextMock(),
   };
 });
 

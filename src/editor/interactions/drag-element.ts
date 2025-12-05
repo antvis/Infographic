@@ -310,18 +310,16 @@ export class DragElement extends Interaction implements IInteraction {
     const yFromAttr = parseNumber(attrs.y, NaN);
     const xFromData = parseNumber(attrs['data-x'], NaN);
     const yFromData = parseNumber(attrs['data-y'], NaN);
-    const x =
-      Number.isFinite(xFromAttr) && !Number.isNaN(xFromAttr)
-        ? xFromAttr
-        : Number.isFinite(xFromData) && !Number.isNaN(xFromData)
-          ? xFromData
-          : bx;
-    const y =
-      Number.isFinite(yFromAttr) && !Number.isNaN(yFromAttr)
-        ? yFromAttr
-        : Number.isFinite(yFromData) && !Number.isNaN(yFromData)
-          ? yFromData
-          : by;
+    const x = Number.isFinite(xFromAttr)
+      ? xFromAttr
+      : Number.isFinite(xFromData)
+        ? xFromData
+        : bx;
+    const y = Number.isFinite(yFromAttr)
+      ? yFromAttr
+      : Number.isFinite(yFromData)
+        ? yFromData
+        : by;
 
     return { x, y, hasX, hasY, hasDataX, hasDataY };
   }
