@@ -219,6 +219,7 @@ export class EditBar extends Plugin implements IPlugin {
       (container.offsetParent as HTMLElement | null) ??
       (document.documentElement as HTMLElement);
     const parentRect = offsetParent.getBoundingClientRect();
+    const viewportHeight = document.documentElement.clientHeight;
     const containerRect = container.getBoundingClientRect();
     const offset = 8;
 
@@ -238,10 +239,15 @@ export class EditBar extends Plugin implements IPlugin {
     let left = anchorTop.x - parentRect.left - containerRect.width / 2;
     left = clamp(left, 0, Math.max(parentRect.width - containerRect.width, 0));
 
-    let top = anchorTop.y - parentRect.top - containerRect.height - offset;
-    if (top < 0) {
-      top = anchorBottom.y - parentRect.top + offset;
-    }
+    // Use viewport space, not container space, to decide whether we have enough room above.
+    const spaceAbove = anchorTop.y - offset;
+    const spaceBelow = viewportHeight - anchorBottom.y - offset;
+    const shouldPlaceAbove =
+      spaceAbove >= containerRect.height || spaceAbove >= spaceBelow;
+
+    let top = shouldPlaceAbove
+      ? anchorTop.y - parentRect.top - containerRect.height - offset
+      : anchorBottom.y - parentRect.top + offset;
     top = clamp(top, 0, Math.max(parentRect.height - containerRect.height, 0));
 
     container.style.left = `${left}px`;
