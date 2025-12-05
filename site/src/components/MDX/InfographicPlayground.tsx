@@ -173,14 +173,14 @@ function ConfigPreview({
   return (
     <div
       className={cn(
-        'relative flex flex-col bg-white dark:bg-gray-950 p-4',
+        'relative flex flex-col bg-white dark:bg-gray-950',
         className
       )}>
       {error ? (
         <PlaygroundErrorBadge message={error} title="JSON 解析失败" />
       ) : null}
       <div className="flex-1 bg-transparent overflow-hidden">
-        <InfographicView options={lastValidConfig} />
+        <InfographicView options={{padding: 20, ...lastValidConfig}} />
       </div>
     </div>
   );
@@ -283,7 +283,7 @@ export function InfographicJsPlayground({
       onCodeChange={setCode}
       preview={
         showPreview ? (
-          <div className="bg-white dark:bg-gray-950 p-4">
+          <div className="bg-white dark:bg-gray-950">
             <JsCodeRunnerPreview code={code} />
           </div>
         ) : null

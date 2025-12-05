@@ -32,6 +32,9 @@ title: 信息图语法
 | themeConfig | `ThemeConfig`           | 否     | 额外主题配置                           | [ThemeConfig](/reference/infographic-types#theme-config)     |
 | svg         | `SVGOptions`            | 否     | svg 容器上的配置                       | [SVGOptions](/reference/infographic-types#svg-options)       |
 | editable    | `boolean`               | 否     | 是否开启编辑能力                        | -                                                     |
+| plugins     | `IPlugin[]`             | 否     | 启用或自定义编辑器插件                  | [IPlugin](/reference/infographic-types#plugin)                  |
+| interactions | `IInteraction[]`        | 否     | 启用或自定义编辑器交互                  | [IInteraction](/reference/infographic-types#interaction)        |
+| elements    | `ElementProps[]`        | 否     | 用于向画布添加初始图形                  | [ElementProps](/reference/infographic-types#element-props)      |
 
 常用搭配：
 
@@ -39,3 +42,4 @@ title: 信息图语法
 - `design`：覆盖或细化模板的结构、数据项、标题
 - `theme`/`themeConfig`：切换主题或调整色板、字体、风格化
 - `data`：填充标题与数据项，是唯一必填项
+- 编辑能力：`editable` 设为 `true` 后，配合 `plugins`、`interactions` 定制编辑器工具，`elements` 可追加初始图形

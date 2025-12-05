@@ -10,7 +10,7 @@ AntV Infographic 采用三层架构：JSX 渲染引擎、运行时、对外 API�
 
 [JSX 渲染引擎](/reference/jsx)实现了独立的 JSX Runtime，在不依赖 React 的情况下用 JSX 描述信息图，并由渲染器将 JSX 元素输出为 SVG。
 
-引擎内置[原语节点](/reference/primitive-nodes)，涵盖 Shape、Container、Text 等基础组件供运行时复用。
+引擎内置[原语节点](/reference/primitive-nodes)，包含几何图形、文本、分组等基础组件，并支持由这些基础组件组合出更复杂的结构。
 
 与 React JSX 不同，框架提供 [createLayout](/reference/create-layout) 以编写自定义布局算法。
 

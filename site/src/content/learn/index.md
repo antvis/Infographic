@@ -23,6 +23,7 @@ const infographic = new Infographic({
   container: '#container',
   width: '100%',
   height: '100%',
+  padding: 30,
   template: 'list-row-simple-horizontal-arrow',
   data: {
     items: [

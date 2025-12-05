@@ -27,6 +27,7 @@ const infographic = new Infographic({
   width: '100%',
   height: '100%',
   editable: true,
+  padding: 30,
   design: {
     title: {
       type: 'default',

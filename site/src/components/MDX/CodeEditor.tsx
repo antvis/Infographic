@@ -188,7 +188,7 @@ export function CodeEditor({
 
   return (
     <div className={cn('sp-code-editor h-full', className)}>
-      <div ref={containerRef} aria-label={ariaLabel} className="h-full p-4" />
+      <div ref={containerRef} aria-label={ariaLabel} className="h-full" />
     </div>
   );
 }
