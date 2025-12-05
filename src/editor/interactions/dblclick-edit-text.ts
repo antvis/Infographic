@@ -6,7 +6,12 @@ import {
   isEditableText,
 } from '../../utils';
 import { UpdateTextCommand } from '../commands';
-import type { IInteraction, InteractionInitOptions } from '../types';
+import type {
+  IInteraction,
+  InteractionInitOptions,
+  Selection,
+  SelectionChangePayload,
+} from '../types';
 import { ClickHandler, getEventTarget } from '../utils';
 import { Interaction } from './base';
 
@@ -14,6 +19,7 @@ export class DblClickEditText extends Interaction implements IInteraction {
   name = 'dblclick-edit-text';
 
   private clickHandler?: ClickHandler;
+  private detachSelectionListener?: () => void;
 
   init(options: InteractionInitOptions) {
     super.init(options);
@@ -29,9 +35,16 @@ export class DblClickEditText extends Interaction implements IInteraction {
             interaction.select([target], 'replace');
             const originalText = getTextContent(target);
             const text = await new Promise<string>((resolve) => {
+              const stopListen = this.listenSelectionChange(target);
               editText(target, {
+                cursorPosition: {
+                  clientX: event.clientX,
+                  clientY: event.clientY,
+                },
                 onBlur: resolve,
+                onCancel: resolve,
               });
+              this.detachSelectionListener = stopListen;
             });
 
             commander.execute(
@@ -45,12 +58,31 @@ export class DblClickEditText extends Interaction implements IInteraction {
 
   destroy() {
     this.clickHandler?.destroy();
+    this.detachSelectionListener?.();
+  }
+
+  private listenSelectionChange(target: Selection[number]) {
+    const handler = ({ next }: SelectionChangePayload) => {
+      if (!next.includes(target)) {
+        this.detachSelectionListener?.();
+        this.detachSelectionListener = undefined;
+        const entity = getTextEntity(target as TextElement);
+        if (entity) entity.blur();
+      }
+    };
+    this.emitter.on('selection:change', handler);
+    return () => this.emitter.off('selection:change', handler);
   }
 }
 
 type EditTextOptions = {
+  cursorPosition?: {
+    clientX: number;
+    clientY: number;
+  };
   onInput?: (text: string) => void;
   onBlur?: (text: string) => void;
+  onCancel?: (text: string) => void;
 };
 
 const EDITOR_STYLE_ID = 'infographic-inline-text-editor-style';
@@ -74,7 +106,7 @@ class InlineTextEditor {
     this.entity.setAttribute('contenteditable', 'true');
     this.entity.classList.add(EDITOR_BASE_CLASS);
     this.entity.focus();
-    this.placeCaretAtEnd();
+    this.placeCaretAtClickPosition();
     this.attachListeners();
   }
 
@@ -153,6 +185,42 @@ class InlineTextEditor {
 
     const plainText = this.getText();
     this.entity.textContent = plainText;
+  }
+
+  private placeCaretAtClickPosition() {
+    const selection = window.getSelection();
+    if (!selection) return;
+
+    const rangeFromPoint = this.getRangeFromPoint();
+    if (rangeFromPoint) {
+      selection.removeAllRanges();
+      selection.addRange(rangeFromPoint);
+      return;
+    }
+
+    this.placeCaretAtEnd();
+  }
+
+  private getRangeFromPoint(): Range | null {
+    const { cursorPosition } = this.options || {};
+    if (!cursorPosition) return null;
+
+    const { clientX, clientY } = cursorPosition;
+    const doc = document as any;
+    const rangeFromPoint: Range | null =
+      doc.caretRangeFromPoint?.(clientX, clientY) ??
+      (() => {
+        const caretPosition = doc.caretPositionFromPoint?.(clientX, clientY);
+        if (!caretPosition) return null;
+        const caretRange = document.createRange();
+        caretRange.setStart(caretPosition.offsetNode, caretPosition.offset);
+        caretRange.collapse(true);
+        return caretRange;
+      })();
+
+    if (!rangeFromPoint) return null;
+    if (!this.entity.contains(rangeFromPoint.startContainer)) return null;
+    return rangeFromPoint;
   }
 
   private placeCaretAtEnd() {

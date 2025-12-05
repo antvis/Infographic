@@ -40,12 +40,14 @@ export class ClickSelect extends Interaction implements IInteraction {
 
     document.addEventListener('keydown', this.onShiftKeyDown);
     document.addEventListener('keyup', this.onShiftKeyUp);
+    document.addEventListener('keydown', this.onEscKeyDown);
   }
 
   destroy() {
     this.clickHandler?.destroy();
     document.removeEventListener('keydown', this.onShiftKeyDown);
     document.removeEventListener('keyup', this.onShiftKeyUp);
+    document.removeEventListener('keydown', this.onEscKeyDown);
   }
 
   private shiftKey = false;
@@ -59,6 +61,12 @@ export class ClickSelect extends Interaction implements IInteraction {
   private onShiftKeyUp = (event: KeyboardEvent) => {
     if (event.key === 'Shift') {
       this.shiftKey = false;
+    }
+  };
+
+  private onEscKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      this.interaction.clearSelection();
     }
   };
 }

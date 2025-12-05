@@ -29,6 +29,7 @@ import {
 export interface EditBarOptions {
   style?: Partial<CSSStyleDeclaration>;
   className?: string;
+  getContainer?: HTMLElement | (() => HTMLElement);
 }
 
 type EditItem = HTMLElement;
@@ -163,7 +164,12 @@ export class EditBar extends Plugin implements IPlugin {
 
     this.container = container;
 
-    this.editor.getDocument().parentNode?.appendChild(container);
+    const { getContainer } = this.options || {};
+    const resolvedContainer =
+      typeof getContainer === 'function' ? getContainer() : getContainer;
+    const containerParent = resolvedContainer ?? document.body;
+
+    containerParent?.appendChild(container);
 
     return container;
   }
