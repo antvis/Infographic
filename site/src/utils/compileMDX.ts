@@ -86,9 +86,10 @@ export default async function compileMDX(
       .join('\n');
 
   // Turn the MDX we just read into some JS we can execute.
-  const {remarkPlugins} = require('../../plugins/markdownToHtml');
+  const {getRemarkPlugins} = require('../../plugins/markdownToHtml');
   const {compile: compileMdx} = await import('@mdx-js/mdx');
   const visit = (await import('unist-util-visit')).default;
+  const remarkPlugins = await getRemarkPlugins();
   const jsxCode = await compileMdx(mdxWithFakeImports, {
     remarkPlugins: [
       ...remarkPlugins,
