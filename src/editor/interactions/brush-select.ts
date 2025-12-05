@@ -5,7 +5,11 @@ import {
   setAttributes,
 } from '../../utils';
 import type { IInteraction, InteractionInitOptions, Selection } from '../types';
-import { clientToViewport, getElementViewportBounds } from '../utils';
+import {
+  clientToViewport,
+  getElementViewportBounds,
+  getEventTarget,
+} from '../utils';
 import { Interaction } from './base';
 
 type Rect = { x: number; y: number; width: number; height: number };
@@ -39,6 +43,7 @@ export class BrushSelect extends Interaction implements IInteraction {
     if (!this.interaction.isActive()) return;
     if (event.button !== 0) return;
     if (this.isTextSelectionTarget(event.target)) return;
+    if (this.hasElementAtStart(event.target)) return;
 
     this.interaction.executeExclusiveInteraction(
       this,
@@ -188,6 +193,12 @@ export class BrushSelect extends Interaction implements IInteraction {
 
   private isSelectable(element: Selection[number]) {
     return isEditableText(element) || isIconElement(element);
+  }
+
+  private hasElementAtStart(target: EventTarget | null) {
+    if (!(target instanceof Element)) return false;
+    if (getEventTarget(target as unknown as SVGElement)) return true;
+    return Boolean(target.closest?.('[data-element-type]'));
   }
 
   private isTextSelectionTarget(target: EventTarget | null) {
