@@ -22,13 +22,13 @@ export class HotkeyHistory extends Interaction implements IInteraction {
     this.hotkey?.destroy();
   }
 
-  private handleUndo = (event: KeyboardEvent) => {
+  private handleUndo = async (event: KeyboardEvent) => {
     event.preventDefault();
-    this.commander.undo();
+    await this.commander.undo();
   };
 
-  private handleRedo = (event: KeyboardEvent) => {
+  private handleRedo = async (event: KeyboardEvent) => {
     event.preventDefault();
-    this.commander.redo();
+    await this.commander.redo();
   };
 }

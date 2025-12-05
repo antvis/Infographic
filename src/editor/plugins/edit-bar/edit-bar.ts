@@ -47,12 +47,14 @@ export class EditBar extends Plugin implements IPlugin {
     const { emitter } = options;
     emitter.on('selection:change', this.handleSelectionChanged);
     emitter.on('selection:geometrychange', this.handleGeometryChanged);
+    emitter.on('history:change', this.handleHistoryChanged);
   }
 
   destroy() {
     const { emitter } = this;
     emitter.off('selection:change', this.handleSelectionChanged);
     emitter.off('selection:geometrychange', this.handleGeometryChanged);
+    emitter.off('history:change', this.handleHistoryChanged);
     this.container?.remove();
   }
 
@@ -77,6 +79,12 @@ export class EditBar extends Plugin implements IPlugin {
     target: Selection[number];
   }) => {
     if (!this.selection.includes(target) || !this.container) return;
+    this.placeEditBar(this.container, this.selection);
+    showContainer(this.container);
+  };
+
+  private handleHistoryChanged = () => {
+    if (!this.container || this.selection.length === 0) return;
     this.placeEditBar(this.container, this.selection);
     showContainer(this.container);
   };

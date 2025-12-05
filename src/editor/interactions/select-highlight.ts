@@ -29,6 +29,7 @@ export class SelectHighlight extends Interaction implements IInteraction {
     const { emitter } = options;
     emitter.on('selection:change', this.handleSelectionChanged);
     emitter.on('selection:geometrychange', this.handleGeometryChanged);
+    emitter.on('history:change', this.handleHistoryChanged);
     this.highlightSelection(this.interaction.getSelection());
   }
 
@@ -37,6 +38,7 @@ export class SelectHighlight extends Interaction implements IInteraction {
     const { emitter } = this;
     emitter.off('selection:change', this.handleSelectionChanged);
     emitter.off('selection:geometrychange', this.handleGeometryChanged);
+    emitter.off('history:change', this.handleHistoryChanged);
   }
 
   private handleSelectionChanged = ({ next }: SelectionChangePayload) => {
@@ -49,6 +51,10 @@ export class SelectHighlight extends Interaction implements IInteraction {
     if (this.interaction.isSelected(target)) {
       this.highlightSelection(this.interaction.getSelection());
     }
+  };
+
+  private handleHistoryChanged = () => {
+    this.highlightSelection(this.interaction.getSelection());
   };
 
   private highlightSelection(selection: Selection) {

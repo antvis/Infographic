@@ -11,7 +11,7 @@ export class ClickSelect extends Interaction implements IInteraction {
     super.init(options);
     const { editor, interaction } = this;
 
-    this.clickHandler = new ClickHandler(editor.getDocument());
+    this.clickHandler = new ClickHandler(editor.getDocument(), { delay: 0 });
 
     const handleSelect = (event: MouseEvent) => {
       if (!interaction.isActive()) return;

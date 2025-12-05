@@ -9,6 +9,7 @@ import { UpdateElementCommand } from '../commands';
 import type {
   IPlugin,
   PluginInitOptions,
+  Selection,
   SelectionChangePayload,
 } from '../types';
 import { getElementViewportBounds } from '../utils';
@@ -53,6 +54,8 @@ export class ResizeElement extends Plugin implements IPlugin {
     super.init(options);
     const { emitter } = options;
     emitter.on('selection:change', this.handleSelectionChange);
+    emitter.on('selection:geometrychange', this.handleGeometryChange);
+    emitter.on('history:change', this.handleHistoryChange);
     emitter.on('deactivated', this.handleDeactivate);
   }
 
@@ -61,6 +64,8 @@ export class ResizeElement extends Plugin implements IPlugin {
     this.removeContainer();
     const { emitter } = this;
     emitter.off('selection:change', this.handleSelectionChange);
+    emitter.off('selection:geometrychange', this.handleGeometryChange);
+    emitter.off('history:change', this.handleHistoryChange);
     emitter.off('deactivated', this.handleDeactivate);
   }
 
@@ -80,6 +85,25 @@ export class ResizeElement extends Plugin implements IPlugin {
     this.target = null;
     this.hideHandles();
     this.cancelDrag();
+  };
+
+  private handleGeometryChange = ({
+    target,
+  }: {
+    type: 'selection:geometrychange';
+    target: Selection[number];
+  }) => {
+    if (!this.target || target !== this.target) return;
+    const rect = this.getViewportRect(this.target);
+    this.lastViewportRect = rect;
+    this.updateHandles(rect);
+  };
+
+  private handleHistoryChange = () => {
+    if (!this.target) return;
+    const rect = this.getViewportRect(this.target);
+    this.lastViewportRect = rect;
+    this.updateHandles(rect);
   };
 
   private ensureContainer(): SVGGElement {
