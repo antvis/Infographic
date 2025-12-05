@@ -34,7 +34,7 @@ export class Editor implements IEditor {
     const plugin = new PluginManager();
     const interaction = new InteractionManager();
 
-    commander.init({ state });
+    commander.init({ state, emitter });
     state.init({
       emitter,
       editor: this,

@@ -1,3 +1,4 @@
+import type { IEventEmitter } from '../../types';
 import type { IStateManager } from './state';
 
 export interface ICommandManager {
@@ -21,5 +22,11 @@ export interface ICommand {
 }
 
 export interface CommandManagerInitOptions {
+  emitter: IEventEmitter;
   state: IStateManager;
 }
+
+export type HistoryChangePayload = {
+  type: 'history:change';
+  action: 'undo' | 'redo';
+};

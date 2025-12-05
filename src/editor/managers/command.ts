@@ -1,3 +1,4 @@
+import type { IEventEmitter } from '../../types';
 import { BatchCommand } from '../commands';
 import type {
   CommandManagerInitOptions,
@@ -7,6 +8,7 @@ import type {
 } from '../types';
 
 export class CommandManager implements ICommandManager {
+  private emitter!: IEventEmitter;
   private state!: IStateManager;
   private undoStack: ICommand[] = [];
   private redoStack: ICommand[] = [];
@@ -33,6 +35,7 @@ export class CommandManager implements ICommandManager {
     if (command) {
       await command.undo(this.state);
       this.redoStack.push(command);
+      this.emitHistoryChange('undo');
     }
   }
 
@@ -41,6 +44,7 @@ export class CommandManager implements ICommandManager {
     if (command) {
       await command.apply(this.state);
       this.undoStack.push(command);
+      this.emitHistoryChange('redo');
     }
   }
 
@@ -67,5 +71,12 @@ export class CommandManager implements ICommandManager {
 
   destroy() {
     this.clear();
+  }
+
+  private emitHistoryChange(action: 'undo' | 'redo') {
+    this.emitter?.emit('history:change', {
+      type: 'history:change',
+      action,
+    });
   }
 }
