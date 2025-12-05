@@ -1,3 +1,4 @@
+import EventEmitter from 'eventemitter3';
 import { describe, expect, it, vi } from 'vitest';
 import { ICommand } from '../../../../src/editor';
 import { CommandManager } from '../../../../src/editor/managers/command';
@@ -11,6 +12,7 @@ const createCommand = (label: string, order: string[] = []): ICommand => ({
   }),
   serialize: vi.fn(() => ({ type: label })),
 });
+const emitter = new EventEmitter();
 
 describe('CommandManager', () => {
   it('executes commands and manages undo/redo stacks', async () => {
@@ -19,7 +21,7 @@ describe('CommandManager', () => {
     const order: string[] = [];
     const command = createCommand('one', order);
 
-    commandManager.init({ state });
+    commandManager.init({ state, emitter });
     await commandManager.execute(command);
 
     expect(command.apply).toHaveBeenCalledWith(state);
@@ -43,7 +45,7 @@ describe('CommandManager', () => {
     const commandB = createCommand('b', order);
     const commandManager = new CommandManager();
 
-    commandManager.init({ state });
+    commandManager.init({ state, emitter });
     await commandManager.executeBatch([commandA, commandB]);
     await Promise.resolve();
 
