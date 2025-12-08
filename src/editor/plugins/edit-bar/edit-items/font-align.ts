@@ -5,18 +5,7 @@ import type {
 } from '../../../../types';
 import { injectStyleOnce } from '../../../../utils';
 import { UpdateElementCommand } from '../../../commands';
-import {
-  AlignBottom,
-  AlignCenter,
-  AlignJustify,
-  AlignLeft,
-  AlignMiddle,
-  AlignRight,
-  AlignTop,
-  Button,
-  IconButton,
-  Popover,
-} from '../components';
+import { Button, IconButton, Popover, TEXT_ICONS } from '../components';
 import type { EditItem } from './types';
 
 // 常量定义
@@ -24,15 +13,15 @@ const GRID_CLASS = 'infographic-font-align-grid';
 const GRID_STYLE_ID = 'infographic-font-align-grid-style';
 
 const HORIZONTAL_ALIGN_OPTIONS = [
-  { icon: AlignLeft, align: 'LEFT' },
-  { icon: AlignCenter, align: 'CENTER' },
-  { icon: AlignRight, align: 'RIGHT' },
+  { icon: TEXT_ICONS.alignLeft, align: 'LEFT' },
+  { icon: TEXT_ICONS.alignCenter, align: 'CENTER' },
+  { icon: TEXT_ICONS.alignRight, align: 'RIGHT' },
 ] as const;
 
 const VERTICAL_ALIGN_OPTIONS = [
-  { icon: AlignTop, align: 'TOP' },
-  { icon: AlignMiddle, align: 'MIDDLE' },
-  { icon: AlignBottom, align: 'BOTTOM' },
+  { icon: TEXT_ICONS.alignTop, align: 'TOP' },
+  { icon: TEXT_ICONS.alignMiddle, align: 'MIDDLE' },
+  { icon: TEXT_ICONS.alignBottom, align: 'BOTTOM' },
 ] as const;
 
 const GRID_STYLES = `
@@ -67,7 +56,7 @@ export const FontAlign: EditItem<TextAttributes> = (
     vertical: attrs['data-vertical-align'],
   };
 
-  const button = IconButton({ icon: AlignJustify });
+  const button = IconButton({ icon: TEXT_ICONS.alignJustify });
 
   const content = createAlignContent(state, (align) => {
     const attributes: Partial<TextAttributes> = {};

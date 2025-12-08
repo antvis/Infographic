@@ -6,7 +6,7 @@ import {
   injectStyleOnce,
 } from '../../../../utils';
 import { UpdateElementCommand } from '../../../commands';
-import { A, IconButton, Popover } from '../components';
+import { IconButton, Popover, TEXT_ICONS } from '../components';
 import type { EditItem } from './types';
 
 const FONT_LIST_CLASS = 'infographic-font-family-list';
@@ -51,7 +51,7 @@ export const FontFamily: EditItem<TextAttributes> = (
     );
   });
 
-  const button = IconButton({ icon: A });
+  const button = IconButton({ icon: TEXT_ICONS.fontFamily });
 
   const popover = Popover({
     target: button,
