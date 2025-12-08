@@ -11,6 +11,7 @@ import {
   setElementRole,
 } from '../../../utils';
 import type {
+  ICommandManager,
   IPlugin,
   PluginInitOptions,
   Selection,
@@ -19,6 +20,7 @@ import type {
 import { getElementViewportBounds, getScreenCTM } from '../../utils';
 import { Plugin } from '../base';
 import {
+  ElementAlign,
   FontAlign,
   FontColor,
   FontFamily,
@@ -191,9 +193,11 @@ export class EditBar extends Plugin implements IPlugin {
     const attrs = getCommonAttrs(
       selection.map((text) => getTextElementProps(text).attributes || {}),
     );
-    return [FontColor, FontSize, FontAlign, FontFamily].map((item) =>
+    const alignment = createElementAlignItem(this.commander, selection, attrs);
+    const items = [FontColor, FontSize, FontAlign, FontFamily].map((item) =>
       item(selection, attrs, this.commander),
     );
+    return alignment ? [...items, alignment] : items;
   }
 
   protected getIconEditItems(selection: Selection): EditItem[] {
@@ -211,12 +215,14 @@ export class EditBar extends Plugin implements IPlugin {
     return [];
   }
 
-  protected getGeometryCollectionEditItems(_selection: Selection): EditItem[] {
-    return [];
+  protected getGeometryCollectionEditItems(selection: Selection): EditItem[] {
+    const alignment = createElementAlignItem(this.commander, selection, {});
+    return alignment ? [alignment] : [];
   }
 
-  protected getElementCollectionEditItems(_selection: Selection): EditItem[] {
-    return [];
+  protected getElementCollectionEditItems(selection: Selection): EditItem[] {
+    const alignment = createElementAlignItem(this.commander, selection, {});
+    return alignment ? [alignment] : [];
   }
 
   private placeEditBar(container: HTMLDivElement, selection: Selection) {
@@ -279,5 +285,17 @@ function setContainerItems(container: HTMLDivElement, items: EditItem[]) {
   container.innerHTML = '';
   items.forEach((node) => {
     container.appendChild(node);
+  });
+}
+
+function createElementAlignItem(
+  commander: ICommandManager,
+  selection: Selection,
+  attrs: Record<string, any>,
+): EditItem | null {
+  if (selection.length <= 1) return null;
+  const enableDistribution = selection.length > 2;
+  return ElementAlign(selection, attrs, commander, {
+    enableDistribution,
   });
 }

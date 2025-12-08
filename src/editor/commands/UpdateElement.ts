@@ -6,6 +6,7 @@ import {
   getTextElementProps,
   isEditableText,
   isIconElement,
+  setAttributes,
   updateIconElement,
   updateTextElement,
 } from '../../utils';
@@ -55,6 +56,8 @@ function updateElement(element: Element, props: Partial<ElementProps>) {
     updateTextElement(element, props as TextProps);
   } else if (isIconElement(element)) {
     updateIconElement(element as IconElement, undefined, props.attributes);
+  } else if (props.attributes) {
+    setAttributes(element, props.attributes);
   }
 }
 

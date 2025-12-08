@@ -5,4 +5,5 @@ export type EditItem<T extends BaseAttributes = BaseAttributes> = (
   selection: Selection,
   attrs: T,
   commander: ICommandManager,
+  options?: Record<string, any>,
 ) => HTMLElement;
