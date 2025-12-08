@@ -91,14 +91,15 @@ function createFontSizeContent(
 }
 
 function createLabelIcon(label: string): Icon {
-  return ({ width = '1.2em', height = '1.2em' } = {}) => {
+  return () => {
+    const size = '1.2em';
     const span = document.createElement('span');
     span.textContent = label;
     span.style.display = 'inline-flex';
     span.style.alignItems = 'center';
     span.style.justifyContent = 'center';
-    span.style.width = width;
-    span.style.height = height;
+    span.style.width = size;
+    span.style.height = size;
     span.style.fontSize = '12px';
     return span;
   };

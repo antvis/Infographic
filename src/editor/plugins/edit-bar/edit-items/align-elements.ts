@@ -131,7 +131,7 @@ function alignSelection(
 
   const items = selection
     .map((element) => createAlignableItem(element, svg))
-    .filter(Boolean) as AlignableItem[];
+    .filter(Boolean);
 
   if (!items.length) return;
   const movable = items.filter((item) => item.movable);
