@@ -78,7 +78,7 @@ export function isGeometryElement(
   ].includes(tagName);
 }
 
-export function isIconElement(element: Element) {
+export function isIconElement(element: SVGElement): boolean {
   return isItemIcon(element) || isItemIconGroup(element);
 }
 

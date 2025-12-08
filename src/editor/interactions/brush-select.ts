@@ -1,14 +1,10 @@
-import {
-  createElement,
-  isEditableText,
-  isIconElement,
-  setAttributes,
-} from '../../utils';
+import { createElement, setAttributes } from '../../utils';
 import type { IInteraction, InteractionInitOptions, Selection } from '../types';
 import {
   clientToViewport,
   getElementViewportBounds,
   getEventTarget,
+  getSelectableTarget,
 } from '../utils';
 import { Interaction } from './base';
 
@@ -159,9 +155,7 @@ export class BrushSelect extends Interaction implements IInteraction {
     const svg = this.editor.getDocument();
 
     const candidates = Array.from(
-      svg.querySelectorAll<SVGGraphicsElement | SVGForeignObjectElement>(
-        '[data-element-type]',
-      ),
+      svg.querySelectorAll<SVGElement>('[data-element-type]'),
     );
 
     const intersects = (a: Rect, b: Rect) => {
@@ -172,9 +166,12 @@ export class BrushSelect extends Interaction implements IInteraction {
       return !(ax2 < b.x || bx2 < a.x || ay2 < b.y || by2 < a.y);
     };
 
+    const collected = new Set<Selection[number]>();
     return candidates.reduce<Selection>((selection, node) => {
-      const element = node as unknown as Selection[number];
-      if (!this.isSelectable(element)) return selection;
+      const element = getSelectableTarget(node as unknown as SVGElement) as
+        | Selection[number]
+        | null;
+      if (!element || collected.has(element)) return selection;
 
       const bounds = getElementViewportBounds(svg, element);
       const targetRect: Rect = {
@@ -186,13 +183,10 @@ export class BrushSelect extends Interaction implements IInteraction {
 
       if (intersects(rect, targetRect)) {
         selection.push(element);
+        collected.add(element);
       }
       return selection;
     }, []);
-  }
-
-  private isSelectable(element: Selection[number]) {
-    return isEditableText(element) || isIconElement(element);
   }
 
   private hasElementAtStart(target: EventTarget | null) {

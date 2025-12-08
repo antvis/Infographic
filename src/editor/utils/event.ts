@@ -1,7 +1,9 @@
 import { Element, IconElement, TextElement } from '../../types';
 import {
   isEditArea,
+  isEditableText,
   isForeignObjectElement,
+  isIconElement,
   isItemIcon,
   isItemIconGroup,
   isRoughElement,
@@ -13,7 +15,7 @@ export function getEventTarget(element: SVGElement | null): Element | null {
   if (!element) return null;
   const preprocess = [getRoughEventTarget];
 
-  let target = element as Element;
+  let target = element as SVGElement;
 
   for (const fn of preprocess) {
     const result = fn(target);
@@ -23,34 +25,46 @@ export function getEventTarget(element: SVGElement | null): Element | null {
     }
   }
 
+  return getSelectableTarget(target);
+}
+
+export function getSelectableTarget(
+  element: SVGElement | null,
+): Element | null {
+  if (!element) return null;
+
   const recognizers = [getTextEventTarget, getIconEventTarget];
 
   for (const fn of recognizers) {
-    const result = fn(target);
+    const result = fn(element);
     if (result) {
       return result;
     }
   }
 
-  if (isEditArea(target)) {
-    return target;
+  if (isEditArea(element)) {
+    return element as unknown as Element;
+  }
+
+  if (isEditableText(element) || isIconElement(element)) {
+    return element as unknown as Element;
   }
 
   return null;
 }
 
-const getRoughEventTarget = (element: SVGElement): Element | null => {
+const getRoughEventTarget = (element: SVGElement): SVGElement | null => {
   const is = (ele: SVGElement | null) => {
     if (!ele) return false;
     return isRoughElement(ele) || isRoughVolume(ele);
   };
 
   if (is(element)) {
-    return element.parentElement as unknown as Element;
+    return element.parentElement as unknown as SVGElement;
   }
 
   if (is(element.parentElement as unknown as SVGElement)) {
-    return element.parentElement?.parentElement as unknown as Element;
+    return element.parentElement?.parentElement as unknown as SVGElement;
   }
 
   return null;
