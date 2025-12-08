@@ -28,5 +28,5 @@ export interface CommandManagerInitOptions {
 
 export type HistoryChangePayload = {
   type: 'history:change';
-  action: 'undo' | 'redo';
+  action: 'execute' | 'undo' | 'redo';
 };

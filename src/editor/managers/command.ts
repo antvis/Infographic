@@ -21,6 +21,7 @@ export class CommandManager implements ICommandManager {
     await command.apply(this.state);
     this.undoStack.push(command);
     this.redoStack = [];
+    this.emitHistoryChange('execute');
   }
 
   async executeBatch(commands: ICommand[]) {
@@ -73,7 +74,7 @@ export class CommandManager implements ICommandManager {
     this.clear();
   }
 
-  private emitHistoryChange(action: 'undo' | 'redo') {
+  private emitHistoryChange(action: 'execute' | 'undo' | 'redo') {
     this.emitter?.emit('history:change', {
       type: 'history:change',
       action,
