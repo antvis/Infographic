@@ -67,6 +67,12 @@ export class EditBar extends Plugin implements IPlugin {
     }
     const container = this.getOrCreateEditBar();
     const items = this.getEditItems(next);
+
+    if (items.length === 0) {
+      hideContainer(container);
+      return;
+    }
+
     setContainerItems(container, items);
 
     this.placeEditBar(container, next);
