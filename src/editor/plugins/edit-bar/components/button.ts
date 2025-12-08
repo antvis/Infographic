@@ -27,7 +27,7 @@ export const IconButton = ({
   if (activate) button.setAttribute('data-activate', 'true');
   if (onClick) button.addEventListener('click', onClick);
 
-  const iconElement = icon({ width: '1.2em', height: '1.2em' });
+  const iconElement = icon();
   button.appendChild(iconElement);
 
   const setActivate = (next: boolean) => {

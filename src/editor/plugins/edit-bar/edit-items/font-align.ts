@@ -56,7 +56,7 @@ export const FontAlign: EditItem<TextAttributes> = (
     vertical: attrs['data-vertical-align'],
   };
 
-  const button = IconButton({ icon: TEXT_ICONS.alignJustify });
+  const button = IconButton({ icon: TEXT_ICONS.align });
 
   const content = createAlignContent(state, (align) => {
     const attributes: Partial<TextAttributes> = {};
