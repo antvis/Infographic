@@ -84,6 +84,12 @@ interface ItemDatum {
 - hierarchy-tree-curved-line-rounded-rect-node
 - hierarchy-tree-tech-style-badge-card
 - chart-column-simple
+- chart-bar-plain-text
+- chart-line-plain-text
+- chart-pie-plain-text
+- chart-pie-compact-card
+- chart-pie-donut-plain-text
+- chart-pie-donut-pill-badge
 
 ## 注意事项
 - 必须严格按照 \`\`\`json 代码块的格式返回信息图配置
