@@ -1,4 +1,7 @@
+export * from './chart-bar';
 export * from './chart-column';
+export * from './chart-line';
+export * from './chart-pie';
 export * from './compare-binary-horizontal';
 export * from './compare-hierarchy-left-right';
 export * from './compare-hierarchy-row';
