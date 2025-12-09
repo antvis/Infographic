@@ -23,7 +23,11 @@ const createDefaultInteractions = () => [
 ];
 
 export const DEFAULT_OPTIONS: Partial<InfographicOptions> = {
-  padding: 0,
+  padding: 20,
+  theme: 'light',
+  themeConfig: {
+    palette: 'antv',
+  },
   get plugins() {
     return createDefaultPlugins();
   },

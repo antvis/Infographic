@@ -16,6 +16,7 @@ import { Renderer } from '../renderer';
 import { IEventEmitter } from '../types';
 import { getTypes, parseSVG } from '../utils';
 import { DEFAULT_OPTIONS } from './options';
+import { mergeOptions } from './utils';
 
 export class Infographic {
   rendered: boolean = false;
@@ -35,7 +36,9 @@ export class Infographic {
       data: cloneDeep(options.data),
       elements: cloneDeep(options.elements || []),
     };
-    this.parsedOptions = parseOptions({ ...DEFAULT_OPTIONS, ...this.options });
+    this.parsedOptions = parseOptions(
+      mergeOptions(DEFAULT_OPTIONS, this.options),
+    );
   }
 
   getOptions() {
