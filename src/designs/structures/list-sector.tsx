@@ -1,3 +1,4 @@
+import { ElementTypeEnum } from '../../constants';
 import type { ComponentType, JSXElement } from '../../jsx';
 import { Ellipse, getElementBounds, Group, Path, Text } from '../../jsx';
 import { BtnAdd, BtnRemove, BtnsGroup, ItemsGroup } from '../components';
@@ -267,7 +268,6 @@ export const ListSector: ComponentType<ListSectorProps> = (props) => {
         />
       )}
       <Text
-        id="title"
         x={titleCenterX - titleWidth / 2}
         y={titleCenterY - titleHeight / 2}
         width={titleWidth}
@@ -277,6 +277,7 @@ export const ListSector: ComponentType<ListSectorProps> = (props) => {
         fontSize={24}
         fontWeight="bold"
         fill={themeColors.colorText}
+        data-element-type={ElementTypeEnum.Title}
       >
         {title}
       </Text>
