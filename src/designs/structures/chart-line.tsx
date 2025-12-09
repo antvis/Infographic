@@ -2,7 +2,7 @@ import { scaleLinear } from 'd3';
 import type { ComponentType, JSXElement } from '../../jsx';
 import { Defs, Ellipse, getElementBounds, Group, Path, Text } from '../../jsx';
 import { ItemDatum, Padding } from '../../types';
-import { parsePadding } from '../../utils';
+import { getSimpleHash, parsePadding } from '../../utils';
 import { ItemsGroup } from '../components';
 import { FlexLayout } from '../layouts';
 import { getColorPrimary, getPaletteColor, getThemeColors } from '../utils';
@@ -111,9 +111,6 @@ export const ChartLine: ComponentType<ChartLineProps> = (props) => {
   const colorPrimary = getColorPrimary(options);
   const themeColors = getThemeColors(options.themeConfig);
   const axisColor = themeColors.colorText || '#666';
-  const gradientIdBase = `chart-line-${Math.random().toString(36).slice(2, 8)}`;
-  const gradientStrokeId = `${gradientIdBase}-stroke`;
-  const gradientAreaId = `${gradientIdBase}-area`;
 
   const gridElements: JSXElement[] = [];
   const axisElements: JSXElement[] = [];
@@ -235,6 +232,18 @@ export const ChartLine: ComponentType<ChartLineProps> = (props) => {
       <stop offset="100%" stopColor={lastColor} stopOpacity="0.04" />,
     );
   }
+
+  const gradientIdBase = `chart-line-${getSimpleHash(
+    [
+      derivedChartWidth,
+      height,
+      axisColor,
+      colorPrimary,
+      colorStopsData.map((s) => `${s.x.toFixed(2)}-${s.color}`).join(),
+    ].join(':'),
+  )}`;
+  const gradientStrokeId = `${gradientIdBase}-stroke`;
+  const gradientAreaId = `${gradientIdBase}-area`;
 
   const smoothLinePath = createSmoothPath(pointPositions);
 

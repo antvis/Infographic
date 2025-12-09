@@ -150,7 +150,6 @@ const TEMPLATE_ENTRIES: [string, any][] = [
   ['hierarchy-tree-tech-style-ribbon-card', DATASET.HIERARCHY],
   ['hierarchy-tree-dashed-line-ribbon-card', DATASET.HIERARCHY],
   ['hierarchy-tree-distributed-origin-ribbon-card', DATASET.HIERARCHY],
-  ['hierarchy-tree-distributed-origin-ribbon-card', DATASET.HIERARCHY], // 注意：原代码中有重复项，这里保留
   ['hierarchy-tree-dashed-arrow-ribbon-card', DATASET.HIERARCHY],
   ['hierarchy-tree-curved-line-ribbon-card', DATASET.HIERARCHY],
 ];
