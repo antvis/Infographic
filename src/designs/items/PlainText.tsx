@@ -8,6 +8,7 @@ export interface LabelTextProps extends BaseItemProps {
   width?: number;
   formatter?: (text?: string) => string;
   usePaletteColor?: boolean;
+  lineNumber?: number;
 }
 
 export const LabelText: ComponentType<LabelTextProps> = (props) => {
@@ -18,19 +19,34 @@ export const LabelText: ComponentType<LabelTextProps> = (props) => {
       width = 120,
       themeColors,
       positionH = 'normal',
+      positionV = 'center',
       formatter = (text?: string) => text || '',
       usePaletteColor = false,
+      lineNumber = 1,
     },
     restProps,
-  ] = getItemProps(props, ['width', 'formatter', 'usePaletteColor']);
+  ] = getItemProps(props, [
+    'width',
+    'formatter',
+    'usePaletteColor',
+    'lineNumber',
+  ]);
+
+  const fontSize = 14;
+  const lineHeight = 1.4;
+  const height =
+    (restProps.height as number | undefined) ??
+    Math.ceil(lineNumber * lineHeight * fontSize);
 
   return (
     <ItemLabel
       {...restProps}
       indexes={indexes}
       width={width}
+      height={height}
+      lineHeight={lineHeight}
       fill={usePaletteColor ? themeColors.colorPrimary : themeColors.colorText}
-      fontSize={14}
+      fontSize={fontSize}
       fontWeight="regular"
       alignHorizontal={
         positionH === 'flipped'
@@ -39,7 +55,13 @@ export const LabelText: ComponentType<LabelTextProps> = (props) => {
             ? 'center'
             : 'left'
       }
-      alignVertical="middle"
+      alignVertical={
+        positionV === 'flipped'
+          ? 'bottom'
+          : positionV === 'center'
+            ? 'middle'
+            : 'top'
+      }
     >
       {formatter(datum.label || datum.desc)}
     </ItemLabel>
