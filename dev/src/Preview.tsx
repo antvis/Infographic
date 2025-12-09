@@ -327,7 +327,6 @@ export const Preview = () => {
             options={{
               template,
               data: parsedData,
-              padding: 20,
               theme,
               themeConfig,
               editable: true,

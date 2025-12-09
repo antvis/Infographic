@@ -198,6 +198,7 @@ export const Composite = () => {
 
     const value: InfographicOptions = {
       padding: 20,
+      editable: true,
       design: {
         title: 'default',
         structure: structureObj,
