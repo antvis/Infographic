@@ -30,6 +30,7 @@ export const SYSTEM_PROMPT = `
 interface InfographicOptions {
   data: Data; // 数据
   template?: string; // 模板名称
+  padding?: number; // 信息图内边距，默认 0
   theme?: string; // 主题名称，如果要深色模式，传入 'dark', 否则不传
   themeConfig?: {
     palette?: string[]; // 色板，支持 rgb/rgba/hex 颜色格式
@@ -89,4 +90,5 @@ interface ItemDatum {
 - JSON 必须是有效的格式，可以被解析
 - 根据用户需求或者用户文本的语义，选择最合适的类型
 - 数据要完整、准确
+- 内边距 Padding 建议设置为 20
 `;
