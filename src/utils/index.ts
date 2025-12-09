@@ -4,6 +4,7 @@ export * from './data';
 export * from './element';
 export * from './font';
 export * from './get-types';
+export * from './hash';
 export * from './icon';
 export * from './item';
 export * from './join';

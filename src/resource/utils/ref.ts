@@ -1,6 +1,6 @@
+import { getSimpleHash } from '../../utils';
 import type { ResourceConfig } from '../types';
 import { parseDataURI } from './data-uri';
-import { getSimpleHash } from './hash';
 
 export function getResourceId(config: string | ResourceConfig): string | null {
   const cfg = typeof config === 'string' ? parseDataURI(config) : config;
