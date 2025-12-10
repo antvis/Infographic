@@ -41,6 +41,10 @@
     {
       "title": "AI 生成信息图",
       "path": "/ai"
+    },
+    {
+      "title": "图标库",
+      "path": "/icon"
     }
   ]
 }

@@ -128,7 +128,14 @@ export default function TopNav({
 }: {
   routeTree: RouteItem;
   breadcrumbs: RouteItem[];
-  section: 'learn' | 'reference' | 'examples' | 'ai' | 'home' | 'unknown';
+  section:
+    | 'learn'
+    | 'reference'
+    | 'examples'
+    | 'ai'
+    | 'icon'
+    | 'home'
+    | 'unknown';
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
@@ -297,6 +304,9 @@ export default function TopNav({
                     <IconStarTwinkle className="w-4 h-4" />
                     AI
                   </span>
+                </NavItem>
+                <NavItem isActive={section === 'icon'} url="/icon">
+                  Icon
                 </NavItem>
               </div>
               <div className="flex w-full md:hidden"></div>

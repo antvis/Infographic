@@ -29,7 +29,14 @@ interface PageProps {
     version?: 'experimental' | 'canary';
     description?: string;
   };
-  section: 'learn' | 'reference' | 'examples' | 'ai' | 'home' | 'unknown';
+  section:
+    | 'learn'
+    | 'reference'
+    | 'examples'
+    | 'ai'
+    | 'icon'
+    | 'home'
+    | 'unknown';
   languages?: Languages | null;
   showFooter?: boolean;
 }
@@ -60,7 +67,7 @@ export function Page({
   } else {
     content = (
       <div className="ps-0">
-        {!['examples', 'ai'].includes(section) && (
+        {!['examples', 'ai', 'icon'].includes(section) && (
           <div>
             <PageHeading
               title={title}
@@ -73,13 +80,13 @@ export function Page({
         )}
         <div
           className={cn(
-            section === 'examples' || section === 'ai'
+            ['examples', 'ai', 'icon'].includes(section)
               ? 'px-0'
               : 'px-5 sm:px-12'
           )}>
           <div
             className={cn(
-              section === 'examples' || section === 'ai'
+              ['examples', 'ai', 'icon'].includes(section)
                 ? 'w-full'
                 : 'max-w-7xl mx-auto'
             )}>
@@ -104,7 +111,7 @@ export function Page({
     hasColumns = false;
     showSidebar = false;
     showToc = false;
-  } else if (section === 'examples' || section === 'ai') {
+  } else if (section === 'examples' || section === 'ai' || section === 'icon') {
     showToc = false;
     hasColumns = false;
     showSidebar = false;
