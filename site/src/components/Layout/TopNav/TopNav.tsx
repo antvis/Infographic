@@ -135,7 +135,14 @@ export default function TopNav({
 }: {
   routeTree: RouteItem;
   breadcrumbs: RouteItem[];
-  section: 'learn' | 'reference' | 'examples' | 'ai' | 'home' | 'unknown';
+  section:
+    | 'learn'
+    | 'reference'
+    | 'examples'
+    | 'ai'
+    | 'icon'
+    | 'home'
+    | 'unknown';
   hideBrandWhenHeroVisible?: boolean;
   overlayOnHome?: boolean;
   heroAnchorId?: string;
@@ -353,6 +360,9 @@ export default function TopNav({
                 <NavItem isActive={section === 'examples'} url="/examples">
                   示例
                 </NavItem>
+                <NavItem isActive={section === 'icon'} url="/icon">
+                  图标
+                </NavItem>
                 <NavItem isActive={section === 'ai'} url="/ai">
                   <span className="inline-flex items-center justify-center gap-1.5">
                     <IconStarTwinkle className="w-4 h-4" />
@@ -452,6 +462,9 @@ export default function TopNav({
                     </NavItem>
                     <NavItem isActive={section === 'examples'} url="/examples">
                       示例
+                    </NavItem>
+                    <NavItem isActive={section === 'icon'} url="/icon">
+                      图标
                     </NavItem>
                     <NavItem isActive={section === 'ai'} url="/ai">
                       <span className="inline-flex items-center justify-center gap-1.5">
