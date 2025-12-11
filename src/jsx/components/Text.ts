@@ -1,18 +1,13 @@
+import { measureText } from '../../utils';
 import type { GroupProps, JSXElement, RectProps, TextProps } from '../types';
-
-const TEXT_ANCHOR_MAP = {
-  center: 'middle',
-  right: 'end',
-  left: 'start',
-} as const;
 
 export function Text(props: TextProps): JSXElement {
   const {
     id,
     x = 0,
     y = 0,
-    width = 0,
-    height = 0,
+    width: w,
+    height: h,
     alignHorizontal = 'left',
     alignVertical = 'top',
     children,
@@ -33,54 +28,67 @@ export function Text(props: TextProps): JSXElement {
     ...restProps
   } = props;
 
+  let width = w;
+  let height = h;
+  let textX = 0;
+  let textY = 0;
+  if (!width || !height) {
+    const metrics = measureText(children, props);
+    width ||= metrics.width;
+    height ||= metrics.height;
+  }
+
+  // 如果由指定容器，那么需要对文本设置偏移量
+  if (w) {
+    textX =
+      alignHorizontal === 'center'
+        ? width / 2
+        : alignHorizontal === 'right'
+          ? width
+          : 0;
+  }
+  if (h) {
+    textY =
+      alignVertical === 'middle'
+        ? height / 2
+        : alignVertical === 'bottom'
+          ? height
+          : 0;
+  }
+
   const dataAttrs = Object.entries({
+    width,
+    height,
     ...(lineHeight !== undefined && { 'line-height': lineHeight }),
     ...(wordWrap !== undefined && { 'data-word-wrap': wordWrap }),
-    ...(width !== undefined && { width: width }),
-    ...(height !== undefined && { height: height }),
   }).reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
 
-  const textX =
+  const textAnchor =
     alignHorizontal === 'center'
-      ? x + width / 2
+      ? 'middle'
       : alignHorizontal === 'right'
-        ? x + width
-        : x;
+        ? 'end'
+        : 'start';
 
-  const calculateTextY = () => {
-    if (alignVertical === 'middle') return y + height / 2;
-    if (alignVertical === 'bottom') return y + height;
-
-    const fz = +fontSize;
-    const ratio = 0.88;
-    if (lineHeight && lineHeight > 1) {
-      const lineHeightPx = fz * lineHeight;
-      const extraSpace = lineHeightPx - fz;
-      return y + extraSpace / 2 + fz * ratio;
-    }
-    return y + fz * ratio;
-  };
-
-  const textY = calculateTextY();
-
-  const getDominantBaseline = () => {
-    if (alignVertical === 'middle') return 'central';
-    if (alignVertical === 'bottom') return 'baseline';
-    return 'baseline';
-  };
+  const dominantBaseline =
+    alignVertical === 'middle'
+      ? 'central'
+      : alignVertical === 'bottom'
+        ? 'baseline'
+        : 'hanging';
 
   const textProps = {
     'data-element-type': 'text',
-    ...(textX && { x: textX }),
-    ...(textY && { y: textY }),
-    ...(width && { width }),
-    ...(height && { height }),
-    ...(x && { 'data-x': x }),
-    ...(y && { 'data-y': y }),
+    width,
+    height,
+    x: textX,
+    y: textY,
+    'data-x': 0,
+    'data-y': 0,
     fill,
     fontSize,
-    textAnchor: TEXT_ANCHOR_MAP[alignHorizontal],
-    dominantBaseline: getDominantBaseline(),
+    textAnchor,
+    dominantBaseline,
     'data-horizontal-align': alignHorizontal.toUpperCase(),
     'data-vertical-align': alignVertical.toUpperCase(),
     children,
@@ -95,45 +103,35 @@ export function Text(props: TextProps): JSXElement {
     ...(opacity !== undefined && opacity !== 1 && { opacity }),
   };
 
-  const bounds = {
-    ...(x && { x }),
-    ...(y && { y }),
-    ...(width && { width }),
-    ...(height && { height }),
-  };
-
   const containerProps: GroupProps = {
-    ...bounds,
+    ...(x !== 0 || y !== 0 ? { x, y, transform: `translate(${x}, ${y})` } : {}),
+    width,
+    height,
     ...(id && { id }),
   };
 
   const hasBackground = backgroundColor && backgroundColor !== 'none';
 
-  if (!hasBackground) {
-    return {
-      type: 'text',
-      props: {
-        ...containerProps,
-        ...textProps,
-      },
-    };
-  }
-
-  const rectProps: RectProps = {
-    'data-element-type': 'shape',
-    ...bounds,
-    fill: backgroundColor,
-    fillOpacity: backgroundOpacity,
-    rx: backgroundRadius,
-    ry: backgroundRadius,
-  };
+  const rectProps: RectProps | undefined = hasBackground
+    ? {
+        'data-element-type': 'shape',
+        x: 0,
+        y: 0,
+        width,
+        height,
+        fill: backgroundColor,
+        fillOpacity: backgroundOpacity,
+        rx: backgroundRadius,
+        ry: backgroundRadius,
+      }
+    : undefined;
 
   return {
     type: 'g',
     props: {
       ...containerProps,
       children: [
-        { type: 'rect', props: rectProps },
+        ...(rectProps ? [{ type: 'rect', props: rectProps }] : []),
         { type: 'text', props: textProps },
       ],
     },
