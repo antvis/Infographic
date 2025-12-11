@@ -36,6 +36,7 @@ export const CircularProgress: ComponentType<CircularProgressProps> = (
   const start = strokeWidth / 2;
   const d = size - strokeWidth;
 
+  const isFullCircle = percentage >= 1;
   const angle = percentage * 360;
   const pathData = describeArc(center, center, radius, 0, angle);
 
@@ -54,14 +55,24 @@ export const CircularProgress: ComponentType<CircularProgressProps> = (
       />
 
       {/* 进度圆环 */}
-      <Path
-        d={pathData}
-        fill="none"
-        stroke={themeColors.colorPrimary}
-        strokeWidth={strokeWidth}
-        strokeLinecap="round"
-        data-element-type="shape"
-      />
+      {isFullCircle ? (
+        <Ellipse
+          {...bounds}
+          fill="none"
+          stroke={themeColors.colorPrimary}
+          strokeWidth={strokeWidth}
+          data-element-type="shape"
+        />
+      ) : (
+        <Path
+          d={pathData}
+          fill="none"
+          stroke={themeColors.colorPrimary}
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+          data-element-type="shape"
+        />
+      )}
 
       {/* 中心数值 */}
       <ItemValue
