@@ -94,7 +94,8 @@ function renderItemRow({
     ),
     label: (
       <Text
-        x={isLeft ? iconX - 10 : iconX + iconSize + 10}
+        width={40}
+        x={isLeft ? iconX - 50 : iconX + iconSize + 10}
         y={iconY + iconSize / 2 - 15}
         fontSize={30}
         fill={color}

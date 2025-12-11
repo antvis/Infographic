@@ -87,10 +87,14 @@ export const HorizontalIconLine: ComponentType<HorizontalIconLineProps> = (
     </Text>
   ) : null;
   const timeBounds = getElementBounds(time);
-
   const lineHeight = 18;
   const line = (
-    <AlignLayout horizontal="center" width={width} height={lineHeight}>
+    <AlignLayout
+      horizontal="center"
+      vertical="middle"
+      width={width}
+      height={lineHeight}
+    >
       <Rect
         width={width}
         height={lineHeight}
@@ -98,20 +102,13 @@ export const HorizontalIconLine: ComponentType<HorizontalIconLineProps> = (
         data-element-type="shape"
       />
       <Ellipse
-        y={-3}
         width={lineHeight + 6}
         height={lineHeight + 6}
         fill={themeColors.colorBg}
         fillOpacity={0.5}
         data-element-type="shape"
       />
-      <Ellipse
-        y={(lineHeight - 12) / 2}
-        width={12}
-        height={12}
-        fill="white"
-        data-element-type="shape"
-      />
+      <Ellipse width={12} height={12} fill="white" data-element-type="shape" />
     </AlignLayout>
   );
 

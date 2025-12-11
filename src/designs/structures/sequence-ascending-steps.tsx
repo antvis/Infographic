@@ -17,7 +17,6 @@ export const SequenceAscendingSteps: ComponentType<
   const { title, desc, items = [] } = data;
 
   const titleContent = Title ? <Title title={title} desc={desc} /> : null;
-
   const itemBounds = getElementBounds(
     <Item indexes={[0]} data={data} datum={items[0]} />,
   );

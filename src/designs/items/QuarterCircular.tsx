@@ -54,7 +54,6 @@ export const QuarterCircular: ComponentType<QuarterCircularProps> = (props) => {
 
   // 根据 positionH 调整布局
   const isFlipped = positionH === 'flipped';
-  const isCentered = positionH === 'center';
 
   // 根据 positionV 调整布局
   const isVFlipped = positionV === 'flipped';
@@ -72,22 +71,6 @@ export const QuarterCircular: ComponentType<QuarterCircularProps> = (props) => {
         diagonalEndY: isVFlipped ? height - DOT_RADIUS : DOT_RADIUS,
         topLineStartX: width - DECORATION_HORIZONTAL_SPACING,
         topLineEndX: CIRCLE_MASS,
-        topLineY: isVFlipped ? height - DOT_RADIUS : DOT_RADIUS,
-      };
-    } else if (isCentered) {
-      // 居中对齐
-      const totalContentWidth =
-        width - circleRadius - DECORATION_HORIZONTAL_SPACING;
-      const centerOffset = (width - totalContentWidth) / 2;
-      return {
-        diagonalStartX: centerOffset + DOT_RADIUS,
-        diagonalStartY: isVFlipped
-          ? height - DECORATION_VERTICAL_SPACING
-          : DECORATION_VERTICAL_SPACING,
-        diagonalEndX: centerOffset + DECORATION_HORIZONTAL_SPACING,
-        diagonalEndY: isVFlipped ? height - DOT_RADIUS : DOT_RADIUS,
-        topLineStartX: centerOffset + DECORATION_HORIZONTAL_SPACING,
-        topLineEndX: centerOffset + totalContentWidth - CIRCLE_MASS,
         topLineY: isVFlipped ? height - DOT_RADIUS : DOT_RADIUS,
       };
     } else {
@@ -119,19 +102,6 @@ export const QuarterCircular: ComponentType<QuarterCircularProps> = (props) => {
         circleX: 0,
         circleY: isVFlipped ? 0 : height,
         iconX: CIRCLE_MASS - iconSize / 2,
-      };
-    } else if (isCentered) {
-      // 居中对齐
-      const totalContentWidth =
-        width - circleRadius - DECORATION_HORIZONTAL_SPACING;
-      const centerOffset = (width - totalContentWidth) / 2;
-      return {
-        valueX: centerOffset,
-        contentX: centerOffset + DECORATION_HORIZONTAL_SPACING,
-        contentWidth: totalContentWidth - circleRadius - 10,
-        circleX: centerOffset + totalContentWidth,
-        circleY: isVFlipped ? 0 : height,
-        iconX: centerOffset + totalContentWidth - CIRCLE_MASS - iconSize / 2,
       };
     } else {
       // 默认左对齐
@@ -227,7 +197,6 @@ export const QuarterCircular: ComponentType<QuarterCircularProps> = (props) => {
           fontSize={VALUE_SIZE}
           fontWeight="bold"
           fill={themeColors.colorPrimary}
-          width={40}
         >
           {indexStr}
         </Text>
@@ -259,6 +228,7 @@ export const QuarterCircular: ComponentType<QuarterCircularProps> = (props) => {
             width={contentCoords.contentWidth}
             fontWeight="bold"
             fill={themeColors.colorText}
+            alignHorizontal={isFlipped ? 'right' : 'left'}
           >
             {datum.label}
           </ItemLabel>
@@ -272,6 +242,7 @@ export const QuarterCircular: ComponentType<QuarterCircularProps> = (props) => {
             y={descY}
             width={contentCoords.contentWidth}
             fill={themeColors.colorTextSecondary}
+            alignHorizontal={isFlipped ? 'right' : 'left'}
           >
             {datum.desc}
           </ItemDesc>

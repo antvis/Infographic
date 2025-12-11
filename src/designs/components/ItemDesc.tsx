@@ -16,7 +16,6 @@ export const ItemDesc = ({
   if (!children) return null;
 
   const finalProps: TextProps = {
-    width: 100,
     fontSize: 14,
     fill: '#666',
     wordWrap: true,

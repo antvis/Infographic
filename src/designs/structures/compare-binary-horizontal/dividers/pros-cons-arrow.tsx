@@ -35,10 +35,10 @@ export const ProsConsArrow: ComponentType<DividerProps> = (props) => {
           fill={colorNegative}
         />
       </ShapesGroup>
-      <Text x={45} y={15} {...textAttrs}>
+      <Text x={40} y={15} {...textAttrs}>
         Pros
       </Text>
-      <Text x={65} y={86} {...textAttrs}>
+      <Text x={70} y={85} {...textAttrs}>
         Cons
       </Text>
     </Group>

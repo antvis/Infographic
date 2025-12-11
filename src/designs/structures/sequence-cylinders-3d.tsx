@@ -380,17 +380,17 @@ const createCylinderElements = (
     />,
   );
 
-  const numberX = x;
-  const numberY = topY + 2;
+  const numberX = x - 10;
+  const numberY = topY - 15;
   const scaleY = 0.6;
   const skewX = -0.6;
-  const transformValue = `translate(${numberX}, ${numberY}) matrix(1, 0, ${skewX}, ${scaleY}, 0, 0) translate(${-numberX}, ${-numberY})`;
+  const transformValue = `translate(${numberX}, ${numberY}) matrix(1, 0, ${skewX}, ${scaleY}, 0, 0)`;
 
   elements.push(
     <Text
       id={`cylinder-number-${index}`}
-      x={numberX}
-      y={numberY}
+      width={50}
+      height={50}
       fontFamily="Arial Black, sans-serif"
       fontSize={32}
       fontWeight={900}

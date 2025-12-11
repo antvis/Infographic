@@ -15,7 +15,6 @@ export const Title = (props: TitleProps) => {
   const {
     x = 0,
     y = 0,
-    width = 720,
     alignHorizontal = 'center',
     title,
     desc,
@@ -26,8 +25,6 @@ export const Title = (props: TitleProps) => {
     const defaultProps: TextProps = {
       fontSize: 24,
       fill: themeColors.colorPrimaryText,
-      width,
-      height: 32,
       lineHeight: 1.4,
       alignHorizontal,
     };
@@ -42,7 +39,6 @@ export const Title = (props: TitleProps) => {
     const defaultProps: TextProps = {
       fontSize: 16,
       fill: themeColors.colorTextSecondary,
-      width,
       alignHorizontal,
       lineHeight: 1.4,
       height: subTitleLineNumber * 24,
@@ -57,7 +53,13 @@ export const Title = (props: TitleProps) => {
   if (!title && !desc) return null;
 
   return (
-    <FlexLayout flexDirection="column" x={x} y={y} width={width} gap={8}>
+    <FlexLayout
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      x={x}
+      y={y}
+    >
       {title && <MainTitle />}
       {desc && <Desc />}
     </FlexLayout>

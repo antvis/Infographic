@@ -78,7 +78,6 @@ export const IconBadge: ComponentType<IconBadgeProps> = (props) => {
       {/* 数值徽章 */}
       <Ellipse
         x={size - badgeSize + 4}
-        y={0}
         width={badgeSize}
         height={badgeSize}
         fill={`url(#${badgeGradientId})`}
@@ -86,8 +85,9 @@ export const IconBadge: ComponentType<IconBadgeProps> = (props) => {
 
       {/* 徽章数值 */}
       <Text
-        x={size - badgeSize / 2 + 4}
-        y={badgeSize / 2}
+        x={size - badgeSize + 4}
+        width={badgeSize}
+        height={badgeSize}
         fontSize={10}
         fontWeight="bold"
         fill={themeColors.colorWhite}

@@ -40,11 +40,12 @@ export const FlexLayout = createLayout<FlexLayoutProps>(
       flexDirection === 'row-reverse' || flexDirection === 'column-reverse';
 
     const childBounds = children.map((child) => getElementBounds(child));
+    const childrenBounds = getElementsBounds(children);
 
+    const containerWidth = props.width ?? childrenBounds.width;
+    const containerHeight = props.height ?? childrenBounds.height;
     const hasContainerSize =
       props.width !== undefined && props.height !== undefined;
-    const containerWidth = props.width || 0;
-    const containerHeight = props.height || 0;
 
     const lines: Array<{ children: JSXElement[]; bounds: Bounds[] }> = [];
 
@@ -237,37 +238,38 @@ export const FlexLayout = createLayout<FlexLayoutProps>(
     }
 
     if (!hasContainerSize) {
-      if (alignItems === 'center' && !isRow) {
-        // For column layout, center items horizontally
-        const maxWidth = Math.max(...childBounds.map((bounds) => bounds.width));
-        layoutChildren.forEach((child, index) => {
-          const bounds = childBounds[index];
-          const centerOffset = (maxWidth - bounds.width) / 2;
-          const newProps = { ...child.props };
-          newProps.x = (newProps.x || 0) + centerOffset;
-          layoutChildren[index] = cloneElement(child, newProps);
-        });
-      } else if (alignItems === 'center' && isRow) {
-        // For row layout, center items vertically
-        const maxHeight = Math.max(
-          ...childBounds.map((bounds) => bounds.height),
-        );
-        layoutChildren.forEach((child, index) => {
-          const bounds = childBounds[index];
-          const centerOffset = (maxHeight - bounds.height) / 2;
-          const newProps = { ...child.props };
-          newProps.y = (newProps.y || 0) + centerOffset;
-          layoutChildren[index] = cloneElement(child, newProps);
-        });
+      if (alignItems === 'center') {
+        if (isRow) {
+          const maxHeight = Math.max(...childBounds.map((b) => b.height));
+          layoutChildren.forEach((child, index) => {
+            const bounds = childBounds[index];
+            const centerOffset = (maxHeight - bounds.height) / 2;
+            const newProps = { ...child.props };
+            newProps.y = (newProps.y || 0) + centerOffset;
+            layoutChildren[index] = cloneElement(child, newProps);
+          });
+        } else {
+          const maxWidth = Math.max(...childBounds.map((b) => b.width));
+          layoutChildren.forEach((child, index) => {
+            const bounds = childBounds[index];
+            const centerOffset = (maxWidth - bounds.width) / 2;
+            const newProps = { ...child.props };
+            newProps.x = (newProps.x || 0) + centerOffset;
+            layoutChildren[index] = cloneElement(child, newProps);
+          });
+        }
       }
-
-      const finalBounds = getElementsBounds(layoutChildren);
-      // props.x ??= finalBounds.x;
-      // props.y ??= finalBounds.y;
-      props.width ??= finalBounds.width;
-      props.height ??= finalBounds.height;
     }
 
-    return <Group {...props}>{layoutChildren}</Group>;
+    const finalBounds = getElementsBounds(layoutChildren);
+    const containerProps = {
+      ...props,
+      x: props.x ?? childrenBounds.x,
+      y: props.y ?? childrenBounds.y,
+      width: props.width ?? finalBounds.width,
+      height: props.height ?? finalBounds.height,
+    };
+
+    return <Group {...containerProps}>{layoutChildren}</Group>;
   },
 );

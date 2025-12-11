@@ -276,6 +276,7 @@ export const ChartPie: ComponentType<ChartPieProps> = (props) => {
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
+      gap={30}
     >
       {titleContent}
       <Group width={totalWidth} height={totalHeight}>

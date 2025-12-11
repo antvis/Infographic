@@ -15,7 +15,6 @@ export const ItemValue = ({
   ...props
 }: ItemValueProps) => {
   const finalProps: TextProps = {
-    width: 100,
     fontSize: 14,
     fill: '#666',
     wordWrap: true,
