@@ -29,6 +29,7 @@ import {
   renderShape,
   renderStaticShape,
   renderStaticText,
+  renderSVG,
   renderText,
 } from './composites';
 import { loadFonts } from './fonts';
@@ -61,7 +62,6 @@ export class Renderer implements IRenderer {
     if (this.rendered) return svg;
 
     renderTemplate(svg, this.options);
-
     svg.style.visibility = 'hidden';
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
@@ -183,6 +183,8 @@ function fill(svg: SVGSVGElement, options: ParsedInfographicOptions) {
       return renderStaticShape(element, options);
     }
   });
+
+  renderSVG(svg, options);
 }
 
 function setSVG(svg: SVGSVGElement, options: ParsedInfographicOptions) {
