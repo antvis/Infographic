@@ -220,32 +220,39 @@ export const DATASET = {
       {
         label: '用户调研',
         icon: 'icon:mingcute/user-question-line',
+        value: 100,
         children: [
           {
             label: '用户为什么要使用某个音乐平台',
             icon: 'icon:mingcute/music-2-ai-line',
+            value: 80,
             children: [
               {
                 label: '用户从哪些渠道了解到这个平台',
                 icon: 'icon:mingcute/ad-circle-line',
+                value: 70,
               },
               {
                 label: '这个平台是哪些方面吸引了用户',
                 icon: 'icon:mingcute/mushroom-line',
+                value: 65,
               },
             ],
           },
           {
             label: '用户在什么场景下使用这个平台',
             icon: 'icon:mingcute/time-line',
+            value: 75,
             children: [
               {
                 label: '用户从什么事件什么场景下使用',
                 icon: 'icon:mingcute/calendar-time-add-line',
+                value: 60,
               },
               {
                 label: '用户在某个场景下用到哪些功能',
                 icon: 'icon:mingcute/danmaku-line',
+                value: 55,
               },
             ],
           },
