@@ -11,6 +11,7 @@ export * from './IconBadge';
 export * from './IndexedCard';
 export * from './LCornerCard';
 export * from './LetterCard';
+export * from './LinedText';
 export * from './PillBadge';
 export * from './PlainText';
 export * from './ProgressCard';
