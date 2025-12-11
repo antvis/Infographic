@@ -59,6 +59,7 @@ export const Title = (props: TitleProps) => {
       alignItems="center"
       x={x}
       y={y}
+      gap={8}
     >
       {title && <MainTitle />}
       {desc && <Desc />}

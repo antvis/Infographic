@@ -31,7 +31,7 @@ export const SequenceHorizontalZigzag: ComponentType<
   const itemBounds = getElementBounds(
     <Item indexes={[0]} data={data} datum={items[0]} positionH="center" />,
   );
-  console.log(itemBounds);
+
   const btnElements: JSXElement[] = [];
   const itemElements: JSXElement[] = [];
   const decoElements: JSXElement[] = [];

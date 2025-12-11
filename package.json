@@ -74,12 +74,11 @@
     "singleQuote": true
   },
   "dependencies": {
-    "@antv/hierarchy": "^0.6.14",
     "css": "^3.0.0",
     "culori": "^4.0.2",
     "d3": "^7.9.0",
     "lodash-es": "^4.17.21",
-    "measury": "^0.1.2",
+    "measury": "^0.1.4",
     "roughjs": "^4.6.6",
     "round-polygon": "^0.6.7",
     "tinycolor2": "^1.6.0"
