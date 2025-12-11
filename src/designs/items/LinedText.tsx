@@ -24,8 +24,8 @@ export const LinedText: ComponentType<LinedTextProps> = (props) => {
       positionH = 'normal',
       positionV = 'center',
       formatter = (text?: string) => text || '',
-      usePaletteColor = true,
-      showUnderline = true,
+      usePaletteColor = false,
+      showUnderline = false,
       underlineGap = 6,
       underlineExtend = 8,
       underlineThickness = 2,
@@ -56,9 +56,7 @@ export const LinedText: ComponentType<LinedTextProps> = (props) => {
   );
   const contentWidth = width ?? measuredLabel.width;
   const labelHeight = measuredLabel.height;
-  const underlineWidth = showUnderline
-    ? Math.max(contentWidth, measuredLabel.width) + underlineExtend * 2
-    : 0;
+  const underlineWidth = showUnderline ? contentWidth + underlineExtend * 2 : 0;
   const totalHeight =
     labelHeight + (showUnderline ? underlineGap + underlineThickness : 0);
   const finalWidth = showUnderline
