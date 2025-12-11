@@ -209,7 +209,7 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
     design: {
       title: 'default',
       structure: { type: 'sequence-timeline', gap: 20 },
-      items: [{ type: 'simple' }],
+      items: [{ type: 'simple', positionV: 'middle' }],
     },
   },
   'sequence-cylinders-3d-simple': {
