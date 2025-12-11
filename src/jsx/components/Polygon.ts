@@ -10,7 +10,8 @@ export function Polygon({ points = [], ...props }: PolygonProps): JSXElement {
   };
 
   if (x !== undefined || y !== undefined) {
-    finalProps.transform = `translate(${x ?? 0}, ${y ?? 0})`;
+    finalProps.transform =
+      `translate(${x ?? 0}, ${y ?? 0})` + (finalProps.transform || '');
   }
 
   const node: JSXElement = {
