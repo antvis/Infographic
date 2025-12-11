@@ -8,6 +8,7 @@ export * from './hash';
 export * from './icon';
 export * from './item';
 export * from './join';
+export * from './measure-text';
 export * from './padding';
 export * from './recognizer';
 export * from './style';
