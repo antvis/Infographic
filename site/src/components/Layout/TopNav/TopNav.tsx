@@ -299,14 +299,14 @@ export default function TopNav({
                 <NavItem isActive={section === 'examples'} url="/examples">
                   示例
                 </NavItem>
+                <NavItem isActive={section === 'icon'} url="/icon">
+                  Icon
+                </NavItem>
                 <NavItem isActive={section === 'ai'} url="/ai">
                   <span className="inline-flex items-center justify-center gap-1.5">
                     <IconStarTwinkle className="w-4 h-4" />
                     AI
                   </span>
-                </NavItem>
-                <NavItem isActive={section === 'icon'} url="/icon">
-                  Icon
                 </NavItem>
               </div>
               <div className="flex w-full md:hidden"></div>

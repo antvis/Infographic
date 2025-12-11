@@ -148,19 +148,16 @@ export function PadView({
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(
-        'https://prepub.weavefox.cn/api/open/v1/icon',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            text: inputText,
-            topK: 32, // Increase fetch count to fill the grid
-          }),
-        }
-      );
+      const response = await fetch('https://www.weavefox.cn/api/open/v1/icon', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text: inputText,
+          topK: 24,
+        }),
+      });
 
       const result = await response.json();
       if (result.status && result.data && result.data.success) {
@@ -172,7 +169,11 @@ export function PadView({
       console.error(err);
       setError('获取图标时发生错误');
       // Mock more data for demo
-      setIcons(Array(32).fill('https://mdn.alipayobjects.com/infographicservice/afts/img/uDn5QZXHA5sAAAAAAAAAAAAAevFJAQFr/original'));
+      setIcons(
+        Array(32).fill(
+          'https://mdn.alipayobjects.com/infographicservice/afts/img/uDn5QZXHA5sAAAAAAAAAAAAAevFJAQFr/original'
+        )
+      );
     } finally {
       setLoading(false);
     }
@@ -208,7 +209,11 @@ export function PadView({
   return (
     <figure
       className="mx-auto w-full h-auto"
-      style={width ? {maxWidth: width} : {maxWidth: enableIconSearch ? '36rem' : '80rem'}}>
+      style={
+        width
+          ? {maxWidth: width}
+          : {maxWidth: enableIconSearch ? '36rem' : '80rem'}
+      }>
       {/* Mac Browser Chrome */}
       <div className="bg-gray-100 dark:bg-gray-900 rounded-t-xl border border-gray-200 dark:border-gray-800 overflow-hidden shadow-2xl">
         {/* Title Bar with Traffic Lights */}
@@ -223,11 +228,22 @@ export function PadView({
         {/* Browser Address Bar */}
         <div className="bg-white dark:bg-gray-850 px-4 py-2 flex items-center gap-3 border-b border-gray-200 dark:border-gray-700">
           <div className="flex-1 bg-gray-100 dark:bg-gray-800 rounded-lg px-4 py-1.5 flex items-center gap-2">
-            <svg className="w-4 h-4 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            <svg
+              className="w-4 h-4 text-pink-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 10V3L4 14h7v7l9-11h-7z"
+              />
             </svg>
             <span className="text-sm text-gray-700 dark:text-gray-300">
-              {enableIconSearch ? '✨ 下方输入任意关键词，AI 帮你找到最合适的图标' : 'infographic.antv.antgroup.com'}
+              {enableIconSearch
+                ? '✨ 下方输入任意关键词，AI 帮你找到最合适的图标'
+                : 'infographic.antv.antgroup.com'}
             </span>
           </div>
         </div>
