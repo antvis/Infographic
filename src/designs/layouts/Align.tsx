@@ -21,83 +21,66 @@ export const AlignLayout = createLayout<AlignLayoutProps>(
     }
 
     const childBounds = children.map((child) => getElementBounds(child));
-
-    // 检查是否设置了容器的宽高
-    const hasContainerWidth = props.width !== undefined;
-    const hasContainerHeight = props.height !== undefined;
-
-    let positionedChildren = [...children];
-
-    // 如果没有设置容器尺寸，先获取子节点的整体包围盒
     const childrenBounds = getElementsBounds(children);
 
-    // 确定对齐的基础区域
-    const alignmentWidth = hasContainerWidth
-      ? props.width!
-      : childrenBounds.width;
-    const alignmentHeight = hasContainerHeight
-      ? props.height!
-      : childrenBounds.height;
-    const alignmentX = hasContainerWidth ? props.x || 0 : childrenBounds.x;
-    const alignmentY = hasContainerHeight ? props.y || 0 : childrenBounds.y;
+    // 容器尺寸和位置
+    const containerX = props.x ?? childrenBounds.x;
+    const containerY = props.y ?? childrenBounds.y;
+    const containerWidth = props.width ?? childrenBounds.width;
+    const containerHeight = props.height ?? childrenBounds.height;
 
-    // 应用对齐
-    positionedChildren = children.map((child, index) => {
+    // 对齐子元素（使用相对于容器的坐标）
+    const positionedChildren = children.map((child, index) => {
       const bounds = childBounds[index];
       const childProps = { ...child.props };
 
-      // 水平对齐
-      if (horizontal) {
+      // 水平对齐（相对于容器左边界）
+      if (horizontal !== undefined) {
         switch (horizontal) {
           case 'left':
-            childProps.x = alignmentX;
+            childProps.x = 0; // 相对容器
             break;
           case 'center':
-            childProps.x = alignmentX + (alignmentWidth - bounds.width) / 2;
+            childProps.x = (containerWidth - bounds.width) / 2;
             break;
           case 'right':
-            childProps.x = alignmentX + alignmentWidth - bounds.width;
+            childProps.x = containerWidth - bounds.width;
             break;
         }
-      } else {
-        // 如果没有设置水平对齐，保持原有的 x 坐标
-        childProps.x = child.props.x || bounds.x;
+      } else if (childProps.x === undefined) {
+        // 保持相对位置
+        childProps.x = bounds.x - containerX;
       }
 
-      // 垂直对齐
-      if (vertical) {
+      // 垂直对齐（相对于容器顶边界）
+      if (vertical !== undefined) {
         switch (vertical) {
           case 'top':
-            childProps.y = alignmentY;
+            childProps.y = 0;
             break;
           case 'middle':
-            childProps.y = alignmentY + (alignmentHeight - bounds.height) / 2;
+            childProps.y = (containerHeight - bounds.height) / 2;
             break;
           case 'bottom':
-            childProps.y = alignmentY + alignmentHeight - bounds.height;
+            childProps.y = containerHeight - bounds.height;
             break;
         }
-      } else {
-        // 如果没有设置垂直对齐，保持原有的 y 坐标
-        childProps.y = child.props.y || bounds.y;
+      } else if (childProps.y === undefined) {
+        // 保持相对位置
+        childProps.y = bounds.y - containerY;
       }
 
       return cloneElement(child, childProps);
     });
 
-    // 如果没有设置容器尺寸，更新容器的边界框
-    if (!hasContainerWidth || !hasContainerHeight) {
-      const finalBounds = getElementsBounds(positionedChildren);
-      if (!hasContainerWidth) {
-        // props.x ??= finalBounds.x;
-        props.width ??= finalBounds.width;
-      }
-      if (!hasContainerHeight) {
-        // props.y ??= finalBounds.y;
-        props.height ??= finalBounds.height;
-      }
-    }
+    const containerProps = {
+      ...props,
+      x: containerX,
+      y: containerY,
+      width: containerWidth,
+      height: containerHeight,
+    };
 
-    return <Group {...props}>{positionedChildren}</Group>;
+    return <Group {...containerProps}>{positionedChildren}</Group>;
   },
 );
