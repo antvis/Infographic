@@ -1,3 +1,5 @@
+import type { HierarchyData, HierarchyNode } from '@antv/hierarchy';
+import { mindmap } from '@antv/hierarchy';
 import type { ComponentType, JSXElement } from '../../jsx';
 import { Defs, Group, Path, getElementBounds } from '../../jsx';
 import type { ItemDatum } from '../../types';
@@ -14,24 +16,15 @@ import {
 import { registerStructure } from './registry';
 import type { BaseStructureProps } from './types';
 
-// @ts-expect-error ignore types
-import * as hierarchy from '@antv/hierarchy';
-
-type AnnotatedItem = ItemDatum & {
+type AnnotatedItem = (ItemDatum & HierarchyData) & {
   _indexes: number[];
   _flatIndex?: number;
   children?: AnnotatedItem[];
 };
 
-type LayoutNode = {
+type LayoutNode = HierarchyNode & {
   data: AnnotatedItem;
-  x: number;
-  y: number;
-  depth: number;
-  side?: 'left' | 'right';
-  hgap?: number;
-  vgap?: number;
-  children?: LayoutNode[];
+  children: LayoutNode[];
   parent?: LayoutNode;
 };
 
@@ -71,7 +64,7 @@ const DEFAULT_COLOR_MODE: HierarchyColorMode = 'node';
 const DEFAULT_EDGE_COLOR_MODE: EdgeColorMode = 'solid';
 
 const annotateTree = (
-  node: ItemDatum,
+  node: ItemDatum & HierarchyData,
   parentIndexes: number[] = [],
   index = 0,
 ): AnnotatedItem => {
@@ -95,7 +88,8 @@ const collectNodes = (
   nodes.push(node);
   node.data._flatIndex ??= nodes.length - 1;
   if (parent) links.push({ parent, child: node });
-  node.children?.forEach((child) => collectNodes(child, nodes, links, node));
+  const children = node.children as unknown as LayoutNode[];
+  children.forEach((child) => collectNodes(child, nodes, links, node));
 };
 
 const createCurvePath = (sx: number, sy: number, tx: number, ty: number) => {
@@ -226,13 +220,13 @@ export const HierarchyMindmap: ComponentType<HierarchyMindmapProps> = (
     return bounds;
   };
 
-  const mindmapRoot = hierarchy.mindmap(root, {
+  const mindmapRoot = mindmap(root, {
     direction: 'H',
-    getSide: (node: any) => {
+    getSide: (node: HierarchyNode, index: number) => {
       if (!node.parent) return 'right';
-      const siblings = node.parent.children ?? [];
-      const order = siblings.indexOf(node);
-      return order % 2 === 0 ? 'left' : 'right';
+      const order = node.parent.children.indexOf(node);
+      const rank = order >= 0 ? order : index;
+      return rank % 2 === 0 ? 'left' : 'right';
     },
     getWidth: (datum: AnnotatedItem) => measureNode(datum).width,
     getHeight: (datum: AnnotatedItem) => measureNode(datum).height,
