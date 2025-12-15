@@ -89,7 +89,7 @@ const collectNodes = (
   node.data._flatIndex ??= nodes.length - 1;
   if (parent) links.push({ parent, child: node });
   const children = node.children as unknown as LayoutNode[];
-  children.forEach((child) => collectNodes(child, nodes, links, node));
+  children?.forEach((child) => collectNodes(child, nodes, links, node));
 };
 
 const createCurvePath = (sx: number, sy: number, tx: number, ty: number) => {
@@ -224,7 +224,7 @@ export const HierarchyMindmap: ComponentType<HierarchyMindmapProps> = (
     direction: 'H',
     getSide: (node: HierarchyNode, index: number) => {
       if (!node.parent) return 'right';
-      const order = node.parent.children.indexOf(node);
+      const order = (node.parent.children || []).indexOf(node);
       const rank = order >= 0 ? order : index;
       return rank % 2 === 0 ? 'left' : 'right';
     },
