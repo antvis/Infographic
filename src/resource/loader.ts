@@ -5,14 +5,16 @@ import {
   loadSVGResource,
 } from './loaders';
 import { getCustomResourceLoader } from './registry';
-import type { Resource, ResourceConfig } from './types';
+import type { Resource, ResourceConfig, ResourceScene } from './types';
 import { getResourceId, parseResourceConfig } from './utils';
 
 async function getResource(
+  scene: ResourceScene,
   config: string | ResourceConfig,
 ): Promise<Resource | null> {
   const cfg = parseResourceConfig(config);
   if (!cfg) return null;
+  cfg.scene ||= scene;
   const { type, data } = cfg;
 
   if (type === 'image') {
@@ -38,6 +40,7 @@ const RESOURCE_LOAD_MAP = new WeakMap<SVGSVGElement, Map<string, SVGElement>>();
  */
 export async function loadResource(
   svg: SVGSVGElement | null,
+  scene: ResourceScene,
   config: string | ResourceConfig,
 ): Promise<string | null> {
   if (!svg) return null;
@@ -47,7 +50,7 @@ export async function loadResource(
 
   const resource = RESOURCE_MAP.has(id)
     ? RESOURCE_MAP.get(id) || null
-    : await getResource(cfg);
+    : await getResource(scene, cfg);
 
   if (!resource) return null;
 

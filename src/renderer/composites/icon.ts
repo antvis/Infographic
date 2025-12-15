@@ -40,7 +40,7 @@ function createIcon(
   attrs: IconAttributes,
 ) {
   // load async
-  loadResource(svg, value);
+  loadResource(svg, 'icon', value);
 
   return createIconElement(value, {
     ...getAttributes(node, [

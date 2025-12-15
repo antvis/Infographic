@@ -27,7 +27,7 @@ export function renderIllus(
   const id = getResourceId(config)!;
   const clipPathId = createClipPath(svg, node, id);
 
-  loadResource(svg, config);
+  loadResource(svg, 'illus', config);
 
   const { data, color } = config;
   return createIllusElement(

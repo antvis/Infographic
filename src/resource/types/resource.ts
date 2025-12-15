@@ -1,6 +1,9 @@
+import { ResourceScene } from './scene';
+
 export interface ResourceConfig {
   type: 'image' | 'svg' | 'remote' | 'custom';
   data: string;
+  scene?: ResourceScene;
   [key: string]: any;
 }
 
