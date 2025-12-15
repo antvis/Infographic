@@ -20,6 +20,8 @@ export function ChatPanel({
   onSelectHistory,
   onRetry,
   onDelete,
+  onOpenConfig,
+  onClear,
   panelClassName = 'min-h-[520px] h-[640px] max-h-[75vh]',
 }: {
   prompt: string;
@@ -38,6 +40,8 @@ export function ChatPanel({
   onSelectHistory: (config?: Partial<InfographicOptions>) => void;
   onRetry: (id: string, text: string) => void;
   onDelete: (id: string) => void;
+  onOpenConfig: () => void;
+  onClear: () => void;
   panelClassName?: string;
 }) {
   const historyRef = useRef<HTMLDivElement>(null);
@@ -66,15 +70,57 @@ export function ChatPanel({
       animate={{opacity: 1, y: 0}}
       transition={{duration: 0.45, ease: 'easeOut'}}
       className={`rounded-2xl border border-border dark:border-border-dark bg-card dark:bg-card-dark shadow-nav dark:shadow-nav-dark p-5 lg:p-6 flex flex-col overflow-visible ${panelClassName}`}>
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <p className="text-base font-semibold text-primary dark:text-primary-dark">
-            生成记录
-          </p>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-4">
+        <p className="text-base font-semibold text-primary dark:text-primary-dark">
+          生成记录
+        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={onOpenConfig}
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border dark:border-border-dark bg-wash dark:bg-wash-dark text-xs font-medium text-primary dark:text-primary-dark hover:border-link hover:text-link dark:hover:border-link-dark dark:hover:text-link-dark transition-colors">
+            <svg
+              className="w-3.5 h-3.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+            </svg>
+            配置服务
+          </button>
+          <button
+            type="button"
+            onClick={onClear}
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border dark:border-border-dark bg-wash dark:bg-wash-dark text-xs font-medium text-primary dark:text-primary-dark hover:border-link hover:text-link dark:hover:border-link-dark dark:hover:text-link-dark transition-colors">
+            <svg
+              className="w-3.5 h-3.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
+            </svg>
+            清空对话
+          </button>
+          <span className="text-xs text-tertiary dark:text-tertiary-dark bg-wash dark:bg-wash-dark px-3 py-1 rounded-full font-medium">
+            ⌘/Ctrl + ↵
+          </span>
         </div>
-        <span className="text-xs text-tertiary dark:text-tertiary-dark bg-wash dark:bg-wash-dark px-2.5 py-1 rounded-full font-medium">
-          ⌘/Ctrl + ↵
-        </span>
       </div>
 
       <TooltipProvider delayDuration={150}>

@@ -465,19 +465,25 @@ export function AIPageContent() {
       toc={[]}
       routeTree={{title: 'AI', path: '/ai', routes: []}}
       meta={{title: 'AI 生成信息图'}}
-      section="ai">
+      section="ai"
+      topNavOptions={{
+        hideBrandWhenHeroVisible: true,
+        overlayOnHome: true,
+        heroAnchorId: 'ai-hero-anchor',
+      }}>
       <div className="relative isolate overflow-hidden bg-wash dark:bg-wash-dark">
         {/* Background decorations */}
         <div className="pointer-events-none absolute -left-32 -top-40 h-96 w-96 rounded-full bg-gradient-to-br from-link/20 via-link/5 to-transparent blur-3xl" />
         <div className="pointer-events-none absolute -right-32 top-20 h-96 w-96 rounded-full bg-gradient-to-br from-purple-40/15 via-transparent to-link/5 blur-3xl" />
 
-        <div className="relative mx-auto max-w-7xl px-5 sm:px-12 py-12 lg:py-16 flex flex-col gap-12">
+        <div className="relative mx-auto max-w-7xl px-5 sm:px-12 py-12 lg:py-16 flex flex-col gap-4">
           {/* Header Section */}
           <motion.header
+            id="ai-hero-anchor"
             initial={{opacity: 0, y: 20}}
             animate={{opacity: 1, y: 0}}
             transition={{duration: 0.6, ease: 'easeOut'}}
-            className="max-w-4xl space-y-6">
+            className="space-y-6">
             <div>
               <h1 className="flex items-center gap-3 text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight text-primary dark:text-primary-dark select-none">
                 <IconStarTwinkle className="w-10 h-10 md:w-12 md:h-12 text-link dark:text-link-dark" />
@@ -491,57 +497,10 @@ export function AIPageContent() {
               </h1>
             </div>
 
-            <p className="text-lg lg:text-xl text-secondary dark:text-secondary-dark max-w-3xl leading-relaxed select-none">
+            <p className="text-lg lg:text-xl text-secondary dark:text-secondary-dark leading-relaxed select-none">
               将你在日常写作、汇报或其他文字工作中遇到的内容粘贴到这里，AI
               会理解语境并为你生成相匹配的信息图方案
             </p>
-
-            <div className="flex flex-col sm:flex-row gap-3 pt-2">
-              <motion.button
-                whileHover={{y: -2, scale: 1.01}}
-                whileTap={{scale: 0.98, y: 0}}
-                onClick={() => setIsConfigOpen(true)}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-link text-white dark:bg-link-dark hover:bg-opacity-90 text-sm font-semibold shadow-secondary-button-stroke active:scale-[.98] transition-all">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-                配置模型服务
-              </motion.button>
-              <motion.button
-                whileHover={{y: -2, scale: 1.01}}
-                whileTap={{scale: 0.98, y: 0}}
-                onClick={handleClear}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-primary dark:text-primary-dark text-sm shadow-secondary-button-stroke dark:shadow-secondary-button-stroke-dark hover:bg-gray-40/5 active:bg-gray-40/10 hover:dark:bg-gray-60/5 active:dark:bg-gray-60/10 font-semibold active:scale-[.98] transition-all">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                  />
-                </svg>
-                清空对话
-              </motion.button>
-            </div>
           </motion.header>
 
           <motion.section
@@ -566,6 +525,8 @@ export function AIPageContent() {
                 onSelectHistory={handleSelectHistory}
                 onRetry={handleRetry}
                 onDelete={handleDelete}
+                onOpenConfig={() => setIsConfigOpen(true)}
+                onClear={handleClear}
                 panelClassName={PANEL_HEIGHT_CLASS}
               />
 

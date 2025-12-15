@@ -32,6 +32,11 @@ interface PageProps {
   section: 'learn' | 'reference' | 'examples' | 'ai' | 'home' | 'unknown';
   languages?: Languages | null;
   showFooter?: boolean;
+  topNavOptions?: {
+    hideBrandWhenHeroVisible?: boolean;
+    overlayOnHome?: boolean;
+    heroAnchorId?: string;
+  };
 }
 
 export function Page({
@@ -42,6 +47,7 @@ export function Page({
   section,
   languages = null,
   showFooter = true,
+  topNavOptions,
 }: PageProps) {
   const {asPath} = useRouter();
   const cleanedPath = asPath.split(/[\?\#]/)[0];
@@ -115,6 +121,10 @@ export function Page({
     searchOrder = order;
   }
 
+  const topNavHideBrand = topNavOptions?.hideBrandWhenHeroVisible ?? isHomePage;
+  const topNavOverlay = topNavOptions?.overlayOnHome ?? isHomePage;
+  const topNavHeroAnchorId = topNavOptions?.heroAnchorId;
+
   return (
     <>
       <Seo
@@ -129,8 +139,9 @@ export function Page({
         section={section}
         routeTree={routeTree}
         breadcrumbs={breadcrumbs}
-        hideBrandWhenHeroVisible={isHomePage}
-        overlayOnHome={isHomePage}
+        hideBrandWhenHeroVisible={topNavHideBrand}
+        overlayOnHome={topNavOverlay}
+        heroAnchorId={topNavHeroAnchorId}
       />
       <div
         className={cn(

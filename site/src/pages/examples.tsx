@@ -7,7 +7,12 @@ export default function Examples() {
       toc={[]}
       routeTree={{title: '示例', path: '/examples', routes: []}}
       meta={{title: '示例'}}
-      section="examples">
+      section="examples"
+      topNavOptions={{
+        hideBrandWhenHeroVisible: true,
+        overlayOnHome: true,
+        heroAnchorId: 'gallery-hero-anchor',
+      }}>
       <GalleryPage />
     </Page>
   );
