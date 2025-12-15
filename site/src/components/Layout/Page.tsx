@@ -129,6 +129,8 @@ export function Page({
         section={section}
         routeTree={routeTree}
         breadcrumbs={breadcrumbs}
+        hideBrandWhenHeroVisible={isHomePage}
+        overlayOnHome={isHomePage}
       />
       <div
         className={cn(

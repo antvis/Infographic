@@ -125,14 +125,19 @@ export default function TopNav({
   routeTree,
   breadcrumbs,
   section,
+  hideBrandWhenHeroVisible = false,
+  overlayOnHome = false,
 }: {
   routeTree: RouteItem;
   breadcrumbs: RouteItem[];
   section: 'learn' | 'reference' | 'examples' | 'ai' | 'home' | 'unknown';
+  hideBrandWhenHeroVisible?: boolean;
+  overlayOnHome?: boolean;
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isHeroVisible, setIsHeroVisible] = useState(false);
   const searchEnabled = false;
   const scrollParentRef = useRef<HTMLDivElement>(null);
   const {asPath} = useRouter();
@@ -199,9 +204,35 @@ export default function TopNav({
       setShowSearch(true);
     });
   }, []);
+
+  useEffect(() => {
+    if (!hideBrandWhenHeroVisible) return;
+    const hero = document.getElementById('home-hero-brand');
+    if (!hero) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => setIsHeroVisible(entry.isIntersecting));
+      },
+      {threshold: 0, rootMargin: '-6% 0px 0px 0px'}
+    );
+    observer.observe(hero);
+    return () => observer.disconnect();
+  }, [hideBrandWhenHeroVisible]);
+
   const onCloseSearch = useCallback(() => {
     setShowSearch(false);
   }, []);
+
+  const isNavTransparent =
+    hideBrandWhenHeroVisible && isHeroVisible && !isScrolled && !isMenuOpen;
+
+  const wrapperClass = overlayOnHome
+    ? isMenuOpen
+      ? 'fixed inset-0 flex flex-col z-40'
+      : 'fixed top-0 inset-x-0 z-40'
+    : isMenuOpen
+    ? 'h-screen sticky top-0 lg:bottom-0 lg:h-screen flex flex-col shadow-nav dark:shadow-nav-dark z-20'
+    : 'z-40 sticky top-0';
 
   return (
     <>
@@ -213,19 +244,26 @@ export default function TopNav({
         />
       )}
       <div ref={scrollDetectorRef} />
-      <div
-        className={cn(
-          isMenuOpen
-            ? 'h-screen sticky top-0 lg:bottom-0 lg:h-screen flex flex-col shadow-nav dark:shadow-nav-dark z-20'
-            : 'z-40 sticky top-0'
-        )}>
+      <div className={cn(wrapperClass)}>
         <nav
           className={cn(
-            'duration-300 backdrop-filter backdrop-blur-lg backdrop-saturate-200 transition-shadow bg-opacity-90 items-center w-full flex justify-between bg-wash dark:bg-wash-dark dark:bg-opacity-95 px-1.5 lg:pe-5 lg:ps-4 z-40',
-            {'dark:shadow-nav-dark shadow-nav': isScrolled || isMenuOpen}
+            'duration-300 transition-shadow items-center w-full flex justify-between px-1.5 lg:pe-5 lg:ps-4 z-40',
+            isNavTransparent
+              ? 'bg-transparent shadow-none backdrop-blur-0 backdrop-filter-none'
+              : 'bg-wash dark:bg-wash-dark bg-opacity-90 dark:bg-opacity-95 backdrop-filter backdrop-blur-lg backdrop-saturate-200',
+            {
+              'dark:shadow-nav-dark shadow-nav':
+                (isScrolled || isMenuOpen) && !isNavTransparent,
+            }
           )}>
           <div className="flex items-center justify-between w-full h-16 gap-0 sm:gap-3">
-            <div className="flex flex-row 3xl:flex-1 items-centers">
+            <div
+              className={cn(
+                'flex flex-row 3xl:flex-1 items-centers transition-opacity duration-200',
+                hideBrandWhenHeroVisible && isHeroVisible
+                  ? 'opacity-0 pointer-events-none'
+                  : 'opacity-100'
+              )}>
               <button
                 type="button"
                 aria-label="Menu"

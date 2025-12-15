@@ -1,7 +1,8 @@
 import {InfographicOptions} from '@antv/infographic';
 import {Page} from 'components/Layout/Page';
 import {AnimatePresence, motion} from 'framer-motion';
-import {useEffect, useRef, useState} from 'react';
+import {useRouter} from 'next/router';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {IconStarTwinkle} from '../Icon/IconStarTwinkle';
 import {ChatPanel} from './ChatPanel';
 import {ConfigPanel} from './ConfigPanel';
@@ -124,6 +125,7 @@ const normalizeStoredHistory = (raw: any): HistoryRecord[] => {
 };
 
 export function AIPageContent() {
+  const router = useRouter();
   const [prompt, setPrompt] = useState('');
   const [history, setHistory] = useState<HistoryRecord[]>([]);
   const [config, setConfig] = useState<AIConfig>(DEFAULT_CONFIG);
@@ -143,6 +145,8 @@ export function AIPageContent() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const copyTimerRef = useRef<NodeJS.Timeout | null>(null);
   const recoveredPendingRef = useRef(false);
+  const autoStartRef = useRef(false);
+  const [hasHydrated, setHasHydrated] = useState(false);
   const PANEL_HEIGHT_CLASS = 'min-h-[520px] h-[640px] max-h-[75vh]';
 
   useEffect(() => {
@@ -187,6 +191,7 @@ export function AIPageContent() {
         setPreviewOptions(null);
       }
     }
+    setHasHydrated(true);
     return () => {
       if (copyTimerRef.current) {
         clearTimeout(copyTimerRef.current);
@@ -240,135 +245,164 @@ export function AIPageContent() {
 
   const effectivePreview = previewOptions || FALLBACK_OPTIONS;
 
-  const requestInfographic = async (content: string, userId: string) => {
-    setIsGenerating(true);
-    setHistory((prev) =>
-      prev.map((item) =>
-        item.id === userId
-          ? {...item, status: 'pending', error: undefined, config: undefined}
-          : item
-      )
-    );
-
-    try {
-      const modelConfig: AIModelConfig = {
-        provider: config.provider,
-        baseURL: config.baseUrl.replace(/\/$/, ''),
-        apiKey: config.apiKey,
-        model: config.model || DEFAULT_CONFIG.model,
-      };
-
-      const payloadMessages: Array<{
-        role: 'user' | 'assistant' | 'system';
-        content: string;
-      }> = [
-        {
-          role: 'user',
-          content,
-        },
-      ];
-
-      const resMsg = await sendMessage(modelConfig, payloadMessages);
-      let parsedConfig: Partial<InfographicOptions> | null = null;
-      let parseError = '';
+  const requestInfographic = useCallback(
+    async (content: string, userId: string) => {
+      setIsGenerating(true);
+      setHistory((prev) =>
+        prev.map((item) =>
+          item.id === userId
+            ? {...item, status: 'pending', error: undefined, config: undefined}
+            : item
+        )
+      );
 
       try {
-        const match = resMsg.match(/```(?:json)?\s*([\s\S]*?)```/);
-        const candidate = match ? match[1] : resMsg;
-        const raw = JSON.parse(candidate);
-        parsedConfig =
-          raw && typeof raw === 'object' && 'config' in raw
-            ? (raw as {config: Partial<InfographicOptions>}).config
-            : (raw as Partial<InfographicOptions>);
-      } catch (err) {
-        if (resMsg.includes('{')) {
-          parseError = '无法解析模型返回内容';
-        } else {
-          parseError = resMsg;
+        const modelConfig: AIModelConfig = {
+          provider: config.provider,
+          baseURL: config.baseUrl.replace(/\/$/, ''),
+          apiKey: config.apiKey,
+          model: config.model || DEFAULT_CONFIG.model,
+        };
+
+        const payloadMessages: Array<{
+          role: 'user' | 'assistant' | 'system';
+          content: string;
+        }> = [
+          {
+            role: 'user',
+            content,
+          },
+        ];
+
+        const resMsg = await sendMessage(modelConfig, payloadMessages);
+        let parsedConfig: Partial<InfographicOptions> | null = null;
+        let parseError = '';
+
+        try {
+          const match = resMsg.match(/```(?:json)?\s*([\s\S]*?)```/);
+          const candidate = match ? match[1] : resMsg;
+          const raw = JSON.parse(candidate);
+          parsedConfig =
+            raw && typeof raw === 'object' && 'config' in raw
+              ? (raw as {config: Partial<InfographicOptions>}).config
+              : (raw as Partial<InfographicOptions>);
+        } catch (err) {
+          if (resMsg.includes('{')) {
+            parseError = '无法解析模型返回内容';
+          } else {
+            parseError = resMsg;
+          }
         }
+
+        setHistory((prev) =>
+          prev.map((item) =>
+            item.id === userId
+              ? {
+                  ...item,
+                  status: parsedConfig ? 'ready' : 'error',
+                  error: parsedConfig ? undefined : parseError,
+                  config: parsedConfig || undefined,
+                }
+              : item
+          )
+        );
+
+        if (parsedConfig) {
+          setPreviewOptions(parsedConfig);
+          setPreviewError(null);
+          setLastJSON(formatJSON(parsedConfig));
+          setActiveTab('preview');
+        }
+      } catch (error) {
+        const message =
+          error instanceof Error && error.message
+            ? error.message
+            : '生成失败，请检查网络或稍后重试。';
+
+        setHistory((prev) =>
+          prev.map((item) =>
+            item.id === userId
+              ? {...item, status: 'error', error: message, config: undefined}
+              : item
+          )
+        );
+      } finally {
+        setIsGenerating(false);
+        inputRef.current?.focus();
+      }
+    },
+    [config]
+  );
+
+  const handleSend = useCallback(
+    async (value?: string) => {
+      const content = (value ?? prompt).trim();
+      if (!content) return;
+
+      const targetId =
+        retryingId && history.some((item) => item.id === retryingId)
+          ? retryingId
+          : null;
+      let requestId: string;
+
+      if (targetId) {
+        requestId = targetId;
+        setHistory((prev) =>
+          prev.map((item) =>
+            item.id === targetId
+              ? {
+                  ...item,
+                  text: content,
+                  title: createTitle(content),
+                  status: 'pending',
+                  error: undefined,
+                  config: undefined,
+                }
+              : item
+          )
+        );
+      } else {
+        const newRecord = toHistoryRecord({
+          id: createId(),
+          text: content,
+          status: 'pending',
+        });
+        requestId = newRecord.id;
+        setHistory((prev) => [...prev, newRecord]);
       }
 
-      setHistory((prev) =>
-        prev.map((item) =>
-          item.id === userId
-            ? {
-                ...item,
-                status: parsedConfig ? 'ready' : 'error',
-                error: parsedConfig ? undefined : parseError,
-                config: parsedConfig || undefined,
-              }
-            : item
-        )
-      );
-
-      if (parsedConfig) {
-        setPreviewOptions(parsedConfig);
-        setPreviewError(null);
-        setLastJSON(formatJSON(parsedConfig));
-        setActiveTab('preview');
+      setPrompt('');
+      if (retryingId) {
+        setRetryingId(null);
       }
-    } catch (error) {
-      const message =
-        error instanceof Error && error.message
-          ? error.message
-          : '生成失败，请检查网络或稍后重试。';
 
-      setHistory((prev) =>
-        prev.map((item) =>
-          item.id === userId
-            ? {...item, status: 'error', error: message, config: undefined}
-            : item
-        )
-      );
-    } finally {
-      setIsGenerating(false);
-      inputRef.current?.focus();
-    }
-  };
+      await requestInfographic(content, requestId);
+    },
+    [prompt, retryingId, history, requestInfographic]
+  );
 
-  const handleSend = async (value?: string) => {
-    const content = (value ?? prompt).trim();
-    if (!content) return;
+  useEffect(() => {
+    if (!router.isReady || autoStartRef.current || !hasHydrated) return;
+    const rawPrompt = router.query.prompt;
+    const incoming = Array.isArray(rawPrompt)
+      ? rawPrompt.join(' ')
+      : rawPrompt || '';
+    const normalized = incoming.replace(/\+/g, ' ').trim();
+    if (!normalized) return;
 
-    const targetId =
-      retryingId && history.some((item) => item.id === retryingId)
-        ? retryingId
-        : null;
-    let requestId: string;
-
-    if (targetId) {
-      requestId = targetId;
-      setHistory((prev) =>
-        prev.map((item) =>
-          item.id === targetId
-            ? {
-                ...item,
-                text: content,
-                title: createTitle(content),
-                status: 'pending',
-                error: undefined,
-                config: undefined,
-              }
-            : item
-        )
-      );
-    } else {
-      const newRecord = toHistoryRecord({
-        id: createId(),
-        text: content,
-        status: 'pending',
-      });
-      requestId = newRecord.id;
-      setHistory((prev) => [...prev, newRecord]);
-    }
-
-    setPrompt('');
-    if (retryingId) {
-      setRetryingId(null);
-    }
-
-    await requestInfographic(content, requestId);
-  };
+    autoStartRef.current = true;
+    setPrompt(normalized);
+    void handleSend(normalized);
+    const {prompt: _omit, ...rest} = router.query;
+    void router.replace(
+      {
+        pathname: router.pathname,
+        query: rest,
+      },
+      undefined,
+      {shallow: true}
+    );
+  }, [router, router.isReady, router.query.prompt, hasHydrated, handleSend]);
 
   const handleCopyHint = (hint: string) => {
     if (copyTimerRef.current) clearTimeout(copyTimerRef.current);

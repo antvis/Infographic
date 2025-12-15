@@ -1,5 +1,6 @@
 import cn from 'classnames';
 import NextLink from 'next/link';
+import {useRouter} from 'next/router';
 import {
   useEffect,
   useRef,
@@ -68,6 +69,21 @@ interface ExamplePanelProps {
 }
 
 console.log('AntV Infographic version:', VERSION);
+
+const HERO_PROMPTS = [
+  {
+    title: '🎯 产品生命周期管理',
+    text: '产品从导入期到成长期，销量快速攀升，市场份额从5%增长至25%。成熟期达到峰值40%后保持稳定。衰退期开始下滑至15%。通过在成长期加大营销投入，成熟期优化成本结构，衰退期及时推出升级产品，实现平稳过渡。',
+  },
+  {
+    title: '💰 客户价值分层',
+    text: '将客户分为四个层级：VIP客户占比5%但贡献45%营收，高价值客户占15%贡献30%营收，普通客户占30%贡献20%营收，低价值客户占50%仅贡献5%营收。针对不同层级制定差异化服务策略，重点维护高价值客群，激活潜力客户。',
+  },
+  {
+    title: '🌍 全球市场布局进展',
+    text: '2020年聚焦亚太市场，营收占比60%。2021年拓展欧洲市场，占比提升至25%。2022年进军北美，三大市场形成均衡格局，分别为40%、30%、25%。2023年新兴市场突破，拉美和中东合计贡献15%，全球化布局初步完成。',
+  },
+];
 
 function Section({children, background = null}: SectionProps) {
   return (
@@ -140,6 +156,65 @@ const features: Feature[] = [
 ];
 
 export function HomeContent(): JSX.Element {
+  const router = useRouter();
+  const [heroPrompt, setHeroPrompt] = useState('');
+  const [placeholderText, setPlaceholderText] = useState('');
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const [placeholderStage, setPlaceholderStage] = useState<
+    'typing' | 'pausing' | 'deleting'
+  >('typing');
+  const [isHeroInputActive, setIsHeroInputActive] = useState(false);
+
+  useEffect(() => {
+    if (heroPrompt || isHeroInputActive) return;
+    const current = HERO_PROMPTS[placeholderIndex]?.title ?? '';
+    let timer: NodeJS.Timeout;
+
+    if (placeholderStage === 'typing') {
+      if (placeholderText.length < current.length) {
+        timer = setTimeout(() => {
+          setPlaceholderText(current.slice(0, placeholderText.length + 1));
+        }, 70);
+      } else {
+        timer = setTimeout(() => setPlaceholderStage('pausing'), 1200);
+      }
+    } else if (placeholderStage === 'pausing') {
+      timer = setTimeout(() => setPlaceholderStage('deleting'), 800);
+    } else {
+      if (placeholderText.length > 0) {
+        timer = setTimeout(() => {
+          setPlaceholderText(current.slice(0, placeholderText.length - 1));
+        }, 35);
+      } else {
+        timer = setTimeout(() => {
+          setPlaceholderStage('typing');
+          setPlaceholderIndex((idx) => (idx + 1) % HERO_PROMPTS.length);
+        }, 200);
+      }
+    }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [
+    heroPrompt,
+    isHeroInputActive,
+    placeholderIndex,
+    placeholderStage,
+    placeholderText,
+  ]);
+
+  const handleHeroSubmit = () => {
+    const content =
+      heroPrompt.trim() ||
+      HERO_PROMPTS[placeholderIndex]?.text ||
+      placeholderText.trim() ||
+      '';
+    if (!content) return;
+    const query = `?prompt=${encodeURIComponent(content)}`;
+    router.push(`/ai${query}`);
+  };
+
   return (
     <>
       <div className="ps-0">
@@ -149,47 +224,119 @@ export function HomeContent(): JSX.Element {
           <div className="pointer-events-none absolute -left-32 -top-40 h-96 w-96 rounded-full bg-gradient-to-br from-link/20 via-link/5 to-transparent blur-3xl" />
           <div className="pointer-events-none absolute -right-32 top-20 h-96 w-96 rounded-full bg-gradient-to-br from-purple-40/15 via-transparent to-link/5 blur-3xl" />
 
-          <div className="mx-5 mt-4 lg:mt-12 mb-8 lg:mb-16 flex flex-col justify-center relative z-10 select-none">
-            <Logo
-              className={cn(
-                'mt-4 mb-3 text-brand dark:text-brand-dark w-24 lg:w-28 self-center text-sm me-0 flex origin-center transition-all ease-in-out'
-              )}
-            />
-            <h1 className="text-5xl font-display lg:text-6xl self-center flex font-semibold leading-snug text-primary dark:text-primary-dark">
-              AntV Infographic
-            </h1>
-            <p className="text-4xl font-display max-w-lg md:max-w-full py-1 text-center text-secondary dark:text-primary-dark leading-snug self-center">
-              新一代信息图可视化引擎
-            </p>
-            <div className="mt-5 self-center flex gap-2 w-full sm:w-auto flex-col sm:flex-row">
-              <ButtonLink
-                href={'/ai'}
-                type="primary"
-                size="lg"
-                className="w-full sm:w-auto justify-center"
-                label="AI Infographic">
-                <IconStarTwinkle
-                  className="w-6 h-6"
-                  animation={false}
-                  monochromeColor="#fff"
-                />
-                <span className="font-semibold">AI Infographic</span>
-              </ButtonLink>
-              <ButtonLink
-                href={'/learn'}
-                type="secondary"
-                size="lg"
-                className="w-full sm:w-auto justify-center"
-                label="快速开始">
-                快速开始
-              </ButtonLink>
-              <ExternalLink
-                href="https://github.com/antvis/infographic"
-                aria-label="AntV Infographic on GitHub"
-                className="inline-flex items-center justify-center gap-2 text-primary dark:text-primary-dark shadow-secondary-button-stroke dark:shadow-secondary-button-stroke-dark hover:bg-gray-40/5 active:bg-gray-40/10 hover:dark:bg-gray-60/5 active:dark:bg-gray-60/10 text-lg px-4 py-3 rounded-full min-w-[52px] focus:outline-none focus-visible:outline focus-visible:outline-link focus:outline-offset-2 focus-visible:dark:focus:outline-link-dark">
-                <IconGitHub className="w-6 h-6" />
-                <span className="font-semibold">GitHub</span>
-              </ExternalLink>
+          <div className="mx-5 mt-20 lg:mt-28 mb-8 lg:mb-16 flex flex-col justify-center relative z-10 select-none">
+            <div className="self-center w-full max-w-6xl">
+              <div className="grid gap-10 lg:grid-cols-[1.05fr,0.95fr] items-center lg:min-h-[420px]">
+                <div className="flex flex-col gap-4 lg:gap-6">
+                  <div className="flex items-center gap-3" id="home-hero-brand">
+                    <Logo className="text-brand dark:text-brand-dark w-14 lg:w-16 h-auto flex-shrink-0" />
+                    <div className="flex flex-col leading-tight">
+                      <span className="text-sm uppercase tracking-[0.08em] text-tertiary dark:text-tertiary-dark">
+                        AntV
+                      </span>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-2xl lg:text-3xl font-display font-semibold text-primary dark:text-primary-dark">
+                          Infographic
+                        </span>
+                        <ExternalLink
+                          href="https://www.npmjs.com/package/@antv/infographic"
+                          className="inline-flex items-center gap-2 rounded-full border border-border/70 dark:border-border-dark/70 px-3 py-1 text-xs uppercase tracking-wide text-tertiary dark:text-tertiary-dark hover:bg-border/10 dark:hover:bg-border-dark/10 transition-colors">
+                          v{VERSION}
+                        </ExternalLink>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-4xl lg:text-5xl font-display leading-tight text-primary dark:text-primary-dark">
+                    新一代声明式信息图可视化引擎
+                  </p>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <ButtonLink
+                      href={'/learn'}
+                      type="primary"
+                      size="lg"
+                      className="min-w-[140px] justify-center whitespace-nowrap"
+                      label="快速开始">
+                      快速开始
+                    </ButtonLink>
+                    <ExternalLink
+                      href="https://github.com/antvis/infographic"
+                      aria-label="AntV Infographic on GitHub"
+                      className="inline-flex items-center justify-center gap-2 text-primary dark:text-primary-dark shadow-secondary-button-stroke dark:shadow-secondary-button-stroke-dark hover:bg-gray-40/5 active:bg-gray-40/10 hover:dark:bg-gray-60/5 active:dark:bg-gray-60/10 text-lg px-4 py-3 rounded-full min-w-[140px] whitespace-nowrap focus:outline-none focus-visible:outline focus-visible:outline-link focus:outline-offset-2 focus-visible:dark:focus:outline-link-dark">
+                      <IconGitHub className="w-6 h-6" />
+                      <span className="font-semibold">GitHub</span>
+                    </ExternalLink>
+                    <ButtonLink
+                      href={'/ai'}
+                      type="secondary"
+                      size="lg"
+                      className="justify-center whitespace-nowrap"
+                      label="AI 生成">
+                      AI 生成
+                    </ButtonLink>
+                  </div>
+                </div>
+
+                <div className="relative flex h/full items-center justify-center lg:justify-end">
+                  <div className="absolute -right-6 -top-10 h-32 w-32 rounded-full bg-gradient-to-br from-purple-40/15 via-transparent to-link/5 blur-3xl" />
+                  <div className="relative w-full lg:max-w-[520px] rounded-2xl border border-border/70 dark:border-border-dark/60 bg-white/90 dark:bg-card-dark/80 shadow-lg shadow-link/10 dark:shadow-link-dark/10 p-4 lg:p-6">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="inline-flex items-center gap-2 text-sm font-semibold text-primary dark:text-primary-dark">
+                        <IconStarTwinkle
+                          className="h-5 w-5 text-link dark:text-link-dark"
+                          animation={false}
+                        />
+                        AI 生成信息图
+                      </div>
+                      <span className="text-xs text-tertiary dark:text-tertiary-dark bg-wash dark:bg-wash-dark px-2.5 py-1 rounded-full font-medium">
+                        ⌘/Ctrl + ↵
+                      </span>
+                    </div>
+                    <div className="relative mt-4 rounded-xl border border-border/70 dark:border-border-dark/60 bg-white/80 dark:bg-card-dark/70 shadow-sm flex items-center overflow-hidden">
+                      <input
+                        className="w-full bg-transparent border-none outline-none focus:ring-0 px-4 lg:px-5 py-3 pr-[152px] text-base lg:text-lg text-secondary dark:text-secondary-dark"
+                        value={heroPrompt}
+                        onFocus={() => setIsHeroInputActive(true)}
+                        onBlur={() => {
+                          if (!heroPrompt) setIsHeroInputActive(false);
+                        }}
+                        onChange={(event) => {
+                          setHeroPrompt(event.target.value);
+                          setIsHeroInputActive(true);
+                        }}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter') {
+                            event.preventDefault();
+                            handleHeroSubmit();
+                          }
+                        }}
+                        aria-label="输入信息图生成描述"
+                      />
+                      {!heroPrompt && !isHeroInputActive && (
+                        <div className="pointer-events-none absolute inset-0 flex items-center px-4 lg:px-5 pr-[152px] text-secondary dark:text-secondary-dark text-base lg:text-lg select-none">
+                          <span className="truncate">
+                            {placeholderText ||
+                              HERO_PROMPTS[placeholderIndex]?.title ||
+                              '用一句话描述你想要的信息图'}
+                          </span>
+                          <span className="ml-1 h-5 w-[2px] bg-link/80 dark:bg-link-dark/80 animate-pulse rounded" />
+                        </div>
+                      )}
+                      <button
+                        type="button"
+                        onClick={handleHeroSubmit}
+                        className="absolute right-1 top-1 bottom-1 inline-flex items-center justify-center gap-2 px-4 sm:px-5 bg-gradient-to-r from-link to-purple-40 text-white font-semibold text-base lg:text-lg rounded-full shadow-secondary-button-stroke active:scale-[.98] transition hover:brightness-[1.05] whitespace-nowrap">
+                        <IconStarTwinkle
+                          className="w-6 h-6"
+                          animation={false}
+                          monochromeColor="#fff"
+                        />
+                        <span className="hidden xs:inline">生成信息图</span>
+                        <span className="xs:hidden">生成</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
             <Gallery />
           </div>
