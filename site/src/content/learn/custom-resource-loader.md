@@ -23,17 +23,16 @@ import {registerResourceLoader, loadSVGResource} from '@antv/infographic';
 
 // 注册资源加载器
 registerResourceLoader(async (config) => {
-  const {data} = config;
+  const {scene = 'icon', data} = config; // scene 区分 icon / illus
 
-  // 解析资源类型和 ID
-  // 例如: "icon:mdi/rocket-launch" -> type="icon", id="mdi/rocket-launch"
-  //       "illus:analysis" -> type="illus", id="analysis"
+  // 解析资源 ID（可以自定义你的协议，这里假设 data 直接是 ID）
+  // icon 使用 iconify，illus 使用 undraw 集合
   let url: string;
 
-  if (type === 'icon') {
-    url = `https://api.iconify.design/${id}.svg`;
-  } else if (type === 'illus') {
-    url = `https://raw.githubusercontent.com/balazser/undraw-svg-collection/refs/heads/main/svgs/${id}.svg`;
+  if (scene === 'icon') {
+    url = `https://api.iconify.design/${data}.svg`;
+  } else {
+    url = `https://raw.githubusercontent.com/balazser/undraw-svg-collection/refs/heads/main/svgs/${data}.svg`;
   }
 
   // 请求资源
@@ -59,37 +58,22 @@ import {
 } from '@antv/infographic';
 
 // 从服务器获取资源的函数
-async function fetchFromYourServer(type: string, id: string): Promise<string> {
+async function fetchFromYourServer(scene: string, id: string): Promise<string> {
   const response = await fetch(
-    `https://your-api.com/assets?type=${type}&id=${id}`
+    `https://your-api.com/assets?type=${scene}&id=${id}`
   );
   return await response.text();
 }
 
 // 注册资源加载器
 registerResourceLoader(async (config) => {
-  const {data} = config;
+  const {data, scene = 'icon'} = config;
 
-  // 解析资源类型和 ID
-  // 例如: "icon:star" -> type="icon", id="star"
-  // "illus:chart-1" -> type="illus", id="chart-1"
-  let type: string;
-  let id: string;
-
-  if (data.startsWith('icon:')) {
-    type = 'icon';
-    id = data.replace('icon:', '');
-  } else if (data.startsWith('illus:')) {
-    type = 'illustration';
-    id = data.replace('illus:', '');
-  } else {
-    // 其他自定义协议
-    type = 'default';
-    id = data;
-  }
+  // 解析资源 ID（这里假设 data 即 ID；可自行扩展协议）
+  const id = data;
 
   // 从你的服务器加载资源
-  const svgString = await fetchFromYourServer(type, id);
+  const svgString = await fetchFromYourServer(scene, id);
 
   // 转换为 SVG 资源对象
   return loadSVGResource(svgString);
@@ -101,9 +85,9 @@ const infographic = new Infographic({
   data: {
     items: [
       {
-        icon: 'icon:star', // 使用自定义协议
+        icon: 'star', // 使用自定义协议，scene 为 icon
         label: '特性 1',
-        illus: 'illus:chart-growth', // 使用自定义协议
+        illus: 'chart-growth', // 使用自定义协议，scene 为 illus
       },
     ],
   },
@@ -250,18 +234,19 @@ registerResourceLoader(async (config) => {
 const resourceCache = new Map<string, string>();
 
 registerResourceLoader(async (config) => {
-  const {data} = config;
+  const {data, scene} = config;
 
   // 检查缓存
-  if (resourceCache.has(data)) {
-    return loadSVGResource(resourceCache.get(data)!);
+  const key = `${scene || 'default'}:${data}`;
+  if (resourceCache.has(key)) {
+    return loadSVGResource(resourceCache.get(key)!);
   }
 
   // 加载资源
-  const svgString = await fetchFromYourServer(data);
+  const svgString = await fetchFromYourServer(scene, data);
 
   // 存入缓存
-  resourceCache.set(data, svgString);
+  resourceCache.set(key, svgString);
 
   return loadSVGResource(svgString);
 });
@@ -298,31 +283,20 @@ import {
 } from '@antv/infographic';
 
 registerResourceLoader(async (config) => {
-  const {data} = config;
+  const {data, scene = 'icon', format} = config;
 
-  // 解析资源标识符
-  const [protocol, ...rest] = data.split(':');
-  const resourceId = rest.join(':');
-
-  switch (protocol) {
-    case 'icon':
-      // 加载 SVG 图标
-      const iconSvg = await fetchIcon(resourceId);
-      return loadSVGResource(iconSvg);
-
-    case 'illus':
-      // 加载 SVG 插图
-      const illusSvg = await fetchIllustration(resourceId);
-      return loadSVGResource(illusSvg);
-
-    case 'img':
-      // 加载位图图片（转为 Base64）
-      const imageBase64 = await fetchImageAsBase64(resourceId);
-      return loadImageBase64Resource(imageBase64);
-
-    default:
-      throw new Error(`不支持的资源协议: ${protocol}`);
+  if (typeof data === 'string' && data.startsWith('img:')) {
+    const resourceId = data.slice(4);
+    const imageBase64 = await fetchImageAsBase64(resourceId);
+    return loadImageBase64Resource(imageBase64);
   }
+
+  // 其它场景按 SVG 处理，可用 scene 做区分
+  const svg =
+    scene === 'illus'
+      ? await fetchIllustration(data)
+      : await fetchIcon(data, format);
+  return loadSVGResource(svg);
 });
 ```
 
@@ -334,22 +308,22 @@ registerResourceLoader(async (config) => {
 import {Infographic} from '@antv/infographic';
 
 // 提取所有资源标识符
-function extractResourceIds(data: Data): string[] {
-  const ids: string[] = [];
+function extractResourceEntries(data: Data): Array<{scene: 'icon' | 'illus'; id: string}> {
+  const entries: Array<{scene: 'icon' | 'illus'; id: string}> = [];
 
   data.items.forEach((item) => {
-    if (item.icon) ids.push(item.icon as string);
-    if (item.illus) ids.push(item.illus as string);
+    if (item.icon) entries.push({scene: 'icon', id: item.icon as string});
+    if (item.illus) entries.push({scene: 'illus', id: item.illus as string});
   });
 
-  return ids;
+  return entries;
 }
 
 // 预加载资源
 async function preloadResources(data: Data) {
-  const resourceIds = extractResourceIds(data);
+  const entries = extractResourceEntries(data);
 
-  await Promise.all(resourceIds.map((id) => fetchFromYourServer(id)));
+  await Promise.all(entries.map(({scene, id}) => fetchFromYourServer(scene, id)));
 }
 
 // 使用
@@ -375,9 +349,9 @@ infographic.render();
 
 ```typescript
 // 推荐：清晰的命名
-icon: 'icon:user-profile';
-icon: 'icon:chart-bar';
-illus: 'illus:dashboard-overview';
+icon: 'user-profile';
+icon: 'chart-bar';
+illus: 'dashboard-overview';
 
 // 不推荐：难以理解的标识符
 icon: 'res001';
@@ -389,13 +363,13 @@ icon: 'abc123';
 在整个项目中使用统一的资源协议格式：
 
 ```typescript
-// 统一使用 "type:id" 格式
-icon: 'icon:star'
-illus: 'illus:chart-1'
+// 统一使用 ID 或 ref 协议
+icon: 'ref:remote:https://example.com/star.svg'
+illus: 'chart-1'
 
-// 或使用对象格式
-icon: { type: 'icon', data: 'star' }
-illus: { type: 'illus', data: 'chart-1' }
+// 或使用对象格式，source/format 自描述
+icon: { source: 'remote', format: 'svg', data: 'https://example.com/star.svg' }
+illus: { source: 'inline', format: 'svg', data: '<svg>...</svg>' }
 ```
 
 ### 3. 实现加载状态 {#loading-state}
@@ -434,21 +408,24 @@ function updateLoadingState() {
 ```typescript
 registerResourceLoader(async (config) => {
   try {
-    const svgString = await fetchFromYourServer(config.data);
+    const svgString = await fetchFromYourServer(config.scene, config.data);
     return loadSVGResource(svgString);
   } catch (error) {
     // 记录错误
-    console.warn(`资源加载失败: ${config.data}`, error);
+    console.warn(`资源加载失败: ${config.scene}:${config.data}`, error);
 
     // 返回占位符 SVG
-    return loadSVGResource(getPlaceholderSVG(config.data));
+    return loadSVGResource(getPlaceholderSVG(config.scene));
   }
 });
 
-function getPlaceholderSVG(resourceId: string): string {
-  // 根据资源类型返回不同的占位符
-  if (resourceId.startsWith('icon:')) {
+function getPlaceholderSVG(scene?: string): string {
+  // 根据资源场景返回不同的占位符
+  if (scene === 'icon') {
     return '<svg><!-- icon placeholder --></svg>';
+  }
+  if (scene === 'illus') {
+    return '<svg><!-- illus placeholder --></svg>';
   }
   return '<svg><!-- default placeholder --></svg>';
 }
@@ -465,13 +442,16 @@ function getPlaceholderSVG(resourceId: string): string {
 ```typescript
 // ✅ 正确：在一个加载器中处理多种类型
 registerResourceLoader(async (config) => {
-  if (config.data.startsWith('icon:')) {
+  if (config.scene === 'icon') {
     return await loadIcon(config.data);
   }
-  if (config.data.startsWith('illus:')) {
+  if (config.scene === 'illus') {
     return await loadIllus(config.data);
   }
-  // 默认处理
+  // 自定义协议示例
+  if (typeof config.data === 'string' && config.data.startsWith('img:')) {
+    return await loadImageBase64Resource(await fetchImageAsBase64(config.data.slice(4)));
+  }
   return null;
 });
 
@@ -491,9 +471,9 @@ const infographic = new Infographic({
   // 其他配置项...
   data: {
     items: [
-      {icon: 'icon:1', label: '数据项 1'},
-      {icon: 'icon:2', label: '数据项 2'}, // 并行加载
-      {icon: 'icon:3', label: '数据项 3'},
+      {icon: '1', label: '数据项 1'},
+      {icon: '2', label: '数据项 2'}, // 并行加载
+      {icon: '3', label: '数据项 3'},
     ],
   },
 });

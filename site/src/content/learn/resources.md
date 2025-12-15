@@ -2,7 +2,7 @@
 title: 资源
 ---
 
-AntV Infographic 不自带资源服务。如需使用图标或插图，需要自行处理加载逻辑。可选方案：
+AntV Infographic 提供了[图标服务](/icon)，对于使用插图的模版，则需要自行处理加载逻辑。可选方案：
 
 1. **内置协议**：使用 Data URI 直接嵌入资源（无需注册加载器）
 2. **自定义加载器**：注册加载器从你的服务按需拉取
@@ -31,10 +31,15 @@ AntV Infographic 不自带资源服务。如需使用图标或插图，需要自
 字符串会被自动解析为 [ResourceConfig](/reference/infographic-types#resource-config) 对象：
 
 ```typescript
-// 直接使用字符串
+// 内联 SVG（非 base64）
 icon: 'data:image/svg+xml,<svg>...</svg>';
-icon: 'data:text/url,https://example.com/icon.svg';
-illus: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...';
+// 标准 base64 图片（png/jpg/webp/...）
+icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...';
+// 远程资源（可选格式提示）
+icon: 'ref:remote:svg:https://example.com/icon.svg';
+illus: 'ref:remote:https://example.com/banner.png'; // 未提供 fmt 时会按 URL / Content-Type 推断
+// 搜索图标（由 AntV 图标搜索服务提供）
+icon: 'ref:search:svg:computer network';
 ```
 
 ### 对象形式 {#object-format}
@@ -43,9 +48,12 @@ illus: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...';
 
 ```typescript
 interface ResourceConfig {
-  type: 'image' | 'svg' | 'remote' | 'custom';
-  data: string;
-  [key: string]: any; // 可以添加自定义属性
+  source: 'inline' | 'remote' | 'search' | 'custom';
+  format?: 'svg' | 'image' | string;     // 兜底格式提示，优先使用真实 Content-Type/内容判定
+  encoding?: 'raw' | 'data-uri' | 'base64';
+  data: string;                          // inline 内容 / URL / 搜索词 / 自定义 payload
+  scene?: 'icon' | 'illus';              // 可选，框架会自动填充当前字段的场景
+  [key: string]: any;                    // 自定义扩展
 }
 ```
 
@@ -71,14 +79,14 @@ interface ResourceConfig {
 
 ### 2. 远程 URL {#remote-url}
 
-通过 Data URI 包装远程 URL，以 `data:text/url,` 开头，后面为资源的完整 URL：
+通过自定义协议 `ref:remote[:fmt]:<url>` 直接指定 URL（`fmt` 可省略，缺省时由 URL 或响应头推断）：
 
 ```json
 {
   "data": {
     "items": [
       {
-        "icon": "data:text/url,https://example.com/icon.svg"
+        "icon": "ref:remote:svg:https://example.com/icon.svg"
       }
     ]
   }
@@ -91,7 +99,7 @@ interface ResourceConfig {
 
 ### 3. Base64 图片 {#base64-image}
 
-使用 Base64 编码的图片，以 `data:image/<format>;base64,` 开头，后面为 Base64 编码字符串：
+使用 Base64 编码的图片，遵循标准 data URI，如 `data:image/<format>;base64,`：
 
 ```json
 {
@@ -99,6 +107,22 @@ interface ResourceConfig {
     "items": [
       {
         "icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA..."
+      }
+    ]
+  }
+}
+```
+
+### 4. 图标搜索 {#search-icon}
+
+通过 `ref:search[:fmt]:<keywords>` 使用AntV 图标搜索服务提供资源，`fmt` 默认为 `svg`：
+
+```json
+{
+  "data": {
+    "items": [
+      {
+        "icon": "ref:search:computer network"
       }
     ]
   }
