@@ -11,7 +11,7 @@ export const enum ElementTypeEnum {
   ItemLabel = 'item-label',
   ItemDesc = 'item-desc',
   ItemValue = 'item-value',
-  ItemsIllus = 'items-illus',
+  ItemIllus = 'item-illus',
   BtnAdd = 'btn-add',
   BtnRemove = 'btn-remove',
   IllusGroup = 'illus-group',

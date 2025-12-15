@@ -14,7 +14,7 @@ export const Illus = ({ indexes, ...props }: IllusProps) => {
 
   if (indexes) {
     finalProps['data-indexes'] = indexes;
-    finalProps['data-element-type'] = ElementTypeEnum.ItemsIllus;
+    finalProps['data-element-type'] = ElementTypeEnum.ItemIllus;
   } else {
     finalProps['data-element-type'] = ElementTypeEnum.Illus;
   }

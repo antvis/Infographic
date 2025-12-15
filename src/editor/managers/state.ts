@@ -147,7 +147,7 @@ export class StateManager implements IStateManager {
       ElementTypeEnum.ItemLabel === role ||
       ElementTypeEnum.ItemDesc === role ||
       ElementTypeEnum.ItemValue === role ||
-      ElementTypeEnum.ItemsIllus === role;
+      ElementTypeEnum.ItemIllus === role;
     const indexes = isItemElement ? getIndexesFromElement(element) : undefined;
     if (isItemElement) {
       const datum = getDatumByIndexes(data, indexes!);
