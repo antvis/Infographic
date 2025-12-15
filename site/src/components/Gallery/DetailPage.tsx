@@ -156,9 +156,9 @@ export default function DetailPage() {
   };
 
   return (
-    <div className="h-[calc(100vh-64px)] w-full bg-wash dark:bg-wash-dark flex overflow-hidden text-primary dark:text-primary-dark">
+    <div className="h-[calc(100vh-64px)] w-full bg-wash dark:bg-gray-95 flex overflow-hidden text-primary dark:text-primary-dark">
       {/* Left Panel: Canvas */}
-      <div className="flex-1 relative bg-gray-10/60 dark:bg-gray-90/60 flex flex-col overflow-hidden">
+      <div className="flex-1 relative bg-gray-10/60 dark:bg-gray-95 flex flex-col overflow-hidden">
         <motion.button
           initial={{opacity: 0, x: -20}}
           animate={{opacity: 1, x: 0}}
@@ -169,7 +169,7 @@ export default function DetailPage() {
         </motion.button>
 
         <div
-          className="absolute inset-0 pointer-events-none opacity-[0.4] z-0"
+          className="absolute inset-0 pointer-events-none opacity-[0.4] z-0 dark:hidden"
           style={{
             backgroundImage:
               'radial-gradient(var(--tw-prose-bullets, #cbd5e1) 1px, transparent 1px)',

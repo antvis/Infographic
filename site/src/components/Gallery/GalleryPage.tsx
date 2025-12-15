@@ -155,7 +155,7 @@ export default function GalleryPage() {
   };
 
   return (
-    <div className="relative isolate overflow-hidden min-h-screen bg-wash dark:bg-wash-dark text-primary dark:text-primary-dark selection:bg-link/20 selection:dark:bg-link-dark/20">
+    <div className="relative isolate overflow-hidden min-h-screen bg-wash dark:bg-gradient-to-b dark:from-gray-95 dark:via-gray-95 dark:to-gray-90 text-primary dark:text-primary-dark selection:bg-link/20 selection:dark:bg-link-dark/20">
       {/* Background decorations */}
       <div className="pointer-events-none absolute -left-32 -top-40 h-96 w-96 rounded-full bg-gradient-to-br from-link/20 via-link/5 to-transparent blur-3xl" />
       <div className="pointer-events-none absolute -right-32 top-20 h-96 w-96 rounded-full bg-gradient-to-br from-purple-40/15 via-transparent to-link/5 blur-3xl" />
@@ -174,14 +174,14 @@ export default function GalleryPage() {
               Gallery
             </span>
           </h1>
-          <p className="text-lg lg:text-xl text-secondary dark:text-secondary-dark max-w-3xl leading-relaxed select-none">
+          <p className="text-lg lg:text-xl text-secondary dark:text-secondary-dark leading-relaxed select-none">
             探索我们精选的信息图模板库，高保真设计、灵活可定制，可即插即用地投入你的应用。
           </p>
         </motion.div>
       </div>
 
       {/* Filter Bar Area */}
-      <div className="sticky top-16 z-40 dark:bg-wash-dark/80 backdrop-blur-xl border-b border-primary/5 dark:border-primary-dark/5 py-4 mb-8 transition-all">
+      <div className="sticky top-16 z-40 dark:bg-gray-95/90 backdrop-blur-xl border-b border-primary/5 dark:border-primary-dark/5 py-4 mb-8 transition-all">
         <motion.div
           initial={{opacity: 0, y: 20}}
           animate={{opacity: 1, y: 0}}
@@ -248,11 +248,6 @@ export default function GalleryPage() {
       </main>
 
       {/* Optional: Noise Texture Overlay for modern feel */}
-      <div
-        className="fixed inset-0 opacity-[0.02] pointer-events-none z-0 dark:opacity-[0.05]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-        }}></div>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import {InfographicOptions} from '@antv/infographic';
+import {CopyToast, useCopyToast} from 'components/CopyToast';
 import {Page} from 'components/Layout/Page';
-import {AnimatePresence, motion} from 'framer-motion';
+import {motion} from 'framer-motion';
 import {useRouter} from 'next/router';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {IconStarTwinkle} from '../Icon/IconStarTwinkle';
@@ -139,15 +140,14 @@ export function AIPageContent() {
   const [previewError, setPreviewError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'preview' | 'json'>('preview');
   const [lastJSON, setLastJSON] = useState('');
-  const [copyHint, setCopyHint] = useState('');
   const [mounted, setMounted] = useState(false);
   const [retryingId, setRetryingId] = useState<string | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const copyTimerRef = useRef<NodeJS.Timeout | null>(null);
   const recoveredPendingRef = useRef(false);
   const autoStartRef = useRef(false);
   const [hasHydrated, setHasHydrated] = useState(false);
   const PANEL_HEIGHT_CLASS = 'min-h-[520px] h-[640px] max-h-[75vh]';
+  const {message: copyHint, show: showCopyHint} = useCopyToast();
 
   useEffect(() => {
     setMounted(true);
@@ -192,11 +192,6 @@ export function AIPageContent() {
       }
     }
     setHasHydrated(true);
-    return () => {
-      if (copyTimerRef.current) {
-        clearTimeout(copyTimerRef.current);
-      }
-    };
   }, []);
 
   useEffect(() => {
@@ -404,11 +399,10 @@ export function AIPageContent() {
     );
   }, [router, router.isReady, router.query.prompt, hasHydrated, handleSend]);
 
-  const handleCopyHint = (hint: string) => {
-    if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
-    setCopyHint(hint);
-    copyTimerRef.current = setTimeout(() => setCopyHint(''), 1500);
-  };
+  const handleCopyHint = useCallback(
+    (hint: string) => showCopyHint(hint),
+    [showCopyHint]
+  );
 
   const handleClear = () => {
     setHistory([]);
@@ -546,18 +540,7 @@ export function AIPageContent() {
             </div>
           </motion.section>
 
-          <AnimatePresence>
-            {copyHint && (
-              <motion.div
-                initial={{opacity: 0, y: 12}}
-                animate={{opacity: 1, y: 0}}
-                exit={{opacity: 0, y: 12}}
-                transition={{duration: 0.25}}
-                className="fixed bottom-8 right-8 rounded-full bg-link dark:bg-link-dark text-white px-5 py-2.5 shadow-lg font-medium text-sm">
-                ✓ {copyHint}
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <CopyToast message={copyHint} />
         </div>
       </div>
 
