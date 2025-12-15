@@ -17,7 +17,8 @@ describe('parser', () => {
 
     it('should return ResourceConfig object as-is', () => {
       const config = {
-        type: 'image' as const,
+        source: 'inline' as const,
+        format: 'image' as const,
         data: 'some-data',
       };
 
@@ -28,7 +29,8 @@ describe('parser', () => {
 
     it('should parse string config using parseDataURI', () => {
       const mockResult = {
-        type: 'svg' as const,
+        source: 'inline' as const,
+        format: 'svg' as const,
         data: '<svg></svg>',
       };
 
@@ -42,13 +44,32 @@ describe('parser', () => {
       expect(result).toBe(mockResult);
     });
 
-    it('should return null when parseDataURI returns null', () => {
+    it('should fallback to inline svg when string looks like svg', () => {
       vi.mocked(parseDataURI).mockReturnValue(null);
 
-      const result = parseResourceConfig('invalid-data-uri');
+      const result = parseResourceConfig('<svg></svg>');
 
-      expect(vi.mocked(parseDataURI)).toHaveBeenCalledWith('invalid-data-uri');
-      expect(result).toBeNull();
+      expect(vi.mocked(parseDataURI)).toHaveBeenCalledWith('<svg></svg>');
+      expect(result).toEqual({
+        source: 'inline',
+        format: 'svg',
+        encoding: 'raw',
+        data: '<svg></svg>',
+      });
+    });
+
+    it('should fallback to custom config when parseDataURI returns null', () => {
+      vi.mocked(parseDataURI).mockReturnValue(null);
+
+      const result = parseResourceConfig('custom-protocol:data');
+
+      expect(vi.mocked(parseDataURI)).toHaveBeenCalledWith(
+        'custom-protocol:data',
+      );
+      expect(result).toEqual({
+        source: 'custom',
+        data: 'custom-protocol:data',
+      });
     });
   });
 });

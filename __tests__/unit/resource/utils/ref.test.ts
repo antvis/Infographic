@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { parseDataURI } from '../../../../src/resource/utils/data-uri';
+import { parseResourceConfig } from '../../../../src/resource/utils/parser';
 import {
   getResourceHref,
   getResourceId,
@@ -7,8 +7,8 @@ import {
 import { getSimpleHash } from '../../../../src/utils';
 
 // Mock dependencies
-vi.mock('../../../../src/resource/utils/data-uri', () => ({
-  parseDataURI: vi.fn(),
+vi.mock('../../../../src/resource/utils/parser', () => ({
+  parseResourceConfig: vi.fn(),
 }));
 
 vi.mock('../../../../src/utils', () => ({
@@ -22,33 +22,37 @@ describe('ref', () => {
 
   describe('getResourceId', () => {
     it('should return null for invalid string config', () => {
-      vi.mocked(parseDataURI).mockReturnValue(null);
+      vi.mocked(parseResourceConfig).mockReturnValue(null);
 
       const result = getResourceId('invalid-config');
 
-      expect(parseDataURI).toHaveBeenCalledWith('invalid-config');
+      expect(parseResourceConfig).toHaveBeenCalledWith('invalid-config');
       expect(result).toBeNull();
     });
 
     it('should generate hash for string config', () => {
       const mockConfig = {
-        type: 'image' as const,
+        source: 'inline' as const,
+        format: 'image' as const,
         data: 'image-data',
       };
 
-      vi.mocked(parseDataURI).mockReturnValue(mockConfig);
+      vi.mocked(parseResourceConfig).mockReturnValue(mockConfig);
       vi.mocked(getSimpleHash).mockReturnValue('12345');
 
       const result = getResourceId('data:image/png;base64,abc123');
 
-      expect(parseDataURI).toHaveBeenCalledWith('data:image/png;base64,abc123');
+      expect(parseResourceConfig).toHaveBeenCalledWith(
+        'data:image/png;base64,abc123',
+      );
       expect(getSimpleHash).toHaveBeenCalledWith(JSON.stringify(mockConfig));
       expect(result).toBe('rsc-12345');
     });
 
     it('should generate hash for ResourceConfig object', () => {
       const config = {
-        type: 'svg' as const,
+        source: 'inline' as const,
+        format: 'svg' as const,
         data: '<svg></svg>',
       };
 
@@ -56,7 +60,7 @@ describe('ref', () => {
 
       const result = getResourceId(config);
 
-      expect(parseDataURI).not.toHaveBeenCalled();
+      expect(parseResourceConfig).not.toHaveBeenCalled();
       expect(getSimpleHash).toHaveBeenCalledWith(JSON.stringify(config));
       expect(result).toBe('rsc-67890');
     });
@@ -69,7 +73,7 @@ describe('ref', () => {
 
   describe('getResourceHref', () => {
     it('should return null when getResourceId returns null', () => {
-      vi.mocked(parseDataURI).mockReturnValue(null);
+      vi.mocked(parseResourceConfig).mockReturnValue(null);
 
       const result = getResourceHref('invalid-config');
 
@@ -78,11 +82,12 @@ describe('ref', () => {
 
     it('should return href with hash when getResourceId succeeds', () => {
       const mockConfig = {
-        type: 'image' as const,
+        source: 'inline' as const,
+        format: 'image' as const,
         data: 'image-data',
       };
 
-      vi.mocked(parseDataURI).mockReturnValue(mockConfig);
+      vi.mocked(parseResourceConfig).mockReturnValue(mockConfig);
       vi.mocked(getSimpleHash).mockReturnValue('abc123');
 
       const result = getResourceHref('data:image/png;base64,def456');
@@ -92,7 +97,8 @@ describe('ref', () => {
 
     it('should work with ResourceConfig object', () => {
       const config = {
-        type: 'svg' as const,
+        source: 'inline' as const,
+        format: 'svg' as const,
         data: '<svg></svg>',
       };
 
