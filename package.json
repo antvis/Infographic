@@ -7,6 +7,7 @@
     "infographic",
     "visualization"
   ],
+  "repository": "git@github.com:antvis/Infographic.git",
   "license": "MIT",
   "author": "Aarebecca",
   "exports": {
@@ -52,6 +53,7 @@
     "lint": "run-s lint:root lint:site",
     "lint:root": "eslint . --ext .ts,.tsx --ignore-pattern 'site/**' && npm run check:test",
     "lint:site": "npm --prefix site run lint",
+    "prepublishOnly": "npm run ci",
     "size": "size-limit",
     "test": "vitest --run --coverage"
   },
@@ -138,6 +140,5 @@
       "limit": "500 Kb",
       "path": "dist/infographic.min.js"
     }
-  ],
-  "repository": "git@github.com:antvis/Infographic.git"
+  ]
 }
