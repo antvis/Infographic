@@ -4,13 +4,18 @@ import { loadRemoteResource } from './remote';
 import { loadSVGResource } from './svg';
 
 const queryIcon = async (query: string): Promise<string | null> => {
-  const params = new URLSearchParams({ text: query, topK: '1' });
-  const url = `${ICON_SERVICE_URL}?${params.toString()}`;
-  const response = await fetch(url);
-  if (!response.ok) return null;
-  const result = await response.json();
-  if (!result?.status || !Array.isArray(result.data?.data)) return null;
-  return (result.data.data[0] as string) || null;
+  try {
+    const params = new URLSearchParams({ text: query, topK: '1' });
+    const url = `${ICON_SERVICE_URL}?${params.toString()}`;
+    const response = await fetch(url);
+    if (!response.ok) return null;
+    const result = await response.json();
+    if (!result?.status || !Array.isArray(result.data?.data)) return null;
+    return (result.data.data[0] as string) || null;
+  } catch (error) {
+    console.error(`Failed to query icon for "${query}":`, error);
+    return null;
+  }
 };
 
 function isDataURI(resource: string): boolean {
