@@ -136,47 +136,47 @@ const list: Array<{
         title: '企业发展历程',
         items: [
           {
-            icon: 'icon:mdi/lightbulb-on',
+            icon: 'mdi/lightbulb-on',
             label: '创意萌芽',
             time: '2017',
           },
           {
-            icon: 'icon:mdi/rocket-launch',
+            icon: 'mdi/rocket-launch',
             label: '项目启动',
             time: '2018',
           },
           {
-            icon: 'icon:mdi/account-group',
+            icon: 'mdi/account-group',
             label: '团队组建',
             time: '2019',
           },
           {
-            icon: 'icon:mdi/chart-line',
+            icon: 'mdi/chart-line',
             label: '快速增长',
             time: '2020',
           },
           {
-            icon: 'icon:mdi/shield-check',
+            icon: 'mdi/shield-check',
             label: '稳定运营',
             time: '2021',
           },
           {
-            icon: 'icon:mdi/trending-up',
+            icon: 'mdi/trending-up',
             label: '规模扩张',
             time: '2022',
           },
           {
-            icon: 'icon:mdi/medal',
+            icon: 'mdi/medal',
             label: '行业认可',
             time: '2023',
           },
           {
-            icon: 'icon:mdi/trophy',
+            icon: 'mdi/trophy',
             label: '市场领先',
             time: '2024',
           },
           {
-            icon: 'icon:mdi/star',
+            icon: 'mdi/star',
             label: '未来展望',
             time: '2025',
           },

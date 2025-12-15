@@ -45,7 +45,7 @@ interface Data {
 
 // ItemDatum 中的字段为可选，如果没有，那就不需要包含在配置中
 interface ItemDatum {
-  icon: string; // 数据项图标，使用 iconify 图标，格式为 icon:<collect>/<name>, 如 icon:mdi/robot, icon:streamline-kameleon-color/bluetooth
+  icon: string; // 数据项图标，提供图标关键词即可，会自动转为图标资源，格式为 ref:search:<关键词>，多个关键词用空格分隔
   label?: string; // 数据项标签
   desc?: string; // 数据项描述
   value?: number; // 数据项数值（若有）

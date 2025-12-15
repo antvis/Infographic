@@ -26,22 +26,22 @@ const styles: StyleConfig[] = [
       data: {
         items: [
           {
-            icon: 'icon:mdi/fire-alert',
+            icon: 'mdi/fire-alert',
             label: '紧急且重要',
             desc: '需要立即处理的关键任务，如系统故障修复、重要客户投诉处理',
           },
           {
-            icon: 'icon:mdi/target-arrow',
+            icon: 'mdi/target-arrow',
             label: '重要但不紧急',
             desc: '对长期目标有重大影响的事项，如技术架构优化、团队能力建设',
           },
           {
-            icon: 'icon:mdi/clock-alert-outline',
+            icon: 'mdi/clock-alert-outline',
             label: '紧急但不重要',
             desc: '需要快速响应但影响有限的事务，如部分会议邀请、常规报告提交',
           },
           {
-            icon: 'icon:mdi/calendar-remove',
+            icon: 'mdi/calendar-remove',
             label: '不紧急且不重要',
             desc: '可以延后或委派的低优先级事项，如非关键的邮件回复、日常琐事',
           },
@@ -78,22 +78,22 @@ const styles: StyleConfig[] = [
           {
             label: '创建账号',
             desc: '填写基本信息，设置用户名和密码完成注册',
-            icon: 'icon:mdi/account-plus',
+            icon: 'mdi/account-plus',
           },
           {
             label: '完善资料',
             desc: '上传头像，补充个人信息和偏好设置',
-            icon: 'icon:mdi/account-edit',
+            icon: 'mdi/account-edit',
           },
           {
             label: '验证身份',
             desc: '通过邮箱或手机号验证，确保账号安全',
-            icon: 'icon:mdi/shield-check',
+            icon: 'mdi/shield-check',
           },
           {
             label: '开始使用',
             desc: '探索平台功能，开启你的专属体验之旅',
-            icon: 'icon:mdi/party-popper',
+            icon: 'mdi/party-popper',
           },
         ],
       },
@@ -122,42 +122,42 @@ const styles: StyleConfig[] = [
           {
             label: '市场调研',
             desc: '分析行业趋势、市场规模，研究竞争对手策略，识别市场机会与风险',
-            icon: 'icon:mdi/chart-box',
+            icon: 'mdi/chart-box',
           },
           {
             label: '用户画像',
             desc: '定义目标用户的年龄、职业、消费习惯等特征，构建用户行为模型',
-            icon: 'icon:mdi/account-group',
+            icon: 'mdi/account-group',
           },
           {
             label: '产品定位',
             desc: '明确产品核心价值、差异化优势和竞争壁垒，确立品牌定位',
-            icon: 'icon:mdi/bullseye-arrow',
+            icon: 'mdi/bullseye-arrow',
           },
           {
             label: '功能规划',
             desc: '梳理功能架构，制定MVP清单，规划优先级和迭代路线图',
-            icon: 'icon:mdi/puzzle',
+            icon: 'mdi/puzzle',
           },
           {
             label: '原型设计',
             desc: '创建交互原型，设计界面布局和视觉风格，输出UI规范文档',
-            icon: 'icon:mdi/palette',
+            icon: 'mdi/palette',
           },
           {
             label: '技术开发',
             desc: '选择技术栈，进行前后端开发和API实现，确保性能和安全性',
-            icon: 'icon:mdi/laptop',
+            icon: 'mdi/laptop',
           },
           {
             label: '测试优化',
             desc: '执行功能、性能和兼容性测试，收集反馈并持续优化体验',
-            icon: 'icon:mdi/tune',
+            icon: 'mdi/tune',
           },
           {
             label: '推广运营',
             desc: '制定营销策略，执行多渠道推广，优化转化率和用户留存',
-            icon: 'icon:mdi/trending-up',
+            icon: 'mdi/trending-up',
           },
         ],
       },

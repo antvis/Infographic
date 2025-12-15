@@ -25,27 +25,27 @@ const PRESET_CONFIGS: ConfigOption[] = [
           {
             label: '战略创新',
             desc: '数据驱动决策，引领行业变革',
-            icon: 'icon:mdi/lightbulb-on',
+            icon: 'mdi/lightbulb-on',
           },
           {
             label: '智能运营',
             desc: 'AI赋能业务，实现自动化管理',
-            icon: 'icon:mdi/robot',
+            icon: 'mdi/robot',
           },
           {
             label: '数据整合',
             desc: '打通数据孤岛，建立统一平台',
-            icon: 'icon:mdi/database-sync',
+            icon: 'mdi/database-sync',
           },
           {
             label: '流程优化',
             desc: '数字化核心业务流程和协作',
-            icon: 'icon:mdi/workflow',
+            icon: 'mdi/workflow',
           },
           {
             label: '基础设施',
             desc: '构建云计算和网络基础架构',
-            icon: 'icon:mdi/server-network',
+            icon: 'mdi/server-network',
           },
         ],
       },
@@ -69,32 +69,32 @@ const PRESET_CONFIGS: ConfigOption[] = [
         desc: '从洞察到执行，智能化工具驱动高效业务协同流程',
         items: [
           {
-            illus: 'illus:analysis',
+            illus: 'analysis',
             label: '业务洞察',
             desc: '基于数据分析洞察业务现状，识别核心增长点与潜在问题。',
           },
           {
-            illus: 'illus:process',
+            illus: 'process',
             label: '流程设计',
             desc: '梳理关键节点，构建结构化流程蓝图，确保整体流程可控可视。',
           },
           {
-            illus: 'illus:prototyping-process',
+            illus: 'prototyping-process',
             label: '方案原型',
             desc: '将流程转化为可落地的原型方案，快速验证业务可行性与合理性。',
           },
           {
-            illus: 'illus:collaboration',
+            illus: 'collaboration',
             label: '团队协作',
             desc: '跨团队协作推进实施，确保设计、研发、运营保持一致目标。',
           },
           {
-            illus: 'illus:progress-data',
+            illus: 'progress-data',
             label: '过程监控',
             desc: '实时跟踪项目进度与数据表现，实现业务全链路的透明化管理。',
           },
           {
-            illus: 'illus:result',
+            illus: 'result',
             label: '结果达成',
             desc: '最终达成业务目标，形成可复制的成功经验与流程规范。',
           },

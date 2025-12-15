@@ -197,17 +197,17 @@ infographic.render();
       {
         "label": "步骤 1",
         "desc": "开始",
-        "icon": "icon:mdi/rocket-launch"
+        "icon": "mdi/rocket-launch"
       },
       {
         "label": "步骤 2",
         "desc": "进行中",
-        "icon": "icon:mdi/progress-clock"
+        "icon": "mdi/progress-clock"
       },
       {
         "label": "步骤 3",
         "desc": "完成",
-        "icon": "icon:mdi/trophy"
+        "icon": "mdi/trophy"
       }
     ]
   }
