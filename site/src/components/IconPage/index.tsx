@@ -6,13 +6,7 @@ import {Check, Copy, Link2, RefreshCw, Search} from 'lucide-react';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {IconCopy} from '../Icon/IconCopy';
 import {IconEllipsis} from '../Icon/IconEllipsis';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select';
+import {Select} from '../ui/select';
 
 const presetQueries = [
   '数据分析',
@@ -223,8 +217,7 @@ export function IconPageContent() {
               </span>
             </h1>
             <p className="text-lg lg:text-xl text-secondary dark:text-secondary-dark leading-relaxed select-none">
-              以自然语言描述需求，实时推荐 100,000+
-              图标库中的最佳匹配，支持一键复制链接与 SVG。
+              提供 100,000+ 图标，支持语义化查询检索
             </p>
           </motion.header>
         </div>
@@ -283,18 +276,15 @@ export function IconPageContent() {
                         </button>
                         <Select
                           value={String(topK)}
-                          onValueChange={(value) => setTopK(Number(value))}>
-                          <SelectTrigger className="shrink-0 w-[80px] bg-white dark:bg-gray-900 text-sm border-gray-200 dark:border-gray-800">
-                            <SelectValue placeholder={`Top ${topK}`} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {[1, 5, 10, 20].map((option) => (
-                              <SelectItem key={option} value={String(option)}>
-                                Top {option}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                          onValueChange={(value) => setTopK(Number(value))}
+                          placeholder={`Top ${topK}`}
+                          width={80}
+                          className="shrink-0 bg-white dark:bg-gray-900 text-sm border-gray-200 dark:border-gray-800"
+                          options={[1, 5, 10, 20].map((option) => ({
+                            value: String(option),
+                            label: `Top ${option}`,
+                          }))}
+                        />
                       </div>
                     </div>
                     <div className="flex flex-wrap gap-2">

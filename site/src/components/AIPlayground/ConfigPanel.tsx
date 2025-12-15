@@ -1,13 +1,7 @@
 import Image from 'next/image';
 import {useEffect, useState} from 'react';
 import {Dialog, DialogContent, DialogTitle} from '../ui/dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select';
+import {Select} from '../ui/select';
 import {DEFAULT_CONFIG, PROVIDER_OPTIONS} from './constants';
 import {fetchModels} from './Service';
 import {AIConfig, AIProvider} from './types';
@@ -115,34 +109,31 @@ export function ConfigPanel({
           <div className="grid gap-4">
             <div className="space-y-2 text-base">
               <label className="block text-sm font-semibold">提供商</label>
-              <Select value={draft.provider} onValueChange={handlePresetSelect}>
-                <SelectTrigger>
-                  <SelectValue
-                    placeholder={
-                      PROVIDER_OPTIONS.find(
-                        (item) => item.value === draft.provider
-                      )?.label || '选择提供商'
-                    }
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  {PROVIDER_OPTIONS.map((item) => (
-                    <SelectItem key={item.value} value={item.value}>
-                      <span className="inline-flex items-center gap-2">
-                        {item.logo ? (
-                          <Image
-                            src={item.logo}
-                            alt={item.label}
-                            width={16}
-                            height={16}
-                            className="object-contain"
-                          />
-                        ) : null}
-                        {item.label}
-                      </span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+              <Select
+                value={draft.provider}
+                onValueChange={handlePresetSelect}
+                placeholder={
+                  PROVIDER_OPTIONS.find((item) => item.value === draft.provider)
+                    ?.label || '选择提供商'
+                }
+                options={PROVIDER_OPTIONS.map((item) => ({
+                  value: item.value,
+                  label: (
+                    <span className="inline-flex items-center gap-2">
+                      {item.logo ? (
+                        <Image
+                          src={item.logo}
+                          alt={item.label}
+                          width={16}
+                          height={16}
+                          className="object-contain"
+                        />
+                      ) : null}
+                      {item.label}
+                    </span>
+                  ),
+                }))}>
+                {/* fallback to children API when options is empty */}
               </Select>
             </div>
 
@@ -186,20 +177,16 @@ export function ConfigPanel({
                   <Select
                     value={draft.model}
                     disabled={loadingModels}
-                    onValueChange={(next) => setDraft({...draft, model: next})}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="选择模型" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {(models.length ? models : [draft.model || '自定义']).map(
-                        (item) => (
-                          <SelectItem key={item} value={item}>
-                            {item}
-                          </SelectItem>
-                        )
-                      )}
-                    </SelectContent>
-                  </Select>
+                    placeholder="选择模型"
+                    options={(models.length
+                      ? models
+                      : [draft.model || '自定义']
+                    ).map((item) => ({
+                      value: item,
+                      label: item,
+                    }))}
+                    onValueChange={(next) => setDraft({...draft, model: next})}
+                  />
                   {loadingModels ? (
                     <p className="text-xs text-secondary dark:text-secondary-dark">
                       正在获取模型列表…

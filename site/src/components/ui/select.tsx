@@ -1,9 +1,69 @@
 import * as SelectPrimitive from '@radix-ui/react-select';
 import cn from 'classnames';
-import type {ComponentPropsWithoutRef, ElementRef} from 'react';
+import type {ComponentPropsWithoutRef, ElementRef, ReactNode} from 'react';
 import {forwardRef} from 'react';
 
-export const Select = SelectPrimitive.Root;
+export type SelectOption = {
+  label?: ReactNode;
+  value: string;
+  disabled?: boolean;
+  className?: string;
+};
+
+type SelectProps = SelectPrimitive.SelectProps & {
+  options?: SelectOption[];
+  placeholder?: ReactNode;
+  itemProps?: Omit<
+    ComponentPropsWithoutRef<typeof SelectItem>,
+    'value' | 'children'
+  >;
+  children?: ReactNode;
+  width?: number | string;
+  className?: string;
+};
+
+export function Select({
+  options,
+  placeholder,
+  itemProps,
+  children,
+  width,
+  className,
+  ...rootProps
+}: SelectProps) {
+  const renderFromOptions = Array.isArray(options) && options.length > 0;
+  const {className: baseItemClassName, ...restItemProps} = itemProps ?? {};
+  const triggerStyle = width ? {width} : undefined;
+  const contentStyle = width
+    ? {minWidth: typeof width === 'number' ? `${width}px` : width}
+    : undefined;
+
+  return (
+    <SelectPrimitive.Root {...rootProps}>
+      {renderFromOptions ? (
+        <>
+          <SelectTrigger className={className} style={triggerStyle}>
+            <SelectValue placeholder={placeholder} />
+          </SelectTrigger>
+          <SelectContent style={contentStyle}>
+            {options?.map((option) => (
+              <SelectItem
+                key={option.value}
+                value={option.value}
+                {...restItemProps}
+                disabled={option.disabled ?? restItemProps.disabled}
+                className={cn(baseItemClassName, option.className)}>
+                {option.label ?? option.value}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </>
+      ) : (
+        children
+      )}
+    </SelectPrimitive.Root>
+  );
+}
 export const SelectValue = SelectPrimitive.Value;
 export const SelectGroup = SelectPrimitive.Group;
 export const SelectLabel = SelectPrimitive.Label;
