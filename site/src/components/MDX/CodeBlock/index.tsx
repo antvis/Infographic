@@ -36,7 +36,7 @@ export default memo(function CodeBlockWrapper(props: CodeBlockProps): any {
             showCopy={showCopyButton}
           />
           <pre translate="no" dir="ltr" className="py-[18px] ps-5 font-normal">
-            <p className="sp-pre-placeholder overflow-hidden">{children}</p>
+            <div className="sp-pre-placeholder overflow-hidden">{children}</div>
           </pre>
         </div>
       }>

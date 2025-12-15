@@ -31,6 +31,9 @@ type SectionBackground = 'left-card' | 'right-card' | null;
 interface SectionProps {
   children: ReactNode;
   background?: SectionBackground;
+  lazy?: boolean;
+  placeholderHeight?: number;
+  rootMargin?: string;
 }
 
 interface BasicProps {
@@ -85,9 +88,43 @@ const HERO_PROMPTS = [
   },
 ];
 
-function Section({children, background = null}: SectionProps) {
+function Section({
+  children,
+  background = null,
+  lazy = false,
+  placeholderHeight = 520,
+  rootMargin = '360px 0px',
+}: SectionProps) {
+  const sectionRef = useRef<HTMLDivElement | null>(null);
+  const [isVisible, setIsVisible] = useState(!lazy);
+
+  useEffect(() => {
+    if (!lazy || isVisible) return;
+    const node = sectionRef.current;
+    if (!node) return;
+
+    if (typeof window === 'undefined' || !('IntersectionObserver' in window)) {
+      setIsVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      {rootMargin}
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [isVisible, lazy, rootMargin]);
+
   return (
     <div
+      ref={sectionRef}
       className={cn(
         'mx-auto flex flex-col w-full',
         background === null && 'max-w-7xl',
@@ -100,7 +137,11 @@ function Section({children, background = null}: SectionProps) {
         contain: 'content',
       }}>
       <div className="flex-col gap-2 flex grow w-full my-20 lg:my-32 mx-auto items-center">
-        {children}
+        {isVisible ? (
+          children
+        ) : (
+          <div aria-hidden="true" style={{minHeight: placeholderHeight}} />
+        )}
       </div>
     </div>
   );
@@ -342,7 +383,7 @@ export function HomeContent(): JSX.Element {
           </div>
         </div>
 
-        <Section background="left-card">
+        <Section background="left-card" lazy placeholderHeight={780}>
           <Center>
             <Header>声明式信息图渲染框架</Header>
             <Para>
@@ -375,7 +416,7 @@ export function HomeContent(): JSX.Element {
           </Center>
         </Section>
 
-        <Section background="right-card">
+        <Section background="right-card" lazy placeholderHeight={760}>
           <Center>
             <Header>AI 轻松生成专业信息图</Header>
             <Para>
@@ -400,7 +441,7 @@ export function HomeContent(): JSX.Element {
           </Center>
         </Section>
 
-        <Section background="left-card">
+        <Section background="left-card" lazy placeholderHeight={680}>
           <Center>
             <Header>多样主题效果</Header>
             <Para>一键切换风格，满足不同场景需求</Para>
@@ -420,7 +461,7 @@ export function HomeContent(): JSX.Element {
           </Center>
         </Section>
 
-        <Section background="right-card">
+        <Section background="right-card" lazy placeholderHeight={740}>
           <Center>
             <Header>在线体验</Header>
             <Para>
@@ -442,7 +483,7 @@ export function HomeContent(): JSX.Element {
           </Center>
         </Section>
 
-        <Section background="right-card">
+        <Section background="right-card" lazy placeholderHeight={760}>
           <div className="max-w-7xl mx-auto flex flex-col lg:flex-row px-5 select-none">
             <div className="max-w-3xl lg:max-w-7xl gap-5 flex flex-col lg:flex-row lg:px-5">
               <div className="w-full lg:w-6/12 max-w-3xl flex flex-col items-start justify-start lg:ps-5 lg:pe-10">
@@ -497,7 +538,7 @@ export function HomeContent(): JSX.Element {
           </div>
         </Section>
 
-        <Section background="left-card">
+        <Section background="left-card" lazy placeholderHeight={520}>
           <div className="mt-20 px-5 lg:px-0 mb-6 max-w-4xl text-center text-opacity-80 select-none">
             <Logo className="text-brand dark:text-brand-dark w-24 lg:w-28 mb-10 lg:mb-8 mt-12 h-auto mx-auto self-start" />
             <Header>
