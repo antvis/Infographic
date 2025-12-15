@@ -1,9 +1,9 @@
 import { getSimpleHash } from '../../utils';
 import type { ResourceConfig } from '../types';
-import { parseDataURI } from './data-uri';
+import { parseResourceConfig } from './parser';
 
 export function getResourceId(config: string | ResourceConfig): string | null {
-  const cfg = typeof config === 'string' ? parseDataURI(config) : config;
+  const cfg = typeof config === 'string' ? parseResourceConfig(config) : config;
   if (!cfg) return null;
   return 'rsc-' + getSimpleHash(JSON.stringify(cfg));
 }

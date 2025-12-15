@@ -2,6 +2,7 @@ import { getOrCreateDefs } from '../utils';
 import {
   loadImageBase64Resource,
   loadRemoteResource,
+  loadSearchResource,
   loadSVGResource,
 } from './loaders';
 import { getCustomResourceLoader } from './registry';
@@ -15,14 +16,24 @@ async function getResource(
   const cfg = parseResourceConfig(config);
   if (!cfg) return null;
   cfg.scene ||= scene;
-  const { type, data } = cfg;
+  const { source, data, format, encoding } = cfg;
 
-  if (type === 'image') {
-    return await loadImageBase64Resource(data);
-  } else if (type === 'svg') {
+  if (source === 'inline') {
+    const isDataURI = data.startsWith('data:');
+    if (format === 'svg' && encoding === 'raw') {
+      return loadSVGResource(data);
+    }
+    if (format === 'svg' && isDataURI) {
+      return await loadImageBase64Resource(data);
+    }
+    if (isDataURI || format === 'image') {
+      return await loadImageBase64Resource(data);
+    }
     return loadSVGResource(data);
-  } else if (type === 'remote') {
-    return await loadRemoteResource(data);
+  } else if (source === 'remote') {
+    return await loadRemoteResource(data, format);
+  } else if (source === 'search') {
+    return await loadSearchResource(data, format);
   } else {
     const customLoader = getCustomResourceLoader();
     if (customLoader) return await customLoader(cfg);

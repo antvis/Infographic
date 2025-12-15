@@ -1,8 +1,7 @@
-import { DataURITypeEnum } from '../../renderer/constants';
 import type { ResourceConfig } from '../types';
 
 export function parseDataURI(resource: string): ResourceConfig | null {
-  if (!resource.startsWith('data:')) return { type: 'custom', data: resource };
+  if (!resource.startsWith('data:')) return null;
   const commaIndex = resource.indexOf(',');
   if (commaIndex === -1) return null;
 
@@ -10,17 +9,27 @@ export function parseDataURI(resource: string): ResourceConfig | null {
   const data = resource.slice(commaIndex + 1);
   const parts = header.split(';');
   const mimeType = parts[0];
+  const isBase64 = parts.includes('base64');
 
-  if (parts.includes('base64')) {
-    return { type: DataURITypeEnum.Image, data: resource };
+  if (mimeType === 'image/svg+xml' && !isBase64) {
+    const decoded = data.startsWith('%3C') ? decodeURIComponent(data) : data;
+    return {
+      source: 'inline',
+      format: 'svg',
+      encoding: 'raw',
+      data: decoded,
+    };
   }
 
-  const typeMap: Record<string, DataURITypeEnum> = {
-    'text/url': DataURITypeEnum.Remote,
-    'image/svg+xml': DataURITypeEnum.SVG,
-  };
+  if (mimeType.startsWith('image/')) {
+    const format = mimeType === 'image/svg+xml' ? 'svg' : 'image';
+    return {
+      source: 'inline',
+      format,
+      encoding: isBase64 ? 'base64' : 'data-uri',
+      data: resource,
+    };
+  }
 
-  const type = typeMap[mimeType];
-  if (type) return { type, data };
-  return { type: 'custom', data: resource };
+  return null;
 }

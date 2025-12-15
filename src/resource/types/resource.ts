@@ -1,7 +1,15 @@
 import { ResourceScene } from './scene';
 
+export type ResourceSource = 'inline' | 'remote' | 'search' | 'custom';
+
+export type ResourceFormat = 'svg' | 'image' | 'json' | 'binary' | string;
+
+export type ResourceEncoding = 'raw' | 'data-uri' | 'base64' | string;
+
 export interface ResourceConfig {
-  type: 'image' | 'svg' | 'remote' | 'custom';
+  source: ResourceSource;
+  format?: ResourceFormat;
+  encoding?: ResourceEncoding;
   data: string;
   scene?: ResourceScene;
   [key: string]: any;

@@ -9,7 +9,14 @@ function isRemoteResource(resource: string): boolean {
   }
 }
 
-export async function loadRemoteResource(resource: string) {
+function shouldParseAsSVG(contentType: string, format?: string) {
+  const normalized = contentType.toLowerCase();
+  if (normalized.includes('image/svg')) return true;
+  if (!contentType && format === 'svg') return true;
+  return false;
+}
+
+export async function loadRemoteResource(resource: string, format?: string) {
   if (!resource || !isRemoteResource(resource)) return null;
 
   const response = await fetch(resource);
@@ -17,7 +24,7 @@ export async function loadRemoteResource(resource: string) {
 
   const contentType = response.headers.get('Content-Type') || '';
 
-  if (contentType.includes('image/svg+xml')) {
+  if (shouldParseAsSVG(contentType, format)) {
     const svgText = await response.text();
     return loadSVGResource(svgText);
   }
