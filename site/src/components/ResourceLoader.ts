@@ -1,22 +1,13 @@
 import {loadSVGResource, registerResourceLoader} from '@antv/infographic';
 
-// 缓存 SVG 文本而不是 DOM 元素
 const svgTextCache = new Map<string, string>();
 const pendingRequests = new Map<string, Promise<string | null>>();
 
 registerResourceLoader(async (config) => {
-  const {data} = config;
+  const {data, scene} = config;
 
   try {
-    const [type, id] = data.split(':');
-
-    // 验证数据格式
-    if (!type || !id) {
-      console.error(`Invalid resource data format: ${data}`);
-      return null;
-    }
-
-    const key = `${type}:${id}`;
+    const key = `${scene}::${data}`;
     let svgText: string | null;
 
     // 1. 命中缓存
@@ -30,17 +21,17 @@ registerResourceLoader(async (config) => {
     // 3. 发起新请求
     else {
       const fetchPromise = (async () => {
-        let url: string;
-
-        if (type === 'icon') {
-          url = `https://api.iconify.design/${id}.svg`;
-        } else if (type === 'illus') {
-          url = `https://raw.githubusercontent.com/balazser/undraw-svg-collection/refs/heads/main/svgs/${id}.svg`;
-        } else {
-          return null;
-        }
-
         try {
+          let url: string | null;
+
+          if (scene === 'icon') {
+            url = `https://api.iconify.design/${data}.svg`;
+          } else if (scene === 'illus') {
+            url = `https://raw.githubusercontent.com/balazser/undraw-svg-collection/refs/heads/main/svgs/${data}.svg`;
+          } else return null;
+
+          if (!url) return null;
+
           const response = await fetch(url);
 
           if (!response.ok) {
