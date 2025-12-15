@@ -65,10 +65,13 @@ export function IconPageContent() {
                       Endpoint
                     </h3>
                     <div className="bg-gray-5 dark:bg-gray-90 p-4 rounded-lg font-mono text-sm overflow-x-auto border border-gray-10 dark:border-gray-80 text-secondary dark:text-secondary-dark">
-                      <span className="text-green-600 dark:text-green-400 font-bold mr-2">
-                        POST
+                      <span className="text-blue-600 dark:text-blue-400 font-bold mr-2">
+                        GET
                       </span>
                       https://www.weavefox.cn/api/open/v1/icon
+                      <span className="text-xs text-gray-40 dark:text-gray-60">
+                        ?text=数据分析&topK=5
+                      </span>
                     </div>
                   </div>
 
@@ -89,7 +92,7 @@ export function IconPageContent() {
                           <span className="text-sm text-red-500">*</span>
                         </div>
                         <p className="text-sm text-secondary dark:text-secondary-dark">
-                          图标描述文本，例如 "数据分析"
+                          图标描述文本，例如 "数据分析"。通过 query string 传递，如 <code>?text=数据分析</code>
                         </p>
                       </div>
                       <div className="bg-white dark:bg-card-dark p-4 rounded-lg border border-gray-10 dark:border-gray-80">
@@ -105,7 +108,7 @@ export function IconPageContent() {
                           </span>
                         </div>
                         <p className="text-sm text-secondary dark:text-secondary-dark">
-                          返回结果数量 (1-20)
+                          返回结果数量 (1-30)。通过 query string 传递，如 <code>&topK=5</code>
                         </p>
                       </div>
                     </div>

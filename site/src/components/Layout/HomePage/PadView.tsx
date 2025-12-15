@@ -148,17 +148,11 @@ export function PadView({
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('https://www.weavefox.cn/api/open/v1/icon', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          text: inputText,
-          topK: 24,
-        }),
+      const params = new URLSearchParams({
+        text: inputText,
+        topK: '24',
       });
-
+      const response = await fetch(`https://www.weavefox.cn/api/open/v1/icon?${params.toString()}`);
       const result = await response.json();
       if (result.status && result.data && result.data.success) {
         setIcons(result.data.data);
