@@ -3,7 +3,7 @@ import {CopyToast, useCopyToast} from 'components/CopyToast';
 import {Page} from 'components/Layout/Page';
 import {motion} from 'framer-motion';
 import {Check, Copy, Link2, RefreshCw, Search} from 'lucide-react';
-import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import {IconCopy} from '../Icon/IconCopy';
 import {IconEllipsis} from '../Icon/IconEllipsis';
 import {
@@ -120,7 +120,6 @@ export function IconPageContent() {
   const [icons, setIcons] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const mountedRef = useRef(false);
   const [topK, setTopK] = useState(20);
   const {message: toast, show: showToast} = useCopyToast();
 
@@ -162,8 +161,6 @@ export function IconPageContent() {
   );
 
   useEffect(() => {
-    if (mountedRef.current) return;
-    mountedRef.current = true;
     fetchIcons(query);
   }, [fetchIcons, query]);
 
@@ -429,7 +426,7 @@ export function IconPageContent() {
                           </span>
                         </div>
                         <p className="text-sm text-secondary dark:text-secondary-dark">
-                          查询图标数量 (1-20)。 
+                          查询图标数量 (1-20)。
                         </p>
                       </div>
                     </div>
@@ -460,7 +457,6 @@ export function IconPageContent() {
             </motion.section>
           </div>
         </div>
-
       </div>
     </Page>
   );
