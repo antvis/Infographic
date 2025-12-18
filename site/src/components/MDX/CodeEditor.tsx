@@ -31,7 +31,7 @@ import {useEffect, useMemo, useRef} from 'react';
 
 import {CustomTheme} from './Sandpack/Themes';
 
-export type CodeMirrorLanguage = 'json' | 'javascript';
+export type CodeMirrorLanguage = 'json' | 'javascript' | 'plaintext';
 
 const syntaxTheme = HighlightStyle.define([
   {tag: tags.keyword, color: 'var(--sp-syntax-color-keyword)'},
@@ -100,12 +100,14 @@ export function CodeEditor({
   className,
   language,
   onChange,
+  readOnly = false,
   value,
 }: {
   ariaLabel?: string;
   className?: string;
   language: CodeMirrorLanguage;
   onChange: (next: string) => void;
+  readOnly?: boolean;
   value: string;
 }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -122,6 +124,7 @@ export function CodeEditor({
   }, [value]);
 
   const languageExtension = useMemo<Extension>(() => {
+    if (language === 'plaintext') return [];
     return language === 'javascript'
       ? javascript({jsx: true, typescript: false})
       : javascript({jsx: false, typescript: false});
@@ -148,6 +151,9 @@ export function CodeEditor({
       keymap.of([...defaultKeymap, ...historyKeymap, indentWithTab]),
       languageExtension,
       editorTheme,
+      ...(readOnly
+        ? [EditorState.readOnly.of(true), EditorView.editable.of(false)]
+        : []),
       EditorView.updateListener.of((update) => {
         const handler = onChangeRef.current;
         if (update.docChanged && handler) {
@@ -170,7 +176,7 @@ export function CodeEditor({
       view.destroy();
       viewRef.current = null;
     };
-  }, [languageExtension]);
+  }, [languageExtension, readOnly]);
 
   useEffect(() => {
     const view = viewRef.current;

@@ -23,6 +23,7 @@ import ErrorDecoder from './ErrorDecoder';
 import {
   CodeRunner,
   InfographicBlock as Infographic,
+  InfographicStreamRunner,
 } from './InfographicPlayground';
 
 const P = (p: HTMLAttributes<HTMLParagraphElement>) => (
@@ -246,6 +247,7 @@ export const MDXComponents = {
   },
   Warning,
   Infographic,
+  InfographicStreamRunner,
   CodeRunner,
   Intro,
   InlineToc,

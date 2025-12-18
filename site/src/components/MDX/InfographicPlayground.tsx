@@ -3,10 +3,18 @@
 import * as InfographicContext from '@antv/infographic';
 import {InfographicOptions} from '@antv/infographic';
 import cn from 'classnames';
-import {ReactNode, useEffect, useMemo, useRef, useState} from 'react';
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
+import Button from '../Button';
 import {Infographic as InfographicView} from '../Infographic';
-import {CodeEditor} from './CodeEditor';
+import {CodeEditor, CodeMirrorLanguage} from './CodeEditor';
 
 type PlaygroundBaseProps = {
   className?: string;
@@ -17,7 +25,7 @@ type PlaygroundBaseProps = {
 type PlaygroundLayoutProps = PlaygroundBaseProps & {
   code: string;
   editorAriaLabel: string;
-  language: 'json' | 'javascript';
+  language: CodeMirrorLanguage;
   onCodeChange: (code: string) => void;
   preview: ReactNode;
 };
@@ -292,6 +300,104 @@ export function InfographicJsPlayground({
   );
 }
 
+const STREAM_INTERVAL_MS = 80;
+const STREAM_STEP_PERCENT = 5;
+
+export function InfographicStreamPlayground({
+  className,
+  initialCode = '',
+  showPreview = true,
+}: PlaygroundBaseProps & {
+  initialCode?: string;
+}) {
+  const {code, setCode} = useSyncedCode(initialCode);
+  const [displayCode, setDisplayCode] = useState(code);
+  const [isStreaming, setIsStreaming] = useState(false);
+  const streamTimerRef = useRef<number | null>(null);
+
+  const stopStreaming = useCallback(() => {
+    if (streamTimerRef.current) {
+      window.clearInterval(streamTimerRef.current);
+      streamTimerRef.current = null;
+    }
+    setIsStreaming(false);
+  }, []);
+
+  const handleStreamRender = useCallback(() => {
+    stopStreaming();
+    const fullText = code;
+    if (!fullText) {
+      setDisplayCode('');
+      return;
+    }
+    setIsStreaming(true);
+    let progress = 0;
+    streamTimerRef.current = window.setInterval(() => {
+      progress = Math.min(100, progress + STREAM_STEP_PERCENT);
+      const nextLength = Math.floor((fullText.length * progress) / 100);
+      setDisplayCode(fullText.slice(0, nextLength));
+      if (progress >= 100) {
+        stopStreaming();
+      }
+    }, STREAM_INTERVAL_MS);
+  }, [code, stopStreaming]);
+
+  const handleCodeChange = useCallback(
+    (nextCode: string) => {
+      if (isStreaming) return;
+      setCode(nextCode);
+      setDisplayCode(nextCode);
+    },
+    [isStreaming, setCode]
+  );
+
+  useEffect(() => {
+    if (isStreaming) return;
+    setDisplayCode(code);
+  }, [code, isStreaming]);
+
+  useEffect(() => () => stopStreaming(), [stopStreaming]);
+
+  return (
+    <div className={cn('sandpack sandpack--mdx-playground my-8', className)}>
+      <div className="rounded-2xl border border-border dark:border-border-dark bg-card dark:bg-card-dark shadow-lg overflow-hidden">
+        <div className="grid md:grid-cols-2 divide-y divide-border dark:divide-border-dark md:divide-y-0 md:divide-x">
+          <div className="bg-wash dark:bg-gray-950/70 flex flex-col">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border dark:border-border-dark">
+              <span className="text-sm text-secondary dark:text-secondary-dark">
+                语法输入
+              </span>
+              <Button
+                onClick={handleStreamRender}
+                className="text-sm py-1.5 px-3"
+                active={isStreaming}>
+                流式渲染
+              </Button>
+            </div>
+            <div className="max-h-[480px] flex-1 overflow-auto bg-transparent [&_.cm-editor]:h-full [&_.cm-scroller]:h-full">
+              <CodeEditor
+                ariaLabel="Infographic stream syntax editor"
+                className="bg-transparent"
+                language="plaintext"
+                onChange={handleCodeChange}
+                readOnly={isStreaming}
+                value={displayCode}
+              />
+            </div>
+          </div>
+          {showPreview ? (
+            <div className="bg-white dark:bg-gray-950">
+              <div className="h-full min-h-[280px] w-full overflow-hidden">
+                <InfographicView options={displayCode} />
+              </div>
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /**
  * 便捷写法：<Infographic> 包裹 JSON 代码块即可渲染。
  */
@@ -326,4 +432,18 @@ export function CodeRunner({
   const code = extractCodeFromChildren(children);
 
   return <InfographicJsPlayground className={className} initialCode={code} />;
+}
+
+/**
+ * 便捷写法：<InfographicStreamRunner> 包裹语法代码块即可流式渲染。
+ */
+export function InfographicStreamRunner({
+  children,
+  className,
+}: PlaygroundBaseProps & {children?: ReactNode}) {
+  const code = extractCodeFromChildren(children);
+  if (!code) return null;
+  return (
+    <InfographicStreamPlayground className={className} initialCode={code} />
+  );
 }

@@ -15,7 +15,7 @@ export type InfographicHandle = {
 
 export const Infographic = forwardRef<
   InfographicHandle,
-  {options: Partial<InfographicOptions>}
+  {options: Partial<InfographicOptions> | string}
 >((props, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const instanceRef = useRef<Renderer | null>(null);
@@ -23,38 +23,46 @@ export const Infographic = forwardRef<
   const isDark = useMemo(() => theme === 'dark', [theme]);
 
   useEffect(() => {
-    if (containerRef.current) {
-      const options = {...props.options};
+    if (!containerRef.current) return;
 
-      if (isDark) {
-        options.themeConfig = {...options.themeConfig};
-        options.theme ||= 'dark';
-        options.themeConfig!.colorBg = '#000';
-      }
-      try {
-        const instance = new Renderer({
-          container: containerRef.current,
-          ...options,
-          svg: {
-            style: {
-              width: '100%',
-              height: '100%',
-            },
+    if (!instanceRef.current) {
+      instanceRef.current = new Renderer({
+        container: containerRef.current,
+        svg: {
+          style: {
+            width: '100%',
+            height: '100%',
           },
-        } as InfographicOptions);
-
-        instance.render();
-        instanceRef.current = instance;
-      } catch (e) {
-        console.error('Infographic render error', e);
-      }
+        },
+      });
     }
 
+    try {
+      if (typeof props.options === 'string') {
+        instanceRef.current.render(props.options);
+      } else {
+        const options = {...props.options};
+        delete (options as Partial<InfographicOptions>).container;
+
+        if (isDark) {
+          options.themeConfig = {...options.themeConfig};
+          options.theme ||= 'dark';
+          options.themeConfig!.colorBg = '#000';
+        }
+
+        instanceRef.current.render(options as InfographicOptions);
+      }
+    } catch (e) {
+      console.error('Infographic render error', e);
+    }
+  }, [props.options, isDark]);
+
+  useEffect(() => {
     return () => {
       instanceRef.current?.destroy?.();
       instanceRef.current = null;
     };
-  }, [props.options, isDark]);
+  }, []);
 
   const handleCopy = useCallback(async () => {
     const instance = instanceRef.current;
