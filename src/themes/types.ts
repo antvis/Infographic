@@ -29,7 +29,7 @@ export interface ThemeConfig {
   palette?: Palette;
   title?: TextAttributes;
   desc?: TextAttributes;
-  shape?: TextAttributes;
+  shape?: ShapeAttributes;
   item?: {
     icon?: DynamicAttributes<IconAttributes>;
     label?: DynamicAttributes<TextAttributes>;
