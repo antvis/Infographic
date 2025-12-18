@@ -12,7 +12,7 @@ import {
   parseOptions,
 } from '../options';
 import { Renderer } from '../renderer';
-import { parseSyntax } from '../syntax';
+import { parseSyntax, type SyntaxError } from '../syntax';
 import { IEventEmitter } from '../types';
 import { getTypes, parseSVG } from '../utils';
 import { DEFAULT_OPTIONS } from './options';
@@ -43,11 +43,22 @@ export class Infographic {
   }
 
   private setOptions(options: string | Partial<InfographicOptions>) {
-    const parsedOptions = parseSyntaxOptions(options);
+    const {
+      options: parsedOptions,
+      errors,
+      warnings,
+    } = parseSyntaxOptions(options);
     this.options = mergeOptions(this.options || {}, parsedOptions);
     this.parsedOptions = parseOptions(
       mergeOptions(DEFAULT_OPTIONS, this.options),
     );
+
+    if (warnings.length) {
+      this.emitter.emit('warning', warnings);
+    }
+    if (errors.length) {
+      this.emitter.emit('error', errors);
+    }
   }
 
   /**
@@ -58,7 +69,8 @@ export class Infographic {
 
     const parsedOptions = this.parsedOptions;
     if (!isCompleteParsedInfographicOptions(parsedOptions)) {
-      return console.error('Incomplete options');
+      this.emitter.emit('error', new Error('Incomplete options'));
+      return;
     }
 
     const { container } = this.parsedOptions;
@@ -108,7 +120,8 @@ export class Infographic {
   getTypes() {
     const parsedOptions = this.parsedOptions;
     if (!isCompleteParsedInfographicOptions(parsedOptions)) {
-      return console.error('Incomplete options');
+      this.emitter.emit('error', new Error('Incomplete options'));
+      return;
     }
     const design = parsedOptions.design;
     const structure = design.structure.composites || [];
@@ -150,27 +163,23 @@ export class Infographic {
   }
 }
 
+type SyntaxParseFeedback = {
+  options: Partial<InfographicOptions>;
+  errors: SyntaxError[];
+  warnings: SyntaxError[];
+};
+
 function parseSyntaxOptions(
   input: string | Partial<InfographicOptions>,
-): Partial<InfographicOptions> {
+): SyntaxParseFeedback {
   if (typeof input === 'string') {
     const { options, errors, warnings } = parseSyntax(input);
-    if (warnings?.length) {
-      warnings.forEach((warning) => {
-        console.warn(
-          `[Infographic Syntax Warning] ${warning.message} at line ${warning.line}`,
-        );
-      });
-    }
-    if (errors?.length) {
-      errors.forEach((error) => {
-        console.error(
-          `[Infographic Syntax Error] ${error.message} at line ${error.line}`,
-        );
-      });
-    }
-    return options;
+    return { options, errors, warnings };
   }
 
-  return cloneOptions(input);
+  return {
+    options: cloneOptions(input),
+    errors: [],
+    warnings: [],
+  };
 }

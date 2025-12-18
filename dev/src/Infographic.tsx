@@ -22,36 +22,38 @@ export const Infographic = ({
   options: string | InfographicOptions;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const instanceRef = useRef<Renderer>(null);
+  const instanceRef = useRef<Renderer | null>(null);
+
+  useEffect(() => {
+    if (!ref.current) return;
+
+    const instance = new Renderer({
+      container: ref.current,
+      svg: {
+        attributes: {
+          width: '100%',
+          height: '100%',
+        },
+        style: {
+          maxHeight: '80vh',
+        },
+      },
+    });
+
+    instanceRef.current = instance;
+    Object.assign(window, { infographic: instance });
+
+    return () => {
+      instance.destroy();
+      instanceRef.current = null;
+    };
+  }, []);
 
   useEffect(() => {
     if (!options) return;
-    if (!ref.current) return;
+    if (!instanceRef.current) return;
 
-    if (!instanceRef.current) {
-      const instance = new Renderer({
-        container: ref.current,
-        svg: {
-          attributes: {
-            width: '100%',
-            height: '100%',
-          },
-          style: {
-            maxHeight: '80vh',
-          },
-        },
-      });
-
-      instance.render(options);
-      instanceRef.current = instance;
-      Object.assign(window, { infographic: instance });
-    } else {
-      instanceRef.current.render(options);
-    }
-
-    return () => {
-      instanceRef.current?.destroy();
-    };
+    instanceRef.current.render(options);
   }, [options]);
 
   return <div ref={ref} style={{ width: '100%', height: '100%' }}></div>;
