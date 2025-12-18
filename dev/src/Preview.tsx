@@ -15,6 +15,8 @@ const DATA = {
   compare: { label: '对比数据', value: COMPARE_DATA },
   swot: { label: 'SWOT 数据', value: SWOT_DATA },
 } as const;
+const getDefaultDataString = (key: keyof typeof DATA) =>
+  JSON.stringify(DATA[key].value, null, 2);
 
 export const Preview = () => {
   // Get stored values with validation
@@ -97,24 +99,21 @@ export const Preview = () => {
   const templateConfig = useMemo(() => {
     const config = getTemplate(template);
     return config ? JSON.stringify(config, null, 2) : '{}';
-  }, [template]);
+  }, [template, data]);
 
-  // Auto-select appropriate data type based on template
-  useEffect(() => {
-    if (template.startsWith('hierarchy-')) {
-      setData('hierarchy');
-    } else if (template.startsWith('compare-')) {
-      setData('compare');
-    } else {
-      setData('list');
+  const applyTemplate = (nextTemplate: string) => {
+    const nextData = nextTemplate.startsWith('hierarchy-')
+      ? 'hierarchy'
+      : nextTemplate.startsWith('compare-')
+        ? 'compare'
+        : 'list';
+    setTemplate(nextTemplate);
+    if (nextData !== data) {
+      setData(nextData);
+      setCustomData(getDefaultDataString(nextData));
+      setDataError('');
     }
-  }, [template]);
-
-  // Update custom data when data type changes
-  useEffect(() => {
-    setCustomData(JSON.stringify(DATA[data].value, null, 2));
-    setDataError('');
-  }, [data]);
+  };
 
   // Parse custom data
   const parsedData = useMemo(() => {
@@ -151,7 +150,7 @@ export const Preview = () => {
         }
 
         const nextTemplate = templates[nextIndex];
-        setTemplate(nextTemplate);
+        applyTemplate(nextTemplate);
         e.preventDefault();
       }
     };
@@ -195,7 +194,7 @@ export const Preview = () => {
                   showSearch
                   value={template}
                   options={templates.map((value) => ({ label: value, value }))}
-                  onChange={(value) => setTemplate(value)}
+                  onChange={(value) => applyTemplate(value)}
                 />
               </Form.Item>
               <Form.Item label="数据">
@@ -205,7 +204,11 @@ export const Preview = () => {
                     label,
                     value: key,
                   }))}
-                  onChange={(value) => setData(value)}
+                  onChange={(value) => {
+                    setData(value);
+                    setCustomData(getDefaultDataString(value));
+                    setDataError('');
+                  }}
                 />
               </Form.Item>
               <Form.Item label="主题">
