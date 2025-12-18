@@ -110,15 +110,15 @@ describe('parseOptions', () => {
 
     expect(parsed.container).toBe(container);
     expect(parsed.padding).toEqual([12, 12, 12, 12]);
-    expect(parsed.themeConfig.palette).toEqual(['design-primary']);
-    expect(parsed.themeConfig.colorPrimary).toBe('#00f');
+    expect(parsed.themeConfig?.palette).toEqual(['design-primary']);
+    expect(parsed.themeConfig?.colorPrimary).toBe('#00f');
 
-    parsed.design.structure.component({ foo: 'bar' } as any);
+    parsed.design?.structure.component({ foo: 'bar' } as any);
     expect(structureComponent).toHaveBeenCalledWith(
       expect.objectContaining({ foo: 'bar', structureProp: 'from-template' }),
     );
 
-    parsed.design.title.component?.({ title: 'hello' } as any);
+    parsed.design?.title.component?.({ title: 'hello' } as any);
     expect(titleComponent).toHaveBeenCalledWith(
       expect.objectContaining({
         title: 'hello',
@@ -127,7 +127,7 @@ describe('parseOptions', () => {
       }),
     );
 
-    parsed.design.item.component({ indexes: [0], foo: 'bar' } as any);
+    parsed.design?.item.component({ indexes: [0], foo: 'bar' } as any);
     expect(itemComponent).toHaveBeenCalledWith(
       expect.objectContaining({
         indexes: [0],
@@ -145,17 +145,105 @@ describe('parseOptions', () => {
     expect(themeSpy).toHaveBeenCalledWith('dark');
   });
 
-  it('throws when structure is missing', () => {
+  it('skips design when structure is missing', () => {
     itemMap.set('custom-item', {
       type: 'custom-item',
       component: itemComponent,
     });
 
-    expect(() =>
-      parseOptions({
-        container: '#missing',
-        design: { item: { type: 'custom-item' } },
-      } as any),
-    ).toThrow('Structure is required in design or template');
+    const parsed = parseOptions({
+      container: '#missing',
+      design: { item: { type: 'custom-item' } },
+    } as any);
+
+    expect(parsed.design).toBeUndefined();
+  });
+
+  it('uses template themeConfig when user themeConfig is omitted', () => {
+    const container = document.createElement('div');
+    container.id = 'container';
+    document.body.appendChild(container);
+
+    structureMap.set('template-structure', {
+      type: 'template-structure',
+      component: structureComponent,
+    });
+    itemMap.set('template-item', {
+      type: 'template-item',
+      component: itemComponent,
+    });
+    templateMap.set('tpl', {
+      design: {
+        structure: { type: 'template-structure' },
+        item: { type: 'template-item' },
+      },
+      themeConfig: { colorBg: '#eeeeee', palette: ['tpl-primary'] },
+    });
+
+    const parsed = parseOptions({
+      container: '#container',
+      template: 'tpl',
+      design: {
+        item: { type: 'template-item' },
+      },
+      data: { items: [{ value: 1 }] },
+    });
+
+    parsed.design?.item.component({ indexes: [0] } as any);
+    expect(generateColorsSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        colorPrimary: '#123456',
+        colorBg: '#eeeeee',
+      }),
+    );
+  });
+
+  it('skips design when structure is null', () => {
+    itemMap.set('custom-item', {
+      type: 'custom-item',
+      component: itemComponent,
+    });
+
+    const parsed = parseOptions({
+      container: '#missing',
+      design: { structure: null, item: { type: 'custom-item' } } as any,
+    });
+
+    expect(parsed.design).toBeUndefined();
+  });
+
+  it('skips design when item is null', () => {
+    structureMap.set('custom-structure', {
+      type: 'custom-structure',
+      component: structureComponent,
+    });
+
+    const parsed = parseOptions({
+      container: '#missing',
+      design: { structure: { type: 'custom-structure' }, item: null } as any,
+    });
+
+    expect(parsed.design).toBeUndefined();
+  });
+
+  it('skips design when items contain null', () => {
+    structureMap.set('custom-structure', {
+      type: 'custom-structure',
+      component: structureComponent,
+    });
+    itemMap.set('custom-item', {
+      type: 'custom-item',
+      component: itemComponent,
+    });
+
+    const parsed = parseOptions({
+      container: '#missing',
+      design: {
+        structure: { type: 'custom-structure' },
+        items: [null, { type: 'custom-item' }],
+      } as any,
+    });
+
+    expect(parsed.design).toBeUndefined();
   });
 });

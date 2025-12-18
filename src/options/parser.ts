@@ -4,18 +4,23 @@ import {
   getItem,
   getStructure,
   getTemplate,
+  NullableParsedDesignsOptions,
   ParsedDesignsOptions,
   Title,
 } from '../designs';
 import { getPaletteColor } from '../renderer';
 import type { TemplateOptions } from '../templates';
 import { generateThemeColors, getTheme, type ThemeConfig } from '../themes';
-import { isDarkColor, parsePadding } from '../utils';
+import {
+  isDarkColor,
+  isNonNullableParsedDesignsOptions,
+  parsePadding,
+} from '../utils';
 import type { InfographicOptions, ParsedInfographicOptions } from './types';
 
 export function parseOptions(
-  options: InfographicOptions,
-): ParsedInfographicOptions {
+  options: Partial<InfographicOptions>,
+): Partial<ParsedInfographicOptions> {
   const {
     container = '#container',
     padding = 0,
@@ -31,25 +36,49 @@ export function parseOptions(
       ? document.querySelector(container) || document.createElement('div')
       : container;
 
-  const templateOptions: TemplateOptions = template
-    ? getTemplate(template) || {}
-    : {};
+  const templateOptions: TemplateOptions | undefined = template
+    ? getTemplate(template)
+    : undefined;
+  const mergedThemeConfig = merge(
+    {},
+    templateOptions?.themeConfig,
+    themeConfig,
+  );
+  const resolvedThemeConfig =
+    theme || themeConfig || templateOptions?.themeConfig
+      ? parseTheme(theme, mergedThemeConfig)
+      : undefined;
 
-  const { design: templateDesign, ...restTemplateOptions } = templateOptions;
-
-  return {
-    ...restTemplateOptions,
-    ...restOptions,
+  const parsed: Partial<ParsedInfographicOptions> = {
     container: parsedContainer as HTMLElement,
     padding: parsePadding(padding),
-    template,
-    design: parseDesign({ ...templateDesign, ...design }, options),
-    theme,
-    themeConfig: parseTheme(
-      theme,
-      merge({ ...restTemplateOptions?.themeConfig }, themeConfig),
-    ),
   };
+
+  if (templateOptions) {
+    const { design: templateDesign, ...restTemplateOptions } = templateOptions;
+    Object.assign(parsed, restTemplateOptions);
+  }
+
+  Object.assign(parsed, restOptions);
+
+  if (template) parsed.template = template;
+  if (templateOptions?.design || design) {
+    const parsedDesign = parseDesign(
+      { ...templateOptions?.design, ...design },
+      resolvedThemeConfig
+        ? { ...options, themeConfig: resolvedThemeConfig }
+        : options,
+    );
+
+    if (isNonNullableParsedDesignsOptions(parsedDesign)) {
+      parsed.design = parsedDesign;
+    }
+  }
+  if (theme) parsed.theme = theme;
+  if (resolvedThemeConfig) {
+    parsed.themeConfig = resolvedThemeConfig;
+  }
+  return parsed;
 }
 
 function normalizeWithType<T extends { type: string }>(obj: string | T): T {
@@ -60,8 +89,8 @@ function normalizeWithType<T extends { type: string }>(obj: string | T): T {
 
 function parseDesign(
   config: DesignOptions,
-  options: InfographicOptions,
-): ParsedDesignsOptions {
+  options: Partial<InfographicOptions>,
+): NullableParsedDesignsOptions {
   const { structure, title, item, items } = config || {};
   const defaultItem = parseDesignItem(item || items?.[0], options);
   return {
@@ -76,11 +105,11 @@ function parseDesign(
 
 function parseDesignStructure(
   config: DesignOptions['structure'],
-): ParsedDesignsOptions['structure'] {
-  if (!config) throw new Error('Structure is required in design or template');
+): ParsedDesignsOptions['structure'] | null {
+  if (!config) return null;
   const { type, ...userProps } = normalizeWithType(config);
   const structure = getStructure(type);
-  if (!structure) throw new Error(`Structure ${type} not found`);
+  if (!structure) return null;
   const { component } = structure;
   return {
     ...structure,
@@ -90,7 +119,7 @@ function parseDesignStructure(
 
 function parseDesignTitle(
   config: DesignOptions['title'],
-  options: InfographicOptions,
+  options: Partial<InfographicOptions>,
 ): ParsedDesignsOptions['title'] {
   if (!config) return { component: null };
   const { type, ...userProps } = normalizeWithType(config);
@@ -107,12 +136,12 @@ function parseDesignTitle(
 
 function parseDesignItem(
   config: DesignOptions['item'],
-  options: InfographicOptions,
-): ParsedDesignsOptions['item'] {
-  if (!config) throw new Error('Item is required in design or template');
+  options: Partial<InfographicOptions>,
+): ParsedDesignsOptions['item'] | null {
+  if (!config) return null;
   const { type, ...userProps } = normalizeWithType(config);
   const item = getItem(type);
-  if (!item) throw new Error(`Item ${type} not found`);
+  if (!item) return null;
   const { component, options: itemOptions } = item;
   return {
     ...item,
