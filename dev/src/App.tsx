@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Composite } from './Composite';
 import { ItemPreview } from './ItemPreview';
 import { Preview } from './Preview';
+import { StreamPreview } from './StreamPreview';
 
 export const App = () => {
   const getInitialTab = () => {
@@ -30,6 +31,7 @@ export const App = () => {
           { label: '灵活组合', value: 'composite' },
           { label: '模版预览', value: 'preview' },
           { label: '数据项预览', value: 'item' },
+          { label: '流式渲染', value: 'stream' },
         ]}
         value={tab}
         onChange={(e) => handleTabChange(e.target.value)}
@@ -42,6 +44,8 @@ export const App = () => {
         <Composite />
       ) : tab === 'preview' ? (
         <Preview />
+      ) : tab === 'stream' ? (
+        <StreamPreview />
       ) : (
         <ItemPreview />
       )}

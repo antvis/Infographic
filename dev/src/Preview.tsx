@@ -1,6 +1,6 @@
 import { getTemplate, getTemplates, ThemeConfig } from '@antv/infographic';
 import Editor from '@monaco-editor/react';
-import { Card, Checkbox, ColorPicker, Form, Select } from 'antd';
+import { Button, Card, Checkbox, ColorPicker, Form, Select } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { Infographic } from './Infographic';
 import { COMPARE_DATA, HIERARCHY_DATA, LIST_DATA, SWOT_DATA } from './data';
@@ -115,6 +115,26 @@ export const Preview = () => {
     }
   };
 
+  const handleCopyTemplate = async () => {
+    try {
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(template);
+        return;
+      }
+
+      const textarea = document.createElement('textarea');
+      textarea.value = template;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+    } catch (error) {
+      console.warn('Failed to copy template name.', error);
+    }
+  };
+
   // Parse custom data
   const parsedData = useMemo(() => {
     try {
@@ -190,12 +210,25 @@ export const Preview = () => {
               colon={false}
             >
               <Form.Item label="模板">
-                <Select
-                  showSearch
-                  value={template}
-                  options={templates.map((value) => ({ label: value, value }))}
-                  onChange={(value) => applyTemplate(value)}
-                />
+                <div style={{ display: 'flex', gap: 8, width: '100%' }}>
+                  <Select
+                    showSearch
+                    value={template}
+                    options={templates.map((value) => ({
+                      label: value,
+                      value,
+                    }))}
+                    onChange={(value) => applyTemplate(value)}
+                    style={{ flex: 1, minWidth: 0 }}
+                  />
+                  <Button
+                    size="small"
+                    onClick={handleCopyTemplate}
+                    style={{ flex: 'none' }}
+                  >
+                    复制
+                  </Button>
+                </div>
               </Form.Item>
               <Form.Item label="数据">
                 <Select
