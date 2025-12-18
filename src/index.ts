@@ -46,6 +46,7 @@ export {
 } from './renderer';
 export { loadSVGResource, registerResourceLoader } from './resource';
 export { Infographic } from './runtime';
+export { parseSyntax } from './syntax';
 export { getTemplate, getTemplates, registerTemplate } from './templates';
 export { getTheme, getThemes, registerTheme } from './themes';
 export { parseSVG } from './utils';
@@ -84,6 +85,7 @@ export type {
   RoughConfig,
   StylizeConfig,
 } from './renderer';
+export type { SyntaxError, SyntaxParseResult } from './syntax';
 export type { ParsedTemplateOptions, TemplateOptions } from './templates';
 export type { ThemeColors, ThemeConfig, ThemeSeed } from './themes';
 export type {
