@@ -1,5 +1,4 @@
 import EventEmitter from 'eventemitter3';
-import { cloneDeep } from 'lodash-es';
 import { Editor, type IEditor } from '../editor';
 import {
   exportToPNGString,
@@ -13,10 +12,15 @@ import {
   parseOptions,
 } from '../options';
 import { Renderer } from '../renderer';
+import { parseSyntax } from '../syntax';
 import { IEventEmitter } from '../types';
 import { getTypes, parseSVG } from '../utils';
 import { DEFAULT_OPTIONS } from './options';
-import { mergeOptions } from './utils';
+import {
+  cloneOptions,
+  isCompleteParsedInfographicOptions,
+  mergeOptions,
+} from './utils';
 
 export class Infographic {
   rendered: boolean = false;
@@ -27,35 +31,45 @@ export class Infographic {
 
   private editor?: IEditor;
 
-  private options: InfographicOptions;
-  private parsedOptions: ParsedInfographicOptions;
+  private options!: Partial<InfographicOptions>;
+  private parsedOptions!: Partial<ParsedInfographicOptions>;
 
-  constructor(options: InfographicOptions) {
-    this.options = {
-      ...options,
-      data: cloneDeep(options.data),
-      elements: cloneDeep(options.elements || []),
-    };
-    this.parsedOptions = parseOptions(
-      mergeOptions(DEFAULT_OPTIONS, this.options),
-    );
+  constructor(options: string | Partial<InfographicOptions>) {
+    this.setOptions(options);
   }
 
   getOptions() {
     return this.options;
   }
 
+  private setOptions(options: string | Partial<InfographicOptions>) {
+    const parsedOptions = parseSyntaxOptions(options);
+    this.options = mergeOptions(this.options || {}, parsedOptions);
+    this.parsedOptions = parseOptions(
+      mergeOptions(DEFAULT_OPTIONS, this.options),
+    );
+  }
+
   /**
    * Render the infographic into the container
    */
-  render() {
+  render(options?: string | Partial<InfographicOptions>) {
+    if (options) this.setOptions(options);
+
+    const parsedOptions = this.parsedOptions;
+    if (!isCompleteParsedInfographicOptions(parsedOptions)) {
+      return console.error('Incomplete options');
+    }
+
     const { container } = this.parsedOptions;
-    const template = this.compose();
-    const renderer = new Renderer(this.parsedOptions, template);
+    const template = this.compose(parsedOptions);
+    const renderer = new Renderer(parsedOptions, template);
     this.node = renderer.render();
-    container.replaceChildren(this.node);
+    container?.replaceChildren(this.node);
+    this.editor?.destroy();
+    this.editor = undefined;
     if (this.options.editable) {
-      this.editor = new Editor(this.emitter, this.node, this.parsedOptions);
+      this.editor = new Editor(this.emitter, this.node, parsedOptions);
     }
 
     this.rendered = true;
@@ -65,8 +79,8 @@ export class Infographic {
   /**
    * Compose the SVG template
    */
-  compose(): SVGSVGElement {
-    const { design, data } = this.parsedOptions;
+  compose(parsedOptions: ParsedInfographicOptions): SVGSVGElement {
+    const { design, data } = parsedOptions;
     const { title, item, items, structure } = design;
     const { component: Structure, props: structureProps } = structure;
     const Title = title.component;
@@ -79,7 +93,7 @@ export class Infographic {
         Title={Title}
         Item={Item}
         Items={Items}
-        options={this.parsedOptions}
+        options={parsedOptions}
         {...structureProps}
       />,
     );
@@ -92,7 +106,11 @@ export class Infographic {
   }
 
   getTypes() {
-    const design = this.parsedOptions.design;
+    const parsedOptions = this.parsedOptions;
+    if (!isCompleteParsedInfographicOptions(parsedOptions)) {
+      return console.error('Incomplete options');
+    }
+    const design = parsedOptions.design;
     const structure = design.structure.composites || [];
     const items = design.items.map((it) => it.composites || []);
     return getTypes({ structure, items });
@@ -130,4 +148,29 @@ export class Infographic {
     this.emitter.emit('destroyed');
     this.emitter.removeAllListeners();
   }
+}
+
+function parseSyntaxOptions(
+  input: string | Partial<InfographicOptions>,
+): Partial<InfographicOptions> {
+  if (typeof input === 'string') {
+    const { options, errors, warnings } = parseSyntax(input);
+    if (warnings?.length) {
+      warnings.forEach((warning) => {
+        console.warn(
+          `[Infographic Syntax Warning] ${warning.message} at line ${warning.line}`,
+        );
+      });
+    }
+    if (errors?.length) {
+      errors.forEach((error) => {
+        console.error(
+          `[Infographic Syntax Error] ${error.message} at line ${error.line}`,
+        );
+      });
+    }
+    return options;
+  }
+
+  return cloneOptions(input);
 }
