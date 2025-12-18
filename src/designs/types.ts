@@ -23,5 +23,14 @@ export interface ParsedDesignsOptions {
   items: WithProps<Item>[];
 }
 
+export interface NullableParsedDesignsOptions {
+  structure: WithProps<Structure> | null;
+  title: {
+    component: ComponentType<any> | null;
+  };
+  item: WithProps<Item> | null;
+  items: (WithProps<Item> | null)[];
+}
+
 type WithType<T> = T & { type: string };
 type WithProps<T, P = any> = T & { props?: P };
