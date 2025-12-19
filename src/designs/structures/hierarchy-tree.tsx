@@ -33,6 +33,8 @@ export interface HierarchyTreeProps extends BaseStructureProps {
   levelGap?: number;
   /** 节点间距：同级节点之间的水平距离，默认 60 */
   nodeGap?: number;
+  /** 布局方向：'top-bottom' 自上而下 | 'bottom-top' 自下而上 | 'left-right' 自左向右 | 'right-left' 自右向左，默认 'top-bottom' */
+  orientation?: 'top-bottom' | 'bottom-top' | 'left-right' | 'right-left';
 
   // ========== 连接线样式配置 ==========
   /** 连接线类型：'straight' 直线 | 'curved' 曲线，默认 'curved' */
@@ -97,8 +99,14 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
     markerSize = 12,
     // 着色模式配置
     colorMode = 'branch',
+    // 布局方向
+    orientation = 'top-bottom',
     options,
   } = props;
+  const isHorizontal =
+    orientation === 'left-right' || orientation === 'right-left';
+  const mainSign =
+    orientation === 'bottom-top' || orientation === 'right-left' ? -1 : 1;
   const { title, desc } = data;
   const colorPrimary = getColorPrimary(options);
 
@@ -119,24 +127,63 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
     x2: number,
     y2: number,
     radius: number,
+    direction: 'vertical' | 'horizontal' = 'vertical',
   ): string => {
-    const midY = y1 + (y2 - y1) / 2;
+    const isVertical = direction === 'vertical';
+    const deltaMain = isVertical ? y2 - y1 : x2 - x1;
+    const deltaCross = isVertical ? x2 - x1 : y2 - y1;
+    const signMain = deltaMain === 0 ? 1 : Math.sign(deltaMain);
+    const signCross = deltaCross === 0 ? 1 : Math.sign(deltaCross);
+    const midMain = isVertical ? y1 + deltaMain / 2 : x1 + deltaMain / 2;
     const effectiveRadius = Math.min(
       radius,
-      Math.abs(y2 - y1) / 2,
-      Math.abs(x2 - x1) / 2,
+      Math.abs(deltaMain) / 2,
+      Math.abs(deltaCross) / 2,
     );
 
     if (effectiveRadius === 0) {
-      return `M ${x1} ${y1} L ${x1} ${midY} L ${x2} ${midY} L ${x2} ${y2}`;
+      return isVertical
+        ? `M ${x1} ${y1} L ${x1} ${midMain} L ${x2} ${midMain} L ${x2} ${y2}`
+        : `M ${x1} ${y1} L ${midMain} ${y1} L ${midMain} ${y2} L ${x2} ${y2}`;
+    }
+
+    if (isVertical) {
+      return `M ${x1} ${y1}
+              L ${x1} ${midMain - signMain * effectiveRadius}
+              Q ${x1} ${midMain} ${x1 + signCross * effectiveRadius} ${midMain}
+              L ${x2 - signCross * effectiveRadius} ${midMain}
+              Q ${x2} ${midMain} ${x2} ${midMain + signMain * effectiveRadius}
+              L ${x2} ${y2}`;
     }
 
     return `M ${x1} ${y1}
-            L ${x1} ${midY - effectiveRadius}
-            Q ${x1} ${midY} ${x1 + (x2 > x1 ? effectiveRadius : -effectiveRadius)} ${midY}
-            L ${x2 - (x2 > x1 ? effectiveRadius : -effectiveRadius)} ${midY}
-            Q ${x2} ${midY} ${x2} ${midY + effectiveRadius}
+            L ${midMain - signMain * effectiveRadius} ${y1}
+            Q ${midMain} ${y1} ${midMain} ${y1 + signCross * effectiveRadius}
+            L ${midMain} ${y2 - signCross * effectiveRadius}
+            Q ${midMain} ${y2} ${midMain + signMain * effectiveRadius} ${y2}
             L ${x2} ${y2}`;
+  };
+  const getLayoutPoint = (node: any) => {
+    const { x, y } = node;
+    return isHorizontal ? { x: y * mainSign, y: x } : { x, y: y * mainSign };
+  };
+  const getNodeRect = (
+    node: any,
+    bounds: any,
+    offsets: { x: number; y: number },
+  ) => {
+    const { x, y } = getLayoutPoint(node);
+    const centerX = x + offsets.x;
+    const top = y + offsets.y;
+    const centerY = top + bounds.height / 2;
+    return {
+      centerX,
+      centerY,
+      left: centerX - bounds.width / 2,
+      right: centerX + bounds.width / 2,
+      top,
+      bottom: top + bounds.height,
+    };
   };
 
   // 内置工具方法：构建层级数据
@@ -217,12 +264,13 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
     gradientDefs: JSXElement[],
     allNodes: any[],
   ) => {
-    const { x, y, depth, data: nodeData, parent } = node;
+    const { depth, data: nodeData, parent } = node;
     const indexes = nodeData._originalIndex;
     const NodeComponent = getItemComponent(Items, depth);
     const bounds = levelBounds.get(depth)!;
-    const nodeX = x + offsets.x - bounds.width / 2;
-    const nodeY = y + offsets.y;
+    const nodeRect = getNodeRect(node, bounds, offsets);
+    const nodeX = nodeRect.left;
+    const nodeY = nodeRect.top;
 
     const elements = {
       items: [] as JSXElement[],
@@ -277,6 +325,11 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
     // 父子连线
     if (parent) {
       const parentBounds = levelBounds.get(parent.depth)!;
+      const parentRect = getNodeRect(parent, parentBounds, offsets);
+      const distributedPadding = (rawPadding: number, size: number): number => {
+        const maxPadding = Math.max(0, size / 2 - 1);
+        return Math.min(rawPadding, maxPadding);
+      };
 
       // 计算父节点的子节点数量和当前节点在兄弟中的索引
       const siblings = allNodes.filter((n) => n.parent === parent);
@@ -285,34 +338,77 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
 
       // 计算连接线起点
       let parentX: number;
+      let parentY: number;
       if (edgeOrigin === 'distributed' && siblingCount > 1) {
         // 分布式起点：根据子节点数量分配起点位置
-        const startX =
-          parent.x + offsets.x - parentBounds.width / 2 + edgeOriginPadding;
-        const endX =
-          parent.x + offsets.x + parentBounds.width / 2 - edgeOriginPadding;
-        const segmentWidth = (endX - startX) / siblingCount;
-        parentX = startX + segmentWidth * siblingIndex + segmentWidth / 2;
+        if (isHorizontal) {
+          const padding = distributedPadding(
+            edgeOriginPadding,
+            parentBounds.height,
+          );
+          const startY = parentRect.top + padding;
+          const endY = parentRect.bottom - padding;
+          const segmentHeight = (endY - startY) / siblingCount;
+          parentY = startY + segmentHeight * siblingIndex + segmentHeight / 2;
+          parentX =
+            (mainSign > 0 ? parentRect.right : parentRect.left) +
+            edgeOffset * mainSign;
+        } else {
+          const padding = distributedPadding(
+            edgeOriginPadding,
+            parentBounds.width,
+          );
+          const startX = parentRect.left + padding;
+          const endX = parentRect.right - padding;
+          const segmentWidth = (endX - startX) / siblingCount;
+          parentX = startX + segmentWidth * siblingIndex + segmentWidth / 2;
+          parentY =
+            (mainSign > 0 ? parentRect.bottom : parentRect.top) +
+            edgeOffset * mainSign;
+        }
       } else {
         // 中心起点：所有线从节点中心出发
-        parentX = parent.x + offsets.x;
+        parentX = isHorizontal
+          ? (mainSign > 0 ? parentRect.right : parentRect.left) +
+            edgeOffset * mainSign
+          : parentRect.centerX;
+        parentY = isHorizontal
+          ? parentRect.centerY
+          : (mainSign > 0 ? parentRect.bottom : parentRect.top) +
+            edgeOffset * mainSign;
       }
 
-      const parentY = parent.y + offsets.y + parentBounds.height + edgeOffset;
-      const childX = x + offsets.x;
-      let childY = y + offsets.y - edgeOffset;
+      const baseChildX = isHorizontal
+        ? (mainSign > 0 ? nodeRect.left : nodeRect.right) -
+          edgeOffset * mainSign
+        : nodeRect.centerX;
+      const baseChildY = isHorizontal
+        ? nodeRect.centerY
+        : (mainSign > 0 ? nodeRect.top : nodeRect.bottom) -
+          edgeOffset * mainSign;
+      let childX = baseChildX;
+      let childY = baseChildY;
 
       // 调整终点位置（为箭头留出空间）
       if (edgeMarker === 'arrow') {
-        childY -= markerSize;
+        if (isHorizontal) {
+          childX -= markerSize * mainSign;
+        } else {
+          childY -= markerSize * mainSign;
+        }
       }
 
       // 生成路径
       let pathD: string;
       if (edgeType === 'curved') {
         // 使用贝塞尔曲线绘制曲线连接
-        const midY = parentY + (childY - parentY) / 2;
-        pathD = `M ${parentX} ${parentY} C ${parentX} ${midY}, ${childX} ${midY}, ${childX} ${childY}`;
+        if (isHorizontal) {
+          const midX = parentX + (childX - parentX) / 2;
+          pathD = `M ${parentX} ${parentY} C ${midX} ${parentY}, ${midX} ${childY}, ${childX} ${childY}`;
+        } else {
+          const midY = parentY + (childY - parentY) / 2;
+          pathD = `M ${parentX} ${parentY} C ${parentX} ${midY}, ${childX} ${midY}, ${childX} ${childY}`;
+        }
       } else if (edgeCornerRadius > 0) {
         // 使用圆角路径
         pathD = createRoundedPath(
@@ -321,11 +417,17 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
           childX,
           childY,
           edgeCornerRadius,
+          isHorizontal ? 'horizontal' : 'vertical',
         );
       } else {
         // 使用直角折线
-        const midY = parentY + (childY - parentY) / 2;
-        pathD = `M ${parentX} ${parentY} L ${parentX} ${midY} L ${childX} ${midY} L ${childX} ${childY}`;
+        if (isHorizontal) {
+          const midX = parentX + (childX - parentX) / 2;
+          pathD = `M ${parentX} ${parentY} L ${midX} ${parentY} L ${midX} ${childY} L ${childX} ${childY}`;
+        } else {
+          const midY = parentY + (childY - parentY) / 2;
+          pathD = `M ${parentX} ${parentY} L ${parentX} ${midY} L ${childX} ${midY} L ${childX} ${childY}`;
+        }
       }
 
       // 确定连接线颜色
@@ -389,17 +491,29 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
             : getColorPrimary(options);
 
         // 三角形箭头
-        const arrowPoints = [
-          { x: childX, y: y + offsets.y - edgeOffset },
-          {
-            x: childX - markerSize / 2,
-            y: y + offsets.y - edgeOffset - markerSize,
-          },
-          {
-            x: childX + markerSize / 2,
-            y: y + offsets.y - edgeOffset - markerSize,
-          },
-        ];
+        const arrowPoints = isHorizontal
+          ? [
+              { x: baseChildX, y: baseChildY },
+              {
+                x: baseChildX - markerSize * mainSign,
+                y: baseChildY - markerSize / 2,
+              },
+              {
+                x: baseChildX - markerSize * mainSign,
+                y: baseChildY + markerSize / 2,
+              },
+            ]
+          : [
+              { x: baseChildX, y: baseChildY },
+              {
+                x: baseChildX - markerSize / 2,
+                y: baseChildY - markerSize * mainSign,
+              },
+              {
+                x: baseChildX + markerSize / 2,
+                y: baseChildY - markerSize * mainSign,
+              },
+            ];
 
         elements.deco.push(
           <Polygon
@@ -429,13 +543,19 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
         // 父节点连接点
         elements.deco.push(
           <Ellipse
-            x={parentX - markerSize}
+            x={
+              (isHorizontal
+                ? mainSign > 0
+                  ? parentRect.right + edgeOffset
+                  : parentRect.left - edgeOffset
+                : parentX) - markerSize
+            }
             y={
-              parent.y +
-              offsets.y +
-              parentBounds.height +
-              edgeOffset -
-              markerSize
+              (isHorizontal
+                ? parentY
+                : mainSign > 0
+                  ? parentRect.bottom + edgeOffset
+                  : parentRect.top - edgeOffset) - markerSize
             }
             width={markerSize * 2}
             height={markerSize * 2}
@@ -450,8 +570,8 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
 
         elements.deco.push(
           <Ellipse
-            x={childX - markerSize}
-            y={y + offsets.y - edgeOffset - markerSize}
+            x={baseChildX - markerSize}
+            y={baseChildY - markerSize}
             width={markerSize * 2}
             height={markerSize * 2}
             fill={childDotColor}
@@ -484,22 +604,47 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
     nodesByParent.forEach((siblings) => {
       if (siblings.length <= 1) return;
 
-      const sorted = siblings.slice().sort((a, b) => a.x - b.x);
-      const siblingY = sorted[0].y + offsets.y - btnBounds.height - 5;
+      const sorted = siblings
+        .slice()
+        .sort((a, b) =>
+          isHorizontal
+            ? getLayoutPoint(a).y - getLayoutPoint(b).y
+            : getLayoutPoint(a).x - getLayoutPoint(b).x,
+        );
+      if (sorted.length === 0) return;
 
       for (let i = 0; i < sorted.length - 1; i++) {
-        const btnX =
-          (sorted[i].x + sorted[i + 1].x) / 2 + offsets.x - btnBounds.width / 2;
+        const current = getLayoutPoint(sorted[i]);
+        const next = getLayoutPoint(sorted[i + 1]);
         const parentIndexes = sorted[i].data._originalIndex.slice(0, -1);
         const insertIndex = sorted[i].data._originalIndex.at(-1)! + 1;
 
-        btns.push(
-          <BtnAdd
-            indexes={[...parentIndexes, insertIndex]}
-            x={btnX}
-            y={siblingY}
-          />,
-        );
+        if (isHorizontal) {
+          const btnX =
+            current.x +
+            offsets.x +
+            (mainSign > 0 ? -btnBounds.width - 5 : btnBounds.width + 5);
+          const btnY =
+            (current.y + next.y) / 2 + offsets.y - btnBounds.height / 2;
+          btns.push(
+            <BtnAdd
+              indexes={[...parentIndexes, insertIndex]}
+              x={btnX}
+              y={btnY}
+            />,
+          );
+        } else {
+          const siblingY = current.y + offsets.y - btnBounds.height - 5;
+          const btnX =
+            (current.x + next.x) / 2 + offsets.x - btnBounds.width / 2;
+          btns.push(
+            <BtnAdd
+              indexes={[...parentIndexes, insertIndex]}
+              x={btnX}
+              y={siblingY}
+            />,
+          );
+        }
       }
     });
 
@@ -541,13 +686,18 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
 
   const treeLayout = d3
     .tree<any>()
-    .nodeSize([maxWidth + nodeGap, maxHeight + levelGap])
+    .nodeSize(
+      isHorizontal
+        ? [maxHeight + nodeGap, maxWidth + levelGap]
+        : [maxWidth + nodeGap, maxHeight + levelGap],
+    )
     .separation(() => 1);
   const nodes = treeLayout(root).descendants();
 
   // 计算偏移量
-  const minX = Math.min(...nodes.map((d) => d.x));
-  const minY = Math.min(...nodes.map((d) => d.y));
+  const layoutPoints = nodes.map((d) => getLayoutPoint(d));
+  const minX = Math.min(...layoutPoints.map((d) => d.x));
+  const minY = Math.min(...layoutPoints.map((d) => d.y));
   const offsets = {
     x: Math.max(0, -minX + maxWidth / 2),
     y: Math.max(0, -minY + btnBounds.height + 10),
@@ -563,6 +713,8 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
   nodes.forEach((node, index) => {
     // 将扁平索引附加到节点数据上，用于 node-flat 模式
     node.data._flatIndex = index;
+    const { x, y } = getLayoutPoint(node);
+    (node as any).__layout = { x, y };
   });
 
   nodes.forEach((node) => {

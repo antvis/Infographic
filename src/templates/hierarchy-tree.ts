@@ -52,19 +52,42 @@ const items: string[] = [
 export const hierarchyTreeTemplates: Record<string, TemplateOptions> = {};
 
 const structureName = 'hierarchy-tree';
+const orientationConfigs: Array<{
+  key: string;
+  orientation?: HierarchyTreeProps['orientation'];
+}> = [
+  { key: '' },
+  { key: 'bt', orientation: 'bottom-top' },
+  { key: 'lr', orientation: 'left-right' },
+  { key: 'rl', orientation: 'right-left' },
+];
+
+const createTemplateName = (
+  oriKey: string,
+  name: string,
+  item: string,
+): string => {
+  return oriKey
+    ? `${structureName}-${oriKey}-${name}-${item}`
+    : `${structureName}-${name}-${item}`;
+};
+
 for (const item of items) {
   for (const [name, structureProps] of Object.entries(structures)) {
-    const templateName = `${structureName}-${name}-${item}`;
-    hierarchyTreeTemplates[templateName] = {
-      design: {
-        structure: {
-          type: 'hierarchy-tree',
-          ...structureProps,
+    for (const { key, orientation } of orientationConfigs) {
+      const templateName = createTemplateName(key, name, item);
+      hierarchyTreeTemplates[templateName] = {
+        design: {
+          structure: {
+            type: 'hierarchy-tree',
+            ...(orientation ? { orientation } : {}),
+            ...structureProps,
+          },
+          item: {
+            type: item,
+          },
         },
-        item: {
-          type: item,
-        },
-      },
-    };
+      };
+    }
   }
 }
