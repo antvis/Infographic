@@ -192,6 +192,9 @@ const TEMPLATE_ENTRIES: [string, any][] = [
   ['hierarchy-tree-dashed-arrow-ribbon-card', DATASET.HIERARCHY],
   ['hierarchy-tree-curved-line-ribbon-card', DATASET.HIERARCHY],
   ...buildHierarchyTreeOrientationEntries(),
+  ['sequence-stairs-front-pill-badge', DATASET.LIST],
+  ['sequence-stairs-front-compact-card', DATASET.LIST],
+  ['sequence-stairs-front-simple', DATASET.LIST],
 ];
 
 // 4. 构建完整对象列表

@@ -30,6 +30,7 @@ export * from './sequence-mountain';
 export * from './sequence-pyramid';
 export * from './sequence-roadmap-vertical';
 export * from './sequence-snake-steps';
+export * from './sequence-stairs-front';
 export * from './sequence-steps';
 export * from './sequence-timeline';
 export * from './sequence-zigzag-pucks-3d';
