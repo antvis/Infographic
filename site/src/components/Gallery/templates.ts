@@ -195,6 +195,8 @@ const TEMPLATE_ENTRIES: [string, any][] = [
   ['sequence-stairs-front-pill-badge', DATASET.LIST],
   ['sequence-stairs-front-compact-card', DATASET.LIST],
   ['sequence-stairs-front-simple', DATASET.LIST],
+  ['chart-wordcloud', DATASET.WORD_CLOUD],
+  ['chart-wordcloud-rotate', DATASET.WORD_CLOUD],
 ];
 
 // 4. 构建完整对象列表

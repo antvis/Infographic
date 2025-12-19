@@ -17,7 +17,13 @@ import {
 } from 'antd';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Infographic } from './Infographic';
-import { COMPARE_DATA, HIERARCHY_DATA, LIST_DATA, SWOT_DATA } from './data';
+import {
+  COMPARE_DATA,
+  HIERARCHY_DATA,
+  LIST_DATA,
+  SWOT_DATA,
+  WOLD_CLOUD_DATA,
+} from './data';
 import { getStoredValues, setStoredValues } from './utils/storage';
 
 const DATA: { label: string; key: string; value: Data }[] = [
@@ -25,6 +31,7 @@ const DATA: { label: string; key: string; value: Data }[] = [
   { label: '层级数据', key: 'hierarchy', value: HIERARCHY_DATA },
   { label: '对比数据', key: 'compare', value: COMPARE_DATA },
   { label: 'SWOT数据', key: 'swot', value: SWOT_DATA },
+  { label: '词云数据', key: 'wordcloud', value: WOLD_CLOUD_DATA },
 ];
 
 const items = getItems();

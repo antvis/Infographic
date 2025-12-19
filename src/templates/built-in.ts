@@ -3,6 +3,7 @@ import { hierarchyTreeTemplates } from './hierarchy-tree';
 import { registerTemplate } from './registry';
 import { sequenceStairsTemplates } from './sequence-stairs';
 import type { TemplateOptions } from './types';
+import { wordCloudTemplate } from './word-cloud';
 
 const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
   'compare-hierarchy-left-right-circle-node-pill-badge': {
@@ -805,6 +806,7 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
   ...hierarchyTreeTemplates,
   ...hierarchyMindmapTemplates,
   ...sequenceStairsTemplates,
+  ...wordCloudTemplate,
 };
 
 Object.entries(BUILT_IN_TEMPLATES).forEach(([name, options]) => {

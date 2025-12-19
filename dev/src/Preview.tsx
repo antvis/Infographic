@@ -3,7 +3,13 @@ import Editor from '@monaco-editor/react';
 import { Button, Card, Checkbox, ColorPicker, Form, Select } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { Infographic } from './Infographic';
-import { COMPARE_DATA, HIERARCHY_DATA, LIST_DATA, SWOT_DATA } from './data';
+import {
+  COMPARE_DATA,
+  HIERARCHY_DATA,
+  LIST_DATA,
+  SWOT_DATA,
+  WOLD_CLOUD_DATA,
+} from './data';
 import { getStoredValues, setStoredValues } from './utils/storage';
 
 const templates = getTemplates();
@@ -14,6 +20,7 @@ const DATA = {
   hierarchy: { label: '层级数据', value: HIERARCHY_DATA },
   compare: { label: '对比数据', value: COMPARE_DATA },
   swot: { label: 'SWOT 数据', value: SWOT_DATA },
+  wordcloud: { label: '词云数据', value: WOLD_CLOUD_DATA },
 } as const;
 const getDefaultDataString = (key: keyof typeof DATA) =>
   JSON.stringify(DATA[key].value, null, 2);
@@ -106,7 +113,11 @@ export const Preview = () => {
       ? 'hierarchy'
       : nextTemplate.startsWith('compare-')
         ? 'compare'
-        : 'list';
+        : nextTemplate.startsWith('swot-')
+          ? 'swot'
+          : nextTemplate.startsWith('chart-wordcloud')
+            ? 'wordcloud'
+            : 'list';
     setTemplate(nextTemplate);
     if (nextData !== data) {
       setData(nextData);
