@@ -8,7 +8,7 @@ import {
   HIERARCHY_DATA,
   LIST_DATA,
   SWOT_DATA,
-  WOLD_CLOUD_DATA,
+  WORD_CLOUD_DATA,
 } from './data';
 import { getStoredValues, setStoredValues } from './utils/storage';
 
@@ -20,10 +20,24 @@ const DATA = {
   hierarchy: { label: '层级数据', value: HIERARCHY_DATA },
   compare: { label: '对比数据', value: COMPARE_DATA },
   swot: { label: 'SWOT 数据', value: SWOT_DATA },
-  wordcloud: { label: '词云数据', value: WOLD_CLOUD_DATA },
+  wordcloud: { label: '词云数据', value: WORD_CLOUD_DATA },
 } as const;
+const TEMPLATE_DATA_MATCHERS: Array<[string, keyof typeof DATA]> = [
+  ['hierarchy-', 'hierarchy'],
+  ['compare-', 'compare'],
+  ['swot-', 'swot'],
+  ['chart-wordcloud', 'wordcloud'],
+];
 const getDefaultDataString = (key: keyof typeof DATA) =>
   JSON.stringify(DATA[key].value, null, 2);
+const getDataByTemplate = (nextTemplate: string): keyof typeof DATA => {
+  for (const [prefix, dataKey] of TEMPLATE_DATA_MATCHERS) {
+    if (nextTemplate.startsWith(prefix)) {
+      return dataKey;
+    }
+  }
+  return 'list';
+};
 
 export const Preview = () => {
   // Get stored values with validation
@@ -109,15 +123,7 @@ export const Preview = () => {
   }, [template, data]);
 
   const applyTemplate = (nextTemplate: string) => {
-    const nextData = nextTemplate.startsWith('hierarchy-')
-      ? 'hierarchy'
-      : nextTemplate.startsWith('compare-')
-        ? 'compare'
-        : nextTemplate.startsWith('swot-')
-          ? 'swot'
-          : nextTemplate.startsWith('chart-wordcloud')
-            ? 'wordcloud'
-            : 'list';
+    const nextData = getDataByTemplate(nextTemplate);
     setTemplate(nextTemplate);
     if (nextData !== data) {
       setData(nextData);

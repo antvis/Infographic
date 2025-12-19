@@ -75,6 +75,11 @@ export interface HierarchyTreeProps extends BaseStructureProps {
   colorMode?: HierarchyColorMode;
 }
 
+const distributedPadding = (rawPadding: number, size: number): number => {
+  const maxPadding = Math.max(0, size / 2 - 1);
+  return Math.min(rawPadding, maxPadding);
+};
+
 export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
   const {
     Title,
@@ -326,10 +331,6 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
     if (parent) {
       const parentBounds = levelBounds.get(parent.depth)!;
       const parentRect = getNodeRect(parent, parentBounds, offsets);
-      const distributedPadding = (rawPadding: number, size: number): number => {
-        const maxPadding = Math.max(0, size / 2 - 1);
-        return Math.min(rawPadding, maxPadding);
-      };
 
       // 计算父节点的子节点数量和当前节点在兄弟中的索引
       const siblings = allNodes.filter((n) => n.parent === parent);
