@@ -4,7 +4,7 @@ import {ArrowRight, Filter, Layers, Sparkles, X} from 'lucide-react';
 import {useRouter} from 'next/router';
 import {useMemo, useState} from 'react';
 import {Infographic} from '../Infographic';
-import {TYPE_DISPLAY_NAMES} from './constants';
+import {SERIES_DISPLAY_NAMES, TYPE_DISPLAY_NAMES} from './constants';
 import {TEMPLATES} from './templates';
 
 const getType = (templateString: string | undefined) => {
@@ -12,6 +12,13 @@ const getType = (templateString: string | undefined) => {
   const raw = templateString.split('-')[0];
   return raw || 'general';
 };
+const getSeries = (templateString: string | undefined) => {
+  if (!templateString) return 'general';
+  const parts = templateString.split('-');
+  if (parts.length < 2) return 'general';
+  return `${parts[0]}-${parts[1]}`;
+};
+const COLLAPSED_COUNT = 5;
 
 // ==========================================
 // 2. Component: Glass Tag (毛玻璃标签)
@@ -128,6 +135,9 @@ const GalleryCard = ({
 // ==========================================
 export default function GalleryPage() {
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [expandedSeries, setExpandedSeries] = useState<Record<string, boolean>>(
+    {}
+  );
   const router = useRouter();
 
   // 计算分类
@@ -141,6 +151,28 @@ export default function GalleryPage() {
     if (activeFilters.length === 0) return TEMPLATES;
     return TEMPLATES.filter((t) => activeFilters.includes(getType(t.template)));
   }, [activeFilters]);
+
+  // 分组数据（保持原始顺序）
+  const groupedTemplates = useMemo(() => {
+    const groups = new Map<string, any[]>();
+    filteredTemplates.forEach((item) => {
+      const key = getSeries(item.template);
+      if (!groups.has(key)) {
+        groups.set(key, []);
+      }
+      groups.get(key)!.push(item);
+    });
+
+    return Array.from(groups.entries()).map(([key, items]) => ({
+      key,
+      label: SERIES_DISPLAY_NAMES[key] ?? key,
+      items,
+    }));
+  }, [filteredTemplates]);
+
+  const toggleSeries = (key: string) => {
+    setExpandedSeries((prev) => ({...prev, [key]: !prev[key]}));
+  };
 
   // 切换逻辑
   const toggleFilter = (type: string) => {
@@ -235,16 +267,53 @@ export default function GalleryPage() {
       </div>
 
       {/* Grid Area */}
-      <main className="px-5 sm:px-12 pb-24 max-w-7xl mx-auto relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2 md:gap-4 lg:gap-6">
-          {filteredTemplates.map((item, index) => (
-            <GalleryCard
-              key={index}
-              item={item}
-              onClick={() => handleCardClick(item.template!)}
-            />
-          ))}
-        </div>
+      <main className="px-5 sm:px-12 pb-24 max-w-7xl mx-auto relative z-10 space-y-8">
+        {groupedTemplates.map(({key, label, items}) => {
+          const isExpanded = !!expandedSeries[key];
+          const visibleItems = isExpanded
+            ? items
+            : items.slice(0, Math.min(items.length, COLLAPSED_COUNT));
+          const canToggle = items.length > COLLAPSED_COUNT;
+
+          return (
+            <section
+              key={key}
+              className="rounded-xl border border-primary/8 dark:border-primary-dark/10 bg-card/60 dark:bg-card-dark/60 backdrop-blur-md shadow-sm overflow-hidden">
+              <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-primary/8 dark:border-primary-dark/10">
+                <div className="flex items-center gap-2 text-sm font-semibold text-primary dark:text-primary-dark">
+                  <span>{label}</span>
+                  <span className="text-tertiary dark:text-tertiary-dark text-xs">
+                    {items.length} 张
+                  </span>
+                </div>
+                {canToggle && (
+                  <button
+                    onClick={() => toggleSeries(key)}
+                    className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-full bg-wash dark:bg-card-dark border border-primary/10 dark:border-primary-dark/10 text-link dark:text-link-dark hover:border-link/40">
+                    <span>{isExpanded ? '收起' : '展开全部'}</span>
+                    <ArrowRight
+                      className={`w-4 h-4 transition-transform ${
+                        isExpanded ? 'rotate-90' : ''
+                      }`}
+                    />
+                  </button>
+                )}
+              </div>
+
+              <div className="p-4 sm:p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2 md:gap-4 lg:gap-5">
+                  {visibleItems.map((item, index) => (
+                    <GalleryCard
+                      key={`${item.template}-${index}`}
+                      item={item}
+                      onClick={() => handleCardClick(item.template!)}
+                    />
+                  ))}
+                </div>
+              </div>
+            </section>
+          );
+        })}
       </main>
 
       {/* Optional: Noise Texture Overlay for modern feel */}

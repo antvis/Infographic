@@ -7,3 +7,8 @@ export const TYPE_DISPLAY_NAMES = {
   quadrant: '四象限型',
   hierarchy: '层级型',
 };
+
+export const SERIES_DISPLAY_NAMES: Record<string, string> = {
+  'hierarchy-tree': '层级树',
+  'hierarchy-mindmap': '思维导图',
+};
