@@ -73,7 +73,18 @@
       "prettier-plugin-organize-imports",
       "prettier-plugin-packagejson"
     ],
-    "singleQuote": true
+    "singleQuote": true,
+    "overrides": [
+      {
+        "files": [
+          "*.md",
+          "*.mdx"
+        ],
+        "options": {
+          "embeddedLanguageFormatting": "off"
+        }
+      }
+    ]
   },
   "dependencies": {
     "@antv/hierarchy": "^0.7.0",

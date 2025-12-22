@@ -1,18 +1,18 @@
 import {css} from '@codemirror/lang-css';
 import {html} from '@codemirror/lang-html';
 import {javascript} from '@codemirror/lang-javascript';
+import {yaml} from '@codemirror/lang-yaml';
 import {HighlightStyle} from '@codemirror/language';
 import {highlightTree, tags} from '@lezer/highlight';
 import cn from 'classnames';
 import rangeParser from 'parse-numeric-range';
+import {CustomTheme} from '../Sandpack/Themes';
 import {
   CodeBlockHeader,
   shouldShowCopyButton,
   useCopyableCode,
   useLanguageLabel,
 } from './shared';
-
-import {CustomTheme} from '../Sandpack/Themes';
 
 export interface CodeBlockProps {
   children: React.ReactNode & {
@@ -43,6 +43,7 @@ const tsLang = javascript({jsx: false, typescript: true});
 const tsxLang = javascript({jsx: true, typescript: true});
 const cssLang = css();
 const htmlLang = html();
+const yamlLang = yaml();
 
 const CodeBlock = function CodeBlock({
   children,
@@ -76,6 +77,12 @@ const CodeBlock = function CodeBlock({
     className === 'language-typescriptreact'
   ) {
     lang = tsxLang;
+  } else if (
+    className === 'language-yaml' ||
+    className === 'language-yml' ||
+    className === 'language-syntax'
+  ) {
+    lang = yamlLang;
   }
   const tree = lang.language.parser.parse(code);
   let tokenStarts = new Map();

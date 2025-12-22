@@ -15,7 +15,8 @@
     {
       "files": "*.md",
       "options": {
-        "parser": "mdx"
+        "parser": "mdx",
+        "embeddedLanguageFormatting": "off"
       }
     }
   ]
