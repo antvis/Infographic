@@ -31,7 +31,7 @@ getOptions(): Partial<InfographicOptions>
 
 ### render {#render}
 
-根据配置信息或语法字符串渲染信息图。可以传入 `string`（信息图语法）或 `Partial<InfographicOptions>` 来覆盖/更新实例内部的配置，也可以不传参数直接使用上一次的配置。
+根据配置信息或语法字符串渲染信息图。
 
 **类型签名：**
 
@@ -59,6 +59,25 @@ data
 
 // 直接渲染信息图语法
 infographic.render(syntax);
+```
+
+### update {#update}
+
+在现有配置的基础上进行增量更新。`update()` 会将传入的语法或配置与当前实例中的 `options` 进行合并，适用于只修改部分字段的场景。
+
+**类型签名：**
+
+```typescript
+update(options: string | Partial<InfographicOptions>): void
+```
+
+**示例：**
+
+```typescript
+// 更新主题，同时保留之前的配置
+infographic.update({
+  theme: 'dark',
+});
 ```
 
 ### compose {#compose}
