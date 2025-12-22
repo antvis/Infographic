@@ -8,10 +8,10 @@ import {IconStarTwinkle} from '../Icon/IconStarTwinkle';
 import {ChatPanel} from './ChatPanel';
 import {ConfigPanel} from './ConfigPanel';
 import {PreviewPanel} from './PreviewPanel';
-import {sendMessage} from './Service';
+import {sendMessageStream} from './Service';
 import {
   DEFAULT_CONFIG,
-  FALLBACK_OPTIONS,
+  FALLBACK_SYNTAX,
   PROVIDER_OPTIONS,
   STORAGE_KEYS,
 } from './constants';
@@ -40,23 +40,42 @@ type HistoryRecord = {
   text: string;
   status: 'pending' | 'ready' | 'error';
   error?: string;
+  syntax?: string;
   config?: Partial<InfographicOptions>;
 };
 
 const createTitle = (text: string) =>
   text.length > 18 ? `${text.slice(0, 18)}…` : text || '待输入';
 
+const extractSyntaxContent = (text: string) => {
+  if (!text) return '';
+  const fenced = text.match(/```(?:[\w-]+)?\s*([\s\S]*?)```/);
+  if (fenced) {
+    const content = fenced[1] || '';
+    return content.replace(/^\s*[\r\n]+/, '');
+  }
+  const startRegex = /```(?:[\w-]+)?\s*/;
+  const match = text.match(startRegex);
+  const startIndex = text.search(startRegex);
+  if (match && startIndex !== -1) {
+    return text.slice(startIndex + match[0].length).replace(/^\s*[\r\n]+/, '');
+  }
+  return text;
+};
+
 const toHistoryRecord = (input: {
   id: string;
   text: string;
   status: 'pending' | 'ready' | 'error';
   error?: string;
+  syntax?: string;
   config?: Partial<InfographicOptions>;
 }): HistoryRecord => ({
   id: input.id,
   text: input.text,
   status: input.status,
   error: input.error,
+  syntax: input.syntax,
   config: input.config,
   title: createTitle(input.text),
 });
@@ -75,7 +94,10 @@ const normalizeLegacyMessages = (raw: ChatMessage[]): HistoryRecord[] => {
           text: pendingUser.text,
           status: msg.isError ? 'error' : 'ready',
           error: msg.error,
-          config: msg.config,
+          config:
+            msg.config && typeof msg.config === 'object'
+              ? (msg.config as Partial<InfographicOptions>)
+              : undefined,
         })
       );
       pendingUser = null;
@@ -109,16 +131,22 @@ const normalizeStoredHistory = (raw: any): HistoryRecord[] => {
       item.status === 'ready' || item.status === 'error'
         ? item.status
         : 'pending';
+    const syntax =
+      typeof (item as any).syntax === 'string'
+        ? (item as any).syntax
+        : undefined;
+    const config =
+      item.config && typeof item.config === 'object'
+        ? (item.config as Partial<InfographicOptions>)
+        : undefined;
     normalized.push(
       toHistoryRecord({
         id: typeof item.id === 'string' ? item.id : createId(),
         text,
         status,
         error: typeof item.error === 'string' ? item.error : undefined,
-        config:
-          item.config && typeof item.config === 'object'
-            ? (item.config as Partial<InfographicOptions>)
-            : undefined,
+        syntax,
+        config,
       })
     );
   }
@@ -135,11 +163,12 @@ export function AIPageContent() {
   } as Config);
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [previewOptions, setPreviewOptions] =
+  const [editorText, setEditorText] = useState('');
+  const [previewKind, setPreviewKind] = useState<'syntax' | 'json'>('syntax');
+  const [jsonPreview, setJsonPreview] =
     useState<Partial<InfographicOptions> | null>(null);
   const [previewError, setPreviewError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'preview' | 'json'>('preview');
-  const [lastJSON, setLastJSON] = useState('');
+  const [activeTab, setActiveTab] = useState<'preview' | 'syntax'>('preview');
   const [mounted, setMounted] = useState(false);
   const [retryingId, setRetryingId] = useState<string | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -186,9 +215,38 @@ export function AIPageContent() {
     }
     if (savedInfographic) {
       try {
-        setPreviewOptions(JSON.parse(savedInfographic));
+        const parsed = JSON.parse(savedInfographic);
+        if (
+          parsed &&
+          typeof parsed === 'object' &&
+          'kind' in parsed &&
+          'value' in parsed
+        ) {
+          if (
+            parsed.kind === 'json' &&
+            parsed.value &&
+            typeof parsed.value === 'object'
+          ) {
+            setPreviewKind('json');
+            setJsonPreview(parsed.value as Partial<InfographicOptions>);
+            setEditorText(formatJSON(parsed.value));
+          } else if (
+            parsed.kind === 'syntax' &&
+            typeof parsed.value === 'string'
+          ) {
+            setPreviewKind('syntax');
+            setJsonPreview(null);
+            setEditorText(parsed.value);
+          }
+        } else if (typeof parsed === 'string') {
+          setPreviewKind('syntax');
+          setJsonPreview(null);
+          setEditorText(parsed);
+        }
       } catch {
-        setPreviewOptions(null);
+        setPreviewKind('syntax');
+        setJsonPreview(null);
+        setEditorText(savedInfographic);
       }
     }
     setHasHydrated(true);
@@ -205,14 +263,9 @@ export function AIPageContent() {
         next[next.length - 1] = {...last, status: 'error', error: '请求未完成'};
         return next;
       });
-      if (previewOptions) {
-        setLastJSON(formatJSON(previewOptions));
-      } else {
-        setLastJSON('');
-      }
       setActiveTab('preview');
     }
-  }, [history, mounted, isGenerating, previewOptions]);
+  }, [history, mounted, isGenerating]);
 
   useEffect(() => {
     if (!mounted) return;
@@ -231,14 +284,21 @@ export function AIPageContent() {
   }, [history, mounted]);
 
   useEffect(() => {
-    if (!mounted || !previewOptions) return;
-    localStorage.setItem(
-      STORAGE_KEYS.infographic,
-      JSON.stringify(previewOptions)
-    );
-  }, [previewOptions, mounted]);
-
-  const effectivePreview = previewOptions || FALLBACK_OPTIONS;
+    if (!mounted) return;
+    if (previewKind === 'json' && jsonPreview) {
+      localStorage.setItem(
+        STORAGE_KEYS.infographic,
+        JSON.stringify({kind: 'json', value: jsonPreview})
+      );
+    } else if (previewKind === 'syntax' && editorText) {
+      localStorage.setItem(
+        STORAGE_KEYS.infographic,
+        JSON.stringify({kind: 'syntax', value: editorText})
+      );
+    } else {
+      localStorage.removeItem(STORAGE_KEYS.infographic);
+    }
+  }, [previewKind, jsonPreview, editorText, mounted]);
 
   const requestInfographic = useCallback(
     async (content: string, userId: string) => {
@@ -246,7 +306,13 @@ export function AIPageContent() {
       setHistory((prev) =>
         prev.map((item) =>
           item.id === userId
-            ? {...item, status: 'pending', error: undefined, config: undefined}
+            ? {
+                ...item,
+                status: 'pending',
+                error: undefined,
+                syntax: undefined,
+                config: undefined,
+              }
             : item
         )
       );
@@ -269,58 +335,81 @@ export function AIPageContent() {
           },
         ];
 
-        const resMsg = await sendMessage(modelConfig, payloadMessages);
-        let parsedConfig: Partial<InfographicOptions> | null = null;
-        let parseError = '';
+        let rawBuffer = '';
+        let syntaxBuffer = '';
+        setPreviewKind('syntax');
+        setJsonPreview(null);
+        setEditorText('');
+        setPreviewError(null);
+        setActiveTab('preview');
 
-        try {
-          const match = resMsg.match(/```(?:json)?\s*([\s\S]*?)```/);
-          const candidate = match ? match[1] : resMsg;
-          const raw = JSON.parse(candidate);
-          parsedConfig =
-            raw && typeof raw === 'object' && 'config' in raw
-              ? (raw as {config: Partial<InfographicOptions>}).config
-              : (raw as Partial<InfographicOptions>);
-        } catch (err) {
-          if (resMsg.includes('{')) {
-            parseError = '无法解析模型返回内容';
-          } else {
-            parseError = resMsg;
+        await sendMessageStream(
+          modelConfig,
+          payloadMessages,
+          (chunk) => {
+            if (!chunk) return;
+            rawBuffer += chunk;
+            syntaxBuffer = extractSyntaxContent(rawBuffer);
+            setPreviewKind('syntax');
+            setJsonPreview(null);
+            setEditorText(syntaxBuffer);
+            setPreviewError(null);
+          },
+          () => {
+            const hasSyntax = syntaxBuffer.trim().length > 0;
+            setHistory((prev) =>
+              prev.map((item) =>
+                item.id === userId
+                  ? {
+                      ...item,
+                      status: hasSyntax ? 'ready' : 'error',
+                      error: hasSyntax ? undefined : '未接收到模型输出',
+                      syntax: hasSyntax ? syntaxBuffer : undefined,
+                      config: hasSyntax ? undefined : item.config,
+                    }
+                  : item
+              )
+            );
+            if (!hasSyntax) {
+              setPreviewError('模型未返回内容');
+            }
+          },
+          (error) => {
+            const message = error.message || '生成失败，请检查网络或稍后重试。';
+            setHistory((prev) =>
+              prev.map((item) =>
+                item.id === userId
+                  ? {
+                      ...item,
+                      status: 'error',
+                      error: message,
+                      syntax: undefined,
+                    }
+                  : item
+              )
+            );
+            setPreviewError(message);
           }
-        }
-
-        setHistory((prev) =>
-          prev.map((item) =>
-            item.id === userId
-              ? {
-                  ...item,
-                  status: parsedConfig ? 'ready' : 'error',
-                  error: parsedConfig ? undefined : parseError,
-                  config: parsedConfig || undefined,
-                }
-              : item
-          )
         );
-
-        if (parsedConfig) {
-          setPreviewOptions(parsedConfig);
-          setPreviewError(null);
-          setLastJSON(formatJSON(parsedConfig));
-          setActiveTab('preview');
-        }
       } catch (error) {
         const message =
           error instanceof Error && error.message
             ? error.message
             : '生成失败，请检查网络或稍后重试。';
-
         setHistory((prev) =>
           prev.map((item) =>
             item.id === userId
-              ? {...item, status: 'error', error: message, config: undefined}
+              ? {
+                  ...item,
+                  status: 'error',
+                  error: message,
+                  syntax: undefined,
+                  config: undefined,
+                }
               : item
           )
         );
+        setPreviewError(message);
       } finally {
         setIsGenerating(false);
         inputRef.current?.focus();
@@ -351,6 +440,7 @@ export function AIPageContent() {
                   title: createTitle(content),
                   status: 'pending',
                   error: undefined,
+                  syntax: undefined,
                   config: undefined,
                 }
               : item
@@ -407,8 +497,9 @@ export function AIPageContent() {
   const handleClear = () => {
     setHistory([]);
     setRetryingId(null);
-    setPreviewOptions(null);
-    setLastJSON('');
+    setEditorText('');
+    setJsonPreview(null);
+    setPreviewKind('syntax');
     setPreviewError(null);
     if (typeof window !== 'undefined') {
       localStorage.removeItem(STORAGE_KEYS.messages);
@@ -418,11 +509,22 @@ export function AIPageContent() {
 
   const historyItems = history;
 
-  const handleSelectHistory = (config?: Partial<InfographicOptions>) => {
-    if (!config) return;
-    setPreviewOptions(config);
+  const handleSelectHistory = (
+    syntax?: string,
+    config?: Partial<InfographicOptions>
+  ) => {
+    if (syntax) {
+      setPreviewKind('syntax');
+      setJsonPreview(null);
+      setEditorText(syntax);
+    } else if (config) {
+      setPreviewKind('json');
+      setJsonPreview(config);
+      setEditorText(formatJSON(config));
+    } else {
+      return;
+    }
     setPreviewError(null);
-    setLastJSON(formatJSON(config));
     setActiveTab('preview');
   };
 
@@ -435,14 +537,18 @@ export function AIPageContent() {
     inputRef.current?.focus();
   };
 
-  const handleJsonChange = (value: string) => {
-    setLastJSON(value);
-    try {
-      const parsed = JSON.parse(value) as Partial<InfographicOptions>;
-      setPreviewOptions(parsed);
+  const handleEditorChange = (value: string) => {
+    setEditorText(value);
+    if (previewKind === 'json') {
+      try {
+        const parsed = JSON.parse(value) as Partial<InfographicOptions>;
+        setJsonPreview(parsed);
+        setPreviewError(null);
+      } catch (err) {
+        setPreviewError(err instanceof Error ? err.message : 'JSON 解析失败');
+      }
+    } else {
       setPreviewError(null);
-    } catch (err) {
-      setPreviewError(err instanceof Error ? err.message : 'JSON 解析失败');
     }
   };
 
@@ -529,12 +635,15 @@ export function AIPageContent() {
                   activeTab={activeTab}
                   onTabChange={setActiveTab}
                   isGenerating={isGenerating}
-                  previewOptions={effectivePreview}
-                  json={lastJSON}
-                  onJsonChange={handleJsonChange}
+                  editorValue={editorText}
+                  previewKind={previewKind}
+                  jsonPreview={jsonPreview}
+                  fallbackSyntax={FALLBACK_SYNTAX}
+                  onEditorChange={handleEditorChange}
                   error={previewError}
                   panelClassName={PANEL_HEIGHT_CLASS}
                   onCopy={handleCopyHint}
+                  onRenderError={setPreviewError}
                 />
               }
             </div>

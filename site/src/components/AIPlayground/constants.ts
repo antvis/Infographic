@@ -1,4 +1,3 @@
-import {InfographicOptions} from '@antv/infographic';
 import {AIConfig, AIProvider} from './types';
 
 export const STORAGE_KEYS = {
@@ -79,4 +78,24 @@ export const EXAMPLE_PROMPTS = [
   },
 ];
 
-export const FALLBACK_OPTIONS: Partial<InfographicOptions> | null = null;
+export const FALLBACK_SYNTAX = `infographic list-row-horizontal-icon-arrow
+data
+  title 客户增长引擎
+  desc 多渠道触达与复购提升
+  items
+    - label 线索获取
+      value 18.6
+      desc 渠道投放与内容获客
+      icon mdi/rocket-launch
+    - label 转化提效
+      value 12.4
+      desc 线索评分与自动跟进
+      icon mdi/progress-check
+    - label 复购提升
+      value 9.8
+      desc 会员体系与权益运营
+      icon mdi/account-sync
+    - label 产品增长
+      value 10.2
+      desc 试用转化与功能引导
+      icon mdi/chart-line`;

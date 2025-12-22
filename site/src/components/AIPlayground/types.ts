@@ -1,12 +1,10 @@
-import {InfographicOptions} from '@antv/infographic';
-
 export type ChatMessage = {
   id: string;
   role: 'user' | 'assistant' | 'system';
   text: string;
   error?: string;
   isError?: boolean;
-  config?: Partial<InfographicOptions>;
+  config?: Record<string, unknown>;
 };
 
 export type AIProvider =
@@ -30,8 +28,4 @@ export type AIModelConfig = {
   baseURL: string;
   model: string;
   apiKey: string;
-};
-
-export type ParsedAIResponse = {
-  config?: Partial<InfographicOptions>;
 };

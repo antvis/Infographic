@@ -35,9 +35,13 @@ export function ChatPanel({
     text: string;
     status: 'pending' | 'ready' | 'error';
     error?: string;
+    syntax?: string;
     config?: Partial<InfographicOptions>;
   }>;
-  onSelectHistory: (config?: Partial<InfographicOptions>) => void;
+  onSelectHistory: (
+    syntax?: string,
+    config?: Partial<InfographicOptions>
+  ) => void;
   onRetry: (id: string, text: string) => void;
   onDelete: (id: string) => void;
   onOpenConfig: () => void;
@@ -54,12 +58,13 @@ export function ChatPanel({
 
   const handleCardClick = (
     id: string,
+    syntax?: string,
     config?: Partial<InfographicOptions>,
     disabled?: boolean
   ) => {
     setExpandedId((prev) => (prev === id ? null : id));
-    if (!disabled && config) {
-      onSelectHistory(config);
+    if (!disabled && (syntax || config)) {
+      onSelectHistory(syntax, config);
     }
   };
 
@@ -163,7 +168,7 @@ export function ChatPanel({
                 const disabled =
                   disabledByRequest ||
                   item.status === 'pending' ||
-                  (!item.config && !isError);
+                  (!item.syntax && !item.config && !isError);
                 const showError = item.status === 'error';
                 const isExpanded = expandedId === item.id;
                 const errorMessage =
@@ -171,7 +176,7 @@ export function ChatPanel({
 
                 const handleSelect = () => {
                   if (isError || disabled) return;
-                  handleCardClick(item.id, item.config, disabled);
+                  handleCardClick(item.id, item.syntax, item.config, disabled);
                 };
 
                 return (

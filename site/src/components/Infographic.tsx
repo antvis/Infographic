@@ -27,11 +27,12 @@ export const Infographic = forwardRef<
   const isDark = useMemo(() => theme === 'dark', [theme]);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    const container = containerRef.current;
+    if (!container) return;
 
     if (!instanceRef.current) {
       instanceRef.current = new Renderer({
-        container: containerRef.current,
+        container,
         svg: {
           style: {
             width: '100%',
@@ -45,8 +46,8 @@ export const Infographic = forwardRef<
     try {
       onError?.(null);
       if (typeof options === 'string') {
-        instanceRef.current.render(options);
-      } else {
+        instanceRef.current!.render(options as string);
+      } else if (options) {
         const finalOptions = {...options};
         delete (finalOptions as Partial<InfographicOptions>).container;
 
@@ -56,7 +57,7 @@ export const Infographic = forwardRef<
           finalOptions.themeConfig!.colorBg = '#000';
         }
 
-        instanceRef.current.render(finalOptions as InfographicOptions);
+        instanceRef.current!.render(finalOptions as InfographicOptions);
       }
     } catch (e) {
       console.error('Infographic render error', e);
