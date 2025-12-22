@@ -6,7 +6,7 @@ title: 自定义数据项
 
 ## 开发提示词 {#development-prompt}
 
-提示词位于 AntV Infographic [GitHub 仓库](https://github.com/antvis/infographic)的中 [src/designs/items/prompt.md](https://github.com/antvis/Infographic/blob/dev/src/designs/items/prompt.md) 文件中。其中包含以下内容：
+提示词位于 AntV Infographic [GitHub 仓库](https://github.com/antvis/infographic)的中 [src/designs/items/prompt.md](https://github.com/antvis/Infographic/blob/main/src/designs/items/prompt.md) 文件中。其中包含以下内容：
 
 - 数据项核心概念
 - 设计要求（完整性、自适应、数值处理）

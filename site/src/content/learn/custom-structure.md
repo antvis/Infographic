@@ -6,7 +6,7 @@ title: 自定义结构
 
 ## 开发提示词 {#development-prompt}
 
-提示词位于 AntV Infographic [GitHub 仓库](https://github.com/antvis/infographic)的中 [src/designs/structures/prompt.md](https://github.com/antvis/Infographic/blob/dev/src/designs/structures/prompt.md) 文件中。其中包含以下内容：
+提示词位于 AntV Infographic [GitHub 仓库](https://github.com/antvis/infographic)的中 [src/designs/structures/prompt.md](https://github.com/antvis/Infographic/blob/main/src/designs/structures/prompt.md) 文件中。其中包含以下内容：
 
 - 结构分类体系（列表、对比、顺序、层级、关系、地理、统计图）
 - 技术规范（类型定义、可用组件、工具函数）
