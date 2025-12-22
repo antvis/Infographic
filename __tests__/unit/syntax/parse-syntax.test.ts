@@ -188,6 +188,55 @@ theme
     expect(result.options.themeConfig?.palette).toEqual(['#abcdef']);
   });
 
+  it('drops invalid theme color values and reports errors', () => {
+    const input = `
+theme
+  colorBg #1
+  colorPrimary #00ff99
+`;
+    const result = parseSyntax(input);
+    expect(result.options.themeConfig?.colorBg).toBeUndefined();
+    expect(result.options.themeConfig?.colorPrimary).toBe('#00ff99');
+    expect(
+      result.errors.some(
+        (error) =>
+          error.code === 'invalid_value' && error.path === 'theme.colorBg',
+      ),
+    ).toBe(true);
+  });
+
+  it('filters invalid palette entries but keeps valid ones', () => {
+    const input = `
+theme
+  palette #0ff #0f0 #1
+`;
+    const result = parseSyntax(input);
+    expect(result.options.themeConfig?.palette).toEqual(['#0ff', '#0f0']);
+    expect(
+      result.errors.some(
+        (error) =>
+          error.code === 'invalid_value' && error.path === 'theme.palette[2]',
+      ),
+    ).toBe(true);
+  });
+
+  it('parses theme base text colors', () => {
+    const input = `
+theme
+  base
+    text
+      fill #123456
+      stroke #1
+    shape
+      fill red
+`;
+    const result = parseSyntax(input);
+    expect(result.errors).toHaveLength(0);
+    expect(result.options.themeConfig?.base?.text?.fill).toBe('#123456');
+    expect(result.options.themeConfig?.base?.text?.stroke).toBeUndefined();
+    expect(result.options.themeConfig?.base?.shape?.fill).toBe('red');
+  });
+
   it('parses template block shorthand and width string values', () => {
     const input = `
 template sales-dashboard

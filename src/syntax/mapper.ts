@@ -1,3 +1,4 @@
+import tinycolor from 'tinycolor2';
 import { parseInlineKeyValue } from './parser';
 import type {
   SchemaNode,
@@ -12,8 +13,8 @@ function createValueNode(value: string, line: number): ValueNode {
 }
 
 const HEX_COLOR_PATTERN =
-  /^#(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
-const RGB_COLOR_PATTERN = /^rgba?\(/i;
+  /^(#[0-9a-f]{8}|#[0-9a-f]{6}|#[0-9a-f]{4}|#[0-9a-f]{3})/i;
+const FUNCTION_COLOR_PATTERN = /^((?:rgb|rgba|hsl|hsla)\([^)]*\))/i;
 
 function parseScalar(value: string) {
   const trimmed = value.trim();
@@ -63,11 +64,70 @@ function splitArrayValue(
   } else {
     parts = text.split(/[,\s]+/);
   }
-  return parts.map((part) => part.trim()).filter(Boolean);
+  const normalized: string[] = [];
+  for (const part of parts) {
+    const trimmedPart = part.trim();
+    if (!trimmedPart) continue;
+    if (trimmedPart === '#' || trimmedPart === '//') break;
+    normalized.push(trimmedPart);
+  }
+  return normalized;
 }
 
-function isExplicitColor(value: string) {
-  return HEX_COLOR_PATTERN.test(value) || RGB_COLOR_PATTERN.test(value);
+function stripColorComments(value: string) {
+  let trimmed = value.trim();
+  const hashIndex = trimmed.search(/\s+#(?![0-9a-f])/i);
+  if (hashIndex >= 0) {
+    trimmed = trimmed.slice(0, hashIndex).trimEnd();
+  }
+  const slashIndex = trimmed.indexOf('//');
+  if (slashIndex >= 0) {
+    trimmed = trimmed.slice(0, slashIndex).trimEnd();
+  }
+  return trimmed;
+}
+
+function normalizeExplicitColor(value: string) {
+  const trimmed = stripColorComments(value);
+  if (!trimmed) return undefined;
+  const hexMatch = trimmed.match(HEX_COLOR_PATTERN);
+  if (hexMatch && hexMatch[0].length === trimmed.length) {
+    return trimmed;
+  }
+  const funcMatch = trimmed.match(FUNCTION_COLOR_PATTERN);
+  if (funcMatch && funcMatch[1].length === trimmed.length) {
+    return trimmed;
+  }
+  if (tinycolor(trimmed).isValid()) return trimmed;
+  return undefined;
+}
+
+function mapColor(
+  node: SyntaxNode,
+  path: string,
+  errors: SyntaxError[],
+  options: { soft?: boolean } = {},
+) {
+  const value = readScalar(node);
+  if (value === undefined) {
+    addError(errors, node, path, 'schema_mismatch', 'Expected color value.');
+    return undefined;
+  }
+  const normalized = normalizeExplicitColor(value);
+  if (!normalized) {
+    if (!options.soft) {
+      addError(
+        errors,
+        node,
+        path,
+        'invalid_value',
+        'Invalid color value.',
+        value,
+      );
+    }
+    return undefined;
+  }
+  return normalized;
 }
 
 function shouldTreatPaletteStringAsArray(
@@ -75,7 +135,8 @@ function shouldTreatPaletteStringAsArray(
   parts: string[],
 ): boolean {
   if (parts.length > 1) return true;
-  return trimmed.startsWith('[') && trimmed.endsWith(']');
+  if (trimmed.startsWith('[') && trimmed.endsWith(']')) return true;
+  return normalizeExplicitColor(trimmed) !== undefined;
 }
 
 function mapUnknown(node: SyntaxNode): any {
@@ -258,12 +319,13 @@ export function mapWithSchema(
     }
     case 'palette': {
       if (node.kind === 'array') {
-        return mapWithSchema(
+        const values = mapWithSchema(
           node,
-          { kind: 'array', item: { kind: 'string' }, split: 'any' },
+          { kind: 'array', item: { kind: 'color' }, split: 'any' },
           path,
           errors,
         );
+        return Array.isArray(values) && values.length > 0 ? values : undefined;
       }
       if (node.kind === 'object' && Object.keys(node.entries).length > 0) {
         addError(
@@ -290,14 +352,27 @@ export function mapWithSchema(
       if (trimmed.startsWith('[') && !trimmed.endsWith(']')) {
         return undefined;
       }
-      if (isExplicitColor(trimmed)) {
-        return [trimmed];
+      const directColor = normalizeExplicitColor(trimmed);
+      if (directColor) {
+        return [directColor];
       }
       const parts = splitArrayValue(scalar, 'any');
       if (shouldTreatPaletteStringAsArray(trimmed, parts)) {
-        return parts;
+        const values = parts
+          .map((part, index) =>
+            mapColor(
+              createValueNode(part, node.line),
+              `${path}[${index}]`,
+              errors,
+            ),
+          )
+          .filter((value): value is string => value !== undefined);
+        return values.length > 0 ? values : undefined;
       }
       return scalar;
+    }
+    case 'color': {
+      return mapColor(node, path, errors, { soft: schema.soft });
     }
     case 'object': {
       if (node.kind === 'array') {

@@ -4,6 +4,10 @@ const string = (): SchemaNode => ({ kind: 'string' });
 const number = (): SchemaNode => ({ kind: 'number' });
 // const boolean = (): SchemaNode => ({ kind: 'boolean' });
 const enumOf = (values: string[]): SchemaNode => ({ kind: 'enum', values });
+const color = (options: { soft?: boolean } = {}): SchemaNode => ({
+  kind: 'color',
+  soft: options.soft,
+});
 const array = (item: SchemaNode, split: 'space' | 'comma' | 'any' = 'any') => ({
   kind: 'array' as const,
   item,
@@ -24,6 +28,14 @@ const union = (...variants: SchemaNode[]): SchemaNode => ({
 });
 const palette = (): SchemaNode => ({ kind: 'palette' });
 
+const nullableColorFields = {
+  fill: color({ soft: true }),
+  stroke: color({ soft: true }),
+};
+
+const textStyleSchema = object(nullableColorFields, { allowUnknown: true });
+const shapeStyleSchema = object(nullableColorFields, { allowUnknown: true });
+
 const itemDatumSchema: ObjectSchema = object({}, { allowUnknown: true });
 itemDatumSchema.fields = {
   label: string(),
@@ -36,15 +48,16 @@ itemDatumSchema.fields = {
 export const ThemeSchema = object(
   {
     type: string(),
-    colorBg: string(),
-    colorPrimary: string(),
+    colorBg: color(),
+    colorPrimary: color(),
     palette: palette(),
-    title: object({}, { allowUnknown: true }),
-    desc: object({}, { allowUnknown: true }),
+    title: textStyleSchema,
+    desc: textStyleSchema,
+    shape: shapeStyleSchema,
     base: object({
       global: object({}, { allowUnknown: true }),
-      shape: object({}, { allowUnknown: true }),
-      text: object({}, { allowUnknown: true }),
+      shape: shapeStyleSchema,
+      text: textStyleSchema,
     }),
     stylize: object(
       {
@@ -54,8 +67,8 @@ export const ThemeSchema = object(
         fillWeight: number(),
         hachureGap: number(),
         pattern: string(),
-        backgroundColor: string(),
-        foregroundColor: string(),
+        backgroundColor: color(),
+        foregroundColor: color(),
         scale: number(),
       },
       { shorthandKey: 'type' },
