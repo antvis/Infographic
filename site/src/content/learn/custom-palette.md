@@ -22,10 +22,12 @@ registerPalette('continuous-palette', (ratio) => {
 
 const infographic = new Infographic({
   // 其他配置项...
-  themeConfig: {
-    palette: 'discrete-palette', // 使用自定义色板
-  },
 });
+
+infographic.render(`
+theme
+  palette discrete-palette
+`);
 ```
 
 自定义色板适用于品牌配色或特定业务配色，注册后即可在 `themeConfig.palette` 中按名称使用。

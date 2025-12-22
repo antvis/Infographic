@@ -22,21 +22,17 @@ registerFont({
 
 const infographic = new Infographic({
   // 其他配置项...
-  themeConfig: {
-    base: {
-      text: {
-        // 配置全局字体
-        'font-family': 'Alibaba PuHuiTi',
-      },
-    },
-    item: {
-      label: {
-        // 仅配置数据项标题字体
-        'font-family': 'Alibaba PuHuiTi',
-      },
-    },
-  },
 });
+
+infographic.render(`
+theme
+  base
+    text
+      font-family Alibaba PuHuiTi # 配置全局字体
+  item
+    label
+      font-family Alibaba PuHuiTi # 仅配置数据项标题字体
+`);
 ```
 
 建议确保字体 CDN 支持跨域与缓存，这样渲染更稳定、加载更快。

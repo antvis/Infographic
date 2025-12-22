@@ -11,17 +11,11 @@ AntV Infographic 提供了[图标服务](/icon)，对于使用插图的模版，
 
 在数据中，`icon` 和 `illus` 属性可以配置资源：
 
-```json
-{
-  "data": {
-    "items": [
-      {
-        "icon": "<ResourceConfig 或 字符串>",
-        "illus": "<ResourceConfig 或 字符串>"
-      }
-    ]
-  }
-}
+```syntax
+data
+  items
+    - icon <ResourceConfig 或字符串>
+      illus <ResourceConfig 或字符串>
 ```
 
 更多加载策略（图标协议、失败兜底等）请参阅[自定义资源加载器](/learn/custom-resource-loader)。
@@ -65,32 +59,20 @@ interface ResourceConfig {
 
 使用 Data URI 格式的 SVG，以 `data:image/svg+xml,` 开头，后面为 SVG 字符串：
 
-```json
-{
-  "data": {
-    "items": [
-      {
-        "icon": "data:image/svg+xml,<svg>...</svg>"
-      }
-    ]
-  }
-}
+```syntax
+data
+  items
+    - icon data:image/svg+xml,<svg>...</svg>
 ```
 
 ### 2. 远程 URL {#remote-url}
 
 通过自定义协议 `ref:remote[:fmt]:<url>` 直接指定 URL（`fmt` 可省略，缺省时由 URL 或响应头推断）：
 
-```json
-{
-  "data": {
-    "items": [
-      {
-        "icon": "ref:remote:svg:https://example.com/icon.svg"
-      }
-    ]
-  }
-}
+```syntax
+data
+  items
+    - icon ref:remote:svg:https://example.com/icon.svg
 ```
 
 <Warning>
@@ -101,30 +83,18 @@ interface ResourceConfig {
 
 使用 Base64 编码的图片，遵循标准 data URI，如 `data:image/<format>;base64,`：
 
-```json
-{
-  "data": {
-    "items": [
-      {
-        "icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA..."
-      }
-    ]
-  }
-}
+```syntax
+data
+  items
+    - icon data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA...
 ```
 
 ### 4. 图标搜索 {#search-icon}
 
 通过 `ref:search[:fmt]:<keywords>` 使用AntV 图标搜索服务提供资源，`fmt` 默认为 `svg`：
 
-```json
-{
-  "data": {
-    "items": [
-      {
-        "icon": "ref:search:computer network"
-      }
-    ]
-  }
-}
+```syntax
+data
+  items
+    - icon ref:search:computer network
 ```

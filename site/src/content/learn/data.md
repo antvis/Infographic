@@ -31,61 +31,35 @@ export interface ItemDatum {
 
 一维数据示例：
 
-```js
-new Infographic({
-  // 其他配置项...
-  data: {
-    title: '信息图标题',
-    desc: '这是信息图的描述文本',
-    items: [
-      {
-        icon: 'https://example.com/icon1.svg',
-        label: '数据项 1',
-        desc: '这是数据项 1 的描述',
-      },
-      {
-        icon: 'https://example.com/icon2.svg',
-        label: '数据项 2',
-        desc: '这是数据项 2 的描述',
-      },
-    ],
-  },
-});
+```syntax
+data
+  title 信息图标题
+  desc 这是信息图的描述文本
+  items
+    - icon https://example.com/icon1.svg
+      label 数据项 1
+      desc 这是数据项 1 的描述
+    - icon https://example.com/icon2.svg
+      label 数据项 2
+      desc 这是数据项 2 的描述
 ```
 
 ## 层级数据 {#hierarchical-data}
 
 层级数据可通过 `children` 递归嵌套：
 
-```js
-new Infographic({
-  // 其他配置项...
-  data: {
-    title: '信息图标题',
-    desc: '这是信息图的描述文本',
-    items: [
-      {
-        label: '一级数据项 1',
-        children: [
-          {
-            label: '二级数据项 1-1',
-          },
-          {
-            label: '二级数据项 1-2',
-          },
-        ],
-      },
-      {
-        label: '一级数据项 2',
-        children: [
-          {
-            label: '二级数据项 2-1',
-          },
-        ],
-      },
-    ],
-  },
-});
+```syntax
+data
+  title 信息图标题
+  desc 这是信息图的描述文本
+  items
+    - label 一级数据项 1
+      children
+        - label 二级数据项 1-1
+        - label 二级数据项 1-2
+    - label 一级数据项 2
+      children
+        - label 二级数据项 2-1
 ```
 
 <Note>

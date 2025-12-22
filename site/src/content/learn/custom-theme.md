@@ -11,10 +11,14 @@ title: 自定义主题
 ```js
 const infographic = new Infographic({
   // 其他配置项...
-  themeConfig: {
-    // 主题配置项
-  },
 });
+
+infographic.render(`
+theme
+  colorPrimary #FF356A
+  colorBg #FFFFFF
+  # 其他主题配置项...
+`);
 ```
 
 > 完整配置项参考[核心概念-主题](/learn/theme)。
@@ -31,4 +35,11 @@ registerTheme('my-theme', {
 });
 ```
 
-注册后即可在实例化时通过 `theme: 'my-theme'` 引用，配合 `themeConfig` 进一步调整。
+注册后即可在语法中通过 `theme my-theme` 引用，配合 `theme` 进一步调整：
+
+```syntax
+infographic list-row-simple-horizontal-arrow
+theme my-theme
+  colorPrimary #FF356A
+  # 其他覆盖配置项...
+```

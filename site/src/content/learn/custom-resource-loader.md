@@ -82,18 +82,16 @@ registerResourceLoader(async (config) => {
 // 使用
 const infographic = new Infographic({
   // 其他配置项...
-  data: {
-    items: [
-      {
-        icon: 'star', // 使用自定义协议，scene 为 icon
-        label: '特性 1',
-        illus: 'chart-growth', // 使用自定义协议，scene 为 illus
-      },
-    ],
-  },
 });
 
-infographic.render();
+infographic.render(`
+data
+  items
+    - icon star # 使用自定义协议，scene 为 icon
+      label 特性 1
+      desc 使用自定义资源协议
+      illus chart-growth # 使用自定义协议，scene 为 illus
+`);
 ```
 
 ## 工具函数 {#工具函数}
@@ -328,7 +326,12 @@ async function preloadResources(data: Data) {
 
 // 使用
 const data = {
-  /* ... */
+  // 与语法中的数据保持一致
+  items: [
+    {icon: '1', /** ... */},
+    {icon: '2', /** ... */},
+    {icon: '3', /** ... */},
+  ],
 };
 
 // 先预加载
@@ -337,10 +340,20 @@ await preloadResources(data);
 // 再渲染
 const infographic = new Infographic({
   // 其他配置项...
-  data,
 });
 
-infographic.render();
+infographic.render(`
+infographic list-row-horizontal-icon-arrow
+data
+  title 预加载示例
+  items
+    - icon 1
+      label 数据项 1
+    - icon 2
+      label 数据项 2
+    - icon 3
+      label 数据项 3
+`);
 ```
 
 ## 最佳实践 {#best-practices}
@@ -469,14 +482,16 @@ registerResourceLoader(loadIllus); // 会覆盖上面的 loadIcon
 ```typescript
 const infographic = new Infographic({
   // 其他配置项...
-  data: {
-    items: [
-      {icon: '1', label: '数据项 1'},
-      {icon: '2', label: '数据项 2'}, // 并行加载
-      {icon: '3', label: '数据项 3'},
-    ],
-  },
 });
 
-infographic.render();
+infographic.render(`
+data
+  items
+    - icon 1
+      label 数据项 1
+    - icon 2
+      label 数据项 2
+    - icon 3
+      label 数据项 3
+`);
 ```

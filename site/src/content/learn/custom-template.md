@@ -19,8 +19,11 @@ registerTemplate('custom-template', {
 
 const infographic = new Infographic({
   // 其他配置项...
-  template: 'custom-template', // 使用自定义模板
 });
+
+infographic.render(`
+infographic custom-template
+`);
 ```
 
 将设计抽象为模板，能让团队共享统一的布局与样式，并在后续项目中直接复用。

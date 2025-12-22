@@ -16,20 +16,12 @@ title: 设计
 
 通过 `options.design.structure` 配置结构，例如：
 
-```js
-new Infographic({
-  // 其他配置项...
-  design: {
-    // 其他设计配置项...
-    structure: {
-      type: 'list-row', // 使用横向分布的列表结构
-      // 其他结构配置项...
-    },
-  },
-});
+```syntax
+design
+  structure list-row
+    # 其他结构配置项...
+# 其他配置项...
 ```
-
-<Note>无需额外参数时，可简写为 `structure: 'list-row'`。</Note>
 
 下图展示相同数据项在两种结构下的差异：左为 `list-grid` 网格，右为 `list-pyramid` 金字塔。
 
@@ -53,23 +45,17 @@ new Infographic({
 
 标题样式通过 `options.design.title` 配置，具体文案通过 `options.data.title` 与 `options.data.desc` 传入：
 
-```js
-new Infographic({
-  // 其他配置项...
-  design: {
-    title: {
-      type: 'default', // 使用默认标题设计
-      alignHorizontal: 'left', // 左对齐
-      descLineNumber: 2, // 描述文本最多显示两行
-      // 其他标题设计配置项...
-    },
-  },
-  data: {
-    title: '信息图标题',
-    desc: '这是信息图的描述文本',
-    // 其他数据配置项...
-  },
-});
+```syntax
+design
+  title default
+    align-horizontal left
+    desc-line-number 2
+    # 其他标题设计配置项...
+  # 其他设计配置项...
+data
+  title 信息图标题
+  desc 这是信息图的描述文本
+  # 其他数据...
 ```
 
 > 更多标题设计会持续增加。
@@ -78,46 +64,23 @@ new Infographic({
 
 数据项组件用于展示具体内容，是信息图的最小可视化单元。`options.design` 支持 `item` 与 `items` 两种形式，常用 `item` 配置单一数据项设计：
 
-```js
-new Infographic({
-  // 其他配置项...
-  design: {
-    item: {
-      type: 'simple-horizontal-arrow', // 使用简单的水平箭头数据项设计
-      // 其他数据项设计配置项...
-    },
-  },
-});
+```syntax
+design
+  item simple-horizontal-arrow
+    # 其他数据项设计配置项...
+# 其他配置项...
 ```
-
-<Note>
-  无需额外参数时，可简写为 `item: 'simple-horizontal-arrow'`。
-</Note>
 
 在层级结构等场景，可用 `items` 为不同层级设置不同设计：
 
-```js
-new Infographic({
-  // 其他配置项...
-  design: {
-    items: [
-      {
-        type: 'level-1-item', // 第一层级数据项设计
-        // 其他第一层级数据项设计配置项...
-      },
-      {
-        type: 'level-2-item', // 第二层级数据项设计
-        // 其他第二层级数据项设计配置项...
-      },
-      // 其他层级数据项设计...
-    ],
-  },
-});
+```syntax
+design
+  items
+    - level-1-item # 第一层级数据项设计
+    - level-2-item # 第二层级数据项设计
 ```
 
-<Note>
-  同时存在 `item` 与 `items` 时，`items` 优先级更高。
-</Note>
+<Note>同时存在 `item` 与 `items` 时，`items` 优先级更高。</Note>
 
 下图为两种层级设计示例：一级数据项使用 `circle-node`，二级使用圆角矩形文本 `pill-badge`。
 

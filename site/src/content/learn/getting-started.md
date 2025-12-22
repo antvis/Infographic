@@ -28,53 +28,41 @@ const infographic = new Infographic({
   height: '100%',
   editable: true,
   padding: 30,
-  design: {
-    title: {
-      type: 'default',
-      width: 300,
-    },
-    structure: {
-      type: 'list-row',
-      gap: 0,
-      zigzag: true,
-    },
-    item: {
-      type: 'horizontal-icon-arrow',
-    },
-  },
-  theme: 'dark',
-  themeConfig: {
-    palette: ['#61DDAA', '#F6BD16', '#F08BB4'],
-    base: {
-      text: {
-        'font-family': '851tegakizatsu',
-      },
-    },
-    stylize: {
-      type: 'rough',
-    },
-  },
-  data: {
-    title: '计划进展',
-    items: [
-      {
-        label: '步骤 1',
-        desc: '开始',
-        time: 'Last Day',
-        icon: 'mdi/rocket-launch',
-      },
-      {
-        label: '步骤 2',
-        desc: '进行中',
-        time: 'Today',
-        icon: 'mdi/progress-clock',
-      },
-      {label: '步骤 3', desc: '完成', time: 'Tomorrow', icon: 'mdi/trophy'},
-    ],
-  },
 });
 
-infographic.render();
+infographic.render(`
+design
+  title default
+    width 300
+  structure list-row
+    gap 0
+    zigzag true
+  item horizontal-icon-arrow
+theme dark
+  palette
+    - #61DDAA
+    - #F6BD16
+    - #F08BB4
+  base
+    text
+      font-family 851tegakizatsu
+  stylize rough
+data
+  title 计划进展
+  items
+    - label 步骤 1
+      desc 开始
+      time Last Day
+      icon mdi/rocket-launch
+    - label 步骤 2
+      desc 进行中
+      time Today
+      icon mdi/progress-clock
+    - label 步骤 3
+      desc 完成
+      time Tomorrow
+      icon mdi/trophy
+`);
 ```
 
 </CodeRunner>

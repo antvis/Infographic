@@ -23,18 +23,19 @@ const infographic = new Infographic({
   container: '#container',
   width: '100%',
   height: '100%',
-  padding: 30,
-  template: 'list-row-simple-horizontal-arrow',
-  data: {
-    items: [
-      {label: '步骤 1', desc: '开始'},
-      {label: '步骤 2', desc: '进行中'},
-      {label: '步骤 3', desc: '完成'},
-    ],
-  },
 });
 
-infographic.render();
+const syntax = `infographic list-row-simple-horizontal-arrow
+data
+  items
+    - label 步骤 1
+      desc 开始
+    - label 步骤 2
+      desc 进行中
+    - label 步骤 3
+      desc 完成`;
+
+infographic.render(syntax);
 ```
 
 </CodeRunner>
@@ -43,10 +44,7 @@ infographic.render();
 
 - `container`：渲染容器的选择器或节点
 - `width` / `height`：信息图宽高，可用百分比或像素
-- `template`：内置模板 ID
-- `data`：用于渲染的标题与数据项
-
-然后调用 `render` 方法进行渲染。
+- `syntax`：[信息图语法](/learn/infographic-syntax)
 
 ### 在 HTML 中使用 {#在-html-中使用}
 
@@ -68,16 +66,21 @@ infographic.render();
         container: '#container',
         width: '100%',
         height: '100%',
-        template: 'list-row-simple-horizontal-arrow',
-        data: {
-          items: [
-            {label: '步骤 1', desc: '开始'},
-            {label: '步骤 2', desc: '进行中'},
-            {label: '步骤 3', desc: '完成'},
-          ],
-        },
       });
-      infographic.render();
+
+      const syntax = `
+        infographic list-row-simple-horizontal-arrow
+        data
+          items
+            - label 步骤 1
+              desc 开始
+            - label 步骤 2
+              desc 进行中
+            - label 步骤 3
+              desc 完成
+        `;
+
+      infographic.render(syntax);
     </script>
   </body>
 </html>
@@ -99,17 +102,23 @@ export function App() {
       container: containerRef.current,
       width: '100%',
       height: '100%',
-      template: 'list-row-simple-horizontal-arrow',
-      data: {
-        items: [
-          {label: '步骤 1', desc: '开始'},
-          {label: '步骤 2', desc: '进行中'},
-          {label: '步骤 3', desc: '完成'},
-        ],
-      },
     });
 
-    infographic.render();
+    infographic.render(`
+      infographic list-row-simple-horizontal-arrow
+          data
+            items
+              - label 步骤 1
+                desc 开始
+              - label 步骤 2
+                desc 进行中
+              - label 步骤 3
+                desc 完成
+    `);
+
+    return () => {
+      infographic.destroy();
+    };
   }, []);
 
   return <div ref={containerRef} />;

@@ -15,8 +15,12 @@ export type InfographicHandle = {
 
 export const Infographic = forwardRef<
   InfographicHandle,
-  {options: Partial<InfographicOptions> | string}
->((props, ref) => {
+  {
+    options: Partial<InfographicOptions> | string;
+    init?: Partial<InfographicOptions>;
+    onError?: (error: Error | null) => void;
+  }
+>(({init, onError, options}, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const instanceRef = useRef<Renderer | null>(null);
   const theme = useTheme();
@@ -34,28 +38,32 @@ export const Infographic = forwardRef<
             height: '100%',
           },
         },
+        ...init,
       });
     }
 
     try {
-      if (typeof props.options === 'string') {
-        instanceRef.current.render(props.options);
+      onError?.(null);
+      if (typeof options === 'string') {
+        instanceRef.current.render(options);
       } else {
-        const options = {...props.options};
-        delete (options as Partial<InfographicOptions>).container;
+        const finalOptions = {...options};
+        delete (finalOptions as Partial<InfographicOptions>).container;
 
         if (isDark) {
-          options.themeConfig = {...options.themeConfig};
-          options.theme ||= 'dark';
-          options.themeConfig!.colorBg = '#000';
+          finalOptions.themeConfig = {...finalOptions.themeConfig};
+          finalOptions.theme ||= 'dark';
+          finalOptions.themeConfig!.colorBg = '#000';
         }
 
-        instanceRef.current.render(options as InfographicOptions);
+        instanceRef.current.render(finalOptions as InfographicOptions);
       }
     } catch (e) {
       console.error('Infographic render error', e);
+      const error = e instanceof Error ? e : new Error(String(e));
+      onError?.(error);
     }
-  }, [props.options, isDark]);
+  }, [init, onError, options, isDark]);
 
   useEffect(() => {
     return () => {

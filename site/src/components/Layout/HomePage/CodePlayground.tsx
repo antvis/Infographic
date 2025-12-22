@@ -1,167 +1,127 @@
 'use client';
 
 import {InfographicOptions} from '@antv/infographic';
-import {useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import {Infographic} from '../../Infographic';
 import {CodeEditor} from '../../MDX/CodeEditor';
 import {BrowserChrome} from './BrowserChrome';
 
 interface ConfigOption {
   label: string;
-  options: Partial<InfographicOptions>;
+  init?: Partial<InfographicOptions>;
+  syntax: string;
 }
 
 // 内置三个配置
 const PRESET_CONFIGS: ConfigOption[] = [
   {
     label: '金字塔型',
-    options: {
+    init: {
       editable: true,
-      template: 'sequence-pyramid-simple',
-      data: {
-        title: '企业数字化转型层级',
-        desc: '从基础设施到战略创新的五层进阶路径',
-        items: [
-          {
-            label: '战略创新',
-            desc: '数据驱动决策，引领行业变革',
-            icon: 'mdi/lightbulb-on',
-          },
-          {
-            label: '智能运营',
-            desc: 'AI赋能业务，实现自动化管理',
-            icon: 'mdi/robot',
-          },
-          {
-            label: '数据整合',
-            desc: '打通数据孤岛，建立统一平台',
-            icon: 'mdi/database-sync',
-          },
-          {
-            label: '流程优化',
-            desc: '数字化核心业务流程和协作',
-            icon: 'mdi/workflow',
-          },
-          {
-            label: '基础设施',
-            desc: '构建云计算和网络基础架构',
-            icon: 'mdi/server-network',
-          },
-        ],
-      },
-      themeConfig: {
-        colorPrimary: '#7f5539',
-        palette: ['#e76f51', '#f4a261', '#e9c46a', '#2a9d8f', '#264653'],
-      },
     },
+    syntax: `
+infographic sequence-pyramid-simple
+data
+  title 企业数字化转型层级
+  desc 从基础设施到战略创新的五层进阶路径
+  items
+    - label 战略创新
+      desc 数据驱动决策，引领行业变革
+      icon mdi/lightbulb-on
+    - label 智能运营
+      desc AI赋能业务，实现自动化管理
+      icon mdi/robot
+    - label 数据整合
+      desc 打通数据孤岛，建立统一平台
+      icon mdi/database-sync
+    - label 流程优化
+      desc 数字化核心业务流程和协作
+      icon mdi/workflow
+    - label 基础设施
+      desc 构建云计算和网络基础架构
+      icon mdi/server-network
+theme
+  colorPrimary #7f5539
+  palette
+    - #e76f51
+    - #f4a261
+    - #e9c46a
+    - #2a9d8f
+    - #264653
+    `,
   },
   {
     label: '过程型',
-    options: {
+    init: {
       editable: true,
-      theme: 'light',
-      themeConfig: {
-        palette: 'antv',
-      },
-      template: 'sequence-horizontal-zigzag-simple-illus',
-      data: {
-        title: '智能业务流程构建',
-        desc: '从洞察到执行，智能化工具驱动高效业务协同流程',
-        items: [
-          {
-            illus: 'analysis',
-            label: '业务洞察',
-            desc: '基于数据分析洞察业务现状，识别核心增长点与潜在问题。',
-          },
-          {
-            illus: 'process',
-            label: '流程设计',
-            desc: '梳理关键节点，构建结构化流程蓝图，确保整体流程可控可视。',
-          },
-          {
-            illus: 'prototyping-process',
-            label: '方案原型',
-            desc: '将流程转化为可落地的原型方案，快速验证业务可行性与合理性。',
-          },
-          {
-            illus: 'collaboration',
-            label: '团队协作',
-            desc: '跨团队协作推进实施，确保设计、研发、运营保持一致目标。',
-          },
-          {
-            illus: 'progress-data',
-            label: '过程监控',
-            desc: '实时跟踪项目进度与数据表现，实现业务全链路的透明化管理。',
-          },
-          {
-            illus: 'result',
-            label: '结果达成',
-            desc: '最终达成业务目标，形成可复制的成功经验与流程规范。',
-          },
-        ],
-      },
     },
+    syntax: `
+infographic sequence-horizontal-zigzag-simple-illus
+theme light
+  palette antv
+data
+  title 智能业务流程构建
+  desc 从洞察到执行，智能化工具驱动高效业务协同流程
+  items
+    - illus analysis
+      label 业务洞察
+      desc 基于数据分析洞察业务现状，识别核心增长点与潜在问题。
+    - illus process
+      label 流程设计
+      desc 梳理关键节点，构建结构化流程蓝图，确保整体流程可控可视。
+    - illus prototyping-process
+      label 方案原型
+      desc 将流程转化为可落地的原型方案，快速验证业务可行性与合理性。
+    - illus collaboration
+      label 团队协作
+      desc 跨团队协作推进实施，确保设计、研发、运营保持一致目标。
+    - illus progress-data
+      label 过程监控
+      desc 实时跟踪项目进度与数据表现，实现业务全链路的透明化管理。
+    - illus result
+      label 结果达成
+      desc 最终达成业务目标，形成可复制的成功经验与流程规范。
+    `,
   },
   {
     label: '统计图',
-    options: {
+    init: {
       editable: true,
-      theme: 'light',
-      themeConfig: {
-        palette: [
-          '#001219',
-          '#005f73',
-          '#0a9396',
-          '#94d2bd',
-          '#ee9b00',
-          '#ca6702',
-          '#bb3e03',
-          '#ae2012',
-          '#9b2226',
-        ],
-      },
-      template: 'chart-column-simple',
-      data: {
-        title: '年度业务指标',
-        desc: '核心业务关键指标的年度变化趋势展示',
-        items: [
-          {
-            label: '产品创新指数',
-            value: 62,
-          },
-          {
-            label: '用户满意度',
-            value: 75,
-          },
-          {
-            label: '技术稳定性',
-            value: 88,
-          },
-          {
-            label: '市场扩展能力',
-            value: 73,
-          },
-          {
-            label: '渠道协同效率',
-            value: 80,
-          },
-          {
-            label: '安全合规能力',
-            value: 92,
-          },
-          {
-            label: '行业竞争力',
-            value: 96,
-          },
-        ],
-      },
     },
+    syntax: `
+infographic chart-column-simple
+theme light
+  palette
+    - #001219
+    - #005f73
+    - #0a9396
+    - #94d2bd
+    - #ee9b00
+    - #ca6702
+    - #bb3e03
+    - #ae2012
+    - #9b2226
+data
+  title 年度业务指标
+  desc 核心业务关键指标的年度变化趋势展示
+  items
+    - label 产品创新指数
+      value 62
+    - label 用户满意度
+      value 75
+    - label 技术稳定性
+      value 88
+    - label 市场扩展能力
+      value 73
+    - label 渠道协同效率
+      value 80
+    - label 安全合规能力
+      value 92
+    - label 行业竞争力
+      value 96
+    `,
   },
 ];
-
-const parse = (code: string) => {
-  return new Function(`return ${code}`)();
-};
 
 /**
  * 内部组件:处理代码监听和预览
@@ -171,36 +131,37 @@ function CodePlaygroundInner({
   code,
   onConfigChange,
   onCodeChange,
-  parsedConfig,
   error,
+  onRenderError,
 }: {
   currentConfigIndex: number;
   code: string;
   onConfigChange: (index: number) => void;
   onCodeChange: (code: string) => void;
-  parsedConfig: Partial<InfographicOptions>;
   error: string | null;
+  onRenderError: (error: Error | null) => void;
 }) {
   const [renderKey, setRenderKey] = useState(0);
+  const currentConfig = PRESET_CONFIGS[currentConfigIndex];
 
   return (
     <div className="w-full flex flex-col gap-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* 左侧：JSON 编辑器 */}
+        {/* 左侧：语法编辑器 */}
         <div className="flex flex-col">
           <div className="shadow-nav dark:shadow-nav-dark rounded-2xl overflow-hidden flex flex-col h-[480px]">
             <div className="bg-wash dark:bg-card-dark h-10 rounded-t-2xl flex items-center px-4 lg:px-6 border-b border-border dark:border-border-dark flex-shrink-0">
               <span className="text-sm text-secondary dark:text-secondary-dark font-medium">
-                spec.json
+                Infographic Syntax
               </span>
             </div>
             <div className="bg-white dark:bg-card-dark sp-layout !block flex-1 min-h-0 rounded-b-2xl overflow-auto">
               <div className="sp-stack h-full">
                 <div className="sp-code-editor h-full [&_.cm-editor]:h-full [&_.cm-scroller]:h-full">
                   <CodeEditor
-                    ariaLabel="Infographic JSON configuration editor"
+                    ariaLabel="Infographic syntax configuration editor"
                     className="bg-transparent"
-                    language="json"
+                    language="plaintext"
                     onChange={onCodeChange}
                     value={code}
                   />
@@ -220,8 +181,13 @@ function CodePlaygroundInner({
             error={error}>
             <div className="w-full h-full pt-14 bg-white dark:bg-gray-950 overflow-auto">
               <div className="p-6 h-full">
-                {parsedConfig ? (
-                  <Infographic key={renderKey} options={parsedConfig} />
+                {code ? (
+                  <Infographic
+                    key={renderKey}
+                    init={currentConfig.init}
+                    onError={onRenderError}
+                    options={code}
+                  />
                 ) : null}
               </div>
             </div>
@@ -257,7 +223,7 @@ function CodePlaygroundInner({
 /**
  * 代码演示 Playground
  *
- * 左侧 JSON 编辑器，右侧浏览器容器显示 Infographic 预览
+ * 左侧语法编辑器，右侧浏览器容器显示 Infographic 预览
  * 底部提供配置切换按钮组
  *
  * @example
@@ -266,14 +232,14 @@ function CodePlaygroundInner({
 export function CodePlayground() {
   const [currentConfigIndex, setCurrentConfigIndex] = useState(0);
   const initialCode = useMemo(
-    () => JSON.stringify(PRESET_CONFIGS[currentConfigIndex].options, null, 2),
+    () => PRESET_CONFIGS[currentConfigIndex].syntax.trim(),
     [currentConfigIndex]
   );
   const [code, setCode] = useState(initialCode);
-  const [lastValidConfig, setLastValidConfig] = useState(
-    PRESET_CONFIGS[0].options
-  );
   const [error, setError] = useState<string | null>(null);
+  const handleRenderError = useCallback((err: Error | null) => {
+    setError(err ? err.message : null);
+  }, []);
 
   const handleConfigChange = (index: number) => {
     setCurrentConfigIndex(index);
@@ -281,19 +247,8 @@ export function CodePlayground() {
 
   useEffect(() => {
     setCode(initialCode);
-    setLastValidConfig(PRESET_CONFIGS[currentConfigIndex].options);
     setError(null);
   }, [currentConfigIndex, initialCode]);
-
-  useEffect(() => {
-    try {
-      const parsed = parse(code);
-      setLastValidConfig(parsed);
-      setError(null);
-    } catch (e) {
-      setError((e as Error).message);
-    }
-  }, [code]);
 
   return (
     <div className="sandpack sandpack--playground w-full max-w-7xl mx-auto my-8">
@@ -302,8 +257,8 @@ export function CodePlayground() {
         currentConfigIndex={currentConfigIndex}
         onCodeChange={setCode}
         onConfigChange={handleConfigChange}
-        parsedConfig={lastValidConfig}
         error={error}
+        onRenderError={handleRenderError}
       />
     </div>
   );
