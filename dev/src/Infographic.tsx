@@ -10,25 +10,29 @@ import { getAsset } from './get-asset';
 registerResourceLoader(async (config) => {
   const { data } = config;
   const type = data.startsWith('illus:') ? 'illustration' : 'icon';
-  const _data = data.replace(/^illus:|^icon:/, '');
-
-  const str = await getAsset(type, _data);
+  const normalized = data.replace(/^illus:|^icon:/, '');
+  const str = await getAsset(type, normalized);
   return loadSVGResource(str);
 });
 
 export const Infographic = ({
   options,
+  init,
+  onError,
 }: {
   options: string | InfographicOptions;
+  init?: Partial<InfographicOptions>;
+  onError?: (error: Error | null) => void;
 }) => {
-  const ref = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const instanceRef = useRef<Renderer | null>(null);
 
   useEffect(() => {
-    if (!ref.current) return;
+    if (!containerRef.current) return;
+    if (instanceRef.current) return;
 
     const instance = new Renderer({
-      container: ref.current,
+      container: containerRef.current,
       svg: {
         attributes: {
           width: '100%',
@@ -38,8 +42,8 @@ export const Infographic = ({
           maxHeight: '80vh',
         },
       },
+      ...init,
     });
-
     instanceRef.current = instance;
     Object.assign(window, { infographic: instance });
 
@@ -47,14 +51,21 @@ export const Infographic = ({
       instance.destroy();
       instanceRef.current = null;
     };
-  }, []);
+  }, [init]);
 
   useEffect(() => {
-    if (!options) return;
-    if (!instanceRef.current) return;
+    const instance = instanceRef.current;
+    if (!instance || !options) return;
 
-    instanceRef.current.render(options);
-  }, [options]);
+    try {
+      onError?.(null);
+      instance.render(options);
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      console.error('Dev Infographic render error', error);
+      onError?.(error);
+    }
+  }, [options, onError]);
 
-  return <div ref={ref} style={{ width: '100%', height: '100%' }}></div>;
+  return <div ref={containerRef} style={{ width: '100%', height: '100%' }} />;
 };
