@@ -11,6 +11,10 @@ function createValueNode(value: string, line: number): ValueNode {
   return { kind: 'value', line, value };
 }
 
+const HEX_COLOR_PATTERN =
+  /^#(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
+const RGB_COLOR_PATTERN = /^rgba?\(/i;
+
 function parseScalar(value: string) {
   const trimmed = value.trim();
   if (trimmed === 'true') return true;
@@ -60,6 +64,18 @@ function splitArrayValue(
     parts = text.split(/[,\s]+/);
   }
   return parts.map((part) => part.trim()).filter(Boolean);
+}
+
+function isExplicitColor(value: string) {
+  return HEX_COLOR_PATTERN.test(value) || RGB_COLOR_PATTERN.test(value);
+}
+
+function shouldTreatPaletteStringAsArray(
+  trimmed: string,
+  parts: string[],
+): boolean {
+  if (parts.length > 1) return true;
+  return trimmed.startsWith('[') && trimmed.endsWith(']');
 }
 
 function mapUnknown(node: SyntaxNode): any {
@@ -239,6 +255,49 @@ export function mapWithSchema(
           ),
         )
         .filter((value) => value !== undefined);
+    }
+    case 'palette': {
+      if (node.kind === 'array') {
+        return mapWithSchema(
+          node,
+          { kind: 'array', item: { kind: 'string' }, split: 'any' },
+          path,
+          errors,
+        );
+      }
+      if (node.kind === 'object' && Object.keys(node.entries).length > 0) {
+        addError(
+          errors,
+          node,
+          path,
+          'schema_mismatch',
+          'Expected palette value.',
+        );
+        return undefined;
+      }
+      const scalar = readScalar(node);
+      if (scalar === undefined) {
+        addError(
+          errors,
+          node,
+          path,
+          'schema_mismatch',
+          'Expected palette value.',
+        );
+        return undefined;
+      }
+      const trimmed = scalar.trim();
+      if (trimmed.startsWith('[') && !trimmed.endsWith(']')) {
+        return undefined;
+      }
+      if (isExplicitColor(trimmed)) {
+        return [trimmed];
+      }
+      const parts = splitArrayValue(scalar, 'any');
+      if (shouldTreatPaletteStringAsArray(trimmed, parts)) {
+        return parts;
+      }
+      return scalar;
     }
     case 'object': {
       if (node.kind === 'array') {

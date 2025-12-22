@@ -22,6 +22,7 @@ const union = (...variants: SchemaNode[]): SchemaNode => ({
   kind: 'union',
   variants,
 });
+const palette = (): SchemaNode => ({ kind: 'palette' });
 
 const itemDatumSchema: ObjectSchema = object({});
 itemDatumSchema.fields = {
@@ -37,7 +38,7 @@ export const ThemeSchema = object(
     type: string(),
     colorBg: string(),
     colorPrimary: string(),
-    palette: array(string(), 'any'),
+    palette: palette(),
     title: object({}, { allowUnknown: true }),
     desc: object({}, { allowUnknown: true }),
     base: object({

@@ -51,7 +51,8 @@ export type SchemaNode =
   | EnumSchema
   | ArraySchema
   | ObjectSchema
-  | UnionSchema;
+  | UnionSchema
+  | PaletteSchema;
 
 export interface StringSchema {
   kind: 'string';
@@ -86,4 +87,8 @@ export interface ObjectSchema {
 export interface UnionSchema {
   kind: 'union';
   variants: SchemaNode[];
+}
+
+export interface PaletteSchema {
+  kind: 'palette';
 }

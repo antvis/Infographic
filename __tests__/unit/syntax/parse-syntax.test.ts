@@ -130,6 +130,49 @@ data
     ).toBe(true);
   });
 
+  it('parses palette name strings when a single inline value is provided', () => {
+    const input = `
+theme
+  palette antv
+`;
+    const result = parseSyntax(input);
+    expect(result.errors).toHaveLength(0);
+    expect(result.options.themeConfig?.palette).toBe('antv');
+  });
+
+  it('treats single inline hex colors as palette arrays', () => {
+    const input = `
+theme
+  palette #ff00aa
+`;
+    const result = parseSyntax(input);
+    expect(result.errors).toHaveLength(0);
+    expect(result.options.themeConfig?.palette).toEqual(['#ff00aa']);
+  });
+
+  it('treats single inline rgb colors as palette arrays', () => {
+    const input = `
+theme
+  palette rgba(255, 0, 0, 0.5)
+`;
+    const result = parseSyntax(input);
+    expect(result.errors).toHaveLength(0);
+    expect(result.options.themeConfig?.palette).toEqual([
+      'rgba(255, 0, 0, 0.5)',
+    ]);
+  });
+
+  it('treats yaml-style palette lists as arrays even with one item', () => {
+    const input = `
+theme
+  palette
+    - #abcdef
+`;
+    const result = parseSyntax(input);
+    expect(result.errors).toHaveLength(0);
+    expect(result.options.themeConfig?.palette).toEqual(['#abcdef']);
+  });
+
   it('parses template block shorthand and width string values', () => {
     const input = `
 template sales-dashboard
