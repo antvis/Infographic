@@ -24,7 +24,7 @@ const union = (...variants: SchemaNode[]): SchemaNode => ({
 });
 const palette = (): SchemaNode => ({ kind: 'palette' });
 
-const itemDatumSchema: ObjectSchema = object({});
+const itemDatumSchema: ObjectSchema = object({}, { allowUnknown: true });
 itemDatumSchema.fields = {
   label: string(),
   value: union(number(), string()),

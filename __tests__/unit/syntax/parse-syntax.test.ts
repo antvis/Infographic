@@ -46,6 +46,21 @@ data
     ).toBe(true);
   });
 
+  it('allows custom properties on data items', () => {
+    const input = `
+data
+  items
+    - label A
+      time 1996
+`;
+    const result = parseSyntax(input);
+    expect(result.errors).toHaveLength(0);
+    expect(result.options.data?.items?.[0]).toMatchObject({
+      label: 'A',
+      time: 1996,
+    });
+  });
+
   it('uses infographic shorthand for template and merges blocks', () => {
     const input = `
 infographic sales-dashboard
