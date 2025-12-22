@@ -31,24 +31,41 @@ export class Infographic {
 
   private editor?: IEditor;
 
+  private initialOptions: Partial<InfographicOptions> = {};
   private options!: Partial<InfographicOptions>;
   private parsedOptions!: Partial<ParsedInfographicOptions>;
 
   constructor(options: string | Partial<InfographicOptions>) {
-    this.setOptions(options);
+    this.setOptions(options, 'replace', true);
   }
 
   getOptions() {
     return this.options;
   }
 
-  private setOptions(options: string | Partial<InfographicOptions>) {
+  private setOptions(
+    options: string | Partial<InfographicOptions>,
+    mode: 'replace' | 'merge' = 'replace',
+    isInitial = false,
+  ) {
     const {
       options: parsedOptions,
       errors,
       warnings,
     } = parseSyntaxOptions(options);
-    this.options = mergeOptions(this.options || {}, parsedOptions);
+    if (isInitial) {
+      this.initialOptions = cloneOptions(parsedOptions);
+    }
+
+    const base =
+      mode === 'replace'
+        ? mergeOptions(cloneOptions(this.initialOptions || {}), parsedOptions)
+        : mergeOptions(
+            this.options || cloneOptions(this.initialOptions || {}),
+            parsedOptions,
+          );
+
+    this.options = base;
     this.parsedOptions = parseOptions(
       mergeOptions(DEFAULT_OPTIONS, this.options),
     );
@@ -65,8 +82,20 @@ export class Infographic {
    * Render the infographic into the container
    */
   render(options?: string | Partial<InfographicOptions>) {
-    if (options) this.setOptions(options);
+    if (options) {
+      this.setOptions(options, 'replace');
+    } else if (!this.options && this.initialOptions) {
+      this.setOptions(this.initialOptions, 'replace');
+    }
+    this.performRender();
+  }
 
+  update(options: string | Partial<InfographicOptions>) {
+    this.setOptions(options, 'merge');
+    this.performRender();
+  }
+
+  private performRender() {
     const parsedOptions = this.parsedOptions;
     if (!isCompleteParsedInfographicOptions(parsedOptions)) {
       this.emitter.emit('error', new Error('Incomplete options'));
