@@ -184,7 +184,7 @@ export function PreviewPanel({
                   <CodeEditor
                     ariaLabel="Infographic input"
                     className="h-full overflow-auto"
-                    language={previewKind === 'json' ? 'json' : 'plaintext'}
+                    language={previewKind === 'json' ? 'json' : 'yaml'}
                     value={effectiveEditorValue}
                     readOnly={previewKind === 'syntax' && isGenerating}
                     onChange={(value) => {

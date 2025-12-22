@@ -242,6 +242,14 @@ export function AIPageContent() {
           setPreviewKind('syntax');
           setJsonPreview(null);
           setEditorText(parsed);
+        } else if (
+          parsed &&
+          typeof parsed === 'object' &&
+          !Array.isArray(parsed)
+        ) {
+          setPreviewKind('json');
+          setJsonPreview(parsed as Partial<InfographicOptions>);
+          setEditorText(formatJSON(parsed));
         }
       } catch {
         setPreviewKind('syntax');

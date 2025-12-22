@@ -31,7 +31,7 @@ import {useEffect, useMemo, useRef} from 'react';
 
 import {CustomTheme} from './Sandpack/Themes';
 
-export type CodeMirrorLanguage = 'json' | 'javascript' | 'plaintext';
+export type CodeMirrorLanguage = 'json' | 'javascript' | 'yaml' | 'plaintext';
 
 const syntaxTheme = HighlightStyle.define([
   {tag: tags.keyword, color: 'var(--sp-syntax-color-keyword)'},
