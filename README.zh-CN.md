@@ -15,11 +15,30 @@
 
 </div>
 
-**AntV Infographic** 是 AntV 推出的新一代**声明式信息图可视化引擎**。通过统一的语法与组件体系，你可以将结构化数据以优雅、灵活的方式渲染为高质量的信息图，让信息表达更高效，让数据叙事更简单。
+**AntV Infographic** 是 AntV 推出的新一代**声明式信息图可视化引擎**，通过精心设计的信息图语法，能够快速、灵活地渲染出高质量的信息图，让信息表达更高效，让数据叙事更简单。
 
 <div align="center">
 
-[官网](https://infographic.antv.vision) · [GitHub](https://github.com/antvis/infographic) · [文档](https://infographic.antv.vision/learn) · [示例](https://infographic.antv.vision/examples) · [Prompt](./prompt.zh-CN.md) · [AI Agent](https://infographic.antv.vision/ai)
+<p align="center">
+  <a href="https://infographic.antv.vision">
+    <img src="https://img.shields.io/badge/%E5%AE%98%E7%BD%91-2F54EB?style=for-the-badge" alt="官网" />
+  </a>
+  <a href="https://github.com/antvis/infographic">
+    <img src="https://img.shields.io/badge/GitHub-000000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" />
+  </a>
+  <a href="https://infographic.antv.vision/learn">
+    <img src="https://img.shields.io/badge/%E6%96%87%E6%A1%A3-722ED1?style=for-the-badge" alt="文档" />
+  </a>
+  <a href="https://infographic.antv.vision/examples">
+    <img src="https://img.shields.io/badge/%E7%A4%BA%E4%BE%8B-13C2C2?style=for-the-badge" alt="示例" />
+  </a>
+  <a href="./prompt.zh-CN.md">
+    <img src="https://img.shields.io/badge/Prompt-FA8C16?style=for-the-badge" alt="Prompt" />
+  </a>
+  <a href="https://infographic.antv.vision/ai">
+    <img src="https://img.shields.io/badge/AI%20Agent-EB2F96?style=for-the-badge" alt="AI Agent" />
+  </a>
+</p>
 
 <img src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*ZdeISZWHuyIAAAAAbEAAAAgAemJ7AQ/fmt.webp" width="768" alt="AntV Infographic 预览">
 
@@ -29,8 +48,8 @@
 
 - 🤖 **AI 友好**：配置和语法更适合 AI 生成，提供简洁有效的 Prompt，支持 AI 流式输出和渲染
 - 📦 **开箱即用**：内置 ~200 信息图模板、数据项组件与布局，快速构建专业信息图
-- 🎨 **主题系统**：支持手绘（rough）、渐变、图案、多套预设主题，并支持深度自定义
-- 🧑🏻‍💻 **内置编辑器**：内置信息图的编辑器，让 AI 生成之后可以二次编辑微调
+- 🎨 **主题系统**：支持手绘、渐变、图案、多套预设主题，允许深度自定义
+- 🧑🏻‍💻 **内置编辑器**：内置信息图的编辑器，让 AI 生成之后可以二次编辑
 - 📐 **高质量 SVG 输出**：默认基于 SVG 渲染，保证视觉品质与可编辑性
 
 ## 🚀 安装
@@ -41,6 +60,10 @@ npm install @antv/infographic
 
 ## 📝 快速开始
 
+[![](https://img.shields.io/badge/%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97-2F54EB)](https://infographic.antv.vision/learn/getting-started)
+[![](https://img.shields.io/badge/%E4%BF%A1%E6%81%AF%E5%9B%BE%E8%AF%AD%E6%B3%95-13C2C2)](https://infographic.antv.vision/learn/infographic-syntax)
+[![](https://img.shields.io/badge/%E9%85%8D%E7%BD%AE%E9%A1%B9-722ED1)](https://infographic.antv.vision/reference/infographic-options)
+
 ```ts
 import { Infographic } from '@antv/infographic';
 
@@ -48,46 +71,41 @@ const infographic = new Infographic({
   container: '#container',
   width: '100%',
   height: '100%',
-  template: 'list-row-simple-horizontal-arrow',
-  data: {
-    items: [
-      { label: '步骤 1', desc: '开始' },
-      { label: '步骤 2', desc: '进行中' },
-      { label: '步骤 3', desc: '完成' },
-    ],
-  },
-  // 开启内置编辑器
   editable: true,
 });
 
-infographic.render();
+infographic.render(`
+infographic list-row-simple-horizontal-arrow
+data
+  items:
+    - label: Step 1
+      desc: Start
+    - label: Step 2
+      desc: In Progress
+    - label: Step 3
+      desc: Complete
+`);
 ```
 
-然后你可以在容器中看到信息图渲染出来。
+渲染结果如下：
 
 <img src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*uvj8Qb26F1MAAAAARAAAAAgAemJ7AQ/fmt.webp" width="480" alt="AntV Infographic DEMO">
 
-更多示例请参考[文档站点](https://infographic.antv.vision/examples)。
+## 流式渲染
 
-## 🗂 配置
+[![](https://img.shields.io/badge/Demo-D46A6A)](https://infographic.antv.vision/learn/infographic-syntax)
 
-实例化 `Infographic` 类时所需传入的 `InfographicOptions` 配置项，具体配置如下：
+使用具有高容错性的信息图语法能够实时接收 AI 流式输出并逐步渲染信息图。
 
-| 属性        | 类型                    | 必填   | 说明                                   | 引用                                             |
-| ----------- | ----------------------- | ------ | -------------------------------------- | ------------------------------------------------ |
-| container   | `string \| HTMLElement` | 否     | 容器，可以是选择器或者 HTMLElement         | -                                                    |
-| width       | `number \| string`      | 否     | 宽度，支持数字（像素值）或者百分比形式        | -                                                       |
-| height      | `number \| string`      | 否     | 高度，支持数字（像素值）或者百分比形式        | -                                                        |
-| padding     | `Padding`               | 否     | 容器内边距                             | [Padding](/reference/infographic-types#padding)     |
-| template    | `string`                | 否     | 模板                                   | -                                                |
-| design      | `DesignOptions`         | 否     | 设计                                   | [DesignOptions](/reference/infographic-types#design-options) |
-| data        | `Data`                  | **是** | 数据                                   | [Data](/reference/infographic-types#data)                    |
-| theme       | `string`                | 否     | 主题                                   | -                                                |
-| themeConfig | `ThemeConfig`           | 否     | 额外主题配置                           | [ThemeConfig](/reference/infographic-types#theme-config)     |
-| svg         | `SVGOptions`            | 否     | SVG 容器上的配置                       | [SVGOptions](/reference/infographic-types#svg-options)       |
-| editable    | `boolean`               | 否     | 是否开启编辑能力                        | -                                                     |
+```ts
+let buffer = '';
+for (const chunk of chunks) {
+  buffer += chunk;
+  infographic.render(buffer);
+}
+```
 
-更多配置项请查看 [配置项](https://infographic.antv.vision/reference/infographic-options)。
+<img src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*e_PFSZrR9AQAAAAASdAAAAgAemJ7AQ/original" width="480" alt="AntV Infographic 流式渲染">
 
 ## 💬 社区与交流
 

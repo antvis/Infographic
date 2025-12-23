@@ -1,4 +1,4 @@
-<img src="https://gw.alipayobjects.com/zos/antfincdn/R8sN%24GNdh6/language.svg" width="18"> [中文](./README.zh-CN.md) | English
+<img src="https://gw.alipayobjects.com/zos/antfincdn/R8sN%24GNdh6/language.svg" width="18"> [简体中文](./README.zh-CN.md) | English
 
 <div align="center">
 
@@ -15,12 +15,30 @@
 
 </div>
 
-**AntV Infographic** is a next-generation **declarative infographic visualization engine** from AntV.
-With unified syntax and component architecture, you can render structured data into high-quality infographics in an elegant and flexible way, making information presentation more efficient and data storytelling simpler.
+**AntV Infographic** is AntV's next-generation **declarative infographic visualization engine**. With a carefully designed infographic syntax, it can quickly and flexibly render high-quality infographics, making information presentation more efficient and data storytelling simpler.
 
 <div align="center">
 
-[Website](https://infographic.antv.vision) · [GitHub](https://github.com/antvis/infographic) · [Document](https://infographic.antv.vision/learn) · [Gallery](https://infographic.antv.vision/examples) · [Prompt](./prompt.md) · [AI Agent](https://infographic.antv.vision/ai)
+<p align="center">
+  <a href="https://infographic.antv.vision">
+    <img src="https://img.shields.io/badge/Website-2F54EB?style=for-the-badge" alt="Website" />
+  </a>
+  <a href="https://github.com/antvis/infographic">
+    <img src="https://img.shields.io/badge/GitHub-000000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" />
+  </a>
+  <a href="https://infographic.antv.vision/learn">
+    <img src="https://img.shields.io/badge/Docs-722ED1?style=for-the-badge" alt="Docs" />
+  </a>
+  <a href="https://infographic.antv.vision/examples">
+    <img src="https://img.shields.io/badge/Gallery-13C2C2?style=for-the-badge" alt="Gallery" />
+  </a>
+  <a href="./prompt.md">
+    <img src="https://img.shields.io/badge/Prompt-FA8C16?style=for-the-badge" alt="Prompt" />
+  </a>
+  <a href="https://infographic.antv.vision/ai">
+    <img src="https://img.shields.io/badge/AI%20Agent-EB2F96?style=for-the-badge" alt="AI Agent" />
+  </a>
+</p>
 
 <img src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*ZdeISZWHuyIAAAAAbEAAAAgAemJ7AQ/fmt.webp" width="768" alt="AntV Infographic Preview">
 
@@ -28,11 +46,11 @@ With unified syntax and component architecture, you can render structured data i
 
 ## ✨ Features
 
-- 🤖 **AI-friendly**: Prompt and syntax more suitable for AI generation, provides concise and effective prompts, supports AI streaming output and rendering 
-- 📦 **Ready to use**: ~200 built-in templates, data-item components, and layouts to assemble infographics in minutes
-- 🎨 **Themeable**: Hand-drawn (rough), gradients, patterns, multiple presets, and deep customization
-- 🧑🏻‍💻 **Built-in editor**: built-in editor for AI-generated infographics, allowing for further customization and refinement
-- 📐 **High-quality SVG**: Default SVG output for crisp visuals and easy editing/export
+- 🤖 **AI-friendly**: Configuration and syntax are tuned for AI generation, provide concise prompts, and support AI streaming output and rendering
+- 📦 **Ready to use**: ~200 built-in infographic templates, data-item components, and layouts to build professional infographics in minutes
+- 🎨 **Theme system**: Hand-drawn, gradients, patterns, multiple preset themes, plus deep customization
+- 🧑🏻‍💻 **Built-in editor**: Includes an editor for infographics so AI-generated results can be edited further
+- 📐 **High-quality SVG output**: Renders with SVG by default to ensure visual fidelity and easy editing
 
 ## 🚀 Installation
 
@@ -42,6 +60,10 @@ npm install @antv/infographic
 
 ## 📝 Quick Start
 
+[![](https://img.shields.io/badge/Getting%20Started-2F54EB)](https://infographic.antv.vision/learn/getting-started)
+[![](https://img.shields.io/badge/Infographic%20Syntax-13C2C2)](https://infographic.antv.vision/learn/infographic-syntax)
+[![](https://img.shields.io/badge/Configuration-722ED1)](https://infographic.antv.vision/reference/infographic-options)
+
 ```ts
 import { Infographic } from '@antv/infographic';
 
@@ -49,47 +71,41 @@ const infographic = new Infographic({
   container: '#container',
   width: '100%',
   height: '100%',
-  template: 'list-row-simple-horizontal-arrow',
-  data: {
-    items: [
-      { label: 'Step 1', desc: 'Start' },
-      { label: 'Step 2', desc: 'In Progress' },
-      { label: 'Step 3', desc: 'Complete' },
-    ],
-  },
-  // Enable editing with the built-in editor
   editable: true,
 });
 
-infographic.render();
+infographic.render(`
+infographic list-row-simple-horizontal-arrow
+data
+  items:
+    - label: Step 1
+      desc: Start
+    - label: Step 2
+      desc: In Progress
+    - label: Step 3
+      desc: Complete
+`);
 ```
 
-Render the infographic in the target container.
+The rendered result looks like this:
 
 <img src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*uvj8Qb26F1MAAAAARAAAAAgAemJ7AQ/fmt.webp" width="480" alt="AntV Infographic DEMO">
 
-For more examples, please refer to the [documentation](https://infographic.antv.vision/examples) site.
+## Streaming Rendering
 
-## 🗂 Configuration
+[![](https://img.shields.io/badge/Demo-D46A6A)](https://infographic.antv.vision/learn/infographic-syntax)
 
-The `InfographicOptions` configuration item required when instantiating the Infographic class, see the information graph syntax for more information.
+With a highly fault-tolerant infographic syntax you can stream AI output in real time and progressively render the infographic.
 
-| Attribute   | Type                    | Required   | Description                           | Reference                                        |
-| ----------- | ----------------------- | ---------- | ------------------------------------- | ------------------------------------------------ |
-| container   | `string \| HTMLElement` | N     | Container, can be selector or HTMLElement. | -                                                                                           |
-| width       | `number \| string`      | N     | Width, support pixel value or percentage.  | -                                                                                           |
-| height      | `number \| string`      | N     | Height, support pixel value or percentage. | -                                                                                           |
-| padding     | `Padding`               | N     | Padding for container                      | [Padding](https://infographic.antv.vision/reference/infographic-types#padding)              |
-| template    | `string`                | N     | Template name                              | -                                                                                           |
-| design      | `DesignOptions`         | N     | Design options                             | [DesignOptions](https://infographic.antv.vision/reference/infographic-types#design-options) |
-| data        | `Data`                  | **Y** | Data for Infographic                       | [Data](https://infographic.antv.vision/reference/infographic-types#data)                    |
-| theme       | `string`                | N     | Theme name                                 | -                                                                                           |
-| themeConfig | `ThemeConfig`           | N     | Theme configure options                    | [ThemeConfig](https://infographic.antv.vision/reference/infographic-types#theme-config)     |
-| svg         | `SVGOptions`            | N     | Options for SVG container                  | [SVGOptions](https://infographic.antv.vision/reference/infographic-types#svg-options)       |
-| editable    | `boolean`               | N     | Whethe editable?                           | -                                                                                           |
+```ts
+let buffer = '';
+for (const chunk of chunks) {
+  buffer += chunk;
+  infographic.render(buffer);
+}
+```
 
-For more details, please refer to the [Configuration](https://infographic.antv.vision/reference/infographic-options) section.
-
+<img src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*e_PFSZrR9AQAAAAASdAAAAgAemJ7AQ/original" width="480" alt="AntV Infographic Streaming Rendering">
 
 ## 💬 Community & Communication
 
