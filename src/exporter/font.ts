@@ -5,6 +5,7 @@ import { getFontURLs, getWoff2BaseURL } from '../renderer';
 import {
   createElement,
   decodeFontFamily,
+  fetchWithCache,
   join,
   normalizeFontWeightName,
 } from '../utils';
@@ -122,7 +123,7 @@ export async function parseFontFamily(fontFamily: string) {
 
   await Promise.allSettled(
     urls.map(async (url) => {
-      const css = await fetch(url)
+      const css = await fetchWithCache(url)
         .then((res) => res.text())
         .then((text) => parse(text) as Stylesheet)
         .catch(() => {
@@ -252,7 +253,7 @@ async function loadWoff2(url: string) {
   const cached = fontDataUrlCache.get(url);
   if (cached) return cached;
 
-  const response = await fetch(url);
+  const response = await fetchWithCache(url);
   if (!response.ok) {
     throw new Error(`Failed to load font: ${url}`);
   }

@@ -1,9 +1,11 @@
+import { fetchWithCache } from '@antv/infographic';
+
 const baseUrl =
   'https://webgw.antgroup-inc.cn/180020010101329077/infographicservice/api/v1';
 export async function getAsset(type: string, id: string) {
   const input = `${baseUrl}/assets?type=${type}&id=${id}`;
 
-  const response = await fetch(input);
+  const response = await fetchWithCache(input);
   const data = await response.arrayBuffer();
   const result = decodeAssetByByteOffset(data);
   return result;

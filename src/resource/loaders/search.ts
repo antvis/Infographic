@@ -1,4 +1,5 @@
 import { ICON_SERVICE_URL } from '../../constants';
+import { fetchWithCache } from '../../utils';
 import { loadImageBase64Resource } from './image';
 import { loadRemoteResource } from './remote';
 import { loadSVGResource } from './svg';
@@ -7,7 +8,7 @@ const queryIcon = async (query: string): Promise<string | null> => {
   try {
     const params = new URLSearchParams({ text: query, topK: '1' });
     const url = `${ICON_SERVICE_URL}?${params.toString()}`;
-    const response = await fetch(url);
+    const response = await fetchWithCache(url);
     if (!response.ok) return null;
     const result = await response.json();
     if (!result?.status || !Array.isArray(result.data?.data)) return null;

@@ -1,3 +1,4 @@
+import { fetchWithCache } from '../../utils';
 import { loadImageBase64Resource } from './image';
 import { loadSVGResource } from './svg';
 
@@ -19,7 +20,7 @@ function shouldParseAsSVG(contentType: string, format?: string) {
 export async function loadRemoteResource(resource: string, format?: string) {
   if (!resource || !isRemoteResource(resource)) return null;
 
-  const response = await fetch(resource);
+  const response = await fetchWithCache(resource);
   if (!response.ok) throw new Error('Failed to load resource');
 
   const contentType = response.headers.get('Content-Type') || '';

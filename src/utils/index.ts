@@ -3,6 +3,7 @@ export * from './color';
 export * from './data';
 export * from './design';
 export * from './element';
+export * from './fetch';
 export * from './font';
 export * from './get-types';
 export * from './hash';
