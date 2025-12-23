@@ -167,7 +167,7 @@ function Para({children}: BasicProps) {
 
 function Center({children}: BasicProps) {
   return (
-    <div className="px-5 lg:px-0 max-w-4xl lg:text-center text-white text-opacity-80 flex flex-col items-center justify-center select-none">
+    <div className="px-5 lg:px-0 max-w-4xl lg:text-center text-white text-opacity-80 flex flex-col items-center justify-center">
       {children}
     </div>
   );
@@ -367,7 +367,7 @@ export function HomeContent(): JSX.Element {
                         aria-label={heroContent.inputLabel}
                       />
                       {!heroPrompt && !isHeroInputActive && (
-                        <div className="pointer-events-none absolute inset-0 flex items-center px-4 lg:px-5 pr-[152px] text-secondary dark:text-secondary-dark text-base lg:text-lg select-none">
+                        <div className="pointer-events-none absolute inset-0 flex items-center px-4 lg:px-5 pr-[152px] text-secondary dark:text-secondary-dark text-base lg:text-lg">
                           <span className="truncate">
                             {placeholderText ||
                               HERO_PROMPTS[placeholderIndex]?.title ||
@@ -494,7 +494,7 @@ export function HomeContent(): JSX.Element {
         </Section>
 
         <Section background="right-card" lazy placeholderHeight={760}>
-          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row px-5 select-none">
+          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row px-5">
             <div className="max-w-3xl lg:max-w-7xl gap-5 flex flex-col lg:flex-row lg:px-5">
               <div className="w-full lg:w-6/12 max-w-3xl flex flex-col items-start justify-start lg:ps-5 lg:pe-10">
                 <Header>{sectionContent.evolution.title}</Header>
@@ -544,7 +544,7 @@ export function HomeContent(): JSX.Element {
         </Section>
 
         <Section background="left-card" lazy placeholderHeight={520}>
-          <div className="mt-20 px-5 lg:px-0 mb-6 max-w-4xl text-center text-opacity-80 select-none">
+          <div className="mt-20 px-5 lg:px-0 mb-6 max-w-4xl text-center text-opacity-80">
             <Logo className="text-brand dark:text-brand-dark w-24 lg:w-28 mb-10 lg:mb-8 mt-12 h-auto mx-auto self-start" />
             <Header>{sectionContent.welcome.title}</Header>
             <ButtonLink
