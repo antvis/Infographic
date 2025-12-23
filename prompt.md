@@ -14,7 +14,7 @@ Please based on the given text content, combine with the AntV Infographic Syntax
 
 ---
 
-## 输出格式
+## Output Format
 
 始终使用 AntV Infographic Syntax 纯语法文本，外层包裹 \`\`\`plain 代码块，不得输出解释性文字。语法结构示例：
 
