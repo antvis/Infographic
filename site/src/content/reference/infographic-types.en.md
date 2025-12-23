@@ -63,8 +63,8 @@ Extra configuration for the SVG container that allows setting styles, attributes
 
 | Property     | Type                                          | Required | Description   |
 | ------------ | --------------------------------------------- | -------- | ------------- |
-| style        | `Record<string, string | number>`             | No       | Inline styles |
-| attributes   | `Record<string, string | number | boolean>`   | No       | Extra attrs   |
+| style        | `Record<string, string \| number>`             | No       | Inline styles |
+| attributes   | `Record<string, string \| number \| boolean>`   | No       | Extra attrs   |
 | id           | `string`                                      | No       | Element id    |
 | className    | `string`                                      | No       | Element class |
 
@@ -96,10 +96,10 @@ Design configuration options.
 
 | Property  | Type                                                                         | Required | Description |
 | --------- | ---------------------------------------------------------------------------- | -------- | ----------- |
-| structure | `string` \| [WithType](#with-type)<[StructureOptions](#structure-options)>   | No       | Structure   |
-| title     | `string` \| [WithType](#with-type)<[TitleOptions](#title-options)>           | No       | Title       |
-| item      | `string` \| [WithType](#with-type)<[ItemOptions](#item-options)>             | No       | Item        |
-| items     | `string` \| [WithType](#with-type)<[ItemOptions](#item-options)>[]           | No       | Per-level item overrides |
+| structure | `string` \| [WithType](#with-type)\<[StructureOptions](#structure-options)\>   | No       | Structure   |
+| title     | `string` \| [WithType](#with-type)\<[TitleOptions](#title-options)\>           | No       | Title       |
+| item      | `string` \| [WithType](#with-type)\<[ItemOptions](#item-options)\>             | No       | Item        |
+| items     | `string` \| [WithType](#with-type)\<[ItemOptions](#item-options)\>[]           | No       | Per-level item overrides |
 
 ## BaseItemProps {#base-item-props}
 
@@ -206,18 +206,18 @@ Theme configuration options.
 | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | -------------------- |
 | colorBg             | `string`                                                                                                                                           | No       | Background color     |
 | colorPrimary        | `string`                                                                                                                                           | No       | Primary color        |
-| base                | { global?: [DynamicAttributes](#dynamic-attributes)<[BaseAttributes](#base-attributes)>; shape?: [ShapeAttributes](#shape-attributes); text?: [TextAttributes](#text-attributes); } | No       | Base styles          |
-| base.`global`       | [DynamicAttributes](#dynamic-attributes)<[BaseAttributes](#base-attributes)>                                                                        | No       | Global defaults      |
+| base                | `{ global?: [DynamicAttributes](#dynamic-attributes)\<[BaseAttributes](#base-attributes)\>; shape?: [ShapeAttributes](#shape-attributes); text?: [TextAttributes](#text-attributes); }` | No       | Base styles          |
+| base.`global`       | [DynamicAttributes](#dynamic-attributes)\<[BaseAttributes](#base-attributes)\>                                                                        | No       | Global defaults      |
 | base.`shape`        | [ShapeAttributes](#shape-attributes)                                                                                                                | No       | Global shape styles  |
 | base.`text`         | [TextAttributes](#text-attributes)                                                                                                                  | No       | Global text styles   |
 | palette             | [Palette](#palette)                                                                                                                                 | No       | Palette              |
 | title               | [TextAttributes](#text-attributes)                                                                                                                  | No       | Title styling        |
 | desc                | [TextAttributes](#text-attributes)                                                                                                                  | No       | Description styling  |
 | item                | `object`                                                                                                                                           | No       | Item-specific config |
-| item.`icon`         | [DynamicAttributes](#dynamic-attributes)<[IconAttributes](#icon-attributes)>                                                                       | No       | Icon styling         |
-| item.`label`        | [DynamicAttributes](#dynamic-attributes)<[TextAttributes](#text-attributes)>                                                                       | No       | Label styling        |
-| item.`desc`         | [DynamicAttributes](#dynamic-attributes)<[TextAttributes](#text-attributes)>                                                                       | No       | Description styling  |
-| item.`value`        | [DynamicAttributes](#dynamic-attributes)<[TextAttributes](#text-attributes)>                                                                       | No       | Value styling        |
+| item.`icon`         | [DynamicAttributes](#dynamic-attributes)\<[IconAttributes](#icon-attributes)\>                                                                       | No       | Icon styling         |
+| item.`label`        | [DynamicAttributes](#dynamic-attributes)\<[TextAttributes](#text-attributes)\>                                                                       | No       | Label styling        |
+| item.`desc`         | [DynamicAttributes](#dynamic-attributes)\<[TextAttributes](#text-attributes)\>                                                                       | No       | Description styling  |
+| item.`value`        | [DynamicAttributes](#dynamic-attributes)\<[TextAttributes](#text-attributes)\>                                                                       | No       | Value styling        |
 | stylize             | [StylizeConfig](#stylize-config) \| `null`                                                                                                           | No       | Stylization feature  |
 
 ## BaseAttributes {#base-attributes}
