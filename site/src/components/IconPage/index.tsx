@@ -10,15 +10,6 @@ import {Select} from '../ui/select';
 import {getStoredLanguage, type Language} from '../../utils/i18n';
 import {t} from '../../utils/translations';
 
-export default function IconPage() {
-  const [lang, setLang] = useState<Language>('zh-CN');
-
-  useEffect(() => {
-    setLang(getStoredLanguage());
-  }, []);
-
-  const presetQueries = t(lang, 'iconPage.presetQueries') as string[];
-
 function IconCard({
   url,
   index,
@@ -113,6 +104,10 @@ function IconCard({
   );
 }
 
+export default function IconPage() {
+  return <IconPageContent />;
+}
+
 export function IconPageContent() {
   const [lang, setLang] = useState<Language>('zh-CN');
   const [query, setQuery] = useState('');
@@ -129,6 +124,8 @@ export function IconPageContent() {
     const presetQueriesForLang = t(currentLang, 'iconPage.presetQueries') as string[];
     setQuery(presetQueriesForLang[0] || '');
   }, []);
+
+  const presetQueries = t(lang, 'iconPage.presetQueries') as string[];
 
   const sampleFallback = useMemo(
     () => Array.from({length: topK}, (_, idx) => `placeholder-${idx}`),
