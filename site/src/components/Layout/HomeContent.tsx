@@ -265,7 +265,7 @@ export function HomeContent(): JSX.Element {
           <div className="pointer-events-none absolute -left-32 -top-40 h-96 w-96 rounded-full bg-gradient-to-br from-link/20 via-link/5 to-transparent blur-3xl" />
           <div className="pointer-events-none absolute -right-32 top-20 h-96 w-96 rounded-full bg-gradient-to-br from-purple-40/15 via-transparent to-link/5 blur-3xl" />
 
-          <div className="mx-5 mt-20 lg:mt-28 mb-8 lg:mb-16 flex flex-col justify-center relative z-10 select-none">
+          <div className="mx-5 mt-20 lg:mt-28 mb-8 lg:mb-16 flex flex-col justify-center relative z-10">
             <div className="self-center w-full max-w-6xl">
               <div className="grid gap-10 lg:grid-cols-[1.05fr,0.95fr] items-center lg:min-h-[420px]">
                 <div className="flex flex-col gap-4 lg:gap-6">

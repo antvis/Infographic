@@ -210,13 +210,13 @@ export function IconPageContent() {
             initial={{opacity: 0, y: 20}}
             animate={{opacity: 1, y: 0}}
             transition={{duration: 0.6}}>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight mb-4 text-primary dark:text-primary-dark select-none">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight mb-4 text-primary dark:text-primary-dark">
               Infographic{' '}
               <span className="bg-gradient-to-r from-link to-purple-40 bg-clip-text text-transparent">
                 Icons
               </span>
             </h1>
-            <p className="text-lg lg:text-xl text-secondary dark:text-secondary-dark leading-relaxed select-none">
+            <p className="text-lg lg:text-xl text-secondary dark:text-secondary-dark leading-relaxed">
               提供 100,000+ 图标，支持语义化查询检索
             </p>
           </motion.header>

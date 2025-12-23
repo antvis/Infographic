@@ -593,7 +593,7 @@ export function AIPageContent() {
             transition={{duration: 0.6, ease: 'easeOut'}}
             className="space-y-6">
             <div>
-              <h1 className="flex items-center gap-3 text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight text-primary dark:text-primary-dark select-none">
+              <h1 className="flex items-center gap-3 text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight text-primary dark:text-primary-dark">
                 <IconStarTwinkle className="w-10 h-10 md:w-12 md:h-12 text-link dark:text-link-dark" />
                 <span>
                   AI
@@ -605,7 +605,7 @@ export function AIPageContent() {
               </h1>
             </div>
 
-            <p className="text-lg lg:text-xl text-secondary dark:text-secondary-dark leading-relaxed select-none">
+            <p className="text-lg lg:text-xl text-secondary dark:text-secondary-dark leading-relaxed">
               将你在日常写作、汇报或其他文字工作中遇到的内容粘贴到这里，AI
               会理解语境并为你生成相匹配的信息图方案
             </p>
