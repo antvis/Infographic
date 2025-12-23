@@ -1,0 +1,110 @@
+{
+  "title": "Learn",
+  "path": "/learn",
+  "routes": [
+    {
+      "title": "Quick Start",
+      "path": "/learn",
+      "routes": [
+        {
+          "title": "Getting Started",
+          "path": "/learn/getting-started"
+        },
+        {
+          "title": "Infographic Syntax",
+          "path": "/learn/infographic-syntax"
+        }
+      ]
+    },
+    {
+      "title": "Core Concepts",
+      "path": "/learn/core-concepts",
+      "routes": [
+        {
+          "title": "Design",
+          "path": "/learn/design"
+        },
+        {
+          "title": "Templates",
+          "path": "/learn/template"
+        },
+        {
+          "title": "Data",
+          "path": "/learn/data"
+        },
+        {
+          "title": "Themes",
+          "path": "/learn/theme"
+        },
+        {
+          "title": "Resources",
+          "path": "/learn/resources"
+        }
+      ]
+    },
+    {
+      "title": "Custom Design",
+      "path": "/learn/custom-design",
+      "routes": [
+        {
+          "title": "Custom Structure",
+          "path": "/learn/custom-structure"
+        },
+        {
+          "title": "Custom Items",
+          "path": "/learn/custom-items"
+        },
+        {
+          "title": "Custom Templates",
+          "path": "/learn/custom-template"
+        },
+        {
+          "title": "Custom Themes",
+          "path": "/learn/custom-theme"
+        },
+        {
+          "title": "Custom Palettes",
+          "path": "/learn/custom-palette"
+        },
+        {
+          "title": "Custom Fonts",
+          "path": "/learn/custom-fonts"
+        },
+        {
+          "title": "Custom Resource Loader",
+          "path": "/learn/custom-resource-loader"
+        },
+        {
+          "title": "Custom Patterns",
+          "path": "/learn/custom-pattern"
+        }
+      ]
+    },
+    {
+      "title": "Infographic Theory",
+      "path": "/learn/infographic-theory",
+      "routes": [
+        {
+          "title": "Infographic Classification",
+          "path": "/learn/infographic-classification"
+        },
+        {
+          "title": "Core Theory",
+          "path": "/learn/core-theory"
+        },
+        {
+          "title": "Infographic Elements",
+          "path": "/learn/infographic-elements"
+        },
+        {
+          "title": "Infographic Design",
+          "path": "/learn/infographic-design"
+        }
+      ]
+    },
+    {
+      "title": "Contributing",
+      "path": "/learn/contributing"
+    }
+  ]
+}

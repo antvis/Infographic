@@ -3,11 +3,70 @@ import {ExternalLink} from 'components/ExternalLink';
 import {IconGitHub} from 'components/Icon/IconGitHub';
 import NextLink from 'next/link';
 import * as React from 'react';
+import {getStoredLanguage, type Language} from '../../utils/i18n';
+import {t} from '../../utils/translations';
 import {IconAntV} from '../Icon/IconAntV';
 import {Logo} from '../Logo';
 
+type FooterTranslationSections = {
+  docs: {
+    header: string;
+    quickStart: string;
+    coreConcepts: string;
+    customDesign: string;
+    theory: string;
+  };
+  api: {
+    header: string;
+    jsx: string;
+    api: string;
+    designAssets: string;
+  };
+  more: {
+    header: string;
+    moreExamples: string;
+    aiInfographic: string;
+    github: string;
+    contribute: string;
+  };
+  friendlyLinksHeader: string;
+};
+
+function getFooterTranslations(lang: Language): FooterTranslationSections {
+  return {
+    docs: {
+      header: t(lang, 'footer.sections.docs.header'),
+      quickStart: t(lang, 'footer.sections.docs.quickStart'),
+      coreConcepts: t(lang, 'footer.sections.docs.coreConcepts'),
+      customDesign: t(lang, 'footer.sections.docs.customDesign'),
+      theory: t(lang, 'footer.sections.docs.theory'),
+    },
+    api: {
+      header: t(lang, 'footer.sections.api.header'),
+      jsx: t(lang, 'footer.sections.api.jsx'),
+      api: t(lang, 'footer.sections.api.api'),
+      designAssets: t(lang, 'footer.sections.api.designAssets'),
+    },
+    more: {
+      header: t(lang, 'footer.sections.more.header'),
+      moreExamples: t(lang, 'footer.sections.more.moreExamples'),
+      aiInfographic: t(lang, 'footer.sections.more.aiInfographic'),
+      github: t(lang, 'footer.sections.more.github'),
+      contribute: t(lang, 'footer.sections.more.contribute'),
+    },
+    friendlyLinksHeader: t(lang, 'footer.friendlyLinksHeader'),
+  };
+}
+
 export function Footer() {
+  const [lang, setLang] = React.useState<Language>('zh-CN');
+
+  React.useEffect(() => {
+    setLang(getStoredLanguage());
+  }, []);
+
   const socialLinkClasses = 'hover:text-primary dark:text-primary-dark';
+  const translations = getFooterTranslations(lang);
   return (
     <footer className={cn('text-secondary dark:text-secondary-dark')}>
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-x-12 gap-y-8 max-w-7xl mx-auto">
@@ -45,32 +104,46 @@ export function Footer() {
         </div>
         <div className="flex flex-col">
           <FooterLink href="/learn" isHeader={true}>
-            文档
+            {translations.docs.header}
           </FooterLink>
-          <FooterLink href="/learn">快速开始</FooterLink>
-          <FooterLink href="/learn/core-concepts">核心概念</FooterLink>
-          <FooterLink href="/learn/custom-design">自定义设计</FooterLink>
-          <FooterLink href="/learn/infographic-theory">信息图理论</FooterLink>
+          <FooterLink href="/learn">{translations.docs.quickStart}</FooterLink>
+          <FooterLink href="/learn/core-concepts">
+            {translations.docs.coreConcepts}
+          </FooterLink>
+          <FooterLink href="/learn/custom-design">
+            {translations.docs.customDesign}
+          </FooterLink>
+          <FooterLink href="/learn/infographic-theory">
+            {translations.docs.theory}
+          </FooterLink>
         </div>
         <div className="flex flex-col">
           <FooterLink href="/reference/infographic-api" isHeader={true}>
-            API 参考
+            {translations.api.header}
           </FooterLink>
-          <FooterLink href="/reference/jsx">JSX</FooterLink>
-          <FooterLink href="/reference/api">API</FooterLink>
-          <FooterLink href="/reference/design-assets">设计资产</FooterLink>
+          <FooterLink href="/reference/jsx">{translations.api.jsx}</FooterLink>
+          <FooterLink href="/reference/api">{translations.api.api}</FooterLink>
+          <FooterLink href="/reference/design-assets">
+            {translations.api.designAssets}
+          </FooterLink>
         </div>
         <div className="flex flex-col">
-          <FooterLink isHeader={true}>更多</FooterLink>
-          <FooterLink href="/examples">更多示例</FooterLink>
-          <FooterLink href="/ai">AI 生成信息图</FooterLink>
-          <FooterLink href="https://github.com/antvis/Infographic">
-            GitHub
+          <FooterLink isHeader={true}>{translations.more.header}</FooterLink>
+          <FooterLink href="/examples">
+            {translations.more.moreExamples}
           </FooterLink>
-          <FooterLink href="/learn/contributing">参与贡献</FooterLink>
+          <FooterLink href="/ai">{translations.more.aiInfographic}</FooterLink>
+          <FooterLink href="https://github.com/antvis/Infographic">
+            {translations.more.github}
+          </FooterLink>
+          <FooterLink href="/learn/contributing">
+            {translations.more.contribute}
+          </FooterLink>
         </div>
         <div className="md:col-start-2 xl:col-start-5 flex flex-col">
-          <FooterLink isHeader={true}>友情链接</FooterLink>
+          <FooterLink isHeader={true}>
+            {translations.friendlyLinksHeader}
+          </FooterLink>
           <FooterLink href="https://antv.antgroup.com/">AntV</FooterLink>
           <FooterLink href="https://g2.antv.antgroup.com/">G2</FooterLink>
           <FooterLink href="https://g6.antv.antgroup.com/">G6</FooterLink>

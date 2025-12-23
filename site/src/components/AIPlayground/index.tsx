@@ -4,17 +4,14 @@ import {Page} from 'components/Layout/Page';
 import {motion} from 'framer-motion';
 import {useRouter} from 'next/router';
 import {useCallback, useEffect, useRef, useState} from 'react';
+import {getStoredLanguage, type Language} from '../../utils/i18n';
+import {t} from '../../utils/translations';
 import {IconStarTwinkle} from '../Icon/IconStarTwinkle';
 import {ChatPanel} from './ChatPanel';
 import {ConfigPanel} from './ConfigPanel';
 import {PreviewPanel} from './PreviewPanel';
 import {sendMessageStream} from './Service';
-import {
-  DEFAULT_CONFIG,
-  FALLBACK_SYNTAX,
-  PROVIDER_OPTIONS,
-  STORAGE_KEYS,
-} from './constants';
+import {DEFAULT_CONFIG, PROVIDER_OPTIONS, STORAGE_KEYS} from './constants';
 import {formatJSON} from './helpers';
 import type {AIConfig, AIModelConfig, AIProvider, ChatMessage} from './types';
 
@@ -44,8 +41,10 @@ type HistoryRecord = {
   config?: Partial<InfographicOptions>;
 };
 
-const createTitle = (text: string) =>
-  text.length > 18 ? `${text.slice(0, 18)}…` : text || '待输入';
+const createTitle = (text: string, lang: Language) =>
+  text.length > 18
+    ? `${text.slice(0, 18)}…`
+    : text || t(lang, 'aiPage.pending');
 
 const extractSyntaxContent = (text: string) => {
   if (!text) return '';
@@ -63,24 +62,30 @@ const extractSyntaxContent = (text: string) => {
   return text;
 };
 
-const toHistoryRecord = (input: {
-  id: string;
-  text: string;
-  status: 'pending' | 'ready' | 'error';
-  error?: string;
-  syntax?: string;
-  config?: Partial<InfographicOptions>;
-}): HistoryRecord => ({
+const toHistoryRecord = (
+  input: {
+    id: string;
+    text: string;
+    status: 'pending' | 'ready' | 'error';
+    error?: string;
+    syntax?: string;
+    config?: Partial<InfographicOptions>;
+  },
+  lang: Language
+): HistoryRecord => ({
   id: input.id,
   text: input.text,
   status: input.status,
   error: input.error,
   syntax: input.syntax,
   config: input.config,
-  title: createTitle(input.text),
+  title: createTitle(input.text, lang),
 });
 
-const normalizeLegacyMessages = (raw: ChatMessage[]): HistoryRecord[] => {
+const normalizeLegacyMessages = (
+  raw: ChatMessage[],
+  lang: Language
+): HistoryRecord[] => {
   const records: HistoryRecord[] = [];
   let pendingUser: ChatMessage | null = null;
 
@@ -89,16 +94,19 @@ const normalizeLegacyMessages = (raw: ChatMessage[]): HistoryRecord[] => {
       pendingUser = msg;
     } else if (msg.role === 'assistant' && pendingUser) {
       records.push(
-        toHistoryRecord({
-          id: pendingUser.id,
-          text: pendingUser.text,
-          status: msg.isError ? 'error' : 'ready',
-          error: msg.error,
-          config:
-            msg.config && typeof msg.config === 'object'
-              ? (msg.config as Partial<InfographicOptions>)
-              : undefined,
-        })
+        toHistoryRecord(
+          {
+            id: pendingUser.id,
+            text: pendingUser.text,
+            status: msg.isError ? 'error' : 'ready',
+            error: msg.error,
+            config:
+              msg.config && typeof msg.config === 'object'
+                ? (msg.config as Partial<InfographicOptions>)
+                : undefined,
+          },
+          lang
+        )
       );
       pendingUser = null;
     }
@@ -106,21 +114,24 @@ const normalizeLegacyMessages = (raw: ChatMessage[]): HistoryRecord[] => {
 
   if (pendingUser) {
     records.push(
-      toHistoryRecord({
-        id: pendingUser.id,
-        text: pendingUser.text,
-        status: 'pending',
-      })
+      toHistoryRecord(
+        {
+          id: pendingUser.id,
+          text: pendingUser.text,
+          status: 'pending',
+        },
+        lang
+      )
     );
   }
 
   return records;
 };
 
-const normalizeStoredHistory = (raw: any): HistoryRecord[] => {
+const normalizeStoredHistory = (raw: any, lang: Language): HistoryRecord[] => {
   if (!Array.isArray(raw)) return [];
   if (raw.some((item) => item && typeof item === 'object' && 'role' in item)) {
-    return normalizeLegacyMessages(raw as ChatMessage[]);
+    return normalizeLegacyMessages(raw as ChatMessage[], lang);
   }
 
   const normalized: HistoryRecord[] = [];
@@ -140,14 +151,17 @@ const normalizeStoredHistory = (raw: any): HistoryRecord[] => {
         ? (item.config as Partial<InfographicOptions>)
         : undefined;
     normalized.push(
-      toHistoryRecord({
-        id: typeof item.id === 'string' ? item.id : createId(),
-        text,
-        status,
-        error: typeof item.error === 'string' ? item.error : undefined,
-        syntax,
-        config,
-      })
+      toHistoryRecord(
+        {
+          id: typeof item.id === 'string' ? item.id : createId(),
+          text,
+          status,
+          error: typeof item.error === 'string' ? item.error : undefined,
+          syntax,
+          config,
+        },
+        lang
+      )
     );
   }
   return normalized;
@@ -155,6 +169,15 @@ const normalizeStoredHistory = (raw: any): HistoryRecord[] => {
 
 export function AIPageContent() {
   const router = useRouter();
+  const [lang, setLang] = useState<Language>('zh-CN');
+  const heroTexts = t(lang, 'aiPage.hero') as any;
+  const workspaceLabel = t(lang, 'aiPage.workspaceLabel') as string;
+  const examplePrompts = t(lang, 'aiPage.examples') as Array<{
+    title: string;
+    text: string;
+  }>;
+  const fallbackSyntax = t(lang, 'aiPage.fallbackSyntax') as string;
+  const metaTitle = t(lang, 'aiPage.metaTitle') as string;
   const [prompt, setPrompt] = useState('');
   const [history, setHistory] = useState<HistoryRecord[]>([]);
   const [config, setConfig] = useState<AIConfig>(DEFAULT_CONFIG);
@@ -179,8 +202,13 @@ export function AIPageContent() {
   const {message: copyHint, show: showCopyHint} = useCopyToast();
 
   useEffect(() => {
+    setLang(getStoredLanguage());
+  }, []);
+
+  useEffect(() => {
     setMounted(true);
     if (typeof window === 'undefined') return;
+    const currentLang = getStoredLanguage();
     const savedConfig = localStorage.getItem(STORAGE_KEYS.config);
     const savedMessages = localStorage.getItem(STORAGE_KEYS.messages);
     const savedInfographic = localStorage.getItem(STORAGE_KEYS.infographic);
@@ -208,7 +236,7 @@ export function AIPageContent() {
     if (savedMessages) {
       try {
         const parsed = JSON.parse(savedMessages);
-        setHistory(normalizeStoredHistory(parsed));
+        setHistory(normalizeStoredHistory(parsed, currentLang));
       } catch {
         setHistory([]);
       }
@@ -268,12 +296,16 @@ export function AIPageContent() {
       recoveredPendingRef.current = true;
       setHistory((prev) => {
         const next = [...prev];
-        next[next.length - 1] = {...last, status: 'error', error: '请求未完成'};
+        next[next.length - 1] = {
+          ...last,
+          status: 'error',
+          error: t(lang, 'aiPage.errors.requestIncomplete'),
+        };
         return next;
       });
       setActiveTab('preview');
     }
-  }, [history, mounted, isGenerating]);
+  }, [history, mounted, isGenerating, lang]);
 
   useEffect(() => {
     if (!mounted) return;
@@ -371,7 +403,9 @@ export function AIPageContent() {
                   ? {
                       ...item,
                       status: hasSyntax ? 'ready' : 'error',
-                      error: hasSyntax ? undefined : '未接收到模型输出',
+                      error: hasSyntax
+                        ? undefined
+                        : t(lang, 'aiPage.errors.noOutput'),
                       syntax: hasSyntax ? syntaxBuffer : undefined,
                       config: hasSyntax ? undefined : item.config,
                     }
@@ -379,11 +413,12 @@ export function AIPageContent() {
               )
             );
             if (!hasSyntax) {
-              setPreviewError('模型未返回内容');
+              setPreviewError(t(lang, 'aiPage.errors.noModel'));
             }
           },
           (error) => {
-            const message = error.message || '生成失败，请检查网络或稍后重试。';
+            const message =
+              error.message || t(lang, 'aiPage.errors.generationFailed');
             setHistory((prev) =>
               prev.map((item) =>
                 item.id === userId
@@ -403,7 +438,7 @@ export function AIPageContent() {
         const message =
           error instanceof Error && error.message
             ? error.message
-            : '生成失败，请检查网络或稍后重试。';
+            : t(lang, 'aiPage.errors.generationFailed');
         setHistory((prev) =>
           prev.map((item) =>
             item.id === userId
@@ -423,7 +458,7 @@ export function AIPageContent() {
         inputRef.current?.focus();
       }
     },
-    [config]
+    [config, lang]
   );
 
   const handleSend = useCallback(
@@ -445,7 +480,7 @@ export function AIPageContent() {
               ? {
                   ...item,
                   text: content,
-                  title: createTitle(content),
+                  title: createTitle(content, lang),
                   status: 'pending',
                   error: undefined,
                   syntax: undefined,
@@ -455,11 +490,14 @@ export function AIPageContent() {
           )
         );
       } else {
-        const newRecord = toHistoryRecord({
-          id: createId(),
-          text: content,
-          status: 'pending',
-        });
+        const newRecord = toHistoryRecord(
+          {
+            id: createId(),
+            text: content,
+            status: 'pending',
+          },
+          lang
+        );
         requestId = newRecord.id;
         setHistory((prev) => [...prev, newRecord]);
       }
@@ -471,7 +509,7 @@ export function AIPageContent() {
 
       await requestInfographic(content, requestId);
     },
-    [prompt, retryingId, history, requestInfographic]
+    [prompt, retryingId, history, requestInfographic, lang]
   );
 
   useEffect(() => {
@@ -553,7 +591,11 @@ export function AIPageContent() {
         setJsonPreview(parsed);
         setPreviewError(null);
       } catch (err) {
-        setPreviewError(err instanceof Error ? err.message : 'JSON 解析失败');
+        setPreviewError(
+          err instanceof Error
+            ? err.message
+            : t(lang, 'aiPage.errors.jsonParse')
+        );
       }
     } else {
       setPreviewError(null);
@@ -571,8 +613,8 @@ export function AIPageContent() {
   return (
     <Page
       toc={[]}
-      routeTree={{title: 'AI', path: '/ai', routes: []}}
-      meta={{title: 'AI 生成信息图'}}
+      routeTree={{title: t(lang, 'nav.ai'), path: '/ai', routes: []}}
+      meta={{title: metaTitle}}
       section="ai"
       topNavOptions={{
         hideBrandWhenHeroVisible: true,
@@ -596,18 +638,17 @@ export function AIPageContent() {
               <h1 className="flex items-center gap-3 text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight text-primary dark:text-primary-dark">
                 <IconStarTwinkle className="w-10 h-10 md:w-12 md:h-12 text-link dark:text-link-dark" />
                 <span>
-                  AI
+                  {heroTexts.title}
                   <span className="bg-gradient-to-r from-link to-purple-40 bg-clip-text text-transparent">
                     {' '}
-                    Infographic
+                    {heroTexts.highlight}
                   </span>
                 </span>
               </h1>
             </div>
 
             <p className="text-lg lg:text-xl text-secondary dark:text-secondary-dark leading-relaxed">
-              将你在日常写作、汇报或其他文字工作中遇到的内容粘贴到这里，AI
-              会理解语境并为你生成相匹配的信息图方案
+              {heroTexts.description}
             </p>
           </motion.header>
 
@@ -618,7 +659,7 @@ export function AIPageContent() {
             className="space-y-5">
             <div className="space-y-2">
               <p className="text-sm font-medium text-tertiary dark:text-tertiary-dark">
-                AI 工作区
+                {workspaceLabel}
               </p>
             </div>
 
@@ -635,6 +676,8 @@ export function AIPageContent() {
                 onDelete={handleDelete}
                 onOpenConfig={() => setIsConfigOpen(true)}
                 onClear={handleClear}
+                lang={lang}
+                examples={examplePrompts}
                 panelClassName={PANEL_HEIGHT_CLASS}
               />
 
@@ -646,12 +689,13 @@ export function AIPageContent() {
                   editorValue={editorText}
                   previewKind={previewKind}
                   jsonPreview={jsonPreview}
-                  fallbackSyntax={FALLBACK_SYNTAX}
+                  fallbackSyntax={fallbackSyntax}
                   onEditorChange={handleEditorChange}
                   error={previewError}
                   panelClassName={PANEL_HEIGHT_CLASS}
                   onCopy={handleCopyHint}
                   onRenderError={setPreviewError}
+                  lang={lang}
                 />
               }
             </div>
@@ -666,6 +710,7 @@ export function AIPageContent() {
         value={config}
         savedConfigs={configMap}
         onClose={() => setIsConfigOpen(false)}
+        lang={lang}
         onSave={(value) => {
           setConfigMap((prev) => ({
             ...prev,

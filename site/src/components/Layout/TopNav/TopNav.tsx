@@ -18,7 +18,10 @@ import {IconHamburger} from 'components/Icon/IconHamburger';
 import {IconNavArrow} from 'components/Icon/IconNavArrow';
 import {IconSearch} from 'components/Icon/IconSearch';
 import {IconStarTwinkle} from 'components/Icon/IconStarTwinkle';
+import {LanguageSwitcher} from 'components/LanguageSwitcher';
 import {Search} from 'components/Search';
+import {getStoredLanguage} from '../../../utils/i18n';
+import {t} from '../../../utils/translations';
 import {IconGitHub} from '../../Icon/IconGitHub';
 import {Logo} from '../../Logo';
 import {SidebarRouteTree} from '../Sidebar';
@@ -153,6 +156,7 @@ export default function TopNav({
   const [isHeroVisible, setIsHeroVisible] = useState(
     () => hideBrandWhenHeroVisible
   );
+  const [currentLang, setCurrentLang] = useState<'zh-CN' | 'en'>('zh-CN');
   const searchEnabled = false;
   const scrollParentRef = useRef<HTMLDivElement>(null);
   const {asPath} = useRouter();
@@ -161,6 +165,11 @@ export default function TopNav({
   if ((routeTree as any).routes.length === 1) {
     routeTree = (routeTree as any).routes[0];
   }
+
+  // Get current language
+  useEffect(() => {
+    setCurrentLang(getStoredLanguage());
+  }, []);
 
   // While the overlay is open, disable body scroll.
   useEffect(() => {
@@ -349,24 +358,24 @@ export default function TopNav({
             <div className="text-base justify-center items-center gap-1.5 flex 3xl:flex-1 flex-row 3xl:justify-end">
               <div className="mx-2.5 gap-1.5 hidden lg:flex">
                 <NavItem isActive={section === 'home'} url="/">
-                  首页
+                  {t(currentLang, 'nav.home')}
                 </NavItem>
                 <NavItem isActive={section === 'learn'} url="/learn">
-                  文档
+                  {t(currentLang, 'nav.learn')}
                 </NavItem>
                 <NavItem isActive={section === 'reference'} url="/reference">
-                  参考
+                  {t(currentLang, 'nav.reference')}
                 </NavItem>
                 <NavItem isActive={section === 'examples'} url="/examples">
-                  示例
+                  {t(currentLang, 'nav.examples')}
                 </NavItem>
                 <NavItem isActive={section === 'icon'} url="/icon">
-                  图标
+                  {t(currentLang, 'nav.icon')}
                 </NavItem>
                 <NavItem isActive={section === 'ai'} url="/ai">
                   <span className="inline-flex items-center justify-center gap-1.5">
                     <IconStarTwinkle className="w-4 h-4" />
-                    AI
+                    {t(currentLang, 'nav.ai')}
                   </span>
                 </NavItem>
               </div>
@@ -377,7 +386,7 @@ export default function TopNav({
                   target="_blank"
                   rel="noreferrer noopener"
                   className="group inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-secondary dark:text-secondary-dark border border-border dark:border-border-dark bg-gray-30/20 dark:bg-gray-40/20 hover:text-link hover:dark:text-link-dark hover:border-link hover:dark:border-link-dark hover:bg-primary/5 hover:dark:bg-primary-dark/10 text-sm font-semibold transition">
-                  企业版
+                  {t(currentLang, 'nav.enterprise')}
                   <IconNavArrow
                     displayDirection="end"
                     className="w-4 h-4 text-secondary dark:text-secondary-dark transition group-hover:text-link group-hover:dark:text-link-dark"
@@ -419,6 +428,9 @@ export default function TopNav({
                   </button>
                 </div>
                 <div className="flex">
+                  <LanguageSwitcher />
+                </div>
+                <div className="flex">
                   <Link
                     href="https://github.com/antvis/infographic"
                     target="_blank"
@@ -450,26 +462,26 @@ export default function TopNav({
                 <Suspense fallback={null}>
                   <div className="ps-3 xs:ps-5 xs:gap-0.5 xs:text-base overflow-x-auto flex flex-row lg:hidden text-base font-bold text-secondary dark:text-secondary-dark">
                     <NavItem isActive={section === 'home'} url="/">
-                      首页
+                      {t(currentLang, 'nav.home')}
                     </NavItem>
                     <NavItem isActive={section === 'learn'} url="/learn">
-                      文档
+                      {t(currentLang, 'nav.learn')}
                     </NavItem>
                     <NavItem
                       isActive={section === 'reference'}
                       url="/reference">
-                      参考
+                      {t(currentLang, 'nav.reference')}
                     </NavItem>
                     <NavItem isActive={section === 'examples'} url="/examples">
-                      示例
+                      {t(currentLang, 'nav.examples')}
                     </NavItem>
                     <NavItem isActive={section === 'icon'} url="/icon">
-                      图标
+                      {t(currentLang, 'nav.icon')}
                     </NavItem>
                     <NavItem isActive={section === 'ai'} url="/ai">
                       <span className="inline-flex items-center justify-center gap-1.5">
                         <IconStarTwinkle className="w-4 h-4" />
-                        AI
+                        {t(currentLang, 'nav.ai')}
                       </span>
                     </NavItem>
                   </div>

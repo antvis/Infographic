@@ -2,10 +2,14 @@ import {AnimatePresence, motion} from 'framer-motion';
 import {uniq} from 'lodash-es';
 import {ArrowRight, Filter, Layers, Sparkles, X} from 'lucide-react';
 import {useRouter} from 'next/router';
-import {useMemo, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
+import {getStoredLanguage, type Language} from '../../utils/i18n';
+import {t} from '../../utils/translations';
 import {Infographic} from '../Infographic';
-import {SERIES_DISPLAY_NAMES, TYPE_DISPLAY_NAMES} from './constants';
+import {getSeriesDisplayNames, getTypeDisplayNames} from './constants';
 import {TEMPLATES} from './templates';
+
+type DisplayNameMap = Record<string, string>;
 
 const getType = (templateString: string | undefined) => {
   if (!templateString) return 'general';
@@ -21,32 +25,34 @@ const getSeries = (templateString: string | undefined) => {
 const COLLAPSED_COUNT = 5;
 
 // ==========================================
-// 2. Component: Glass Tag (毛玻璃标签)
+// 2. Component: Glass Tag
 // ==========================================
 const TypeTag = ({label}: {label: string}) => (
   <div className="absolute top-4 left-4 z-20 flex items-center gap-2">
     <span className="w-1.5 h-1.5 rounded-full bg-link dark:bg-link-dark" />
     <span className="text-[11px] font-semibold tracking-wide text-primary dark:text-primary-dark uppercase">
-      {TYPE_DISPLAY_NAMES[label as keyof typeof TYPE_DISPLAY_NAMES]}
+      {label}
     </span>
   </div>
 );
 
 // ==========================================
-// 3. Component: Filter Chip (顶部筛选按钮)
+// 3. Component: Filter Chip
 // ==========================================
 const FilterChip = ({
+  value,
   label,
   isActive,
   onClick,
 }: {
+  value: string;
   label: string;
   isActive: boolean;
-  onClick: () => void;
+  onClick: (value: string) => void;
 }) => {
   return (
     <button
-      onClick={onClick}
+      onClick={() => onClick(value)}
       className={`
         relative px-3.5 py-1.5 rounded-full text-sm font-semibold tracking-wide transition-all duration-200 border
         ${
@@ -55,7 +61,7 @@ const FilterChip = ({
             : 'bg-card text-secondary border-primary/10 hover:border-link/50 hover:text-primary hover:bg-gray-40/5 dark:bg-card-dark dark:text-secondary-dark dark:border-primary-dark/15 dark:hover:border-link-dark/50 dark:hover:text-primary-dark dark:hover:bg-gray-60/5'
         }
       `}>
-      {TYPE_DISPLAY_NAMES[label as keyof typeof TYPE_DISPLAY_NAMES]}
+      {label}
     </button>
   );
 };
@@ -66,11 +72,16 @@ const FilterChip = ({
 const GalleryCard = ({
   item,
   onClick,
+  useLabel,
+  typeDisplayNames,
 }: {
   item: any;
   onClick: (id: string) => void;
+  useLabel: string;
+  typeDisplayNames: DisplayNameMap;
 }) => {
   const type = getType(item.template);
+  const typeLabel = typeDisplayNames[type] ?? type;
 
   return (
     <motion.div
@@ -92,10 +103,10 @@ const GalleryCard = ({
         transition={{type: 'spring', stiffness: 400, damping: 25}}
         className="relative flex-1 bg-wash dark:bg-card-dark rounded-[.5rem] overflow-hidden border border-primary/12 dark:border-primary-dark/15 group-hover:border-link/25 shadow-nav dark:shadow-nav-dark cursor-pointer transition-colors duration-300 ease-out"
         style={{transformStyle: 'preserve-3d'}}>
-        {/* 1. 分类标签 */}
-        <TypeTag label={type} />
+        {/* 1. Category tag */}
+        <TypeTag label={typeLabel} />
 
-        {/* 2. 内容展示区域 (Canvas) */}
+        {/* 2. Canvas */}
         <div className="w-full h-full relative flex items-center justify-center overflow-hidden">
           <div
             className="absolute inset-0 opacity-[0.4]"
@@ -120,7 +131,7 @@ const GalleryCard = ({
               }}
               className="flex items-center gap-2 text-link dark:text-link-dark font-semibold text-sm bg-wash dark:bg-card-dark px-6 py-3 rounded-full shadow-secondary-button-stroke dark:shadow-secondary-button-stroke-dark border border-primary/10 dark:border-primary-dark/10">
               <Sparkles className="w-4 h-4" />
-              <span>使用</span>
+              <span>{useLabel}</span>
               <ArrowRight className="w-4 h-4 ml-1" />
             </motion.div>
           </div>
@@ -134,25 +145,34 @@ const GalleryCard = ({
 // 4. Page: Gallery Page
 // ==========================================
 export default function GalleryPage() {
+  const [lang, setLang] = useState<Language>('zh-CN');
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [expandedSeries, setExpandedSeries] = useState<Record<string, boolean>>(
     {}
   );
   const router = useRouter();
 
-  // 计算分类
+  useEffect(() => {
+    setLang(getStoredLanguage());
+  }, []);
+
+  const TYPE_DISPLAY_NAMES = getTypeDisplayNames(lang) as DisplayNameMap;
+  const SERIES_DISPLAY_NAMES = getSeriesDisplayNames(lang) as DisplayNameMap;
+  const pageTexts = t(lang, 'gallery.page') as any;
+
+  // Collect categories
   const allCategories = useMemo(() => {
     const cats = TEMPLATES.map((t) => getType(t.template));
     return uniq(cats).sort();
   }, []);
 
-  // 过滤数据
+  // Filter data
   const filteredTemplates = useMemo(() => {
     if (activeFilters.length === 0) return TEMPLATES;
     return TEMPLATES.filter((t) => activeFilters.includes(getType(t.template)));
   }, [activeFilters]);
 
-  // 分组数据（保持原始顺序）
+  // Group data while keeping order
   const groupedTemplates = useMemo(() => {
     const groups = new Map<string, any[]>();
     filteredTemplates.forEach((item) => {
@@ -168,20 +188,20 @@ export default function GalleryPage() {
       label: SERIES_DISPLAY_NAMES[key] ?? key,
       items,
     }));
-  }, [filteredTemplates]);
+  }, [filteredTemplates, SERIES_DISPLAY_NAMES]);
 
   const toggleSeries = (key: string) => {
     setExpandedSeries((prev) => ({...prev, [key]: !prev[key]}));
   };
 
-  // 切换逻辑
+  // Toggle logic
   const toggleFilter = (type: string) => {
     setActiveFilters((prev) =>
       prev.includes(type) ? prev.filter((c) => c !== type) : [...prev, type]
     );
   };
 
-  // 跳转到详情页
+  // Jump to detail page
   const handleCardClick = (template: string) => {
     router.push(`/examples/example?template=${template}`);
   };
@@ -201,13 +221,13 @@ export default function GalleryPage() {
           animate={{opacity: 1, y: 0}}
           transition={{duration: 0.6}}>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight mb-6 text-primary dark:text-primary-dark">
-            Infographic{' '}
+            {pageTexts.heroTitlePrefix}{' '}
             <span className="bg-gradient-to-r from-link to-purple-40 bg-clip-text text-transparent">
-              Gallery
+              {pageTexts.heroTitleHighlight}
             </span>
           </h1>
           <p className="text-lg lg:text-xl text-secondary dark:text-secondary-dark leading-relaxed">
-            探索我们精选的信息图模板库，高保真设计、灵活可定制，可即插即用地投入你的应用。
+            {pageTexts.heroDescription}
           </p>
         </motion.div>
       </div>
@@ -224,16 +244,17 @@ export default function GalleryPage() {
               <div className="flex items-center gap-2 mr-3 text-tertiary dark:text-tertiary-dark">
                 <Filter className="w-3.5 h-3.5" />
                 <span className="text-[11px] font-semibold uppercase tracking-[0.2em]">
-                  Filter
+                  {pageTexts.filterLabel}
                 </span>
               </div>
 
               {allCategories.map((cat: string) => (
                 <FilterChip
                   key={cat}
-                  label={cat}
+                  value={cat}
+                  label={TYPE_DISPLAY_NAMES[cat] ?? cat}
                   isActive={activeFilters.includes(cat)}
-                  onClick={() => toggleFilter(cat)}
+                  onClick={toggleFilter}
                 />
               ))}
 
@@ -245,14 +266,14 @@ export default function GalleryPage() {
                     exit={{opacity: 0, scale: 0.8}}
                     onClick={() => setActiveFilters([])}
                     className="ml-2 p-1.5 text-tertiary dark:text-tertiary-dark hover:text-link hover:dark:text-link-dark hover:bg-gray-40/5 dark:hover:bg-gray-60/5 rounded-full transition-colors"
-                    title="Clear all">
+                    title={pageTexts.clearFilters}>
                     <X className="w-4 h-4" />
                   </motion.button>
                 )}
               </AnimatePresence>
             </div>
 
-            {/* Counter Right (保持在 sticky bar 里，方便随时查看数量) */}
+            {/* Counter Right */}
             <div className="flex items-center gap-3 text-tertiary dark:text-tertiary-dark bg-card/80 dark:bg-card-dark/80 px-4 py-1.5 rounded-full shadow-secondary-button-stroke dark:shadow-secondary-button-stroke-dark border border-primary/10 dark:border-primary-dark/10 hidden sm:flex">
               <Layers className="w-3.5 h-3.5" />
               <div className="flex items-baseline gap-1 text-xs font-semibold tracking-wide">
@@ -283,14 +304,16 @@ export default function GalleryPage() {
                 <div className="flex items-center gap-2 text-sm font-semibold text-primary dark:text-primary-dark">
                   <span>{label}</span>
                   <span className="text-tertiary dark:text-tertiary-dark text-xs">
-                    {items.length} 张
+                    {t(lang, 'gallery.page.seriesCount', items.length)}
                   </span>
                 </div>
                 {canToggle && (
                   <button
                     onClick={() => toggleSeries(key)}
                     className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-full bg-wash dark:bg-card-dark border border-primary/10 dark:border-primary-dark/10 text-link dark:text-link-dark hover:border-link/40">
-                    <span>{isExpanded ? '收起' : '展开全部'}</span>
+                    <span>
+                      {isExpanded ? pageTexts.collapse : pageTexts.expandAll}
+                    </span>
                     <ArrowRight
                       className={`w-4 h-4 transition-transform ${
                         isExpanded ? 'rotate-90' : ''
@@ -307,6 +330,8 @@ export default function GalleryPage() {
                       key={item.template}
                       item={item}
                       onClick={() => handleCardClick(item.template!)}
+                      useLabel={pageTexts.useTemplate}
+                      typeDisplayNames={TYPE_DISPLAY_NAMES}
                     />
                   ))}
                 </div>

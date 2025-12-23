@@ -19,11 +19,13 @@ import {IconStarTwinkle} from 'components/Icon/IconStarTwinkle';
 import {Logo} from 'components/Logo';
 import BlogCard from 'components/MDX/BlogCard';
 import CodeBlock from 'components/MDX/CodeBlock';
+import {getStoredLanguage, type Language} from '../../utils/i18n';
+import {t} from '../../utils/translations';
 import ButtonLink from '../ButtonLink';
 import {AIInfographicFlow} from './HomePage/AIInfographicFlow';
 import {CodePlayground} from './HomePage/CodePlayground';
 import {Gallery} from './HomePage/Gallery';
-import {QuickStartDemo, QuickStartDemoCode} from './HomePage/QuickStartDemo';
+import {QuickStartDemo, useQuickStartDemoCode} from './HomePage/QuickStartDemo';
 import {StylizeDemo} from './HomePage/StylizeDemo';
 
 type SectionBackground = 'left-card' | 'right-card' | null;
@@ -73,18 +75,18 @@ interface ExamplePanelProps {
 
 console.log('AntV Infographic version:', VERSION);
 
-const HERO_PROMPTS = [
+const getHeroPrompts = (lang: Language) => [
   {
-    title: '🎯 产品生命周期管理',
-    text: '产品从导入期到成长期，销量快速攀升，市场份额从5%增长至25%。成熟期达到峰值40%后保持稳定。衰退期开始下滑至15%。通过在成长期加大营销投入，成熟期优化成本结构，衰退期及时推出升级产品，实现平稳过渡。',
+    title: t(lang, 'home.heroPrompts.prompt1Title'),
+    text: t(lang, 'home.heroPrompts.prompt1Text'),
   },
   {
-    title: '💰 客户价值分层',
-    text: '将客户分为四个层级：VIP客户占比5%但贡献45%营收，高价值客户占15%贡献30%营收，普通客户占30%贡献20%营收，低价值客户占50%仅贡献5%营收。针对不同层级制定差异化服务策略，重点维护高价值客群，激活潜力客户。',
+    title: t(lang, 'home.heroPrompts.prompt2Title'),
+    text: t(lang, 'home.heroPrompts.prompt2Text'),
   },
   {
-    title: '🌍 全球市场布局进展',
-    text: '2020年聚焦亚太市场，营收占比60%。2021年拓展欧洲市场，占比提升至25%。2022年进军北美，三大市场形成均衡格局，分别为40%、30%、25%。2023年新兴市场突破，拉美和中东合计贡献15%，全球化布局初步完成。',
+    title: t(lang, 'home.heroPrompts.prompt3Title'),
+    text: t(lang, 'home.heroPrompts.prompt3Text'),
   },
 ];
 
@@ -177,27 +179,38 @@ function FullBleed({children}: BasicProps) {
   );
 }
 
-const features: Feature[] = [
+const getFeatures = (lang: Language): Feature[] => [
   {
-    title: '信息图语法',
-    detail: '贴合信息图特性的声明式语法，涵盖布局、元素、主题',
+    title: t(lang, 'home.features.feature1Title'),
+    detail: t(lang, 'home.features.feature1Detail'),
   },
   {
-    title: 'JSX 定制开发',
-    detail: '以 JSX 描述设计资产，直观可复用，灵活扩展',
+    title: t(lang, 'home.features.feature2Title'),
+    detail: t(lang, 'home.features.feature2Detail'),
   },
   {
-    title: '风格化渲染',
-    detail: '一套模板多种风格，支持手绘、纹理、渐变等效果',
+    title: t(lang, 'home.features.feature3Title'),
+    detail: t(lang, 'home.features.feature3Detail'),
   },
   {
-    title: '可视化编辑',
-    detail: '可交互增删数据项，添加图形与标注，所见即所得',
+    title: t(lang, 'home.features.feature4Title'),
+    detail: t(lang, 'home.features.feature4Detail'),
   },
 ];
 
 export function HomeContent(): JSX.Element {
   const router = useRouter();
+  const [lang, setLang] = useState<Language>('zh-CN');
+
+  useEffect(() => {
+    setLang(getStoredLanguage());
+  }, []);
+
+  const HERO_PROMPTS = getHeroPrompts(lang);
+  const features = getFeatures(lang);
+  const heroContent = t(lang, 'home.hero') as Record<string, string>;
+  const sectionContent = t(lang, 'home.sections') as any;
+  const quickStartDemoCode = useQuickStartDemoCode();
   const [heroPrompt, setHeroPrompt] = useState('');
   const [placeholderText, setPlaceholderText] = useState('');
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
@@ -243,6 +256,7 @@ export function HomeContent(): JSX.Element {
     placeholderIndex,
     placeholderStage,
     placeholderText,
+    HERO_PROMPTS,
   ]);
 
   const handleHeroSubmit = () => {
@@ -288,7 +302,7 @@ export function HomeContent(): JSX.Element {
                     </div>
                   </div>
                   <p className="text-4xl lg:text-5xl font-display leading-tight text-primary dark:text-primary-dark">
-                    新一代声明式信息图可视化引擎
+                    {heroContent.tagline}
                   </p>
                   <div className="flex flex-wrap items-center gap-3">
                     <ButtonLink
@@ -296,8 +310,8 @@ export function HomeContent(): JSX.Element {
                       type="primary"
                       size="lg"
                       className="min-w-[140px] justify-center whitespace-nowrap"
-                      label="快速开始">
-                      快速开始
+                      label={heroContent.ctaStart}>
+                      {heroContent.ctaStart}
                     </ButtonLink>
                     <ExternalLink
                       href="https://github.com/antvis/infographic"
@@ -311,8 +325,8 @@ export function HomeContent(): JSX.Element {
                       type="secondary"
                       size="lg"
                       className="justify-center whitespace-nowrap"
-                      label="AI 生成">
-                      AI 生成
+                      label={heroContent.ctaAi}>
+                      {heroContent.ctaAi}
                     </ButtonLink>
                   </div>
                 </div>
@@ -326,7 +340,7 @@ export function HomeContent(): JSX.Element {
                           className="h-5 w-5 text-link dark:text-link-dark"
                           animation={false}
                         />
-                        AI 生成信息图
+                        {heroContent.aiCardTitle}
                       </div>
                       <span className="text-xs text-tertiary dark:text-tertiary-dark bg-wash dark:bg-wash-dark px-2.5 py-1 rounded-full font-medium">
                         ⌘/Ctrl + ↵
@@ -350,14 +364,14 @@ export function HomeContent(): JSX.Element {
                             handleHeroSubmit();
                           }
                         }}
-                        aria-label="输入信息图生成描述"
+                        aria-label={heroContent.inputLabel}
                       />
                       {!heroPrompt && !isHeroInputActive && (
                         <div className="pointer-events-none absolute inset-0 flex items-center px-4 lg:px-5 pr-[152px] text-secondary dark:text-secondary-dark text-base lg:text-lg">
                           <span className="truncate">
                             {placeholderText ||
                               HERO_PROMPTS[placeholderIndex]?.title ||
-                              '用一句话描述你想要的信息图'}
+                              heroContent.inputPlaceholder}
                           </span>
                           <span className="ml-1 h-5 w-[2px] bg-link/80 dark:bg-link-dark/80 animate-pulse rounded" />
                         </div>
@@ -371,8 +385,12 @@ export function HomeContent(): JSX.Element {
                           animation={false}
                           monochromeColor="#fff"
                         />
-                        <span className="hidden xs:inline">生成信息图</span>
-                        <span className="xs:hidden">生成</span>
+                        <span className="hidden xs:inline">
+                          {heroContent.submitFull}
+                        </span>
+                        <span className="xs:hidden">
+                          {heroContent.submitShort}
+                        </span>
                       </button>
                     </div>
                   </div>
@@ -385,10 +403,10 @@ export function HomeContent(): JSX.Element {
 
         <Section background="left-card" lazy placeholderHeight={780}>
           <Center>
-            <Header>声明式信息图渲染框架</Header>
+            <Header>{sectionContent.declarative.title}</Header>
             <Para>
-              <Code>声明式</Code>{' '}
-              配置描述信息图，让数据叙事更简单、更优雅、更高效
+              <Code>{sectionContent.declarative.keyword}</Code>{' '}
+              {sectionContent.declarative.description}
             </Para>
           </Center>
           <FullBleed>
@@ -399,7 +417,7 @@ export function HomeContent(): JSX.Element {
                   noShadow={true}
                   noMargin={true}
                   showCopy={false}>
-                  <div>{QuickStartDemoCode}</div>
+                  <div>{quickStartDemoCode}</div>
                 </CodeBlock>
               }
               right={
@@ -410,32 +428,28 @@ export function HomeContent(): JSX.Element {
             />
           </FullBleed>
           <Center>
-            <Para>
-              100+ 内置模板与组件，开箱可用；从 0 到 1 构建信息图，从未如此轻松
-            </Para>
+            <Para>{sectionContent.declarative.note}</Para>
           </Center>
         </Section>
 
         <Section background="right-card" lazy placeholderHeight={760}>
           <Center>
-            <Header>AI 轻松生成专业信息图</Header>
-            <Para>
-              让 AI 理解文本，抽取关键信息并生成配置，一键渲染专业信息图
-            </Para>
+            <Header>{sectionContent.ai.title}</Header>
+            <Para>{sectionContent.ai.description}</Para>
           </Center>
           <FullBleed>
             <AIInfographicFlow />
           </FullBleed>
           <Center>
-            <Para>无需设计经验，AI 完成从内容理解到可视化呈现的全流程</Para>
+            <Para>{sectionContent.ai.note}</Para>
             <div className="mt-5">
               <ButtonLink
                 href={'/ai'}
                 type="primary"
                 size="lg"
                 className="w-full sm:w-auto justify-center"
-                label="前往体验">
-                前往体验
+                label={sectionContent.ai.cta}>
+                {sectionContent.ai.cta}
               </ButtonLink>
             </div>
           </Center>
@@ -443,8 +457,8 @@ export function HomeContent(): JSX.Element {
 
         <Section background="left-card" lazy placeholderHeight={680}>
           <Center>
-            <Header>多样主题效果</Header>
-            <Para>一键切换风格，满足不同场景需求</Para>
+            <Header>{sectionContent.themes.title}</Header>
+            <Para>{sectionContent.themes.description}</Para>
           </Center>
           <FullBleed>
             <div className="flex justify-center px-5">
@@ -452,10 +466,10 @@ export function HomeContent(): JSX.Element {
             </div>
           </FullBleed>
           <Center>
-            <Para>支持自定义主题配置，灵活扩展样式系统</Para>
+            <Para>{sectionContent.themes.note}</Para>
             <div className="flex justify-start w-full lg:justify-center">
               <CTA color="gray" icon="code" href="/learn/theme">
-                查看主题配置文档
+                {sectionContent.themes.cta}
               </CTA>
             </div>
           </Center>
@@ -463,21 +477,17 @@ export function HomeContent(): JSX.Element {
 
         <Section background="right-card" lazy placeholderHeight={740}>
           <Center>
-            <Header>在线体验</Header>
-            <Para>
-              在线编辑器中创建你的第一张信息图。用简洁配置快速完成可视化，实时预览即改即见
-            </Para>
+            <Header>{sectionContent.playground.title}</Header>
+            <Para>{sectionContent.playground.description}</Para>
           </Center>
           <FullBleed>
             <CodePlayground />
           </FullBleed>
           <Center>
-            <Para>
-              无需安装，在浏览器即可创作。丰富示例助你快速上手，轻松打造专业信息图
-            </Para>
+            <Para>{sectionContent.playground.note}</Para>
             <div className="flex justify-start w-full lg:justify-center">
               <CTA color="gray" icon="framework" href="/examples">
-                查看更多示例
+                {sectionContent.playground.cta}
               </CTA>
             </div>
           </Center>
@@ -487,16 +497,16 @@ export function HomeContent(): JSX.Element {
           <div className="max-w-7xl mx-auto flex flex-col lg:flex-row px-5">
             <div className="max-w-3xl lg:max-w-7xl gap-5 flex flex-col lg:flex-row lg:px-5">
               <div className="w-full lg:w-6/12 max-w-3xl flex flex-col items-start justify-start lg:ps-5 lg:pe-10">
-                <Header>持续演进，拥抱未来</Header>
-                <Para>愿景：让信息图成为 AI 时代的视觉语言基础设施</Para>
+                <Header>{sectionContent.evolution.title}</Header>
+                <Para>{sectionContent.evolution.description}</Para>
                 <div className="order-last pt-5 w-full">
                   <div className="flex flex-row justify-between items-center gap-3 mt-5 lg:-mt-2 w-full">
                     <p className="uppercase tracking-wide font-bold text-sm text-tertiary dark:text-tertiary-dark flex flex-row gap-2 items-center">
                       <IconChevron />
-                      特性
+                      {sectionContent.evolution.featuresLabel}
                     </p>
                     <p className="uppercase tracking-wide font-bold text-sm text-tertiary dark:text-tertiary-dark flex flex-row gap-2 items-center">
-                      未来计划
+                      {sectionContent.evolution.roadmapLabel}
                       <IconChevron displayDirection="right" />
                     </p>
                   </div>
@@ -516,20 +526,15 @@ export function HomeContent(): JSX.Element {
                   </div>
                   <div className="flex lg:hidden justify-start w-full">
                     <CTA color="gray" icon="news" href="">
-                      了解更多动态
+                      {sectionContent.evolution.cta}
                     </CTA>
                   </div>
-                  {/* <div className="hidden lg:flex justify-start w-full">
-                    <CTA color="gray" icon="news" href="">
-                      了解更多动态
-                    </CTA>
-                  </div> */}
                 </div>
               </div>
               <div className="w-full lg:w-6/12 flex flex-col items-center lg:items-end">
                 <img
                   src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*15OrQo7ftkAAAAAASxAAAAgAemJ7AQ/original"
-                  alt="AntV Infographic 团队技术探索示意"
+                  alt={sectionContent.evolution.alt}
                   className="w-full h-auto rounded-2xl lg:max-h-[480px] object-contain"
                   draggable={false}
                 />
@@ -541,16 +546,13 @@ export function HomeContent(): JSX.Element {
         <Section background="left-card" lazy placeholderHeight={520}>
           <div className="mt-20 px-5 lg:px-0 mb-6 max-w-4xl text-center text-opacity-80">
             <Logo className="text-brand dark:text-brand-dark w-24 lg:w-28 mb-10 lg:mb-8 mt-12 h-auto mx-auto self-start" />
-            <Header>
-              欢迎使用 <br className="hidden lg:inline" />
-              AntV Infographic
-            </Header>
+            <Header>{sectionContent.welcome.title}</Header>
             <ButtonLink
               href={'/learn'}
               type="primary"
               size="lg"
-              label="立即开始">
-              立即开始
+              label={sectionContent.welcome.cta}>
+              {sectionContent.welcome.cta}
             </ButtonLink>
           </div>
         </Section>

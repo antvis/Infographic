@@ -1,14 +1,8 @@
-export const TYPE_DISPLAY_NAMES = {
-  compare: '对比型',
-  list: '列表型',
-  chart: '图表型',
-  relation: '关系型',
-  sequence: '顺序型',
-  quadrant: '四象限型',
-  hierarchy: '层级型',
-};
+import {Language} from '../../utils/i18n';
+import {translations} from '../../utils/translations';
 
-export const SERIES_DISPLAY_NAMES: Record<string, string> = {
-  'hierarchy-tree': '层级树',
-  'hierarchy-mindmap': '思维导图',
-};
+export const getTypeDisplayNames = (lang: Language) =>
+  translations[lang].gallery.types;
+
+export const getSeriesDisplayNames = (lang: Language) =>
+  translations[lang].gallery.series;
