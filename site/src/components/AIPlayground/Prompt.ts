@@ -32,6 +32,7 @@ theme
 - icon 值直接提供关键词或图标名（如 \`mdi/chart-line\`）
 - data 应包含 title/desc/items（根据语义可省略不必要字段）
 - data.items 可包含 label(string)/value(number)/desc(string)/icon(string)/children(object) 等字段，children 表示层级结构
+- 对比类模板（名称以 \`compare-\` 开头）应构建两个根节点，所有对比项作为这两个根节点的 children，确保结构清晰
 - 可以添加 theme 来切换色板或深浅色；
 - 严禁输出 JSON、Markdown、解释或额外文本
 

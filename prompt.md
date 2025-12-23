@@ -53,6 +53,7 @@ EN: AntV Infographic Syntax is a syntax for describing information graph renderi
 - The icon value is provided directly with keywords or icon names (such as \`mdi/chart-line\`))
 - data should contain title/desc/items (which can be omitted according to semantics)
 - data.items should contain label(string)/value(number)/desc(string)/icon(string)/children(object), where children represents the hierarchical structure
+- For comparison templates (template names starting with `compare-`), construct exactly two root nodes and place every comparison item under them as children to keep the hierarchy clear
 - You can switch color palettes or dark/light themes through the theme.
 - You are not allowed to output JSON, Markdown, explanations or additional text.
 
