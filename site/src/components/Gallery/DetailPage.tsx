@@ -10,6 +10,8 @@ import {
 } from 'lucide-react';
 import {useRouter} from 'next/router';
 import {useEffect, useRef, useState} from 'react';
+import {getStoredLanguage, type Language} from '../../utils/i18n';
+import {t} from '../../utils/translations';
 import {CodeEditor} from '../MDX/CodeEditor';
 import {TEMPLATES} from './templates';
 
@@ -81,11 +83,17 @@ export default function DetailPage() {
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [lang, setLang] = useState<Language>('zh-CN');
 
   const containerRef = useRef<HTMLDivElement>(null);
   const infographicRef = useRef<any>(null);
+  const detailTexts = t(lang, 'gallery.detail') as any;
 
-  // 初始化代码模版
+  useEffect(() => {
+    setLang(getStoredLanguage());
+  }, []);
+
+  // Initialize code template
   useEffect(() => {
     const initialize = async () => {
       const initialCode = await generateJavaScriptCode(initialTemplate);
@@ -107,7 +115,7 @@ export default function DetailPage() {
       const config = parseConfigFromCode(code);
 
       if (!config) {
-        setError('Syntax Error: Invalid configuration object');
+        setError(t(lang, 'gallery.detail.errors.syntax'));
         return;
       }
 
@@ -126,11 +134,11 @@ export default function DetailPage() {
         })
         .catch((err) => {
           console.error('Render error:', err);
-          setError(`Render Error: ${err.message}`);
+          setError(t(lang, 'gallery.detail.errors.render', err.message));
         });
     } catch (err: any) {
       console.error('Execution error:', err);
-      setError(`Execution Error: ${err.message}`);
+      setError(t(lang, 'gallery.detail.errors.execution', err.message));
     }
 
     return () => {
@@ -139,7 +147,7 @@ export default function DetailPage() {
         infographicRef.current = null;
       }
     };
-  }, [code]);
+  }, [code, lang]);
 
   const handleCodeChange = (e: string) => {
     setCode(e);
@@ -164,7 +172,7 @@ export default function DetailPage() {
           animate={{opacity: 1, x: 0}}
           onClick={handleBack}
           className="absolute top-6 left-6 z-30 p-3 bg-card dark:bg-card-dark rounded-full shadow-nav dark:shadow-nav-dark border border-primary/10 dark:border-primary-dark/10 text-secondary dark:text-secondary-dark hover:text-link hover:dark:text-link-dark hover:scale-105 transition-all group"
-          title="Back to Gallery">
+          title={detailTexts.back}>
           <ArrowLeft className="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" />
         </motion.button>
 
@@ -186,14 +194,14 @@ export default function DetailPage() {
               </button>
             </div>
 
-            {/* 直接渲染容器 */}
+            {/* Canvas container */}
             <div
               id="container"
               ref={containerRef}
               className="w-full h-full p-8 flex items-center justify-center"
               style={{minHeight: '600px'}}></div>
 
-            {/* 错误提示 */}
+            {/* Error banner */}
             {error && (
               <div className="absolute inset-0 flex items-center justify-center bg-card/95 dark:bg-card-dark/95 backdrop-blur">
                 <div className="text-center p-6 max-w-md">
@@ -212,15 +220,15 @@ export default function DetailPage() {
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 px-2 py-1 bg-gray-10 dark:bg-gray-90 rounded border border-primary/10 dark:border-primary-dark/15">
               <span className="text-[10px] font-semibold text-tertiary dark:text-tertiary-dark uppercase">
-                Template
+                {detailTexts.templateLabel}
               </span>
               <span className="text-xs font-mono text-primary dark:text-primary-dark font-semibold">
-                index.js
+                {detailTexts.fileLabel}
               </span>
             </div>
             {error && (
               <span className="text-[11px] text-red-500 flex items-center gap-1 font-medium animate-pulse">
-                <AlertCircle className="w-3 h-3" /> Error
+                <AlertCircle className="w-3 h-3" /> {detailTexts.errorBadge}
               </span>
             )}
           </div>
@@ -231,7 +239,7 @@ export default function DetailPage() {
                 setCode(await generateJavaScriptCode(initialTemplate))
               }
               className="p-2 text-tertiary dark:text-tertiary-dark hover:text-primary hover:dark:text-primary-dark hover:bg-gray-40/5 dark:hover:bg-gray-60/5 rounded-md transition-colors"
-              title="Reset Code">
+              title={detailTexts.reset}>
               <RotateCcw className="w-4 h-4" />
             </button>
             <div className="w-[1px] h-4 bg-primary/10 dark:bg-primary-dark/15 mx-1" />
@@ -243,7 +251,7 @@ export default function DetailPage() {
               ) : (
                 <Copy className="w-3.5 h-3.5" />
               )}
-              Copy
+              {copied ? detailTexts.copySuccess : detailTexts.copy}
             </button>
           </div>
         </div>
@@ -259,8 +267,10 @@ export default function DetailPage() {
           </div>
 
           <div className="absolute bottom-0 left-0 right-0 px-4 py-2 bg-card/80 dark:bg-card-dark/80 backdrop-blur border-t border-primary/10 dark:border-primary-dark/10 text-[10px] text-tertiary dark:text-tertiary-dark flex justify-between items-center">
-            <span>Line {code.split('\n').length}, Col 1</span>
-            <span>UTF-8 • JavaScript</span>
+            <span>
+              {t(lang, 'gallery.detail.status', code.split('\n').length)}
+            </span>
+            <span>{detailTexts.footer}</span>
           </div>
         </div>
       </div>

@@ -1,6 +1,8 @@
 import {InfographicOptions} from '@antv/infographic';
 import {motion} from 'framer-motion';
 import {useEffect, useRef, useState} from 'react';
+import {type Language} from '../../utils/i18n';
+import {t} from '../../utils/translations';
 import {IconErrorCircle} from '../Icon/IconErrorCircle';
 import {
   Tooltip,
@@ -8,7 +10,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../ui/tooltip';
-import {EXAMPLE_PROMPTS} from './constants';
 
 export function ChatPanel({
   prompt,
@@ -22,6 +23,8 @@ export function ChatPanel({
   onDelete,
   onOpenConfig,
   onClear,
+  lang,
+  examples,
   panelClassName = 'min-h-[520px] h-[640px] max-h-[75vh]',
 }: {
   prompt: string;
@@ -46,10 +49,14 @@ export function ChatPanel({
   onDelete: (id: string) => void;
   onOpenConfig: () => void;
   onClear: () => void;
+  lang: Language;
+  examples: Array<{title: string; text: string}>;
   panelClassName?: string;
 }) {
   const historyRef = useRef<HTMLDivElement>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const chatTexts = t(lang, 'aiPage.chat') as any;
+  const apiErrorFallback = t(lang, 'aiPage.errors.apiKey');
 
   useEffect(() => {
     if (!historyRef.current) return;
@@ -77,7 +84,7 @@ export function ChatPanel({
       className={`rounded-2xl border border-border dark:border-border-dark bg-card dark:bg-card-dark shadow-nav dark:shadow-nav-dark p-5 lg:p-6 flex flex-col overflow-visible ${panelClassName}`}>
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-4">
         <p className="text-base font-semibold text-primary dark:text-primary-dark">
-          生成记录
+          {chatTexts.historyTitle}
         </p>
         <div className="flex flex-wrap items-center gap-2">
           <button
@@ -102,7 +109,7 @@ export function ChatPanel({
                 d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
               />
             </svg>
-            配置服务
+            {chatTexts.configure}
           </button>
           <button
             type="button"
@@ -120,10 +127,10 @@ export function ChatPanel({
                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
               />
             </svg>
-            清空对话
+            {chatTexts.clear}
           </button>
           <span className="text-xs text-tertiary dark:text-tertiary-dark bg-wash dark:bg-wash-dark px-3 py-1 rounded-full font-medium">
-            ⌘/Ctrl + ↵
+            {chatTexts.shortcut}
           </span>
         </div>
       </div>
@@ -151,10 +158,10 @@ export function ChatPanel({
                 </div>
                 <div className="flex-1">
                   <p className="font-semibold text-primary dark:text-primary-dark mb-1.5 text-base">
-                    开始你的创作
+                    {chatTexts.emptyTitle}
                   </p>
                   <p className="text-sm leading-relaxed">
-                    还没有生成记录，使用下方示例或粘贴你的内容开始。
+                    {chatTexts.emptyDescription}
                   </p>
                 </div>
               </div>
@@ -171,8 +178,7 @@ export function ChatPanel({
                   (!item.syntax && !item.config && !isError);
                 const showError = item.status === 'error';
                 const isExpanded = expandedId === item.id;
-                const errorMessage =
-                  item.error || '生成失败，请检查 API Key 或网络连接';
+                const errorMessage = item.error || apiErrorFallback;
 
                 const handleSelect = () => {
                   if (isError || disabled) return;
@@ -248,7 +254,7 @@ export function ChatPanel({
                               }}
                               type="button"
                               className="inline-flex items-center justify-center h-7 px-2 text-[11px] font-semibold text-red-500 dark:text-red-400 hover:underline">
-                              重试
+                              {chatTexts.retry}
                             </button>
                             <Tooltip>
                               <TooltipTrigger asChild>
@@ -268,7 +274,7 @@ export function ChatPanel({
                                 onDelete(item.id);
                               }}
                               type="button"
-                              aria-label="删除记录"
+                              aria-label={chatTexts.deleteAria}
                               className="inline-flex items-center justify-center h-8 w-8 text-tertiary dark:text-tertiary-dark hover:text-primary dark:hover:text-primary-dark transition-colors">
                               <svg
                                 className="w-3.5 h-3.5"
@@ -311,7 +317,7 @@ export function ChatPanel({
 
       <div className="mt-4 space-y-3">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-          {EXAMPLE_PROMPTS.map((example) => (
+          {examples.map((example) => (
             <button
               key={example.title}
               onClick={() => {
@@ -340,7 +346,7 @@ export function ChatPanel({
               }
             }}
             rows={4}
-            placeholder="提供你的数据，我会帮你生成信息图"
+            placeholder={chatTexts.placeholder}
             className="w-full bg-transparent outline-none resize-none text-[15px] leading-relaxed text-primary dark:text-primary-dark placeholder:text-tertiary dark:placeholder:text-tertiary-dark py-3.5 px-4"
           />
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between px-4 pb-3.5 pt-0">
@@ -358,7 +364,7 @@ export function ChatPanel({
                 />
               </svg>
               <span className="leading-tight select-none">
-                明确图表类型、数据来源、配色/风格，会生成得更准
+                {chatTexts.helper}
               </span>
             </div>
             <button
@@ -385,7 +391,7 @@ export function ChatPanel({
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     />
                   </svg>
-                  生成中...
+                  {chatTexts.sending}
                 </>
               ) : (
                 <>
@@ -401,7 +407,7 @@ export function ChatPanel({
                       d="M13 10V3L4 14h7v7l9-11h-7z"
                     />
                   </svg>
-                  生成信息图
+                  {chatTexts.send}
                 </>
               )}
             </button>

@@ -6,6 +6,8 @@ import {BrowserChrome} from 'components/Layout/HomePage/BrowserChrome';
 import {CodeEditor} from 'components/MDX/CodeEditor';
 import {AnimatePresence, motion} from 'framer-motion';
 import {useCallback, useMemo, useRef} from 'react';
+import {type Language} from '../../utils/i18n';
+import {t} from '../../utils/translations';
 
 type TabKey = 'preview' | 'syntax';
 
@@ -22,6 +24,7 @@ export function PreviewPanel({
   onCopy,
   onRenderError,
   panelClassName = 'min-h-[520px] h-[640px] max-h-[75vh]',
+  lang,
 }: {
   activeTab: TabKey;
   onTabChange: (tab: TabKey) => void;
@@ -35,6 +38,7 @@ export function PreviewPanel({
   onCopy?: (hint: string) => void;
   onRenderError?: (message: string | null) => void;
   panelClassName?: string;
+  lang: Language;
 }) {
   const infographicRef = useRef<InfographicHandle | null>(null);
   const fallbackValue = fallbackSyntax || '';
@@ -48,13 +52,14 @@ export function PreviewPanel({
       ? editorValue
       : fallbackValue
     : jsonPreview;
+  const previewTexts = t(lang, 'aiPage.preview') as any;
 
   const handleCopy = useCallback(async () => {
     const success = (await infographicRef.current?.copyToClipboard()) || false;
     if (success && onCopy) {
-      onCopy('已复制图片');
+      onCopy(t(lang, 'aiPage.notifications.copyImage'));
     }
-  }, [onCopy]);
+  }, [lang, onCopy]);
 
   const navButtons = useMemo(
     () => (
@@ -66,7 +71,7 @@ export function PreviewPanel({
               ? 'bg-link text-white shadow-sm'
               : 'bg-[#ebecef] hover:bg-[#d3d7de] text-tertiary dark:text-tertiary-dark dark:bg-gray-70 dark:hover:bg-gray-60'
           }`}>
-          <span className="sr-only">预览</span>
+          <span className="sr-only">{previewTexts.tabPreview}</span>
           <svg
             aria-hidden="true"
             className="h-4 w-4"
@@ -96,18 +101,18 @@ export function PreviewPanel({
               ? 'bg-link text-white shadow-sm'
               : 'bg-[#ebecef] hover:bg-[#d3d7de] text-tertiary dark:text-tertiary-dark dark:bg-gray-70 dark:hover:bg-gray-60'
           }`}>
-          <span className="sr-only">语法</span>
+          <span className="sr-only">{previewTexts.tabSyntax}</span>
           <IconCodeBlock className="h-4 w-4" aria-hidden="true" />
         </button>
         <button
           onClick={handleCopy}
           className="inline-flex items-center justify-center h-7 w-7 rounded-full bg-[#ebecef] hover:bg-[#d3d7de] text-tertiary dark:text-tertiary-dark dark:bg-gray-70 dark:hover:bg-gray-60">
-          <span className="sr-only">复制图片</span>
+          <span className="sr-only">{previewTexts.copyImage}</span>
           <IconCopy className="h-4 w-4" aria-hidden="true" />
         </button>
       </div>
     ),
-    [activeTab, handleCopy, onTabChange]
+    [activeTab, handleCopy, onTabChange, previewTexts]
   );
 
   return (
@@ -119,7 +124,11 @@ export function PreviewPanel({
       className={`rounded-2xl border border-border dark:border-border-dark bg-card dark:bg-card-dark shadow-nav dark:shadow-nav-dark overflow-hidden flex flex-col ${panelClassName}`}>
       <BrowserChrome
         domain=""
-        path={activeTab === 'preview' ? 'Preview' : 'Syntax'}
+        path={
+          activeTab === 'preview'
+            ? previewTexts.tabPreview
+            : previewTexts.tabSyntax
+        }
         hasRefresh
         error={error || null}
         hideDefaultActions
@@ -149,7 +158,7 @@ export function PreviewPanel({
                         <div className="flex flex-col items-center gap-3">
                           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-link dark:border-link-dark" />
                           <p className="text-sm text-secondary dark:text-secondary-dark font-medium">
-                            生成中...
+                            {previewTexts.generating}
                           </p>
                         </div>
                       </motion.div>
@@ -167,7 +176,7 @@ export function PreviewPanel({
                     ) : (
                       <div className="h-full w-full flex items-center justify-center rounded-xl border border-dashed border-border dark:border-border-dark">
                         <p className="text-sm text-tertiary dark:text-tertiary-dark">
-                          输入提示语以生成信息图语法
+                          {previewTexts.empty}
                         </p>
                       </div>
                     )}

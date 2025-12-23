@@ -4,11 +4,11 @@ import {Page} from 'components/Layout/Page';
 import {motion} from 'framer-motion';
 import {Check, Copy, Link2, RefreshCw, Search} from 'lucide-react';
 import {useCallback, useEffect, useMemo, useState} from 'react';
+import {getStoredLanguage, type Language} from '../../utils/i18n';
+import {t} from '../../utils/translations';
 import {IconCopy} from '../Icon/IconCopy';
 import {IconEllipsis} from '../Icon/IconEllipsis';
 import {Select} from '../ui/select';
-import {getStoredLanguage, type Language} from '../../utils/i18n';
-import {t} from '../../utils/translations';
 
 function IconCard({
   url,
@@ -90,13 +90,13 @@ function IconCard({
           <button
             onClick={copySvg}
             className="inline-flex items-center gap-1 text-xs text-primary dark:text-primary-dark hover:text-link dark:hover:text-link"
-            title="复制 SVG">
+            title={t(lang, 'iconPage.copySvg')}>
             {copying === 'svg' ? (
               <Check className="w-3 h-3" />
             ) : (
               <Copy className="w-3 h-3" />
             )}
-            SVG
+            {t(lang, 'iconPage.svgLabel')}
           </button>
         </div>
       )}
@@ -121,11 +121,18 @@ export function IconPageContent() {
     const currentLang = getStoredLanguage();
     setLang(currentLang);
     // Set initial query based on language
-    const presetQueriesForLang = t(currentLang, 'iconPage.presetQueries') as string[];
+    const presetQueriesForLang = t(
+      currentLang,
+      'iconPage.presetQueries'
+    ) as string[];
     setQuery(presetQueriesForLang[0] || '');
   }, []);
 
-  const presetQueries = t(lang, 'iconPage.presetQueries') as string[];
+  const iconTexts = t(lang, 'iconPage') as any;
+  const presetQueries = iconTexts.presetQueries as string[];
+  const defaultQuery = presetQueries[0] || '';
+  const searchTexts = iconTexts.search;
+  const sidebarTexts = iconTexts.sidebar;
 
   const sampleFallback = useMemo(
     () => Array.from({length: topK}, (_, idx) => `placeholder-${idx}`),
@@ -151,17 +158,17 @@ export function IconPageContent() {
         if (result.status && result.data && result.data.success) {
           setIcons(result.data.data);
         } else {
-          setError('未获取到结果，请稍后再试');
+          setError(iconTexts.errors.noResult);
         }
       } catch (err) {
         console.error(err);
-        setError('获取图标时发生错误');
+        setError(iconTexts.errors.fetch);
         setIcons(sampleFallback);
       } finally {
         setLoading(false);
       }
     },
-    [topK, sampleFallback]
+    [topK, sampleFallback, iconTexts.errors.fetch, iconTexts.errors.noResult]
   );
 
   useEffect(() => {
@@ -174,10 +181,10 @@ export function IconPageContent() {
 
   const endpointParams = useMemo(
     () => ({
-      text: query.trim() || '数据分析',
+      text: query.trim() || defaultQuery,
       topK: topK.toString(),
     }),
-    [query, topK]
+    [query, topK, defaultQuery]
   );
 
   const endpointUrl = useMemo(() => {
@@ -191,7 +198,7 @@ export function IconPageContent() {
   const copyEndpoint = async () => {
     try {
       await navigator.clipboard.writeText(endpointUrl);
-      handleCopy('接口地址已复制');
+      handleCopy(iconTexts.notifications.endpointCopied);
     } catch (err) {
       console.error('Failed to copy endpoint', err);
     }
@@ -202,8 +209,8 @@ export function IconPageContent() {
   return (
     <Page
       toc={[]}
-      routeTree={{title: 'Icon', path: '/icon', routes: []}}
-      meta={{title: 'Icon 智能推荐'}}
+      routeTree={{title: t(lang, 'nav.icon'), path: '/icon', routes: []}}
+      meta={{title: iconTexts.metaTitle}}
       section="icon"
       topNavOptions={{
         hideBrandWhenHeroVisible: true,
@@ -221,13 +228,13 @@ export function IconPageContent() {
             animate={{opacity: 1, y: 0}}
             transition={{duration: 0.6}}>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight mb-4 text-primary dark:text-primary-dark">
-              Infographic{' '}
+              {iconTexts.hero.titlePrefix}{' '}
               <span className="bg-gradient-to-r from-link to-purple-40 bg-clip-text text-transparent">
-                Icons
+                {iconTexts.hero.titleHighlight}
               </span>
             </h1>
             <p className="text-lg lg:text-xl text-secondary dark:text-secondary-dark leading-relaxed">
-              提供 100,000+ 图标，支持语义化查询检索
+              {iconTexts.hero.description}
             </p>
           </motion.header>
         </div>
@@ -243,10 +250,10 @@ export function IconPageContent() {
                 <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-850 flex flex-wrap items-center gap-4">
                   <div>
                     <div className="text-sm uppercase tracking-[0.2em] text-gray-500 dark:text-gray-500">
-                      ICON SEARCH
+                      {searchTexts.badge}
                     </div>
                     <div className="text-2xl font-semibold text-primary dark:text-primary-dark">
-                      语义化检索图标
+                      {searchTexts.title}
                     </div>
                   </div>
                 </div>
@@ -263,7 +270,7 @@ export function IconPageContent() {
                           onKeyDown={(e) =>
                             e.key === 'Enter' && fetchIcons(query)
                           }
-                          placeholder="例如：笔记本电脑"
+                          placeholder={searchTexts.placeholder}
                           className="w-full bg-transparent border-none focus:outline-none focus:ring-0 text-primary dark:text-primary-dark placeholder:text-gray-400 dark:placeholder:text-gray-600 text-sm"
                         />
                       </div>
@@ -275,24 +282,24 @@ export function IconPageContent() {
                           {loading ? (
                             <>
                               <RefreshCw className="w-4 h-4 animate-spin" />
-                              搜索中
+                              {searchTexts.buttonLoading}
                             </>
                           ) : (
                             <>
                               <Search className="w-4 h-4" />
-                              搜索
+                              {searchTexts.button}
                             </>
                           )}
                         </button>
                         <Select
                           value={String(topK)}
                           onValueChange={(value) => setTopK(Number(value))}
-                          placeholder={`Top ${topK}`}
+                          placeholder={searchTexts.topKOption(topK)}
                           width={80}
                           className="shrink-0 bg-white dark:bg-gray-900 text-sm border-gray-200 dark:border-gray-800"
                           options={[1, 5, 10, 20].map((option) => ({
                             value: String(option),
-                            label: `Top ${option}`,
+                            label: searchTexts.topKOption(option),
                           }))}
                         />
                       </div>
@@ -355,14 +362,14 @@ export function IconPageContent() {
               <div className="bg-white dark:bg-card-dark rounded-2xl border border-gray-100 dark:border-gray-850 shadow-lg p-6 sticky top-24 h-full flex flex-col">
                 <h2 className="text-2xl font-bold mb-6 text-primary dark:text-primary-dark flex items-center gap-2">
                   <div className="w-1 h-6 bg-link rounded-full" />
-                  OpenAPI
+                  {sidebarTexts.title}
                 </h2>
 
                 <div className="space-y-8">
                   <div>
                     <div className="flex items-center justify-between gap-3 mb-3">
                       <h3 className="text-lg font-semibold text-primary dark:text-primary-dark">
-                        Endpoint
+                        {sidebarTexts.endpoint}
                       </h3>
                       <button
                         onClick={copyEndpoint}
@@ -377,7 +384,7 @@ export function IconPageContent() {
                       <span className="whitespace-pre-wrap break-words">
                         https://www.weavefox.cn/api/open/v1/icon?
                         <span className="font-semibold text-primary dark:text-primary-dark">
-                          text
+                          {sidebarTexts.paramTextLabel}
                         </span>
                         =
                         <span className="italic text-primary dark:text-primary-dark">
@@ -385,7 +392,7 @@ export function IconPageContent() {
                         </span>
                         &
                         <span className="font-semibold text-primary dark:text-primary-dark">
-                          topK
+                          {sidebarTexts.paramTopKLabel}
                         </span>
                         =
                         <span className="italic text-primary dark:text-primary-dark">
@@ -397,37 +404,37 @@ export function IconPageContent() {
 
                   <div>
                     <h3 className="text-lg font-semibold mb-3 text-primary dark:text-primary-dark">
-                      Search Parameters
+                      {sidebarTexts.searchParams}
                     </h3>
                     <div className="space-y-3">
                       <div className="bg-white dark:bg-card-dark p-4 rounded-lg border border-gray-10 dark:border-primary-dark/20">
                         <div className="flex items-baseline gap-2 mb-2">
                           <code className="text-base font-mono text-secondary dark:text-secondary-dark">
-                            text
+                            {sidebarTexts.paramTextLabel}
                           </code>
                           <span className="text-sm font-mono text-pink-500">
-                            string
+                            {sidebarTexts.paramTextType}
                           </span>
                           <span className="text-sm text-red-500">*</span>
                         </div>
                         <p className="text-sm text-secondary dark:text-secondary-dark">
-                          查询文本，如 &quot;数据分析&quot;。
+                          {sidebarTexts.paramTextDescription}
                         </p>
                       </div>
                       <div className="bg-white dark:bg-card-dark p-4 rounded-lg border border-gray-10 dark:border-primary-dark/20">
                         <div className="flex items-baseline gap-2 mb-2">
                           <code className="text-base font-mono text-secondary dark:text-secondary-dark">
-                            topK
+                            {sidebarTexts.paramTopKLabel}
                           </code>
                           <span className="text-sm font-mono text-pink-500">
-                            number
+                            {sidebarTexts.paramTopKType}
                           </span>
                           <span className="text-sm text-gray-40 dark:text-gray-60">
-                            default: 5
+                            {sidebarTexts.paramTopKDefault}
                           </span>
                         </div>
                         <p className="text-sm text-secondary dark:text-secondary-dark">
-                          查询图标数量 (1-20)。
+                          {sidebarTexts.paramTopKDescription}
                         </p>
                       </div>
                     </div>
@@ -435,7 +442,7 @@ export function IconPageContent() {
 
                   <div>
                     <h3 className="text-lg font-semibold mb-3 text-primary dark:text-primary-dark">
-                      Response
+                      {sidebarTexts.response}
                     </h3>
                     <div className="bg-gray-5 dark:bg-gray-90 p-4 rounded-lg font-mono text-sm overflow-x-auto border border-gray-10 dark:border-gray-80">
                       <pre className="text-secondary dark:text-secondary-dark">
