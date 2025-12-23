@@ -186,7 +186,7 @@ export function BrowserChrome({
         }>
         {/* 地址栏 */}
         <div className="w-full h-14 rounded-t-2xl shadow-outer-border backdrop-filter overflow-visible backdrop-blur-lg backdrop-saturate-200 bg-wash dark:bg-card-dark z-50 absolute top-0 px-3 gap-2 flex flex-row items-center">
-          <div className="select-none h-8 relative bg-gray-30/20 dark:bg-gray-950 text-sm text-tertiary dark:text-tertiary-dark text-center rounded-full flex-1 min-w-0 flex-row flex items-center justify-center px-3">
+          <div className="h-8 relative bg-gray-30/20 dark:bg-gray-950 text-sm text-tertiary dark:text-tertiary-dark text-center rounded-full flex-1 min-w-0 flex-row flex items-center justify-center px-3">
             {hasRefresh && <div className="h-4 w-6" />}
             <div className="w-full leading-snug flex flex-row items-center justify-center truncate">
               {/* 锁图标或错误图标 */}

@@ -26,12 +26,12 @@ export function AIInfographicFlow() {
         <Image
           {...imgProps}
           src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*NQfsRok_qYoAAAAAXQAAAAgAemJ7AQ/original.svg"
-          className="w-full h-auto select-none block dark:hidden"
+          className="w-full h-auto block dark:hidden"
         />
         <Image
           {...imgProps}
           src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*4KcXS5qkNEkAAAAAXWAAAAgAemJ7AQ/original.svg"
-          className="w-full h-auto select-none hidden dark:block"
+          className="w-full h-auto hidden dark:block"
         />
       </div>
     </motion.div>

@@ -48,7 +48,7 @@ const FilterChip = ({
     <button
       onClick={onClick}
       className={`
-        relative px-3.5 py-1.5 rounded-full text-sm font-semibold tracking-wide transition-all duration-200 border select-none
+        relative px-3.5 py-1.5 rounded-full text-sm font-semibold tracking-wide transition-all duration-200 border
         ${
           isActive
             ? 'bg-link text-white border-link shadow-secondary-button-stroke transform scale-[1.02] dark:bg-link-dark dark:border-link-dark'
@@ -221,7 +221,7 @@ export default function GalleryPage() {
           <div className="px-5 sm:px-12 max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             {/* Filters Left */}
             <div className="flex flex-wrap items-center gap-2">
-              <div className="flex items-center gap-2 mr-3 text-tertiary dark:text-tertiary-dark select-none">
+              <div className="flex items-center gap-2 mr-3 text-tertiary dark:text-tertiary-dark">
                 <Filter className="w-3.5 h-3.5" />
                 <span className="text-[11px] font-semibold uppercase tracking-[0.2em]">
                   Filter
