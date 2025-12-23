@@ -20,7 +20,7 @@ With unified syntax and component architecture, you can render structured data i
 
 <div align="center">
 
-[Website](https://infographic.antv.vision) · [GitHub](https://github.com/antvis/infographic) · [Document](https://infographic.antv.vision/learn) · [Gallery](https://infographic.antv.vision/examples) · [AI Agent](https://infographic.antv.vision/ai)
+[Website](https://infographic.antv.vision) · [GitHub](https://github.com/antvis/infographic) · [Document](https://infographic.antv.vision/learn) · [Gallery](https://infographic.antv.vision/examples) · [Prompt](./prompt.md) · [AI Agent](https://infographic.antv.vision/ai)
 
 <img src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*ZdeISZWHuyIAAAAAbEAAAAgAemJ7AQ/fmt.webp" width="768" alt="AntV Infographic Preview">
 
