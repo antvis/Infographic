@@ -19,7 +19,7 @@
 
 <div align="center">
 
-[官网](https://infographic.antv.vision) · [GitHub](https://github.com/antvis/infographic) · [文档](https://infographic.antv.vision/learn) · [示例](https://infographic.antv.vision/examples) · [AI 生成](https://infographic.antv.vision/ai)
+[官网](https://infographic.antv.vision) · [GitHub](https://github.com/antvis/infographic) · [文档](https://infographic.antv.vision/learn) · [示例](https://infographic.antv.vision/examples) · [Prompt](./prompt.md) · [AI Agent](https://infographic.antv.vision/ai)
 
 <img src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*ZdeISZWHuyIAAAAAbEAAAAgAemJ7AQ/fmt.webp" width="768" alt="AntV Infographic 预览">
 
@@ -27,12 +27,10 @@
 
 ## ✨ 特性
 
-- 📦 **开箱即用**：内置 100+ 信息图模板、数据项组件与布局，快速构建专业信息图
+- 🤖 **AI 友好**：配置和语法更适合 AI 生成，提供简洁有效的 Prompt，支持 AI 流式输出和渲染
+- 📦 **开箱即用**：内置 ~200 信息图模板、数据项组件与布局，快速构建专业信息图
 - 🎨 **主题系统**：支持手绘（rough）、渐变、图案、多套预设主题，并支持深度自定义
 - 🧑🏻‍💻 **内置编辑器**：内置信息图的编辑器，让 AI 生成之后可以二次编辑微调
-- 🧩 **组件化架构**：数据项、结构布局、渲染单元完全组件化，可灵活组合与扩展
-- 🎯 **声明式配置**：简单清晰的配置方式，更适合 AI 生成、机器理解与自动化流程
-- 🤖 **AI 友好**：完善的 JSON Schema 定义，使大模型可自动生成可用配置
 - 📐 **高质量 SVG 输出**：默认基于 SVG 渲染，保证视觉品质与可编辑性
 
 ## 🚀 安装

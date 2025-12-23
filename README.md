@@ -28,12 +28,10 @@ With unified syntax and component architecture, you can render structured data i
 
 ## ✨ Features
 
-- 📦 **Ready to use**: 100+ built-in templates, data-item components, and layouts to assemble infographics in minutes
+- 🤖 **AI-friendly**: Prompt and syntax more suitable for AI generation, provides concise and effective prompts, supports AI streaming output and rendering 
+- 📦 **Ready to use**: ~200 built-in templates, data-item components, and layouts to assemble infographics in minutes
 - 🎨 **Themeable**: Hand-drawn (rough), gradients, patterns, multiple presets, and deep customization
 - 🧑🏻‍💻 **Built-in editor**: built-in editor for AI-generated infographics, allowing for further customization and refinement
-- 🧩 **Composable**: Structures, items, and render units are fully componentized for flexible extension
-- 🎯 **Declarative Configuration**: Simple and clear configuration approach, ideal for AI generation, machine understanding, and automated workflows
-- 🤖 **AI-friendly**: Declarative config with JSON Schema, ideal for AI generation and automated workflows
 - 📐 **High-quality SVG**: Default SVG output for crisp visuals and easy editing/export
 
 ## 🚀 Installation
