@@ -1,10 +1,5 @@
-import * as React from 'react';
 import {useEffect, useState} from 'react';
-import {
-  getStoredLanguage,
-  Language,
-  setStoredLanguage,
-} from '../../utils/i18n';
+import {getStoredLanguage, Language, setStoredLanguage} from '../../utils/i18n';
 
 const languageIcon = (
   <svg

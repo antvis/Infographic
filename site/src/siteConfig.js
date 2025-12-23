@@ -8,8 +8,8 @@ exports.siteConfig = {
   // --------------------------------------
   // Multi-language support
   languages: [
-    { code: 'zh-CN', label: '简体中文' },
-    { code: 'en', label: 'English' }
+    {code: 'zh-CN', label: '简体中文'},
+    {code: 'en', label: 'English'},
   ],
   defaultLanguage: 'zh-CN',
   // --------------------------------------

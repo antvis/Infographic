@@ -3,31 +3,42 @@ import {MDXComponents} from 'components/MDX/MDXComponents';
 import {useRouter} from 'next/router';
 import {Fragment, useEffect, useMemo, useState} from 'react';
 import compileMDX from 'utils/compileMDX';
-import {getStoredLanguage} from '../utils/i18n';
 import sidebarHome from '../sidebarHome.json';
-import sidebarLearn from '../sidebarLearn.json';
 import sidebarLearnEn from '../sidebarLearn.en.json';
-import sidebarReference from '../sidebarReference.json';
+import sidebarLearn from '../sidebarLearn.json';
 import sidebarReferenceEn from '../sidebarReference.en.json';
+import sidebarReference from '../sidebarReference.json';
+import {getStoredLanguage} from '../utils/i18n';
 
-export default function Layout({content, toc, meta, languages, contentEn, tocEn, metaEn}) {
+export default function Layout({
+  content,
+  toc,
+  meta,
+  languages,
+  contentEn,
+  tocEn,
+  metaEn,
+}) {
   const [currentLang, setCurrentLang] = useState('zh-CN');
-  
+
   useEffect(() => {
     const lang = getStoredLanguage();
     setCurrentLang(lang);
   }, []);
-  
+
   // Select content based on current language
   const activeContent = currentLang === 'en' && contentEn ? contentEn : content;
   const activeToc = currentLang === 'en' && tocEn ? tocEn : toc;
   const activeMeta = currentLang === 'en' && metaEn ? metaEn : meta;
-  
+
   const parsedContent = useMemo(
     () => JSON.parse(activeContent, reviveNodeOnClient),
     [activeContent]
   );
-  const parsedToc = useMemo(() => JSON.parse(activeToc, reviveNodeOnClient), [activeToc]);
+  const parsedToc = useMemo(
+    () => JSON.parse(activeToc, reviveNodeOnClient),
+    [activeToc]
+  );
   const section = useActiveSection();
   let routeTree;
   switch (section) {
@@ -102,11 +113,11 @@ export async function getStaticProps(context) {
 
   // Read MDX from the file.
   let path = (context.params.markdownPath || []).join('/') || 'index';
-  
+
   // Try to load both Chinese and English versions
   let mdx, mdxEn;
   let hasEnglish = false;
-  
+
   // Try Chinese version
   try {
     mdx = fs.readFileSync(rootDir + path + '.md', 'utf8');
@@ -117,7 +128,7 @@ export async function getStaticProps(context) {
       throw new Error(`No Chinese markdown file found for path: ${path}`);
     }
   }
-  
+
   // Try English version
   try {
     mdxEn = fs.readFileSync(rootDir + path + '.en.md', 'utf8');
@@ -133,18 +144,18 @@ export async function getStaticProps(context) {
   }
 
   const {toc, content, meta, languages} = await compileMDX(mdx, path, {});
-  
+
   let tocEn = toc;
   let contentEn = content;
   let metaEn = meta;
-  
+
   if (hasEnglish) {
     const resultEn = await compileMDX(mdxEn, path, {});
     tocEn = resultEn.toc;
     contentEn = resultEn.content;
     metaEn = resultEn.meta;
   }
-  
+
   return {
     props: {
       toc,

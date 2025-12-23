@@ -20,12 +20,12 @@ import {IconSearch} from 'components/Icon/IconSearch';
 import {IconStarTwinkle} from 'components/Icon/IconStarTwinkle';
 import {LanguageSwitcher} from 'components/LanguageSwitcher';
 import {Search} from 'components/Search';
+import {getStoredLanguage} from '../../../utils/i18n';
+import {t} from '../../../utils/translations';
 import {IconGitHub} from '../../Icon/IconGitHub';
 import {Logo} from '../../Logo';
 import {SidebarRouteTree} from '../Sidebar';
 import type {RouteItem} from '../getRouteMeta';
-import {getStoredLanguage} from '../../../utils/i18n';
-import {t} from '../../../utils/translations';
 import BrandMenu from './BrandMenu';
 
 const useIsoLayoutEffect =
@@ -165,7 +165,7 @@ export default function TopNav({
   if ((routeTree as any).routes.length === 1) {
     routeTree = (routeTree as any).routes[0];
   }
-  
+
   // Get current language
   useEffect(() => {
     setCurrentLang(getStoredLanguage());
