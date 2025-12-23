@@ -19,7 +19,7 @@
 
 <div align="center">
 
-[官网](https://infographic.antv.vision) · [GitHub](https://github.com/antvis/infographic) · [文档](https://infographic.antv.vision/learn) · [示例](https://infographic.antv.vision/examples) · [Prompt](./prompt.md) · [AI Agent](https://infographic.antv.vision/ai)
+[官网](https://infographic.antv.vision) · [GitHub](https://github.com/antvis/infographic) · [文档](https://infographic.antv.vision/learn) · [示例](https://infographic.antv.vision/examples) · [Prompt](./prompt.zh-CN.md) · [AI Agent](https://infographic.antv.vision/ai)
 
 <img src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*ZdeISZWHuyIAAAAAbEAAAAgAemJ7AQ/fmt.webp" width="768" alt="AntV Infographic 预览">
 
