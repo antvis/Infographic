@@ -303,7 +303,7 @@ export function IconPageContent() {
                               fetchIcons(item);
                             }
                           }}
-                          className="text-xs px-3 py-1 rounded-lg border border-gray-100 dark:border-gray-850 bg-white dark:bg-gray-900 text-secondary dark:text-secondary-dark hover:border-link hover:text-link hover:bg-link/5 dark:hover:bg-link/10 cursor-pointer select-none transition">
+                          className="text-xs px-3 py-1 rounded-lg border border-gray-100 dark:border-gray-850 bg-white dark:bg-gray-900 text-secondary dark:text-secondary-dark hover:border-link hover:text-link hover:bg-link/5 dark:hover:bg-link/10 cursor-pointer transition">
                           {item}
                         </span>
                       ))}

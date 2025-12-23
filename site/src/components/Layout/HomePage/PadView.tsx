@@ -48,7 +48,7 @@ export function PadView({
           style={
             Object.keys(contentStyle).length > 0 ? contentStyle : undefined
           }>
-          <div className="select-none w-full h-14 flex flex-row items-start pt-3 -mb-2.5 justify-between text-tertiary dark:text-tertiary-dark transition-colors duration-500">
+          <div className="w-full h-14 flex flex-row items-start pt-3 -mb-2.5 justify-between text-tertiary dark:text-tertiary-dark transition-colors duration-500">
             <span className="uppercase tracking-wide leading-none font-bold text-sm text-tertiary dark:text-tertiary-dark">
               <CurrentTime />
             </span>
