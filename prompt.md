@@ -94,7 +94,7 @@ EN: AntV Infographic Syntax is a syntax for describing information graph renderi
 - chart-pie-donut-plain-text
 - chart-pie-donut-pill-badge
 
-### Exanmple
+### Example
 
 Draw an information graph of the Internet technology evolution
 
