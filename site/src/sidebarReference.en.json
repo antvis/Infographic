@@ -1,0 +1,80 @@
+{
+  "title": "API Reference",
+  "path": "/reference",
+  "routes": [
+    {
+      "title": "Infographic",
+      "path": "/reference",
+      "routes": [
+        {
+          "title": "API",
+          "path": "/reference/infographic-api"
+        },
+        {
+          "title": "Options",
+          "path": "/reference/infographic-options"
+        },
+        {
+          "title": "Type Definitions",
+          "path": "/reference/infographic-types"
+        },
+        {
+          "title": "Exports",
+          "path": "/reference/infographic-exports"
+        }
+      ]
+    },
+    {
+      "title": "JSX",
+      "path": "/reference/jsx",
+      "routes": [
+        {
+          "title": "Primitive Nodes",
+          "path": "/reference/primitive-nodes"
+        },
+        {
+          "title": "Create Layout",
+          "path": "/reference/create-layout"
+        },
+        {
+          "title": "Utility Functions",
+          "path": "/reference/jsx-utils"
+        }
+      ]
+    },
+    {
+      "title": "Design Assets",
+      "path": "/reference/design-assets",
+      "routes": [
+        {
+          "title": "Built-in Structures",
+          "path": "/reference/built-in-structures"
+        },
+        {
+          "title": "Built-in Items",
+          "path": "/reference/built-in-items"
+        },
+        {
+          "title": "Built-in Templates",
+          "path": "/reference/built-in-templates"
+        },
+        {
+          "title": "Built-in Themes",
+          "path": "/reference/built-in-themes"
+        },
+        {
+          "title": "Built-in Palettes",
+          "path": "/reference/built-in-palettes"
+        },
+        {
+          "title": "Built-in Patterns",
+          "path": "/reference/built-in-patterns"
+        },
+        {
+          "title": "Built-in Components",
+          "path": "/reference/built-in-components"
+        }
+      ]
+    }
+  ]
+}
