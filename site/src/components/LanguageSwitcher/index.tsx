@@ -1,7 +1,5 @@
-import {useRouter} from 'next/router';
 import * as React from 'react';
 import {useEffect, useState} from 'react';
-import {siteConfig} from '../../siteConfig';
 import {
   getStoredLanguage,
   Language,
@@ -26,9 +24,7 @@ const languageIcon = (
 );
 
 export function LanguageSwitcher() {
-  const router = useRouter();
   const [currentLanguage, setCurrentLanguage] = useState<Language>('zh-CN');
-  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     setCurrentLanguage(getStoredLanguage());
@@ -37,24 +33,9 @@ export function LanguageSwitcher() {
   const switchLanguage = (newLanguage: Language) => {
     setStoredLanguage(newLanguage);
     setCurrentLanguage(newLanguage);
-    setIsOpen(false);
 
-    // Construct new path based on language
-    let newPath = router.asPath;
-    const currentPath = router.asPath.split(/[\?\#]/)[0];
-
-    // Check if we're on a documentation page
-    if (
-      currentPath.startsWith('/learn') ||
-      currentPath.startsWith('/reference')
-    ) {
-      // For now, just reload the page to pick up the new language
-      // In a full implementation, we would need to check if the translation exists
-      window.location.reload();
-    } else {
-      // For non-documentation pages, just reload
-      window.location.reload();
-    }
+    // Reload the page to pick up the new language
+    window.location.reload();
   };
 
   const otherLanguage =

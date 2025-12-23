@@ -47,7 +47,7 @@ export function t(
   language: Language,
   key: string,
   ...args: any[]
-): string | (((...args: any[]) => string)) {
+): string {
   const keys = key.split('.');
   let value: any = translations[language];
 
