@@ -2,10 +2,11 @@ import {AnimatePresence, motion} from 'framer-motion';
 import {uniq} from 'lodash-es';
 import {ArrowRight, Filter, Layers, Sparkles, X} from 'lucide-react';
 import {useRouter} from 'next/router';
-import {useMemo, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {Infographic} from '../Infographic';
-import {SERIES_DISPLAY_NAMES, TYPE_DISPLAY_NAMES} from './constants';
+import {getSeriesDisplayNames, getTypeDisplayNames} from './constants';
 import {TEMPLATES} from './templates';
+import {getStoredLanguage, type Language} from '../../utils/i18n';
 
 const getType = (templateString: string | undefined) => {
   if (!templateString) return 'general';
@@ -134,11 +135,19 @@ const GalleryCard = ({
 // 4. Page: Gallery Page
 // ==========================================
 export default function GalleryPage() {
+  const [lang, setLang] = useState<Language>('zh-CN');
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [expandedSeries, setExpandedSeries] = useState<Record<string, boolean>>(
     {}
   );
   const router = useRouter();
+
+  useEffect(() => {
+    setLang(getStoredLanguage());
+  }, []);
+
+  const TYPE_DISPLAY_NAMES = getTypeDisplayNames(lang);
+  const SERIES_DISPLAY_NAMES = getSeriesDisplayNames(lang);
 
   // 计算分类
   const allCategories = useMemo(() => {

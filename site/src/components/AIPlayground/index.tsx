@@ -17,6 +17,8 @@ import {
 } from './constants';
 import {formatJSON} from './helpers';
 import type {AIConfig, AIModelConfig, AIProvider, ChatMessage} from './types';
+import {getStoredLanguage, type Language} from '../../utils/i18n';
+import {t} from '../../utils/translations';
 
 const createId = () => {
   try {
@@ -44,8 +46,8 @@ type HistoryRecord = {
   config?: Partial<InfographicOptions>;
 };
 
-const createTitle = (text: string) =>
-  text.length > 18 ? `${text.slice(0, 18)}…` : text || '待输入';
+const createTitle = (text: string, lang: Language) =>
+  text.length > 18 ? `${text.slice(0, 18)}…` : text || t(lang, 'aiPage.pending');
 
 const extractSyntaxContent = (text: string) => {
   if (!text) return '';
@@ -63,24 +65,27 @@ const extractSyntaxContent = (text: string) => {
   return text;
 };
 
-const toHistoryRecord = (input: {
-  id: string;
-  text: string;
-  status: 'pending' | 'ready' | 'error';
-  error?: string;
-  syntax?: string;
-  config?: Partial<InfographicOptions>;
-}): HistoryRecord => ({
+const toHistoryRecord = (
+  input: {
+    id: string;
+    text: string;
+    status: 'pending' | 'ready' | 'error';
+    error?: string;
+    syntax?: string;
+    config?: Partial<InfographicOptions>;
+  },
+  lang: Language
+): HistoryRecord => ({
   id: input.id,
   text: input.text,
   status: input.status,
   error: input.error,
   syntax: input.syntax,
   config: input.config,
-  title: createTitle(input.text),
+  title: createTitle(input.text, lang),
 });
 
-const normalizeLegacyMessages = (raw: ChatMessage[]): HistoryRecord[] => {
+const normalizeLegacyMessages = (raw: ChatMessage[], lang: Language): HistoryRecord[] => {
   const records: HistoryRecord[] = [];
   let pendingUser: ChatMessage | null = null;
 
@@ -98,7 +103,7 @@ const normalizeLegacyMessages = (raw: ChatMessage[]): HistoryRecord[] => {
             msg.config && typeof msg.config === 'object'
               ? (msg.config as Partial<InfographicOptions>)
               : undefined,
-        })
+        }, lang)
       );
       pendingUser = null;
     }
@@ -110,17 +115,17 @@ const normalizeLegacyMessages = (raw: ChatMessage[]): HistoryRecord[] => {
         id: pendingUser.id,
         text: pendingUser.text,
         status: 'pending',
-      })
+      }, lang)
     );
   }
 
   return records;
 };
 
-const normalizeStoredHistory = (raw: any): HistoryRecord[] => {
+const normalizeStoredHistory = (raw: any, lang: Language): HistoryRecord[] => {
   if (!Array.isArray(raw)) return [];
   if (raw.some((item) => item && typeof item === 'object' && 'role' in item)) {
-    return normalizeLegacyMessages(raw as ChatMessage[]);
+    return normalizeLegacyMessages(raw as ChatMessage[], lang);
   }
 
   const normalized: HistoryRecord[] = [];
@@ -147,7 +152,7 @@ const normalizeStoredHistory = (raw: any): HistoryRecord[] => {
         error: typeof item.error === 'string' ? item.error : undefined,
         syntax,
         config,
-      })
+      }, lang)
     );
   }
   return normalized;
@@ -155,6 +160,7 @@ const normalizeStoredHistory = (raw: any): HistoryRecord[] => {
 
 export function AIPageContent() {
   const router = useRouter();
+  const [lang, setLang] = useState<Language>('zh-CN');
   const [prompt, setPrompt] = useState('');
   const [history, setHistory] = useState<HistoryRecord[]>([]);
   const [config, setConfig] = useState<AIConfig>(DEFAULT_CONFIG);
@@ -179,8 +185,13 @@ export function AIPageContent() {
   const {message: copyHint, show: showCopyHint} = useCopyToast();
 
   useEffect(() => {
+    setLang(getStoredLanguage());
+  }, []);
+
+  useEffect(() => {
     setMounted(true);
     if (typeof window === 'undefined') return;
+    const currentLang = getStoredLanguage();
     const savedConfig = localStorage.getItem(STORAGE_KEYS.config);
     const savedMessages = localStorage.getItem(STORAGE_KEYS.messages);
     const savedInfographic = localStorage.getItem(STORAGE_KEYS.infographic);
@@ -208,7 +219,7 @@ export function AIPageContent() {
     if (savedMessages) {
       try {
         const parsed = JSON.parse(savedMessages);
-        setHistory(normalizeStoredHistory(parsed));
+        setHistory(normalizeStoredHistory(parsed, currentLang));
       } catch {
         setHistory([]);
       }
@@ -445,7 +456,7 @@ export function AIPageContent() {
               ? {
                   ...item,
                   text: content,
-                  title: createTitle(content),
+                  title: createTitle(content, lang),
                   status: 'pending',
                   error: undefined,
                   syntax: undefined,
@@ -459,7 +470,7 @@ export function AIPageContent() {
           id: createId(),
           text: content,
           status: 'pending',
-        });
+        }, lang);
         requestId = newRecord.id;
         setHistory((prev) => [...prev, newRecord]);
       }

@@ -25,6 +25,8 @@ import {CodePlayground} from './HomePage/CodePlayground';
 import {Gallery} from './HomePage/Gallery';
 import {QuickStartDemo, QuickStartDemoCode} from './HomePage/QuickStartDemo';
 import {StylizeDemo} from './HomePage/StylizeDemo';
+import {getStoredLanguage, type Language} from '../../utils/i18n';
+import {t} from '../../utils/translations';
 
 type SectionBackground = 'left-card' | 'right-card' | null;
 
@@ -73,18 +75,18 @@ interface ExamplePanelProps {
 
 console.log('AntV Infographic version:', VERSION);
 
-const HERO_PROMPTS = [
+const getHeroPrompts = (lang: Language) => [
   {
-    title: '🎯 产品生命周期管理',
-    text: '产品从导入期到成长期，销量快速攀升，市场份额从5%增长至25%。成熟期达到峰值40%后保持稳定。衰退期开始下滑至15%。通过在成长期加大营销投入，成熟期优化成本结构，衰退期及时推出升级产品，实现平稳过渡。',
+    title: t(lang, 'home.heroPrompts.prompt1Title'),
+    text: t(lang, 'home.heroPrompts.prompt1Text'),
   },
   {
-    title: '💰 客户价值分层',
-    text: '将客户分为四个层级：VIP客户占比5%但贡献45%营收，高价值客户占15%贡献30%营收，普通客户占30%贡献20%营收，低价值客户占50%仅贡献5%营收。针对不同层级制定差异化服务策略，重点维护高价值客群，激活潜力客户。',
+    title: t(lang, 'home.heroPrompts.prompt2Title'),
+    text: t(lang, 'home.heroPrompts.prompt2Text'),
   },
   {
-    title: '🌍 全球市场布局进展',
-    text: '2020年聚焦亚太市场，营收占比60%。2021年拓展欧洲市场，占比提升至25%。2022年进军北美，三大市场形成均衡格局，分别为40%、30%、25%。2023年新兴市场突破，拉美和中东合计贡献15%，全球化布局初步完成。',
+    title: t(lang, 'home.heroPrompts.prompt3Title'),
+    text: t(lang, 'home.heroPrompts.prompt3Text'),
   },
 ];
 
@@ -177,27 +179,35 @@ function FullBleed({children}: BasicProps) {
   );
 }
 
-const features: Feature[] = [
+const getFeatures = (lang: Language): Feature[] => [
   {
-    title: '信息图语法',
-    detail: '贴合信息图特性的声明式语法，涵盖布局、元素、主题',
+    title: t(lang, 'home.features.feature1Title'),
+    detail: t(lang, 'home.features.feature1Detail'),
   },
   {
-    title: 'JSX 定制开发',
-    detail: '以 JSX 描述设计资产，直观可复用，灵活扩展',
+    title: t(lang, 'home.features.feature2Title'),
+    detail: t(lang, 'home.features.feature2Detail'),
   },
   {
-    title: '风格化渲染',
-    detail: '一套模板多种风格，支持手绘、纹理、渐变等效果',
+    title: t(lang, 'home.features.feature3Title'),
+    detail: t(lang, 'home.features.feature3Detail'),
   },
   {
-    title: '可视化编辑',
-    detail: '可交互增删数据项，添加图形与标注，所见即所得',
+    title: t(lang, 'home.features.feature4Title'),
+    detail: t(lang, 'home.features.feature4Detail'),
   },
 ];
 
 export function HomeContent(): JSX.Element {
   const router = useRouter();
+  const [lang, setLang] = useState<Language>('zh-CN');
+
+  useEffect(() => {
+    setLang(getStoredLanguage());
+  }, []);
+
+  const HERO_PROMPTS = getHeroPrompts(lang);
+  const features = getFeatures(lang);
   const [heroPrompt, setHeroPrompt] = useState('');
   const [placeholderText, setPlaceholderText] = useState('');
   const [placeholderIndex, setPlaceholderIndex] = useState(0);

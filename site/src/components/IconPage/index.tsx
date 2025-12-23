@@ -7,25 +7,29 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
 import {IconCopy} from '../Icon/IconCopy';
 import {IconEllipsis} from '../Icon/IconEllipsis';
 import {Select} from '../ui/select';
+import {getStoredLanguage, type Language} from '../../utils/i18n';
+import {t} from '../../utils/translations';
 
-const presetQueries = [
-  '数据分析',
-  '人机协作',
-  '金融',
-  '安全防护',
-  '可视化',
-  '出行',
-];
+export default function IconPage() {
+  const [lang, setLang] = useState<Language>('zh-CN');
+
+  useEffect(() => {
+    setLang(getStoredLanguage());
+  }, []);
+
+  const presetQueries = t(lang, 'iconPage.presetQueries') as string[];
 
 function IconCard({
   url,
   index,
   onCopy,
+  lang,
   isPlaceholder = false,
 }: {
   url: string;
   index: number;
   onCopy: (msg: string) => void;
+  lang: Language;
   isPlaceholder?: boolean;
 }) {
   const [copying, setCopying] = useState<'url' | 'svg' | null>(null);
@@ -35,7 +39,7 @@ function IconCard({
     try {
       await navigator.clipboard.writeText(url);
       setCopying('url');
-      onCopy('图标链接已复制');
+      onCopy(t(lang, 'iconPage.linkCopied'));
       setTimeout(() => setCopying(null), 1500);
     } catch (err) {
       console.error('Failed to copy URL', err);
@@ -48,7 +52,7 @@ function IconCard({
       const svg = await fetch(url).then((res) => res.text());
       await navigator.clipboard.writeText(svg);
       setCopying('svg');
-      onCopy('SVG 代码已复制');
+      onCopy(t(lang, 'iconPage.svgCopied'));
       setTimeout(() => setCopying(null), 1500);
     } catch (err) {
       console.error('Failed to copy SVG', err);
@@ -68,7 +72,7 @@ function IconCard({
           <IconEllipsis className="w-10 h-10 text-gray-400 dark:text-gray-500" />
         ) : (
           <span
-            aria-label={`推荐图标 ${index + 1}`}
+            aria-label={t(lang, 'iconPage.recommendedIcon', index + 1)}
             className="block w-12 h-12 sm:w-14 sm:h-14 text-primary dark:text-primary-dark transition duration-200 group-hover:scale-105"
             style={{
               backgroundColor: 'currentColor',
@@ -83,13 +87,13 @@ function IconCard({
           <button
             onClick={copyUrl}
             className="inline-flex items-center gap-1 text-xs text-primary dark:text-primary-dark hover:text-link dark:hover:text-link"
-            title="复制链接">
+            title={t(lang, 'iconPage.copyLink')}>
             {copying === 'url' ? (
               <Check className="w-3 h-3" />
             ) : (
               <Link2 className="w-3 h-3" />
             )}
-            链接
+            {t(lang, 'iconPage.link')}
           </button>
           <span className="h-4 w-px bg-gray-200 dark:bg-gray-800" />
           <button
@@ -110,12 +114,21 @@ function IconCard({
 }
 
 export function IconPageContent() {
-  const [query, setQuery] = useState('数据分析');
+  const [lang, setLang] = useState<Language>('zh-CN');
+  const [query, setQuery] = useState('');
   const [icons, setIcons] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [topK, setTopK] = useState(20);
   const {message: toast, show: showToast} = useCopyToast();
+
+  useEffect(() => {
+    const currentLang = getStoredLanguage();
+    setLang(currentLang);
+    // Set initial query based on language
+    const presetQueriesForLang = t(currentLang, 'iconPage.presetQueries') as string[];
+    setQuery(presetQueriesForLang[0] || '');
+  }, []);
 
   const sampleFallback = useMemo(
     () => Array.from({length: topK}, (_, idx) => `placeholder-${idx}`),
@@ -324,6 +337,7 @@ export function IconPageContent() {
                             key={`${url}-${index}`}
                             url={url}
                             index={index}
+                            lang={lang}
                             onCopy={handleCopy}
                             isPlaceholder={usingFallback}
                           />
