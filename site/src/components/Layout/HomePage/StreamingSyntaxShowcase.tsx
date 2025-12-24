@@ -1,7 +1,7 @@
 import {useInView} from 'framer-motion';
 import NextLink from 'next/link';
 import {CSSProperties, useCallback, useEffect, useRef, useState} from 'react';
-import {createPortal} from 'react-dom';
+import {useFullscreen} from '../../../hooks/useFullscreen';
 import {useLocaleBundle} from '../../../hooks/useTranslation';
 
 import {Infographic} from '../../Infographic';
@@ -319,7 +319,6 @@ export function StreamingSyntaxShowcase({
   const FULL_STREAM_TEXT = translation[caseType].syntax;
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const infographicContainerRef = useRef<HTMLDivElement>(null);
   const bufferRef = useRef<HTMLDivElement>(null);
   const lineCountRef = useRef(0);
   const isInView = useInView(containerRef, {margin: '-120px', once: false});
@@ -328,13 +327,39 @@ export function StreamingSyntaxShowcase({
   const [renderError, setRenderError] = useState<string | null>(null);
   const [isStreaming, setIsStreaming] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [fullscreenLayout, setFullscreenLayout] = useState<{
-    scale: number;
-    width: number;
-    height: number;
-  } | null>(null);
-  const [placeholderSize, setPlaceholderSize] = useState<number | null>(null);
+
+  // 自定义全屏布局计算
+  const calculateFullscreenLayout = useCallback(
+    (size: {width: number; height: number}) => {
+      const viewportHeight = window.innerHeight;
+      const viewportWidth = window.innerWidth;
+
+      const scaleX = (viewportWidth * 0.85) / size.width;
+      const scaleY = (viewportHeight * 0.85) / size.height;
+
+      const scale = Math.min(scaleX, scaleY, 1.5);
+
+      return {
+        scale,
+        width: size.width,
+        height: size.height,
+      };
+    },
+    []
+  );
+
+  // 使用 useFullscreen hook
+  const {
+    isFullscreen,
+    fullscreenLayout,
+    placeholderSize,
+    toggleFullscreen,
+    containerRef: infographicContainerRef,
+    renderFullscreenPortal,
+  } = useFullscreen({
+    calculateLayout: calculateFullscreenLayout,
+  });
+
   const streamTimerRef = useRef<number | null>(null);
   const restartTimerRef = useRef<number | null>(null);
   const progressRef = useRef(0); // 保存当前进度
@@ -433,70 +458,6 @@ export function StreamingSyntaxShowcase({
     });
   }, [stopStreaming]);
 
-  const calculateFullscreenLayout = useCallback(
-    (size: {width: number; height: number}) => {
-      const viewportHeight = window.innerHeight;
-      const viewportWidth = window.innerWidth;
-
-      const scaleX = (viewportWidth * 0.85) / size.width;
-      const scaleY = (viewportHeight * 0.85) / size.height;
-
-      const scale = Math.min(scaleX, scaleY, 1.5);
-
-      return {
-        scale,
-        width: size.width,
-        height: size.height,
-      };
-    },
-    []
-  );
-
-  const portalContainerRef = useRef<HTMLDivElement | null>(null);
-  const baseSizeRef = useRef<{width: number; height: number} | null>(null);
-
-  const toggleFullscreen = useCallback(() => {
-    if (!isFullscreen && infographicContainerRef.current) {
-      const rect = infographicContainerRef.current.getBoundingClientRect();
-      const baseSize = {width: rect.width, height: rect.height};
-      baseSizeRef.current = baseSize;
-      setPlaceholderSize(rect.height);
-      setFullscreenLayout(calculateFullscreenLayout(baseSize));
-    } else {
-      baseSizeRef.current = null;
-      setFullscreenLayout(null);
-      setPlaceholderSize(null);
-    }
-    setIsFullscreen((prev) => !prev);
-  }, [calculateFullscreenLayout, isFullscreen]);
-
-  useEffect(() => {
-    if (!isFullscreen) return;
-
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setIsFullscreen(false);
-      }
-    };
-
-    // 获取滚动条宽度
-    const scrollbarWidth =
-      window.innerWidth - document.documentElement.clientWidth;
-
-    // 禁用滚动并补偿滚动条宽度
-    document.body.style.overflow = 'hidden';
-    if (scrollbarWidth > 0) {
-      document.body.style.paddingRight = `${scrollbarWidth}px`;
-    }
-
-    document.addEventListener('keydown', handleEscape);
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = '';
-      document.body.style.paddingRight = '';
-    };
-  }, [isFullscreen]);
-
   const shouldAutoScroll = useCallback(() => {
     const el = bufferRef.current;
     if (!el) return false;
@@ -542,36 +503,6 @@ export function StreamingSyntaxShowcase({
       requestSmoothScroll();
     }
   }, [displayCode, requestSmoothScroll]);
-
-  useEffect(() => {
-    const portalDiv = document.createElement('div');
-    portalDiv.className = 'streaming-syntax-portal';
-    document.body.appendChild(portalDiv);
-    portalContainerRef.current = portalDiv;
-    return () => {
-      document.body.removeChild(portalDiv);
-      portalContainerRef.current = null;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!isFullscreen) return;
-
-    const handleResize = () => {
-      if (!baseSizeRef.current) return;
-      setFullscreenLayout(calculateFullscreenLayout(baseSizeRef.current));
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [calculateFullscreenLayout, isFullscreen]);
-
-  useEffect(() => {
-    if (isFullscreen) return;
-    baseSizeRef.current = null;
-    setFullscreenLayout(null);
-    setPlaceholderSize(null);
-  }, [isFullscreen]);
 
   const renderInfographicCard = (
     style?: CSSProperties,
@@ -738,31 +669,22 @@ export function StreamingSyntaxShowcase({
 
   return (
     <>
-      {isFullscreen && portalContainerRef.current && fullscreenLayout
-        ? createPortal(
-            <div
-              className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9998]"
-              onClick={toggleFullscreen}
-            />,
-            portalContainerRef.current
-          )
-        : null}
-      {isFullscreen && portalContainerRef.current && fullscreenLayout
-        ? createPortal(
-            <div className="fixed inset-0 flex items-center justify-center z-[9999] pointer-events-none">
-              {renderInfographicCard(
-                {
-                  width: fullscreenLayout.width,
-                  height: fullscreenLayout.height,
-                  transform: `scale(${fullscreenLayout.scale})`,
-                  transformOrigin: 'center',
-                },
-                'pointer-events-auto'
-              )}
-            </div>,
-            portalContainerRef.current
-          )
-        : null}
+      {isFullscreen && placeholderSize && (
+        <div style={{height: placeholderSize}} aria-hidden />
+      )}
+      {renderFullscreenPortal(
+        renderInfographicCard(
+          fullscreenLayout
+            ? {
+                width: fullscreenLayout.width,
+                height: fullscreenLayout.height,
+                transform: `scale(${fullscreenLayout.scale})`,
+                transformOrigin: 'center',
+              }
+            : undefined,
+          'pointer-events-auto'
+        )
+      )}
       <div ref={containerRef} className="w-full max-w-7xl mx-auto px-5 lg:px-0">
         <style
           dangerouslySetInnerHTML={{

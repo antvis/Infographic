@@ -2,7 +2,7 @@
 
 import cn from 'classnames';
 import {ReactNode, useCallback, useEffect, useRef, useState} from 'react';
-import {createPortal} from 'react-dom';
+import {useFullscreen} from '../../../hooks/useFullscreen';
 import {IconErrorCircle} from '../../Icon/IconErrorCircle';
 import {IconRestart} from '../../Icon/IconRestart';
 import {
@@ -52,46 +52,9 @@ export function BrowserChrome({
   const [restartId, setRestartId] = useState(0);
   const isPulsing = hasPulse && restartId === 0;
   const [shouldAnimatePulse, setShouldAnimatePulse] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [fullscreenLayout, setFullscreenLayout] = useState<{
-    scale: number;
-    width: number;
-    height: number;
-    left: number;
-    top: number;
-  } | null>(null);
-  const [placeholderSize, setPlaceholderSize] = useState<number | null>(null);
   const refreshRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const portalContainerRef = useRef<HTMLDivElement | null>(null);
-  const baseSizeRef = useRef<{width: number; height: number} | null>(null);
 
-  useEffect(() => {
-    if (!isPulsing) {
-      return;
-    }
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          setShouldAnimatePulse(entry.isIntersecting);
-        });
-      },
-      {
-        root: null,
-        rootMargin: `0px 0px`,
-      }
-    );
-    if (refreshRef.current) {
-      observer.observe(refreshRef.current);
-    }
-    return () => observer.disconnect();
-  }, [isPulsing]);
-
-  function handleRestart() {
-    setRestartId((i) => i + 1);
-    onRestart?.();
-  }
-
+  // 使用自定义布局计算函数
   const calculateFullscreenLayout = useCallback(
     (size: {width: number; height: number}) => {
       const viewportHeight = window.innerHeight;
@@ -120,70 +83,43 @@ export function BrowserChrome({
     []
   );
 
-  function toggleFullscreen() {
-    if (!isFullscreen && containerRef.current) {
-      const rect = containerRef.current.getBoundingClientRect();
-      const baseSize = {width: rect.width, height: rect.height};
-      baseSizeRef.current = baseSize;
-      setPlaceholderSize(rect.height);
-      setFullscreenLayout(calculateFullscreenLayout(baseSize));
-    } else {
-      baseSizeRef.current = null;
-      setFullscreenLayout(null);
-      setPlaceholderSize(null);
-    }
-    setIsFullscreen((prev) => !prev);
-  }
+  // 使用 useFullscreen hook
+  const {
+    isFullscreen,
+    fullscreenLayout,
+    placeholderSize,
+    toggleFullscreen,
+    containerRef,
+    renderFullscreenPortal,
+  } = useFullscreen({
+    calculateLayout: calculateFullscreenLayout,
+  });
 
   useEffect(() => {
-    if (!isFullscreen) return;
-
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setIsFullscreen(false);
+    if (!isPulsing) {
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setShouldAnimatePulse(entry.isIntersecting);
+        });
+      },
+      {
+        root: null,
+        rootMargin: `0px 0px`,
       }
-    };
-
-    // 获取滚动条宽度
-    const scrollbarWidth =
-      window.innerWidth - document.documentElement.clientWidth;
-
-    // 禁用滚动并补偿滚动条宽度
-    document.body.style.overflow = 'hidden';
-    if (scrollbarWidth > 0) {
-      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    );
+    if (refreshRef.current) {
+      observer.observe(refreshRef.current);
     }
+    return () => observer.disconnect();
+  }, [isPulsing]);
 
-    document.addEventListener('keydown', handleEscape);
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = '';
-      document.body.style.paddingRight = '';
-    };
-  }, [isFullscreen]);
-
-  useEffect(() => {
-    if (!isFullscreen) return;
-
-    const handleResize = () => {
-      if (!baseSizeRef.current) return;
-      setFullscreenLayout(calculateFullscreenLayout(baseSizeRef.current));
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [calculateFullscreenLayout, isFullscreen]);
-
-  useEffect(() => {
-    const portalDiv = document.createElement('div');
-    portalDiv.className = 'browser-chrome-portal';
-    document.body.appendChild(portalDiv);
-    portalContainerRef.current = portalDiv;
-    return () => {
-      document.body.removeChild(portalDiv);
-      portalContainerRef.current = null;
-    };
-  }, []);
+  function handleRestart() {
+    setRestartId((i) => i + 1);
+    onRestart?.();
+  }
 
   const chromeContent = (
     <>
@@ -333,33 +269,25 @@ export function BrowserChrome({
     </>
   );
 
-  if (isFullscreen && portalContainerRef.current && fullscreenLayout) {
+  // 渲染全屏模式
+  if (isFullscreen && fullscreenLayout) {
     return (
       <>
         {placeholderSize ? (
           <div style={{height: placeholderSize}} aria-hidden />
         ) : null}
-        {createPortal(
-          <>
-            <div
-              className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9998]"
-              onClick={toggleFullscreen}
-            />
-            <div className="fixed inset-0 flex items-center justify-center z-[9999] pointer-events-none">
-              <div
-                ref={containerRef}
-                className="shadow-nav dark:shadow-nav-dark overflow-hidden dark:border-opacity-10 flex flex-col rounded-2xl relative pointer-events-auto bg-white dark:bg-gray-950"
-                style={{
-                  width: fullscreenLayout.width,
-                  height: fullscreenLayout.height,
-                  transform: `scale(${fullscreenLayout.scale})`,
-                  transformOrigin: 'center',
-                }}>
-                {chromeContent}
-              </div>
-            </div>
-          </>,
-          portalContainerRef.current
+        {renderFullscreenPortal(
+          <div
+            ref={containerRef}
+            className="shadow-nav dark:shadow-nav-dark overflow-hidden dark:border-opacity-10 flex flex-col rounded-2xl relative pointer-events-auto bg-white dark:bg-gray-950"
+            style={{
+              width: fullscreenLayout.width,
+              height: fullscreenLayout.height,
+              transform: `scale(${fullscreenLayout.scale})`,
+              transformOrigin: 'center',
+            }}>
+            {chromeContent}
+          </div>
         )}
       </>
     );
