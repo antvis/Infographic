@@ -25,6 +25,7 @@ import {AIInfographicFlow} from './HomePage/AIInfographicFlow';
 import {CodePlayground} from './HomePage/CodePlayground';
 import {Gallery} from './HomePage/Gallery';
 import {QuickStartDemo, useQuickStartDemoCode} from './HomePage/QuickStartDemo';
+import {StreamingSyntaxShowcase} from './HomePage/StreamingSyntaxShowcase';
 import {StylizeDemo} from './HomePage/StylizeDemo';
 
 type SectionBackground = 'left-card' | 'right-card' | null;
@@ -126,15 +127,13 @@ const TRANSLATIONS = {
         cta: '前往体验',
       },
       streaming: {
-        title: '流式渲染，画面与语法同步',
-        description:
-          'AI 每输出一段信息图语法，就追加到缓冲并重新渲染，让画面跟随文本逐帧更新。',
-        note: '阅读信息图语法文档的流式渲染章节，掌握分段输出与 render 更新方式。',
-        cta: '了解流式语法',
+        title: 'AI 友好的信息图语法',
+        cta: '了解信息图语法',
         highlights: [
-          '模型片段逐步补全语法，实时感知内容增长',
-          '每次调用 `render` 让视觉输出与文本保持同步',
-          '适合长提示、会议纪要或需要不断迭代的创作流程',
+          '简洁：语法简洁直观，易于理解和编写',
+          '高容错：对人工或 AI 生成的语法错误具备一定容错能力',
+          '能力完备：支持完备的信息图配置能力，满足多样化需求',
+          '流式输出：天然适配 AI 流式输出特点，支持分段描述与实时渲染',
         ],
       },
       themes: {
@@ -227,15 +226,13 @@ const TRANSLATIONS = {
         cta: 'Try It Now',
       },
       streaming: {
-        title: 'Streaming Rendering',
-        description:
-          'As each syntax chunk flows from AI, append it to your buffer and re-render so visuals stay in sync.',
-        note: 'See the streaming section in the Infographic Syntax guide for tips on chunking and render calls.',
-        cta: 'Explore Streaming Syntax',
+        title: 'AI friendly Infographic Syntax',
+        cta: 'View Infographic Syntax',
         highlights: [
-          'Append each model fragment to the syntax buffer before re-rendering',
-          'Every `render` keeps the canvas synced with the current text',
-          'Perfect for long prompts, meeting transcripts, or collaborative AI loops',
+          'Simplicity: Concise and intuitive syntax, easy to understand and write',
+          'Fault Tolerance: Resilient to errors in human or AI-generated syntax',
+          'Completeness: Comprehensive infographic configuration capabilities',
+          'Streaming Output: Naturally supports AI streaming with segmented rendering',
         ],
       },
       themes: {
@@ -584,6 +581,18 @@ export function HomeContent(): JSX.Element {
           <Center>
             <Para>{sectionContent.declarative.note}</Para>
           </Center>
+        </Section>
+
+        <Section background="right-card" lazy placeholderHeight={880}>
+          <Center>
+            <Header>{sectionContent.streaming.title}</Header>
+          </Center>
+          <FullBleed>
+            <StreamingSyntaxShowcase
+              cta={sectionContent.streaming.cta}
+              highlights={sectionContent.streaming.highlights}
+            />
+          </FullBleed>
         </Section>
 
         <Section background="right-card" lazy placeholderHeight={760}>
