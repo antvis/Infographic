@@ -19,8 +19,6 @@ interface FontFaceAttributes {
   'unicode-range': string;
 }
 
-const fontDataUrlCache = new Map<string, string>();
-
 export async function embedFonts(svg: SVGSVGElement, embedResources = true) {
   // 1. 收集使用到的 font-family
   const usedFonts = collectUsedFonts(svg);
@@ -247,12 +245,9 @@ function insertFontStyle(svg: SVGSVGElement, fontFaces: FontFaceAttributes[]) {
 }
 
 /**
- * 加载 woff2 并转为 DataURL，带缓存
+ * 加载 woff2 并转为 DataURL
  */
 async function loadWoff2(url: string) {
-  const cached = fontDataUrlCache.get(url);
-  if (cached) return cached;
-
   const response = await fetchWithCache(url);
   if (!response.ok) {
     throw new Error(`Failed to load font: ${url}`);
@@ -269,6 +264,5 @@ async function loadWoff2(url: string) {
     reader.readAsDataURL(blob);
   });
 
-  fontDataUrlCache.set(url, dataUrl);
   return dataUrl;
 }
