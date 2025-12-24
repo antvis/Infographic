@@ -49,7 +49,7 @@ export { Infographic } from './runtime';
 export { parseSyntax } from './syntax';
 export { getTemplate, getTemplates, registerTemplate } from './templates';
 export { getTheme, getThemes, registerTheme } from './themes';
-export { fetchWithCache, parseSVG } from './utils';
+export { parseSVG } from './utils';
 
 export type { EditBarOptions } from './editor';
 export type {

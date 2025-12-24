@@ -1,4 +1,4 @@
-import { fetchWithCache } from '@antv/infographic';
+import { fetchWithCache } from '@antv/infographic/utils';
 
 const baseUrl =
   'https://webgw.antgroup-inc.cn/180020010101329077/infographicservice/api/v1';
