@@ -10,10 +10,44 @@ import {
 } from 'lucide-react';
 import {useRouter} from 'next/router';
 import {useEffect, useRef, useState} from 'react';
-import {getStoredLanguage, type Language} from '../../utils/i18n';
-import {t} from '../../utils/translations';
+import {useLocaleBundle} from '../../hooks/useTranslation';
 import {CodeEditor} from '../MDX/CodeEditor';
 import {TEMPLATES} from './templates';
+
+const TRANSLATIONS = {
+  'zh-CN': {
+    back: '返回素材库',
+    templateLabel: '模板',
+    fileLabel: 'index.js',
+    errorBadge: '错误',
+    reset: '重置代码',
+    copy: '复制',
+    copySuccess: '已复制',
+    status: (line: number) => `第 ${line} 行，第 1 列`,
+    footer: 'UTF-8 • JavaScript',
+    errors: {
+      syntax: '语法错误：配置无效',
+      render: (msg: string) => `渲染错误：${msg}`,
+      execution: (msg: string) => `执行错误：${msg}`,
+    },
+  },
+  'en-US': {
+    back: 'Back to Gallery',
+    templateLabel: 'Template',
+    fileLabel: 'index.js',
+    errorBadge: 'Error',
+    reset: 'Reset Code',
+    copy: 'Copy',
+    copySuccess: 'Copied',
+    status: (line: number) => `Line ${line}, Col 1`,
+    footer: 'UTF-8 • JavaScript',
+    errors: {
+      syntax: 'Syntax Error: Invalid configuration object',
+      render: (msg: string) => `Render Error: ${msg}`,
+      execution: (msg: string) => `Execution Error: ${msg}`,
+    },
+  },
+};
 
 const generateJavaScriptCode = async (config: Partial<InfographicOptions>) => {
   const options = {
@@ -83,15 +117,10 @@ export default function DetailPage() {
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const [lang, setLang] = useState<Language>('zh-CN');
 
   const containerRef = useRef<HTMLDivElement>(null);
   const infographicRef = useRef<any>(null);
-  const detailTexts = t(lang, 'gallery.detail') as any;
-
-  useEffect(() => {
-    setLang(getStoredLanguage());
-  }, []);
+  const detailTexts = useLocaleBundle(TRANSLATIONS);
 
   // Initialize code template
   useEffect(() => {
@@ -115,7 +144,7 @@ export default function DetailPage() {
       const config = parseConfigFromCode(code);
 
       if (!config) {
-        setError(t(lang, 'gallery.detail.errors.syntax'));
+        setError(detailTexts.errors.syntax);
         return;
       }
 
@@ -134,11 +163,11 @@ export default function DetailPage() {
         })
         .catch((err) => {
           console.error('Render error:', err);
-          setError(t(lang, 'gallery.detail.errors.render', err.message));
+          setError(detailTexts.errors.render(err.message));
         });
     } catch (err: any) {
       console.error('Execution error:', err);
-      setError(t(lang, 'gallery.detail.errors.execution', err.message));
+      setError(detailTexts.errors.execution(err.message));
     }
 
     return () => {
@@ -147,7 +176,7 @@ export default function DetailPage() {
         infographicRef.current = null;
       }
     };
-  }, [code, lang]);
+  }, [code, detailTexts.errors]);
 
   const handleCodeChange = (e: string) => {
     setCode(e);
@@ -267,9 +296,7 @@ export default function DetailPage() {
           </div>
 
           <div className="absolute bottom-0 left-0 right-0 px-4 py-2 bg-card/80 dark:bg-card-dark/80 backdrop-blur border-t border-primary/10 dark:border-primary-dark/10 text-[10px] text-tertiary dark:text-tertiary-dark flex justify-between items-center">
-            <span>
-              {t(lang, 'gallery.detail.status', code.split('\n').length)}
-            </span>
+            <span>{detailTexts.status(code.split('\n').length)}</span>
             <span>{detailTexts.footer}</span>
           </div>
         </div>

@@ -12,6 +12,7 @@ import {
   useState,
 } from 'react';
 
+import {useLocaleBundle} from '../../hooks/useTranslation';
 import Button from '../Button';
 import {Infographic as InfographicView} from '../Infographic';
 import {CodeEditor, CodeMirrorLanguage} from './CodeEditor';
@@ -52,6 +53,39 @@ infographic.render();
 
 const parseConfig = (code: string) => {
   return new Function(`return ${code}`)();
+};
+
+const TRANSLATIONS = {
+  'zh-CN': {
+    editorAria: {
+      config: 'Infographic JSON 配置编辑器',
+      js: 'Infographic JavaScript 编辑器',
+      stream: 'Infographic 流式语法编辑器',
+    },
+    errors: {
+      json: 'JSON 解析失败',
+      runtime: '运行出错',
+    },
+    stream: {
+      inputLabel: '语法输入',
+      renderButton: '流式渲染',
+    },
+  },
+  'en-US': {
+    editorAria: {
+      config: 'Infographic JSON configuration editor',
+      js: 'Infographic JavaScript editor',
+      stream: 'Infographic stream syntax editor',
+    },
+    errors: {
+      json: 'JSON parse failed',
+      runtime: 'Runtime error',
+    },
+    stream: {
+      inputLabel: 'Syntax input',
+      renderButton: 'Streaming render',
+    },
+  },
 };
 
 function PlaygroundErrorBadge({
@@ -155,10 +189,12 @@ function ConfigPreview({
   fallbackConfig,
   className,
   code,
+  errorTitle,
 }: {
   fallbackConfig: Partial<InfographicOptions>;
   className?: string;
   code: string;
+  errorTitle?: string;
 }) {
   const [lastValidConfig, setLastValidConfig] =
     useState<Partial<InfographicOptions>>(fallbackConfig);
@@ -185,7 +221,10 @@ function ConfigPreview({
         className
       )}>
       {error ? (
-        <PlaygroundErrorBadge message={error} title="JSON 解析失败" />
+        <PlaygroundErrorBadge
+          message={error}
+          title={errorTitle ?? 'JSON parse failed'}
+        />
       ) : null}
       <div className="flex-1 bg-transparent overflow-hidden">
         <InfographicView options={{padding: 20, ...lastValidConfig}} />
@@ -205,6 +244,7 @@ export function InfographicConfigPlayground({
   initialOptions?: Partial<InfographicOptions>;
   initialCode?: string;
 }) {
+  const texts = useLocaleBundle(TRANSLATIONS);
   const normalizedInitialCode = useMemo(() => {
     if (initialCodeProp) return initialCodeProp.trim();
     return JSON.stringify(initialOptions, null, 2);
@@ -215,7 +255,7 @@ export function InfographicConfigPlayground({
     <PlaygroundLayout
       className={className}
       code={code}
-      editorAriaLabel="Infographic JSON configuration editor"
+      editorAriaLabel={texts.editorAria.config}
       language="json"
       onCodeChange={setCode}
       preview={
@@ -223,6 +263,7 @@ export function InfographicConfigPlayground({
           fallbackConfig={initialOptions}
           className="bg-white dark:bg-gray-950"
           code={code}
+          errorTitle={texts.errors.json}
         />
       }
     />
@@ -232,7 +273,13 @@ export function InfographicConfigPlayground({
 /**
  * 原样运行用户编写的 JS 代码，只内置 @antv/infographic 依赖。
  */
-function JsCodeRunnerPreview({code}: {code: string}) {
+function JsCodeRunnerPreview({
+  code,
+  errorTitle = 'Runtime error',
+}: {
+  code: string;
+  errorTitle?: string;
+}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -261,7 +308,9 @@ function JsCodeRunnerPreview({code}: {code: string}) {
 
   return (
     <div className="relative h-full bg-white dark:bg-gray-950">
-      {error ? <PlaygroundErrorBadge message={error} title="运行出错" /> : null}
+      {error ? (
+        <PlaygroundErrorBadge message={error} title={errorTitle} />
+      ) : null}
       <div className="h-full min-h-[280px] w-full overflow-hidden">
         <div
           id="container"
@@ -280,19 +329,23 @@ export function InfographicJsPlayground({
 }: PlaygroundBaseProps & {
   initialCode?: string;
 }) {
+  const texts = useLocaleBundle(TRANSLATIONS);
   const {code, setCode} = useSyncedCode(initialCode);
 
   return (
     <PlaygroundLayout
       className={className}
       code={code}
-      editorAriaLabel="Infographic JavaScript editor"
+      editorAriaLabel={texts.editorAria.js}
       language="javascript"
       onCodeChange={setCode}
       preview={
         showPreview ? (
           <div className="bg-white dark:bg-gray-950">
-            <JsCodeRunnerPreview code={code} />
+            <JsCodeRunnerPreview
+              code={code}
+              errorTitle={texts.errors.runtime}
+            />
           </div>
         ) : null
       }
@@ -310,6 +363,7 @@ export function InfographicStreamPlayground({
 }: PlaygroundBaseProps & {
   initialCode?: string;
 }) {
+  const texts = useLocaleBundle(TRANSLATIONS);
   const {code, setCode} = useSyncedCode(initialCode);
   const [displayCode, setDisplayCode] = useState(code);
   const [isStreaming, setIsStreaming] = useState(false);
@@ -365,18 +419,18 @@ export function InfographicStreamPlayground({
           <div className="bg-wash dark:bg-gray-950/70 flex flex-col">
             <div className="flex items-center justify-between px-4 py-3 border-b border-border dark:border-border-dark">
               <span className="text-sm text-secondary dark:text-secondary-dark">
-                语法输入
+                {texts.stream.inputLabel}
               </span>
               <Button
                 onClick={handleStreamRender}
                 className="text-sm py-1.5 px-3"
                 active={isStreaming}>
-                流式渲染
+                {texts.stream.renderButton}
               </Button>
             </div>
             <div className="max-h-[480px] flex-1 overflow-auto bg-transparent [&_.cm-editor]:h-full [&_.cm-scroller]:h-full">
               <CodeEditor
-                ariaLabel="Infographic stream syntax editor"
+                ariaLabel={texts.editorAria.stream}
                 className="bg-transparent"
                 language="plaintext"
                 onChange={handleCodeChange}

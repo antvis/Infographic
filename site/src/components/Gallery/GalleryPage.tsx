@@ -2,12 +2,63 @@ import {AnimatePresence, motion} from 'framer-motion';
 import {uniq} from 'lodash-es';
 import {ArrowRight, Filter, Layers, Sparkles, X} from 'lucide-react';
 import {useRouter} from 'next/router';
-import {useEffect, useMemo, useState} from 'react';
-import {getStoredLanguage, type Language} from '../../utils/i18n';
-import {t} from '../../utils/translations';
+import {useMemo, useState} from 'react';
+import {useLocaleBundle} from '../../hooks/useTranslation';
 import {Infographic} from '../Infographic';
-import {getSeriesDisplayNames, getTypeDisplayNames} from './constants';
 import {TEMPLATES} from './templates';
+
+const TRANSLATIONS = {
+  'zh-CN': {
+    types: {
+      compare: '对比型',
+      list: '列表型',
+      chart: '图表型',
+      relation: '关系型',
+      sequence: '顺序型',
+      quadrant: '四象限型',
+      hierarchy: '层级型',
+    },
+    series: {
+      'hierarchy-tree': '层级树',
+      'hierarchy-mindmap': '思维导图',
+    },
+    heroTitlePrefix: 'Infographic',
+    heroTitleHighlight: 'Gallery',
+    heroDescription:
+      '探索我们精选的信息图模板库，高保真设计、灵活可定制，可即插即用地投入你的应用。',
+    filterLabel: '筛选',
+    clearFilters: '清除筛选',
+    useTemplate: '使用',
+    seriesCount: (count: number) => `${count} 张`,
+    expandAll: '展开全部',
+    collapse: '收起',
+  },
+  'en-US': {
+    types: {
+      compare: 'Comparison',
+      list: 'List',
+      chart: 'Chart',
+      relation: 'Relation',
+      sequence: 'Sequence',
+      quadrant: 'Quadrant',
+      hierarchy: 'Hierarchy',
+    },
+    series: {
+      'hierarchy-tree': 'Hierarchy Tree',
+      'hierarchy-mindmap': 'Mind Map',
+    },
+    heroTitlePrefix: 'Infographic',
+    heroTitleHighlight: 'Gallery',
+    heroDescription:
+      'Explore our curated infographic template library with high-fidelity designs ready to drop into your apps.',
+    filterLabel: 'Filter',
+    clearFilters: 'Clear all',
+    useTemplate: 'Use',
+    seriesCount: (count: number) => `${count} templates`,
+    expandAll: 'Expand All',
+    collapse: 'Collapse',
+  },
+};
 
 type DisplayNameMap = Record<string, string>;
 
@@ -145,20 +196,15 @@ const GalleryCard = ({
 // 4. Page: Gallery Page
 // ==========================================
 export default function GalleryPage() {
-  const [lang, setLang] = useState<Language>('zh-CN');
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [expandedSeries, setExpandedSeries] = useState<Record<string, boolean>>(
     {}
   );
   const router = useRouter();
 
-  useEffect(() => {
-    setLang(getStoredLanguage());
-  }, []);
-
-  const TYPE_DISPLAY_NAMES = getTypeDisplayNames(lang) as DisplayNameMap;
-  const SERIES_DISPLAY_NAMES = getSeriesDisplayNames(lang) as DisplayNameMap;
-  const pageTexts = t(lang, 'gallery.page') as any;
+  const galleryTexts = useLocaleBundle(TRANSLATIONS);
+  const TYPE_DISPLAY_NAMES = galleryTexts.types as DisplayNameMap;
+  const SERIES_DISPLAY_NAMES = galleryTexts.series as DisplayNameMap;
 
   // Collect categories
   const allCategories = useMemo(() => {
@@ -221,13 +267,13 @@ export default function GalleryPage() {
           animate={{opacity: 1, y: 0}}
           transition={{duration: 0.6}}>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight mb-6 text-primary dark:text-primary-dark">
-            {pageTexts.heroTitlePrefix}{' '}
+            {galleryTexts.heroTitlePrefix}{' '}
             <span className="bg-gradient-to-r from-link to-purple-40 bg-clip-text text-transparent">
-              {pageTexts.heroTitleHighlight}
+              {galleryTexts.heroTitleHighlight}
             </span>
           </h1>
           <p className="text-lg lg:text-xl text-secondary dark:text-secondary-dark leading-relaxed">
-            {pageTexts.heroDescription}
+            {galleryTexts.heroDescription}
           </p>
         </motion.div>
       </div>
@@ -244,7 +290,7 @@ export default function GalleryPage() {
               <div className="flex items-center gap-2 mr-3 text-tertiary dark:text-tertiary-dark">
                 <Filter className="w-3.5 h-3.5" />
                 <span className="text-[11px] font-semibold uppercase tracking-[0.2em]">
-                  {pageTexts.filterLabel}
+                  {galleryTexts.filterLabel}
                 </span>
               </div>
 
@@ -266,7 +312,7 @@ export default function GalleryPage() {
                     exit={{opacity: 0, scale: 0.8}}
                     onClick={() => setActiveFilters([])}
                     className="ml-2 p-1.5 text-tertiary dark:text-tertiary-dark hover:text-link hover:dark:text-link-dark hover:bg-gray-40/5 dark:hover:bg-gray-60/5 rounded-full transition-colors"
-                    title={pageTexts.clearFilters}>
+                    title={galleryTexts.clearFilters}>
                     <X className="w-4 h-4" />
                   </motion.button>
                 )}
@@ -304,7 +350,7 @@ export default function GalleryPage() {
                 <div className="flex items-center gap-2 text-sm font-semibold text-primary dark:text-primary-dark">
                   <span>{label}</span>
                   <span className="text-tertiary dark:text-tertiary-dark text-xs">
-                    {t(lang, 'gallery.page.seriesCount', items.length)}
+                    {galleryTexts.seriesCount(items.length)}
                   </span>
                 </div>
                 {canToggle && (
@@ -312,7 +358,9 @@ export default function GalleryPage() {
                     onClick={() => toggleSeries(key)}
                     className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-full bg-wash dark:bg-card-dark border border-primary/10 dark:border-primary-dark/10 text-link dark:text-link-dark hover:border-link/40">
                     <span>
-                      {isExpanded ? pageTexts.collapse : pageTexts.expandAll}
+                      {isExpanded
+                        ? galleryTexts.collapse
+                        : galleryTexts.expandAll}
                     </span>
                     <ArrowRight
                       className={`w-4 h-4 transition-transform ${
@@ -330,7 +378,7 @@ export default function GalleryPage() {
                       key={item.template}
                       item={item}
                       onClick={() => handleCardClick(item.template!)}
-                      useLabel={pageTexts.useTemplate}
+                      useLabel={galleryTexts.useTemplate}
                       typeDisplayNames={TYPE_DISPLAY_NAMES}
                     />
                   ))}

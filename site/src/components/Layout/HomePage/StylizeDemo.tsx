@@ -2,7 +2,8 @@
 
 import {InfographicOptions} from '@antv/infographic';
 import {useEffect, useMemo, useState} from 'react';
-import {getStoredLanguage, type Language} from '../../../utils/i18n';
+import {useLocaleBundle} from '../../../hooks/useTranslation';
+import type {Language} from '../../../utils/i18n';
 import {Infographic} from '../../Infographic';
 import {PadView} from './PadView';
 
@@ -215,7 +216,7 @@ const stylizeTranslations: Record<Language, StylizeTranslations> = {
       },
     ],
   },
-  en: {
+  'en-US': {
     aria: {
       prev: 'Previous style',
       next: 'Next style',
@@ -348,16 +349,11 @@ const getStyles = (translation: StylizeTranslations): StyleConfig[] =>
   });
 
 export function StylizeDemo() {
-  const [lang, setLang] = useState<Language>('zh-CN');
-  const translation = stylizeTranslations[lang] ?? stylizeTranslations.en;
+  const translation = useLocaleBundle(stylizeTranslations);
   const styleConfigs = useMemo(() => getStyles(translation), [translation]);
   const totalStyles = styleConfigs.length;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState<'left' | 'right'>('right');
-
-  useEffect(() => {
-    setLang(getStoredLanguage());
-  }, []);
 
   useEffect(() => {
     if (!totalStyles) {

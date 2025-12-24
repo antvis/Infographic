@@ -4,23 +4,129 @@ import {Page} from 'components/Layout/Page';
 import {motion} from 'framer-motion';
 import {Check, Copy, Link2, RefreshCw, Search} from 'lucide-react';
 import {useCallback, useEffect, useMemo, useState} from 'react';
-import {getStoredLanguage, type Language} from '../../utils/i18n';
-import {t} from '../../utils/translations';
+import {useLocaleBundle} from '../../hooks/useTranslation';
 import {IconCopy} from '../Icon/IconCopy';
 import {IconEllipsis} from '../Icon/IconEllipsis';
 import {Select} from '../ui/select';
+
+const TRANSLATIONS = {
+  'zh-CN': {
+    metaTitle: 'Icon 智能推荐',
+    navTitle: '图标',
+    presetQueries: [
+      '数据分析',
+      '人机协作',
+      '金融',
+      '安全防护',
+      '可视化',
+      '出行',
+    ],
+    copyLink: '复制链接',
+    linkCopied: '图标链接已复制',
+    svgCopied: 'SVG 代码已复制',
+    copySvg: '复制 SVG',
+    link: '链接',
+    svgLabel: 'SVG',
+    recommendedIcon: (n: number) => `推荐图标 ${n}`,
+    hero: {
+      titlePrefix: 'Infographic',
+      titleHighlight: 'Icons',
+      description: '提供 100,000+ 图标，支持语义化查询检索',
+    },
+    search: {
+      badge: 'ICON SEARCH',
+      title: '语义化检索图标',
+      placeholder: '例如：笔记本电脑',
+      button: '搜索',
+      buttonLoading: '搜索中',
+      topKOption: (n: number) => `Top ${n}`,
+    },
+    errors: {
+      noResult: '未获取到结果，请稍后再试',
+      fetch: '获取图标时发生错误',
+    },
+    notifications: {
+      endpointCopied: '接口地址已复制',
+    },
+    sidebar: {
+      title: 'OpenAPI',
+      endpoint: 'Endpoint',
+      searchParams: 'Search Parameters',
+      response: 'Response',
+      paramTextLabel: 'text',
+      paramTextType: 'string',
+      paramTextDescription: '查询文本，如 "数据分析"。',
+      paramTopKLabel: 'topK',
+      paramTopKType: 'number',
+      paramTopKDefault: '默认：5',
+      paramTopKDescription: '查询图标数量 (1-20)。',
+    },
+  },
+  'en-US': {
+    metaTitle: 'Icon Recommendation',
+    navTitle: 'Icon',
+    presetQueries: [
+      'Data Analysis',
+      'Human-AI Collaboration',
+      'Finance',
+      'Security',
+      'Visualization',
+      'Transportation',
+    ],
+    copyLink: 'Copy Link',
+    linkCopied: 'Icon link copied',
+    svgCopied: 'SVG code copied',
+    copySvg: 'Copy SVG',
+    link: 'Link',
+    svgLabel: 'SVG',
+    recommendedIcon: (n: number) => `Recommended Icon ${n}`,
+    hero: {
+      titlePrefix: 'Infographic',
+      titleHighlight: 'Icons',
+      description: 'Over 100,000 icons with semantic search support',
+    },
+    search: {
+      badge: 'ICON SEARCH',
+      title: 'Semantic icon search',
+      placeholder: 'e.g. laptop',
+      button: 'Search',
+      buttonLoading: 'Searching...',
+      topKOption: (n: number) => `Top ${n}`,
+    },
+    errors: {
+      noResult: 'No results yet, please try again later',
+      fetch: 'Failed to fetch icons',
+    },
+    notifications: {
+      endpointCopied: 'Endpoint copied',
+    },
+    sidebar: {
+      title: 'OpenAPI',
+      endpoint: 'Endpoint',
+      searchParams: 'Search Parameters',
+      response: 'Response',
+      paramTextLabel: 'text',
+      paramTextType: 'string',
+      paramTextDescription: 'Query text, e.g. "data analysis".',
+      paramTopKLabel: 'topK',
+      paramTopKType: 'number',
+      paramTopKDefault: 'default: 5',
+      paramTopKDescription: 'Number of icons to fetch (1-20).',
+    },
+  },
+};
 
 function IconCard({
   url,
   index,
   onCopy,
-  lang,
+  iconTexts,
   isPlaceholder = false,
 }: {
   url: string;
   index: number;
   onCopy: (msg: string) => void;
-  lang: Language;
+  iconTexts: any;
   isPlaceholder?: boolean;
 }) {
   const [copying, setCopying] = useState<'url' | 'svg' | null>(null);
@@ -30,7 +136,7 @@ function IconCard({
     try {
       await navigator.clipboard.writeText(url);
       setCopying('url');
-      onCopy(t(lang, 'iconPage.linkCopied'));
+      onCopy(iconTexts.linkCopied);
       setTimeout(() => setCopying(null), 1500);
     } catch (err) {
       console.error('Failed to copy URL', err);
@@ -43,7 +149,7 @@ function IconCard({
       const svg = await fetch(url).then((res) => res.text());
       await navigator.clipboard.writeText(svg);
       setCopying('svg');
-      onCopy(t(lang, 'iconPage.svgCopied'));
+      onCopy(iconTexts.svgCopied);
       setTimeout(() => setCopying(null), 1500);
     } catch (err) {
       console.error('Failed to copy SVG', err);
@@ -63,7 +169,7 @@ function IconCard({
           <IconEllipsis className="w-10 h-10 text-gray-400 dark:text-gray-500" />
         ) : (
           <span
-            aria-label={t(lang, 'iconPage.recommendedIcon', index + 1)}
+            aria-label={iconTexts.recommendedIcon(index + 1)}
             className="block w-12 h-12 sm:w-14 sm:h-14 text-primary dark:text-primary-dark transition duration-200 group-hover:scale-105"
             style={{
               backgroundColor: 'currentColor',
@@ -78,25 +184,25 @@ function IconCard({
           <button
             onClick={copyUrl}
             className="inline-flex items-center gap-1 text-xs text-primary dark:text-primary-dark hover:text-link dark:hover:text-link"
-            title={t(lang, 'iconPage.copyLink')}>
+            title={iconTexts.copyLink}>
             {copying === 'url' ? (
               <Check className="w-3 h-3" />
             ) : (
               <Link2 className="w-3 h-3" />
             )}
-            {t(lang, 'iconPage.link')}
+            {iconTexts.link}
           </button>
           <span className="h-4 w-px bg-gray-200 dark:bg-gray-800" />
           <button
             onClick={copySvg}
             className="inline-flex items-center gap-1 text-xs text-primary dark:text-primary-dark hover:text-link dark:hover:text-link"
-            title={t(lang, 'iconPage.copySvg')}>
+            title={iconTexts.copySvg}>
             {copying === 'svg' ? (
               <Check className="w-3 h-3" />
             ) : (
               <Copy className="w-3 h-3" />
             )}
-            {t(lang, 'iconPage.svgLabel')}
+            {iconTexts.svgLabel}
           </button>
         </div>
       )}
@@ -109,7 +215,6 @@ export default function IconPage() {
 }
 
 export function IconPageContent() {
-  const [lang, setLang] = useState<Language>('zh-CN');
   const [query, setQuery] = useState('');
   const [icons, setIcons] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -117,22 +222,16 @@ export function IconPageContent() {
   const [topK, setTopK] = useState(20);
   const {message: toast, show: showToast} = useCopyToast();
 
-  useEffect(() => {
-    const currentLang = getStoredLanguage();
-    setLang(currentLang);
-    // Set initial query based on language
-    const presetQueriesForLang = t(
-      currentLang,
-      'iconPage.presetQueries'
-    ) as string[];
-    setQuery(presetQueriesForLang[0] || '');
-  }, []);
-
-  const iconTexts = t(lang, 'iconPage') as any;
+  const iconTexts = useLocaleBundle(TRANSLATIONS);
   const presetQueries = iconTexts.presetQueries as string[];
   const defaultQuery = presetQueries[0] || '';
   const searchTexts = iconTexts.search;
   const sidebarTexts = iconTexts.sidebar;
+
+  useEffect(() => {
+    // Set initial query based on preset queries
+    setQuery(presetQueries[0] || '');
+  }, [presetQueries]);
 
   const sampleFallback = useMemo(
     () => Array.from({length: topK}, (_, idx) => `placeholder-${idx}`),
@@ -209,7 +308,7 @@ export function IconPageContent() {
   return (
     <Page
       toc={[]}
-      routeTree={{title: t(lang, 'nav.icon'), path: '/icon', routes: []}}
+      routeTree={{title: iconTexts.navTitle, path: '/icon', routes: []}}
       meta={{title: iconTexts.metaTitle}}
       section="icon"
       topNavOptions={{
@@ -341,7 +440,7 @@ export function IconPageContent() {
                             key={`${url}-${index}`}
                             url={url}
                             index={index}
-                            lang={lang}
+                            iconTexts={iconTexts}
                             onCopy={handleCopy}
                             isPlaceholder={usingFallback}
                           />

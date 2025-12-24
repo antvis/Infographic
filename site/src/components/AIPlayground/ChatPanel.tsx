@@ -1,8 +1,7 @@
 import {InfographicOptions} from '@antv/infographic';
 import {motion} from 'framer-motion';
 import {useEffect, useRef, useState} from 'react';
-import {type Language} from '../../utils/i18n';
-import {t} from '../../utils/translations';
+import {useLocaleBundle} from '../../hooks/useTranslation';
 import {IconErrorCircle} from '../Icon/IconErrorCircle';
 import {
   Tooltip,
@@ -10,6 +9,42 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../ui/tooltip';
+
+const TRANSLATIONS = {
+  'zh-CN': {
+    historyTitle: '生成记录',
+    configure: '配置服务',
+    clear: '清空对话',
+    shortcut: '⌘/Ctrl + ↵',
+    emptyTitle: '开始你的创作',
+    emptyDescription: '还没有生成记录，使用下方示例或粘贴你的内容开始。',
+    retry: '重试',
+    deleteAria: '删除记录',
+    placeholder: '提供你的数据，我会帮你生成信息图',
+    helper: '明确图表类型、数据来源、配色/风格，会生成得更准',
+    send: '生成信息图',
+    sending: '生成中...',
+    apiKeyError: '生成失败，请检查 API Key 或网络连接',
+  },
+  'en-US': {
+    historyTitle: 'Generation History',
+    configure: 'Configure Service',
+    clear: 'Clear Conversation',
+    shortcut: '⌘/Ctrl + ↵',
+    emptyTitle: 'Start creating',
+    emptyDescription:
+      'No generations yet. Use the examples below or paste your content to get started.',
+    retry: 'Retry',
+    deleteAria: 'Delete record',
+    placeholder: 'Provide your data and I will create an infographic for you',
+    helper:
+      'Specify chart types, data sources, and palette/style to get better results',
+    send: 'Generate',
+    sending: 'Generating...',
+    apiKeyError:
+      'Generation failed, please check your API key or network connection',
+  },
+};
 
 export function ChatPanel({
   prompt,
@@ -23,7 +58,6 @@ export function ChatPanel({
   onDelete,
   onOpenConfig,
   onClear,
-  lang,
   examples,
   panelClassName = 'min-h-[520px] h-[640px] max-h-[75vh]',
 }: {
@@ -49,14 +83,12 @@ export function ChatPanel({
   onDelete: (id: string) => void;
   onOpenConfig: () => void;
   onClear: () => void;
-  lang: Language;
   examples: Array<{title: string; text: string}>;
   panelClassName?: string;
 }) {
   const historyRef = useRef<HTMLDivElement>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const chatTexts = t(lang, 'aiPage.chat') as any;
-  const apiErrorFallback = t(lang, 'aiPage.errors.apiKey');
+  const chatTexts = useLocaleBundle(TRANSLATIONS);
 
   useEffect(() => {
     if (!historyRef.current) return;
@@ -178,7 +210,7 @@ export function ChatPanel({
                   (!item.syntax && !item.config && !isError);
                 const showError = item.status === 'error';
                 const isExpanded = expandedId === item.id;
-                const errorMessage = item.error || apiErrorFallback;
+                const errorMessage = item.error || chatTexts.apiKeyError;
 
                 const handleSelect = () => {
                   if (isError || disabled) return;

@@ -20,13 +20,33 @@ import {IconSearch} from 'components/Icon/IconSearch';
 import {IconStarTwinkle} from 'components/Icon/IconStarTwinkle';
 import {LanguageSwitcher} from 'components/LanguageSwitcher';
 import {Search} from 'components/Search';
-import {getStoredLanguage} from '../../../utils/i18n';
-import {t} from '../../../utils/translations';
+import {useLocaleBundle} from '../../../hooks/useTranslation';
 import {IconGitHub} from '../../Icon/IconGitHub';
 import {Logo} from '../../Logo';
 import {SidebarRouteTree} from '../Sidebar';
 import type {RouteItem} from '../getRouteMeta';
 import BrandMenu from './BrandMenu';
+
+const TRANSLATIONS = {
+  'zh-CN': {
+    home: '首页',
+    learn: '文档',
+    reference: '参考',
+    examples: '示例',
+    icon: '图标',
+    ai: 'AI',
+    enterprise: '企业版',
+  },
+  'en-US': {
+    home: 'Home',
+    learn: 'Learn',
+    reference: 'Reference',
+    examples: 'Examples',
+    icon: 'Icon',
+    ai: 'AI',
+    enterprise: 'Enterprise',
+  },
+};
 
 const useIsoLayoutEffect =
   typeof window !== 'undefined' ? useLayoutEffect : useEffect;
@@ -156,7 +176,7 @@ export default function TopNav({
   const [isHeroVisible, setIsHeroVisible] = useState(
     () => hideBrandWhenHeroVisible
   );
-  const [currentLang, setCurrentLang] = useState<'zh-CN' | 'en'>('zh-CN');
+  const navTexts = useLocaleBundle(TRANSLATIONS);
   const searchEnabled = false;
   const scrollParentRef = useRef<HTMLDivElement>(null);
   const {asPath} = useRouter();
@@ -165,11 +185,6 @@ export default function TopNav({
   if ((routeTree as any).routes.length === 1) {
     routeTree = (routeTree as any).routes[0];
   }
-
-  // Get current language
-  useEffect(() => {
-    setCurrentLang(getStoredLanguage());
-  }, []);
 
   // While the overlay is open, disable body scroll.
   useEffect(() => {
@@ -358,24 +373,24 @@ export default function TopNav({
             <div className="text-base justify-center items-center gap-1.5 flex 3xl:flex-1 flex-row 3xl:justify-end">
               <div className="mx-2.5 gap-1.5 hidden lg:flex">
                 <NavItem isActive={section === 'home'} url="/">
-                  {t(currentLang, 'nav.home')}
+                  {navTexts.home}
                 </NavItem>
                 <NavItem isActive={section === 'learn'} url="/learn">
-                  {t(currentLang, 'nav.learn')}
+                  {navTexts.learn}
                 </NavItem>
                 <NavItem isActive={section === 'reference'} url="/reference">
-                  {t(currentLang, 'nav.reference')}
+                  {navTexts.reference}
                 </NavItem>
                 <NavItem isActive={section === 'examples'} url="/examples">
-                  {t(currentLang, 'nav.examples')}
+                  {navTexts.examples}
                 </NavItem>
                 <NavItem isActive={section === 'icon'} url="/icon">
-                  {t(currentLang, 'nav.icon')}
+                  {navTexts.icon}
                 </NavItem>
                 <NavItem isActive={section === 'ai'} url="/ai">
                   <span className="inline-flex items-center justify-center gap-1.5">
                     <IconStarTwinkle className="w-4 h-4" />
-                    {t(currentLang, 'nav.ai')}
+                    {navTexts.ai}
                   </span>
                 </NavItem>
               </div>
@@ -386,7 +401,7 @@ export default function TopNav({
                   target="_blank"
                   rel="noreferrer noopener"
                   className="group inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-secondary dark:text-secondary-dark border border-border dark:border-border-dark bg-gray-30/20 dark:bg-gray-40/20 hover:text-link hover:dark:text-link-dark hover:border-link hover:dark:border-link-dark hover:bg-primary/5 hover:dark:bg-primary-dark/10 text-sm font-semibold transition">
-                  {t(currentLang, 'nav.enterprise')}
+                  {navTexts.enterprise}
                   <IconNavArrow
                     displayDirection="end"
                     className="w-4 h-4 text-secondary dark:text-secondary-dark transition group-hover:text-link group-hover:dark:text-link-dark"
@@ -462,26 +477,26 @@ export default function TopNav({
                 <Suspense fallback={null}>
                   <div className="ps-3 xs:ps-5 xs:gap-0.5 xs:text-base overflow-x-auto flex flex-row lg:hidden text-base font-bold text-secondary dark:text-secondary-dark">
                     <NavItem isActive={section === 'home'} url="/">
-                      {t(currentLang, 'nav.home')}
+                      {navTexts.home}
                     </NavItem>
                     <NavItem isActive={section === 'learn'} url="/learn">
-                      {t(currentLang, 'nav.learn')}
+                      {navTexts.learn}
                     </NavItem>
                     <NavItem
                       isActive={section === 'reference'}
                       url="/reference">
-                      {t(currentLang, 'nav.reference')}
+                      {navTexts.reference}
                     </NavItem>
                     <NavItem isActive={section === 'examples'} url="/examples">
-                      {t(currentLang, 'nav.examples')}
+                      {navTexts.examples}
                     </NavItem>
                     <NavItem isActive={section === 'icon'} url="/icon">
-                      {t(currentLang, 'nav.icon')}
+                      {navTexts.icon}
                     </NavItem>
                     <NavItem isActive={section === 'ai'} url="/ai">
                       <span className="inline-flex items-center justify-center gap-1.5">
                         <IconStarTwinkle className="w-4 h-4" />
-                        {t(currentLang, 'nav.ai')}
+                        {navTexts.ai}
                       </span>
                     </NavItem>
                   </div>

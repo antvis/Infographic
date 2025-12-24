@@ -6,10 +6,28 @@ import {BrowserChrome} from 'components/Layout/HomePage/BrowserChrome';
 import {CodeEditor} from 'components/MDX/CodeEditor';
 import {AnimatePresence, motion} from 'framer-motion';
 import {useCallback, useMemo, useRef} from 'react';
-import {type Language} from '../../utils/i18n';
-import {t} from '../../utils/translations';
+import {useLocaleBundle} from '../../hooks/useTranslation';
 
 type TabKey = 'preview' | 'syntax';
+
+const TRANSLATIONS = {
+  'zh-CN': {
+    tabPreview: '预览',
+    tabSyntax: '语法',
+    copyImage: '复制图片',
+    generating: '生成中...',
+    empty: '输入提示语以生成信息图语法',
+    copyImageHint: '已复制图片',
+  },
+  'en-US': {
+    tabPreview: 'Preview',
+    tabSyntax: 'Syntax',
+    copyImage: 'Copy image',
+    generating: 'Generating...',
+    empty: 'Enter a prompt to generate infographic syntax',
+    copyImageHint: 'Image copied',
+  },
+};
 
 export function PreviewPanel({
   activeTab,
@@ -24,7 +42,6 @@ export function PreviewPanel({
   onCopy,
   onRenderError,
   panelClassName = 'min-h-[520px] h-[640px] max-h-[75vh]',
-  lang,
 }: {
   activeTab: TabKey;
   onTabChange: (tab: TabKey) => void;
@@ -38,7 +55,6 @@ export function PreviewPanel({
   onCopy?: (hint: string) => void;
   onRenderError?: (message: string | null) => void;
   panelClassName?: string;
-  lang: Language;
 }) {
   const infographicRef = useRef<InfographicHandle | null>(null);
   const fallbackValue = fallbackSyntax || '';
@@ -52,14 +68,14 @@ export function PreviewPanel({
       ? editorValue
       : fallbackValue
     : jsonPreview;
-  const previewTexts = t(lang, 'aiPage.preview') as any;
+  const previewTexts = useLocaleBundle(TRANSLATIONS);
 
   const handleCopy = useCallback(async () => {
     const success = (await infographicRef.current?.copyToClipboard()) || false;
     if (success && onCopy) {
-      onCopy(t(lang, 'aiPage.notifications.copyImage'));
+      onCopy(previewTexts.copyImageHint);
     }
-  }, [lang, onCopy]);
+  }, [onCopy, previewTexts.copyImageHint]);
 
   const navButtons = useMemo(
     () => (

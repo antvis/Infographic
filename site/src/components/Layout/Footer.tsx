@@ -3,70 +3,62 @@ import {ExternalLink} from 'components/ExternalLink';
 import {IconGitHub} from 'components/Icon/IconGitHub';
 import NextLink from 'next/link';
 import * as React from 'react';
-import {getStoredLanguage, type Language} from '../../utils/i18n';
-import {t} from '../../utils/translations';
+import {useLocaleBundle} from '../../hooks/useTranslation';
 import {IconAntV} from '../Icon/IconAntV';
 import {Logo} from '../Logo';
 
-type FooterTranslationSections = {
-  docs: {
-    header: string;
-    quickStart: string;
-    coreConcepts: string;
-    customDesign: string;
-    theory: string;
-  };
-  api: {
-    header: string;
-    jsx: string;
-    api: string;
-    designAssets: string;
-  };
-  more: {
-    header: string;
-    moreExamples: string;
-    aiInfographic: string;
-    github: string;
-    contribute: string;
-  };
-  friendlyLinksHeader: string;
-};
-
-function getFooterTranslations(lang: Language): FooterTranslationSections {
-  return {
+const TRANSLATIONS = {
+  'zh-CN': {
     docs: {
-      header: t(lang, 'footer.sections.docs.header'),
-      quickStart: t(lang, 'footer.sections.docs.quickStart'),
-      coreConcepts: t(lang, 'footer.sections.docs.coreConcepts'),
-      customDesign: t(lang, 'footer.sections.docs.customDesign'),
-      theory: t(lang, 'footer.sections.docs.theory'),
+      header: '文档',
+      quickStart: '快速开始',
+      coreConcepts: '核心概念',
+      customDesign: '自定义设计',
+      theory: '信息图理论',
     },
     api: {
-      header: t(lang, 'footer.sections.api.header'),
-      jsx: t(lang, 'footer.sections.api.jsx'),
-      api: t(lang, 'footer.sections.api.api'),
-      designAssets: t(lang, 'footer.sections.api.designAssets'),
+      header: 'API 参考',
+      jsx: 'JSX',
+      api: 'API',
+      designAssets: '设计资产',
     },
     more: {
-      header: t(lang, 'footer.sections.more.header'),
-      moreExamples: t(lang, 'footer.sections.more.moreExamples'),
-      aiInfographic: t(lang, 'footer.sections.more.aiInfographic'),
-      github: t(lang, 'footer.sections.more.github'),
-      contribute: t(lang, 'footer.sections.more.contribute'),
+      header: '更多',
+      moreExamples: '更多示例',
+      aiInfographic: 'AI 生成信息图',
+      github: 'GitHub',
+      contribute: '参与贡献',
     },
-    friendlyLinksHeader: t(lang, 'footer.friendlyLinksHeader'),
-  };
-}
+    friendlyLinksHeader: '友情链接',
+  },
+  'en-US': {
+    docs: {
+      header: 'Docs',
+      quickStart: 'Quick Start',
+      coreConcepts: 'Core Concepts',
+      customDesign: 'Custom Design',
+      theory: 'Infographic Theory',
+    },
+    api: {
+      header: 'API Reference',
+      jsx: 'JSX',
+      api: 'API',
+      designAssets: 'Design Assets',
+    },
+    more: {
+      header: 'More',
+      moreExamples: 'More Examples',
+      aiInfographic: 'AI Generated Infographics',
+      github: 'GitHub',
+      contribute: 'Contribute',
+    },
+    friendlyLinksHeader: 'Friendly Links',
+  },
+};
 
 export function Footer() {
-  const [lang, setLang] = React.useState<Language>('zh-CN');
-
-  React.useEffect(() => {
-    setLang(getStoredLanguage());
-  }, []);
-
   const socialLinkClasses = 'hover:text-primary dark:text-primary-dark';
-  const translations = getFooterTranslations(lang);
+  const translations = useLocaleBundle(TRANSLATIONS);
   return (
     <footer className={cn('text-secondary dark:text-secondary-dark')}>
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-x-12 gap-y-8 max-w-7xl mx-auto">

@@ -1,8 +1,20 @@
 import cn from 'classnames';
 import NextLink from 'next/link';
 import {memo} from 'react';
+import {useLocaleBundle} from '../hooks/useTranslation';
 import {IconNavArrow} from './Icon/IconNavArrow';
 import type {RouteMeta} from './Layout/getRouteMeta';
+
+const TRANSLATIONS = {
+  'zh-CN': {
+    previous: '上一章',
+    next: '下一章',
+  },
+  'en-US': {
+    previous: 'Previous',
+    next: 'Next',
+  },
+};
 
 export type DocsPageFooterProps = Pick<
   RouteMeta,
@@ -15,6 +27,8 @@ function areEqual(prevProps: DocsPageFooterProps, props: DocsPageFooterProps) {
 
 export const DocsPageFooter = memo<DocsPageFooterProps>(
   function DocsPageFooter({nextRoute, prevRoute, route}) {
+    const footerTexts = useLocaleBundle(TRANSLATIONS);
+
     if (!route || route?.heading) {
       return null;
     }
@@ -29,6 +43,7 @@ export const DocsPageFooter = memo<DocsPageFooterProps>(
                   type="Previous"
                   title={prevRoute.title}
                   href={prevRoute.path}
+                  label={footerTexts.previous}
                 />
               ) : (
                 <div />
@@ -39,6 +54,7 @@ export const DocsPageFooter = memo<DocsPageFooterProps>(
                   type="Next"
                   title={nextRoute.title}
                   href={nextRoute.path}
+                  label={footerTexts.next}
                 />
               ) : (
                 <div />
@@ -56,10 +72,12 @@ function FooterLink({
   href,
   title,
   type,
+  label,
 }: {
   href: string;
   title: string;
   type: 'Previous' | 'Next';
+  label: string;
 }) {
   return (
     <NextLink
@@ -76,7 +94,7 @@ function FooterLink({
       />
       <div className="flex flex-col overflow-hidden">
         <span className="text-sm font-bold tracking-wide no-underline uppercase text-secondary dark:text-secondary-dark group-focus:text-link dark:group-focus:text-link-dark group-focus:text-opacity-100">
-          {type === 'Previous' ? '上一章' : '下一章'}
+          {label}
         </span>
         <span className="text-lg break-words group-hover:underline">
           {title}

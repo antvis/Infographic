@@ -4,8 +4,7 @@ import {Page} from 'components/Layout/Page';
 import {motion} from 'framer-motion';
 import {useRouter} from 'next/router';
 import {useCallback, useEffect, useRef, useState} from 'react';
-import {getStoredLanguage, type Language} from '../../utils/i18n';
-import {t} from '../../utils/translations';
+import {useLocaleBundle} from '../../hooks/useTranslation';
 import {IconStarTwinkle} from '../Icon/IconStarTwinkle';
 import {ChatPanel} from './ChatPanel';
 import {ConfigPanel} from './ConfigPanel';
@@ -14,6 +13,96 @@ import {sendMessageStream} from './Service';
 import {DEFAULT_CONFIG, PROVIDER_OPTIONS, STORAGE_KEYS} from './constants';
 import {formatJSON} from './helpers';
 import type {AIConfig, AIModelConfig, AIProvider, ChatMessage} from './types';
+
+const TRANSLATIONS = {
+  'zh-CN': {
+    pending: '待输入',
+    metaTitle: 'AI 生成信息图',
+    hero: {
+      title: 'AI',
+      highlight: 'Infographic',
+      description:
+        '将你在日常写作、汇报或其他文字工作中遇到的内容粘贴到这里，AI 会理解语境并为你生成相匹配的信息图方案',
+    },
+    workspaceLabel: 'AI 工作区',
+    preview: {
+      tabPreview: '预览',
+      tabSyntax: '语法',
+      copyImage: '复制图片',
+      generating: '生成中...',
+      empty: '输入提示语以生成信息图语法',
+    },
+    notifications: {
+      copyImage: '已复制图片',
+    },
+    errors: {
+      requestIncomplete: '请求未完成',
+      noOutput: '未接收到模型输出',
+      noModel: '模型未返回内容',
+      generationFailed: '生成失败，请检查网络或稍后重试。',
+      jsonParse: 'JSON 解析失败',
+    },
+    examples: [
+      {
+        title: '🎯 产品生命周期管理',
+        text: '产品从导入期到成长期，销量快速攀升，市场份额从5%增长至25%。成熟期达到峰值40%后保持稳定。衰退期开始下滑至15%。通过在成长期加大营销投入，成熟期优化成本结构，衰退期及时推出升级产品，实现平稳过渡。',
+      },
+      {
+        title: '💰 客户价值分层',
+        text: '将客户分为四个层级：VIP客户占比5%但贡献45%营收，高价值客户占15%贡献30%营收，普通客户占30%贡献20%营收，低价值客户占50%仅贡献5%营收。针对不同层级制定差异化服务策略，重点维护高价值客群，激活潜力客户。',
+      },
+      {
+        title: '🌍 全球市场布局进展',
+        text: '2020年聚焦亚太市场，营收占比60%。2021年拓展欧洲市场，占比提升至25%。2022年进军北美，三大市场形成均衡格局，分别为40%、30%、25%。2023年新兴市场突破，拉美和中东合计贡献15%，全球化布局初步完成。',
+      },
+    ],
+    fallbackSyntax: `infographic list-row-horizontal-icon-arrow\ndata\n  title 客户增长引擎\n  desc 多渠道触达与复购提升\n  items\n    - label 线索获取\n      value 18.6\n      desc 渠道投放与内容获客\n      icon mdi/rocket-launch\n    - label 转化提效\n      value 12.4\n      desc 线索评分与自动跟进\n      icon mdi/progress-check\n    - label 复购提升\n      value 9.8\n      desc 会员体系与权益运营\n      icon mdi/account-sync\n    - label 产品增长\n      value 10.2\n      desc 试用转化与功能引导\n      icon mdi/chart-line`,
+  },
+  'en-US': {
+    pending: 'Pending input',
+    metaTitle: 'AI Infographic',
+    hero: {
+      title: 'AI',
+      highlight: 'Infographic',
+      description:
+        'Paste content from writing, reporting, or any text task and AI will understand the context and output an infographic plan.',
+    },
+    workspaceLabel: 'AI Workspace',
+    preview: {
+      tabPreview: 'Preview',
+      tabSyntax: 'Syntax',
+      copyImage: 'Copy image',
+      generating: 'Generating...',
+      empty: 'Enter a prompt to generate infographic syntax',
+    },
+    notifications: {
+      copyImage: 'Image copied',
+    },
+    errors: {
+      requestIncomplete: 'Request was not completed',
+      noOutput: 'No model output received',
+      noModel: 'The model did not return content',
+      generationFailed:
+        'Generation failed. Check the network or try again later.',
+      jsonParse: 'JSON parse error',
+    },
+    examples: [
+      {
+        title: '🎯 Product Lifecycle Management',
+        text: 'From introduction to growth phase, sales rapidly increased and market share grew from 5% to 25%. During maturity, it peaked at 40% and remained stable. In the decline phase, it dropped to 15%. By increasing marketing investment during growth, optimizing cost structure during maturity, and timely launching upgraded products during decline, a smooth transition was achieved.',
+      },
+      {
+        title: '💰 Customer Value Segmentation',
+        text: 'Customers are divided into four tiers: VIP customers account for 5% but contribute 45% of revenue, high-value customers 15% contribute 30% of revenue, regular customers 30% contribute 20% of revenue, and low-value customers 50% contribute only 5% of revenue. Differentiated service strategies are developed for different tiers, focusing on maintaining high-value customer groups and activating potential customers.',
+      },
+      {
+        title: '🌍 Global Market Expansion',
+        text: 'In 2020, focused on the Asia-Pacific market, accounting for 60% of revenue. In 2021, expanded to the European market, increasing to 25%. In 2022, entered North America, forming a balanced pattern across three major markets at 40%, 30%, and 25% respectively. In 2023, emerging markets broke through, with Latin America and the Middle East contributing a combined 15%, completing the initial globalization layout.',
+      },
+    ],
+    fallbackSyntax: `infographic list-row-horizontal-icon-arrow\ndata\n  title Customer Growth Engine\n  desc Multi-channel reach and retention\n  items\n    - label Lead Acquisition\n      value 18.6\n      desc Paid media and content marketing\n      icon mdi/rocket-launch\n    - label Conversion Boost\n      value 12.4\n      desc Lead scoring with automated follow-ups\n      icon mdi/progress-check\n    - label Loyalty Growth\n      value 9.8\n      desc Membership programs and benefits\n      icon mdi/account-sync\n    - label Product Growth\n      value 10.2\n      desc Trial conversion and feature onboarding\n      icon mdi/chart-line`,
+  },
+};
 
 const createId = () => {
   try {
@@ -41,10 +130,8 @@ type HistoryRecord = {
   config?: Partial<InfographicOptions>;
 };
 
-const createTitle = (text: string, lang: Language) =>
-  text.length > 18
-    ? `${text.slice(0, 18)}…`
-    : text || t(lang, 'aiPage.pending');
+const createTitle = (text: string, pendingText: string) =>
+  text.length > 18 ? `${text.slice(0, 18)}…` : text || pendingText;
 
 const extractSyntaxContent = (text: string) => {
   if (!text) return '';
@@ -71,7 +158,7 @@ const toHistoryRecord = (
     syntax?: string;
     config?: Partial<InfographicOptions>;
   },
-  lang: Language
+  pendingText: string
 ): HistoryRecord => ({
   id: input.id,
   text: input.text,
@@ -79,12 +166,12 @@ const toHistoryRecord = (
   error: input.error,
   syntax: input.syntax,
   config: input.config,
-  title: createTitle(input.text, lang),
+  title: createTitle(input.text, pendingText),
 });
 
 const normalizeLegacyMessages = (
   raw: ChatMessage[],
-  lang: Language
+  pendingText: string
 ): HistoryRecord[] => {
   const records: HistoryRecord[] = [];
   let pendingUser: ChatMessage | null = null;
@@ -105,7 +192,7 @@ const normalizeLegacyMessages = (
                 ? (msg.config as Partial<InfographicOptions>)
                 : undefined,
           },
-          lang
+          pendingText
         )
       );
       pendingUser = null;
@@ -120,7 +207,7 @@ const normalizeLegacyMessages = (
           text: pendingUser.text,
           status: 'pending',
         },
-        lang
+        pendingText
       )
     );
   }
@@ -128,10 +215,13 @@ const normalizeLegacyMessages = (
   return records;
 };
 
-const normalizeStoredHistory = (raw: any, lang: Language): HistoryRecord[] => {
+const normalizeStoredHistory = (
+  raw: any,
+  pendingText: string
+): HistoryRecord[] => {
   if (!Array.isArray(raw)) return [];
   if (raw.some((item) => item && typeof item === 'object' && 'role' in item)) {
-    return normalizeLegacyMessages(raw as ChatMessage[], lang);
+    return normalizeLegacyMessages(raw as ChatMessage[], pendingText);
   }
 
   const normalized: HistoryRecord[] = [];
@@ -160,7 +250,7 @@ const normalizeStoredHistory = (raw: any, lang: Language): HistoryRecord[] => {
           syntax,
           config,
         },
-        lang
+        pendingText
       )
     );
   }
@@ -169,15 +259,12 @@ const normalizeStoredHistory = (raw: any, lang: Language): HistoryRecord[] => {
 
 export function AIPageContent() {
   const router = useRouter();
-  const [lang, setLang] = useState<Language>('zh-CN');
-  const heroTexts = t(lang, 'aiPage.hero') as any;
-  const workspaceLabel = t(lang, 'aiPage.workspaceLabel') as string;
-  const examplePrompts = t(lang, 'aiPage.examples') as Array<{
-    title: string;
-    text: string;
-  }>;
-  const fallbackSyntax = t(lang, 'aiPage.fallbackSyntax') as string;
-  const metaTitle = t(lang, 'aiPage.metaTitle') as string;
+  const aiTexts = useLocaleBundle(TRANSLATIONS);
+  const heroTexts = aiTexts.hero;
+  const workspaceLabel = aiTexts.workspaceLabel;
+  const examplePrompts = aiTexts.examples;
+  const fallbackSyntax = aiTexts.fallbackSyntax;
+  const metaTitle = aiTexts.metaTitle;
   const [prompt, setPrompt] = useState('');
   const [history, setHistory] = useState<HistoryRecord[]>([]);
   const [config, setConfig] = useState<AIConfig>(DEFAULT_CONFIG);
@@ -202,13 +289,8 @@ export function AIPageContent() {
   const {message: copyHint, show: showCopyHint} = useCopyToast();
 
   useEffect(() => {
-    setLang(getStoredLanguage());
-  }, []);
-
-  useEffect(() => {
     setMounted(true);
     if (typeof window === 'undefined') return;
-    const currentLang = getStoredLanguage();
     const savedConfig = localStorage.getItem(STORAGE_KEYS.config);
     const savedMessages = localStorage.getItem(STORAGE_KEYS.messages);
     const savedInfographic = localStorage.getItem(STORAGE_KEYS.infographic);
@@ -236,7 +318,7 @@ export function AIPageContent() {
     if (savedMessages) {
       try {
         const parsed = JSON.parse(savedMessages);
-        setHistory(normalizeStoredHistory(parsed, currentLang));
+        setHistory(normalizeStoredHistory(parsed, aiTexts.pending));
       } catch {
         setHistory([]);
       }
@@ -286,7 +368,7 @@ export function AIPageContent() {
       }
     }
     setHasHydrated(true);
-  }, []);
+  }, [aiTexts.pending]);
 
   useEffect(() => {
     if (!mounted || recoveredPendingRef.current || isGenerating) return;
@@ -299,13 +381,13 @@ export function AIPageContent() {
         next[next.length - 1] = {
           ...last,
           status: 'error',
-          error: t(lang, 'aiPage.errors.requestIncomplete'),
+          error: aiTexts.errors.requestIncomplete,
         };
         return next;
       });
       setActiveTab('preview');
     }
-  }, [history, mounted, isGenerating, lang]);
+  }, [history, mounted, isGenerating, aiTexts.errors.requestIncomplete]);
 
   useEffect(() => {
     if (!mounted) return;
@@ -403,9 +485,7 @@ export function AIPageContent() {
                   ? {
                       ...item,
                       status: hasSyntax ? 'ready' : 'error',
-                      error: hasSyntax
-                        ? undefined
-                        : t(lang, 'aiPage.errors.noOutput'),
+                      error: hasSyntax ? undefined : aiTexts.errors.noOutput,
                       syntax: hasSyntax ? syntaxBuffer : undefined,
                       config: hasSyntax ? undefined : item.config,
                     }
@@ -413,12 +493,11 @@ export function AIPageContent() {
               )
             );
             if (!hasSyntax) {
-              setPreviewError(t(lang, 'aiPage.errors.noModel'));
+              setPreviewError(aiTexts.errors.noModel);
             }
           },
           (error) => {
-            const message =
-              error.message || t(lang, 'aiPage.errors.generationFailed');
+            const message = error.message || aiTexts.errors.generationFailed;
             setHistory((prev) =>
               prev.map((item) =>
                 item.id === userId
@@ -438,7 +517,7 @@ export function AIPageContent() {
         const message =
           error instanceof Error && error.message
             ? error.message
-            : t(lang, 'aiPage.errors.generationFailed');
+            : aiTexts.errors.generationFailed;
         setHistory((prev) =>
           prev.map((item) =>
             item.id === userId
@@ -458,7 +537,12 @@ export function AIPageContent() {
         inputRef.current?.focus();
       }
     },
-    [config, lang]
+    [
+      config,
+      aiTexts.errors.noOutput,
+      aiTexts.errors.noModel,
+      aiTexts.errors.generationFailed,
+    ]
   );
 
   const handleSend = useCallback(
@@ -480,7 +564,7 @@ export function AIPageContent() {
               ? {
                   ...item,
                   text: content,
-                  title: createTitle(content, lang),
+                  title: createTitle(content, aiTexts.pending),
                   status: 'pending',
                   error: undefined,
                   syntax: undefined,
@@ -496,7 +580,7 @@ export function AIPageContent() {
             text: content,
             status: 'pending',
           },
-          lang
+          aiTexts.pending
         );
         requestId = newRecord.id;
         setHistory((prev) => [...prev, newRecord]);
@@ -509,7 +593,7 @@ export function AIPageContent() {
 
       await requestInfographic(content, requestId);
     },
-    [prompt, retryingId, history, requestInfographic, lang]
+    [prompt, retryingId, history, requestInfographic, aiTexts.pending]
   );
 
   useEffect(() => {
@@ -592,9 +676,7 @@ export function AIPageContent() {
         setPreviewError(null);
       } catch (err) {
         setPreviewError(
-          err instanceof Error
-            ? err.message
-            : t(lang, 'aiPage.errors.jsonParse')
+          err instanceof Error ? err.message : aiTexts.errors.jsonParse
         );
       }
     } else {
@@ -613,7 +695,7 @@ export function AIPageContent() {
   return (
     <Page
       toc={[]}
-      routeTree={{title: t(lang, 'nav.ai'), path: '/ai', routes: []}}
+      routeTree={{title: 'AI', path: '/ai', routes: []}}
       meta={{title: metaTitle}}
       section="ai"
       topNavOptions={{
@@ -676,7 +758,6 @@ export function AIPageContent() {
                 onDelete={handleDelete}
                 onOpenConfig={() => setIsConfigOpen(true)}
                 onClear={handleClear}
-                lang={lang}
                 examples={examplePrompts}
                 panelClassName={PANEL_HEIGHT_CLASS}
               />
@@ -695,7 +776,6 @@ export function AIPageContent() {
                   panelClassName={PANEL_HEIGHT_CLASS}
                   onCopy={handleCopyHint}
                   onRenderError={setPreviewError}
-                  lang={lang}
                 />
               }
             </div>
@@ -710,7 +790,6 @@ export function AIPageContent() {
         value={config}
         savedConfigs={configMap}
         onClose={() => setIsConfigOpen(false)}
-        lang={lang}
         onSave={(value) => {
           setConfigMap((prev) => ({
             ...prev,

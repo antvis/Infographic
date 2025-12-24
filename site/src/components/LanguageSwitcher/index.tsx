@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react';
+import {siteConfig} from '../../siteConfig';
 import {getStoredLanguage, Language, setStoredLanguage} from '../../utils/i18n';
 
 const languageIcon = (
@@ -19,7 +20,9 @@ const languageIcon = (
 );
 
 export function LanguageSwitcher() {
-  const [currentLanguage, setCurrentLanguage] = useState<Language>('zh-CN');
+  const [currentLanguage, setCurrentLanguage] = useState<Language>(
+    siteConfig.defaultLanguage as Language
+  );
 
   useEffect(() => {
     setCurrentLanguage(getStoredLanguage());
@@ -35,7 +38,7 @@ export function LanguageSwitcher() {
 
   const otherLanguage =
     currentLanguage === 'zh-CN'
-      ? {code: 'en' as Language, label: 'English'}
+      ? {code: 'en-US' as Language, label: 'English'}
       : {code: 'zh-CN' as Language, label: '简体中文'};
 
   return (

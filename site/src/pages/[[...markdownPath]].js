@@ -26,10 +26,12 @@ export default function Layout({
     setCurrentLang(lang);
   }, []);
 
+  const isEnglish = currentLang.toLowerCase().startsWith('en');
+
   // Select content based on current language
-  const activeContent = currentLang === 'en' && contentEn ? contentEn : content;
-  const activeToc = currentLang === 'en' && tocEn ? tocEn : toc;
-  const activeMeta = currentLang === 'en' && metaEn ? metaEn : meta;
+  const activeContent = isEnglish && contentEn ? contentEn : content;
+  const activeToc = isEnglish && tocEn ? tocEn : toc;
+  const activeMeta = isEnglish && metaEn ? metaEn : meta;
 
   const parsedContent = useMemo(
     () => JSON.parse(activeContent, reviveNodeOnClient),
@@ -47,10 +49,10 @@ export default function Layout({
       routeTree = sidebarHome;
       break;
     case 'learn':
-      routeTree = currentLang === 'en' ? sidebarLearnEn : sidebarLearn;
+      routeTree = isEnglish ? sidebarLearnEn : sidebarLearn;
       break;
     case 'reference':
-      routeTree = currentLang === 'en' ? sidebarReferenceEn : sidebarReference;
+      routeTree = isEnglish ? sidebarReferenceEn : sidebarReference;
       break;
   }
   return (

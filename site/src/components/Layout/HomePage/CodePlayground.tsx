@@ -2,7 +2,7 @@
 
 import {InfographicOptions} from '@antv/infographic';
 import {useCallback, useEffect, useMemo, useState} from 'react';
-import {getStoredLanguage, type Language} from '../../../utils/i18n';
+import {useLocaleBundle} from '../../../hooks/useTranslation';
 import {Infographic} from '../../Infographic';
 import {CodeEditor} from '../../MDX/CodeEditor';
 import {BrowserChrome} from './BrowserChrome';
@@ -14,7 +14,7 @@ interface ConfigOption {
 }
 
 // 翻译文本
-const translations = {
+const TRANSLATIONS = {
   'zh-CN': {
     syntaxLabel: 'Infographic 语法',
     presetLabels: ['金字塔型', '过程型', '统计图'],
@@ -73,7 +73,7 @@ const translations = {
       ],
     },
   },
-  en: {
+  'en-US': {
     syntaxLabel: 'Infographic Syntax',
     presetLabels: ['Pyramid', 'Process', 'Chart'],
     pyramid: {
@@ -148,24 +148,13 @@ const translations = {
   },
 };
 
-const t = (lang: Language, key: keyof (typeof translations)['en']): string => {
-  const langTranslations = translations[lang] || translations.en;
-  return langTranslations[key] as string;
-};
-
-const getPresetLabel = (lang: Language, index: number): string => {
-  const labels =
-    translations[lang]?.presetLabels || translations.en.presetLabels;
-  return labels[index] || labels[0];
-};
+type TranslationType = (typeof TRANSLATIONS)['zh-CN'];
 
 // 内置三个配置
-const getPresetConfigs = (lang: Language): ConfigOption[] => {
-  const t = translations[lang] || translations.en;
-
+const getPresetConfigs = (t: TranslationType): ConfigOption[] => {
   return [
     {
-      label: getPresetLabel(lang, 0),
+      label: t.presetLabels[0],
       init: {
         editable: true,
       },
@@ -201,7 +190,7 @@ theme
     `,
     },
     {
-      label: getPresetLabel(lang, 1),
+      label: t.presetLabels[1],
       init: {
         editable: true,
       },
@@ -234,7 +223,7 @@ data
     `,
     },
     {
-      label: getPresetLabel(lang, 2),
+      label: t.presetLabels[2],
       init: {
         editable: true,
       },
@@ -278,7 +267,7 @@ data
  * 内部组件:处理代码监听和预览
  */
 function CodePlaygroundInner({
-  lang,
+  playgroundTexts,
   currentConfigIndex,
   code,
   onConfigChange,
@@ -286,7 +275,7 @@ function CodePlaygroundInner({
   error,
   onRenderError,
 }: {
-  lang: Language;
+  playgroundTexts: TranslationType;
   currentConfigIndex: number;
   code: string;
   onConfigChange: (index: number) => void;
@@ -295,7 +284,10 @@ function CodePlaygroundInner({
   onRenderError: (error: Error | null) => void;
 }) {
   const [renderKey, setRenderKey] = useState(0);
-  const presetConfigs = useMemo(() => getPresetConfigs(lang), [lang]);
+  const presetConfigs = useMemo(
+    () => getPresetConfigs(playgroundTexts),
+    [playgroundTexts]
+  );
   const currentConfig = presetConfigs[currentConfigIndex];
 
   return (
@@ -306,7 +298,7 @@ function CodePlaygroundInner({
           <div className="shadow-nav dark:shadow-nav-dark rounded-2xl overflow-hidden flex flex-col h-[480px]">
             <div className="bg-wash dark:bg-card-dark h-10 rounded-t-2xl flex items-center px-4 lg:px-6 border-b border-border dark:border-border-dark flex-shrink-0">
               <span className="text-sm text-secondary dark:text-secondary-dark font-medium">
-                {t(lang, 'syntaxLabel')}
+                {playgroundTexts.syntaxLabel}
               </span>
             </div>
             <div className="bg-white dark:bg-card-dark sp-layout !block flex-1 min-h-0 rounded-b-2xl overflow-auto">
@@ -384,13 +376,11 @@ function CodePlaygroundInner({
  * <CodePlayground />
  */
 export function CodePlayground() {
-  const [lang, setLang] = useState<Language>('zh-CN');
-
-  useEffect(() => {
-    setLang(getStoredLanguage());
-  }, []);
-
-  const presetConfigs = useMemo(() => getPresetConfigs(lang), [lang]);
+  const playgroundTexts = useLocaleBundle(TRANSLATIONS);
+  const presetConfigs = useMemo(
+    () => getPresetConfigs(playgroundTexts),
+    [playgroundTexts]
+  );
 
   const [currentConfigIndex, setCurrentConfigIndex] = useState(0);
   const initialCode = useMemo(
@@ -415,7 +405,7 @@ export function CodePlayground() {
   return (
     <div className="sandpack sandpack--playground w-full max-w-7xl mx-auto my-8">
       <CodePlaygroundInner
-        lang={lang}
+        playgroundTexts={playgroundTexts}
         code={code}
         currentConfigIndex={currentConfigIndex}
         onCodeChange={setCode}

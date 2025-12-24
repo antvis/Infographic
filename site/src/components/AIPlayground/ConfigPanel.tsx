@@ -1,12 +1,44 @@
 import Image from 'next/image';
 import {useEffect, useState} from 'react';
-import {type Language} from '../../utils/i18n';
-import {t} from '../../utils/translations';
+import {useLocaleBundle} from '../../hooks/useTranslation';
 import {Dialog, DialogContent, DialogTitle} from '../ui/dialog';
 import {Select} from '../ui/select';
 import {DEFAULT_CONFIG, PROVIDER_OPTIONS} from './constants';
 import {fetchModels} from './Service';
 import {AIConfig, AIProvider} from './types';
+
+const TRANSLATIONS = {
+  'zh-CN': {
+    title: '配置模型服务',
+    provider: '提供商',
+    providerPlaceholder: '选择提供商',
+    presetNotice: '正在使用 AntV 内置服务，无需额外配置。',
+    baseUrl: 'Base URL',
+    apiKey: 'API Key',
+    model: '模型',
+    modelPlaceholder: '选择模型',
+    customOption: '自定义',
+    fetchingModels: '正在获取模型列表…',
+    save: '保存配置',
+    reset: '重置',
+    cancel: '取消',
+  },
+  'en-US': {
+    title: 'Configure Model Service',
+    provider: 'Provider',
+    providerPlaceholder: 'Select a provider',
+    presetNotice: 'Using AntV built-in service, no setup required.',
+    baseUrl: 'Base URL',
+    apiKey: 'API Key',
+    model: 'Model',
+    modelPlaceholder: 'Select a model',
+    customOption: 'Custom',
+    fetchingModels: 'Fetching model list…',
+    save: 'Save',
+    reset: 'Reset',
+    cancel: 'Cancel',
+  },
+};
 
 export function ConfigPanel({
   open,
@@ -14,14 +46,12 @@ export function ConfigPanel({
   value,
   savedConfigs,
   onSave,
-  lang,
 }: {
   open: boolean;
   value: AIConfig;
   savedConfigs: Record<AIProvider, AIConfig>;
   onClose: () => void;
   onSave: (config: AIConfig) => void;
-  lang: Language;
 }) {
   const [draft, setDraft] = useState<AIConfig>(value);
 
@@ -30,7 +60,7 @@ export function ConfigPanel({
   );
   const [loadingModels, setLoadingModels] = useState(false);
   const isAntv = draft.provider === 'antv';
-  const configTexts = t(lang, 'aiPage.config') as any;
+  const configTexts = useLocaleBundle(TRANSLATIONS);
 
   const handlePresetSelect = (next: string) => {
     const provider = next as AIProvider;
