@@ -77,7 +77,7 @@ export function useTranslation() {
  */
 export function useLocaleBundle<T>(
   bundle: Record<Language, T>,
-  fallbackLanguage: Language = 'zh-CN'
+  fallbackLanguage: Language = siteConfig.defaultLanguage as Language
 ): T {
   const {language} = useTranslation();
   const fallback =

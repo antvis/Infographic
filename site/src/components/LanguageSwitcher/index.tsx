@@ -36,19 +36,35 @@ export function LanguageSwitcher() {
     window.location.reload();
   };
 
-  const otherLanguage =
-    currentLanguage === 'zh-CN'
-      ? {code: 'en-US' as Language, label: 'English'}
-      : {code: 'zh-CN' as Language, label: '简体中文'};
+  /**
+   * 动态获取下一个可用语言
+   * 从 siteConfig.languages 中循环选择下一个语言
+   */
+  const getNextLanguage = () => {
+    const currentIndex = siteConfig.languages.findIndex(
+      (lang) => lang.code === currentLanguage
+    );
+
+    // 如果找不到当前语言或只有一个语言，返回默认语言
+    if (currentIndex === -1 || siteConfig.languages.length <= 1) {
+      return siteConfig.languages[0];
+    }
+
+    // 获取下一个语言（循环）
+    const nextIndex = (currentIndex + 1) % siteConfig.languages.length;
+    return siteConfig.languages[nextIndex];
+  };
+
+  const nextLanguage = getNextLanguage();
 
   return (
     <div className="relative">
       <button
         type="button"
         aria-label="Switch Language"
-        onClick={() => switchLanguage(otherLanguage.code)}
+        onClick={() => switchLanguage(nextLanguage.code as Language)}
         className="flex items-center justify-center w-12 h-12 transition-transform rounded-full active:scale-95 hover:bg-primary/5 hover:dark:bg-primary-dark/5 outline-link"
-        title={`Switch to ${otherLanguage.label}`}>
+        title={`Switch to ${nextLanguage.label}`}>
         {languageIcon}
       </button>
     </div>
