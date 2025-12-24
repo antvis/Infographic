@@ -59,6 +59,13 @@ export const ThemeSchema = object(
       shape: shapeStyleSchema,
       text: textStyleSchema,
     }),
+    item: object({
+      icon: object({}, { allowUnknown: true }),
+      label: textStyleSchema,
+      desc: textStyleSchema,
+      value: textStyleSchema,
+      shape: shapeStyleSchema,
+    }),
     stylize: object(
       {
         type: enumOf(['rough', 'pattern']),
@@ -73,6 +80,7 @@ export const ThemeSchema = object(
       },
       { shorthandKey: 'type' },
     ),
+    elements: object({}, { allowUnknown: true }),
   },
   { shorthandKey: 'type' },
 );
