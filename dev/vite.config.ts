@@ -7,6 +7,6 @@ export default defineConfig({
   },
   plugins: [tsconfigPaths()],
   optimizeDeps: {
-    exclude: ['@antv/infographic'],
+    exclude: ['@antv/infographic', '@antv/hierarchy'],
   },
 });

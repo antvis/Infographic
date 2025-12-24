@@ -1,3 +1,5 @@
+import flru from 'flru';
+
 type FetchFunction = (
   input: RequestInfo | URL,
   init?: RequestInit,
@@ -8,62 +10,12 @@ interface CachedResponseEntry {
   init: ResponseInit;
 }
 
-const nativeFetch: FetchFunction =
-  typeof globalThis.fetch === 'function'
-    ? (globalThis.fetch as FetchFunction).bind(globalThis)
-    : ((() =>
-        Promise.reject(
-          new Error('fetch is not supported by the runtime'),
-        )) as FetchFunction);
+const nativeFetch: FetchFunction = globalThis.fetch;
 
 const CACHE_MAX_ENTRIES = 1024;
 
-class BoundedMap<K, V> {
-  private readonly inner = new Map<K, V>();
-
-  constructor(private readonly maxEntries: number) {}
-
-  get(key: K) {
-    const entry = this.inner.get(key);
-    if (entry === undefined) return undefined;
-    this.inner.delete(key);
-    this.inner.set(key, entry);
-    return entry;
-  }
-
-  set(key: K, value: V) {
-    if (this.inner.has(key)) {
-      this.inner.delete(key);
-    }
-    this.inner.set(key, value);
-    if (this.inner.size > this.maxEntries) {
-      const oldestKey = this.inner.keys().next().value;
-      if (oldestKey !== undefined) {
-        this.inner.delete(oldestKey);
-      }
-    }
-    return this;
-  }
-
-  has(key: K) {
-    return this.inner.has(key);
-  }
-
-  delete(key: K) {
-    return this.inner.delete(key);
-  }
-
-  clear() {
-    this.inner.clear();
-  }
-}
-
-const responseCache = new BoundedMap<string, CachedResponseEntry>(
-  CACHE_MAX_ENTRIES,
-);
-const pendingRequests = new BoundedMap<string, Promise<CachedResponseEntry>>(
-  CACHE_MAX_ENTRIES,
-);
+const responseCache = flru<CachedResponseEntry>(CACHE_MAX_ENTRIES);
+const pendingRequests = new Map<string, Promise<CachedResponseEntry>>();
 
 function buildHeadersKey(request: Request) {
   const entries = Array.from(request.headers.entries());
