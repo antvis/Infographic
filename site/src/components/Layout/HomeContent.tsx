@@ -117,7 +117,7 @@ const TRANSLATIONS = {
         title: '声明式信息图渲染框架',
         keyword: '声明式',
         description: '配置描述信息图，让数据叙事更简单、更优雅、更高效',
-        note: '100+ 内置模板与组件，开箱可用；从 0 到 1 构建信息图，从未如此轻松',
+        note: '~200 内置模板与组件，开箱可用；从 0 到 1 构建信息图，从未如此轻松',
       },
       ai: {
         title: 'AI 轻松生成专业信息图',
@@ -216,7 +216,7 @@ const TRANSLATIONS = {
         keyword: 'Declarative',
         description:
           'Describe infographics declaratively to make data stories simpler, cleaner, and more efficient',
-        note: '100+ built-in templates and components help you go from 0 to 1 with ease',
+        note: '~200 built-in templates and components help you go from 0 to 1 with ease',
       },
       ai: {
         title: 'AI Creates Pro Infographics',
