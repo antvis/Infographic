@@ -1,0 +1,11 @@
+infographic list-row-simple-horizontal-arrow
+data
+  title Getting Started Example
+  desc A simple list-based infographic
+  items
+    - label Step 1
+      desc Initial setup and configuration
+    - label Step 2
+      desc Development and testing
+    - label Step 3
+      desc Deployment and monitoring

@@ -5,7 +5,9 @@ const baseUrl =
 export async function getAsset(type: string, id: string) {
   const input = `${baseUrl}/assets?type=${type}&id=${id}`;
 
-  const response = await fetchWithCache(input);
+  const response = await fetchWithCache(input, {
+    signal: AbortSignal.timeout(3000)
+  });
   const data = await response.arrayBuffer();
   const result = decodeAssetByByteOffset(data);
   return result;

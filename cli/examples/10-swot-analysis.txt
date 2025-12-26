@@ -1,0 +1,37 @@
+infographic compare-swot
+data
+  title SWOT Analysis
+  desc Comprehensive analysis of internal and external factors to guide strategic planning
+  items
+    - label Strengths
+      children
+        - label Leading R&D capabilities
+        - label Complete supply chain system
+        - label Efficient customer service
+        - label Mature management team
+        - label Good user reputation
+        - label Stable product quality
+    - label Weaknesses
+      children
+        - label Insufficient brand exposure
+        - label Slow product line updates
+        - label Single market channel
+        - label High operating costs
+        - label Low organizational decision efficiency
+        - label Slowing user growth
+    - label Opportunities
+      children
+        - label Accelerating digital transformation
+        - label Continuous emerging market expansion
+        - label Policy support for industry development
+        - label Increasing intelligent application scenarios
+        - label Growing cross-industry cooperation
+        - label Consumer upgrade trends
+    - label Threats
+      children
+        - label Increasingly fierce competition
+        - label Rapidly changing user needs
+        - label Lowering market entry barriers
+        - label Rising supply chain risks
+        - label Intensifying data security challenges
+        - label Macroeconomic uncertainties

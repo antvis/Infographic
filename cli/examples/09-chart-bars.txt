@@ -1,0 +1,21 @@
+infographic chart-bar-plain-text
+data
+  title Annual Revenue Growth
+  desc Recent three years and current year target revenue comparison (in hundred million yuan)
+  items
+    - label 2021
+      value 120
+      desc Transformation period, steady exploration
+      icon lucide/sprout
+    - label 2022
+      value 150
+      desc Platform optimization, significant efficiency improvement
+      icon lucide/zap
+    - label 2023
+      value 190
+      desc Deepening digital integration, comprehensive growth
+      icon lucide/brain-circuit
+    - label 2024
+      value 240
+      desc Expanding ecosystem collaboration, reaching new heights
+      icon lucide/trophy

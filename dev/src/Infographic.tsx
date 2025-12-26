@@ -11,8 +11,14 @@ registerResourceLoader(async (config) => {
   const { data } = config;
   const type = data.startsWith('illus:') ? 'illustration' : 'icon';
   const normalized = data.replace(/^illus:|^icon:/, '');
-  const str = await getAsset(type, normalized);
-  return loadSVGResource(str);
+  try {
+    const str = await getAsset(type, normalized);
+    return loadSVGResource(str);
+  } catch (err) {
+    const error = err instanceof Error ? err : new Error(String(err));
+    console.error('Dev Infographic load asset error', error);
+    return null;
+  } 
 });
 
 export const Infographic = ({
