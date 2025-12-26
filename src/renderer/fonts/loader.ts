@@ -1,20 +1,34 @@
-import { join, normalizeFontWeightName } from '../../utils';
+import { join, normalizeFontWeightName, splitFontFamily } from '../../utils';
 import { getFont, getFonts } from './registry';
 
 export function getFontURLs(font: string): string[] {
-  const config = getFont(font);
-  if (!config) return [];
-  const { baseUrl, fontWeight } = config;
-  return Object.values(fontWeight)
-    .filter(Boolean)
-    .map((url) => join(baseUrl, url));
+  const urls: string[] = [];
+  const families = splitFontFamily(font);
+
+  families.forEach((family) => {
+    const config = getFont(family);
+    if (!config) return;
+    const { baseUrl, fontWeight } = config;
+    Object.values(fontWeight)
+      .filter(Boolean)
+      .forEach((url) => {
+        urls.push(join(baseUrl, url));
+      });
+  });
+
+  return Array.from(new Set(urls));
 }
 
 export function getWoff2BaseURL(
   font: string,
   fontWeightName: string,
 ): string | null {
-  const config = getFont(font);
+  const families = splitFontFamily(font);
+  let config = null as ReturnType<typeof getFont>;
+  for (const family of families) {
+    config = getFont(family);
+    if (config) break;
+  }
   if (!config) return null;
 
   const name = normalizeFontWeightName(fontWeightName);

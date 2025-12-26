@@ -9,6 +9,9 @@ describe('font utils', () => {
   it('decodes font family by trimming and removing quotes', () => {
     expect(decodeFontFamily('  "Roboto Slab" ')).toBe('Roboto Slab');
     expect(decodeFontFamily("'Open Sans'")).toBe('Open Sans');
+    expect(decodeFontFamily("'SimSun', 'Times New Roman', Times, serif")).toBe(
+      'SimSun, Times New Roman, Times, serif',
+    );
   });
 
   it('encodes font family that needs quoting', () => {
@@ -16,6 +19,12 @@ describe('font utils', () => {
     expect(encodeFontFamily('123Font')).toBe('"123Font"');
     expect(encodeFontFamily('Font With Space')).toBe('"Font With Space"');
     expect(encodeFontFamily('PlainFont')).toBe('PlainFont');
+    expect(encodeFontFamily("'SimSun', 'Times New Roman', Times, serif")).toBe(
+      "'SimSun', 'Times New Roman', Times, serif",
+    );
+    expect(encodeFontFamily('SimSun, Times New Roman, serif')).toBe(
+      'SimSun, "Times New Roman", serif',
+    );
   });
 
   it('normalizes font weight names to tokens', () => {
