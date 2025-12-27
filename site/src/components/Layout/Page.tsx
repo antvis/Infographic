@@ -36,6 +36,7 @@ interface PageProps {
     | 'ai'
     | 'icon'
     | 'home'
+    | 'editor'
     | 'unknown';
   languages?: Languages | null;
   showFooter?: boolean;

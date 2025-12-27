@@ -7,6 +7,7 @@ import {
   indentWithTab,
 } from '@codemirror/commands';
 import {javascript} from '@codemirror/lang-javascript';
+import {yaml} from '@codemirror/lang-yaml';
 import {
   HighlightStyle,
   bracketMatching,
@@ -125,6 +126,7 @@ export function CodeEditor({
 
   const languageExtension = useMemo<Extension>(() => {
     if (language === 'plaintext') return [];
+    if (language === 'yaml') return yaml();
     return language === 'javascript'
       ? javascript({jsx: true, typescript: false})
       : javascript({jsx: false, typescript: false});

@@ -34,6 +34,7 @@ const TRANSLATIONS = {
     reference: '参考',
     examples: '示例',
     icon: '图标',
+    editor: '编辑器',
     ai: 'AI',
     enterprise: '企业版',
   },
@@ -43,6 +44,7 @@ const TRANSLATIONS = {
     reference: 'Reference',
     examples: 'Gallery',
     icon: 'Icon',
+    editor: 'Editor',
     ai: 'AI',
     enterprise: 'Enterprise',
   },
@@ -165,6 +167,7 @@ export default function TopNav({
     | 'ai'
     | 'icon'
     | 'home'
+    | 'editor'
     | 'unknown';
   hideBrandWhenHeroVisible?: boolean;
   overlayOnHome?: boolean;
@@ -387,6 +390,9 @@ export default function TopNav({
                 <NavItem isActive={section === 'icon'} url="/icon">
                   {navTexts.icon}
                 </NavItem>
+                <NavItem isActive={section === 'editor'} url="/editor">
+                  {navTexts.editor}
+                </NavItem>
                 <NavItem isActive={section === 'ai'} url="/ai">
                   <span className="inline-flex items-center justify-center gap-1.5">
                     <IconStarTwinkle className="w-4 h-4" />
@@ -492,6 +498,9 @@ export default function TopNav({
                     </NavItem>
                     <NavItem isActive={section === 'icon'} url="/icon">
                       {navTexts.icon}
+                    </NavItem>
+                    <NavItem isActive={section === 'editor'} url="/editor">
+                      {navTexts.editor}
                     </NavItem>
                     <NavItem isActive={section === 'ai'} url="/ai">
                       <span className="inline-flex items-center justify-center gap-1.5">

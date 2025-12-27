@@ -19,8 +19,9 @@ export const Infographic = forwardRef<
     options: Partial<InfographicOptions> | string;
     init?: Partial<InfographicOptions>;
     onError?: (error: Error | null) => void;
+    enableEditor?: boolean;
   }
->(({init, onError, options}, ref) => {
+>(({init, onError, options, enableEditor = false}, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const instanceRef = useRef<Renderer | null>(null);
   const theme = useTheme();
@@ -39,6 +40,7 @@ export const Infographic = forwardRef<
             height: '100%',
           },
         },
+        editable: enableEditor,
         ...init,
       });
     }
@@ -64,7 +66,7 @@ export const Infographic = forwardRef<
       const error = e instanceof Error ? e : new Error(String(e));
       onError?.(error);
     }
-  }, [init, onError, options, isDark]);
+  }, [init, onError, options, isDark, enableEditor]);
 
   useEffect(() => {
     return () => {
