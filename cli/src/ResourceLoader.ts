@@ -1,31 +1,7 @@
-import {loadSVGResource, registerResourceLoader} from '@antv/infographic';
+import {loadSVGResource } from '@antv/infographic';
 const svgTextCache = new Map<string, string>();
 const pendingRequests = new Map<string, Promise<string | null>>();
 
-export function extractIconsFromParsedData(data: { items?: unknown[] }): string[] {
-  const icons: string[] = []
-  const illus: string[] = []
-  function extractFromItems(items: unknown[] | undefined) {
-    if (!items || !Array.isArray(items)) return
-    for (const item of items) {
-      if (item && typeof item === 'object') {
-        const obj = item as Record<string, unknown>
-        if (obj.icon && typeof obj.icon === 'string') {
-          icons.push(obj.icon)
-        }
-        if (obj.illus && typeof obj.illus === 'string') {
-          illus.push(obj.illus)
-        }
-        if (obj.children && Array.isArray(obj.children)) {
-          extractFromItems(obj.children)
-        }
-      }
-    }
-  }
-
-  extractFromItems(data.items)
-  return [...new Set(icons), ...new Set(illus)] // 去重
-}
 export const resourceLoader = (async (config: any) => {
   const {data, scene} = config;
 

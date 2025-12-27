@@ -100,7 +100,6 @@ export class Infographic {
       this.emitter.emit('error', new Error('Incomplete options'));
       return;
     }
-    this.emitter.emit('rendering', { options: this.options, data: parsedOptions.data });
     const { container } = this.parsedOptions;
     const template = this.compose(parsedOptions);
     const renderer = new Renderer(parsedOptions, template);

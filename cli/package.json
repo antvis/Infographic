@@ -24,7 +24,6 @@
   "files": [
     "lib",
     "bin",
-    "src",
     "README.md"
   ],
   "scripts": {

@@ -110,7 +110,7 @@ export async function renderToSVG(
       warnings.push(warning);
     });
     let svgResultPromise = new Promise<string>((resolve, reject) => {
-      infographic.on('rendered', async ({ node, options }) => {
+      infographic.on('rendered', async ({ node }) => {
         try {
           // 6. Export SVG after resources are preloaded
           const svg = await exportToSVG(node, { embedResources: true });
