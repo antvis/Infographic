@@ -21,8 +21,8 @@ data
     expect(parseResult.options.data?.items?.[0].label).toBe('Step 1');
   });
 
-  it('should render simple syntax to SVG', () => {
-    const result = renderToSVG({
+  it('should render simple syntax to SVG', async () => {
+    const result = await renderToSVG({
       input: `infographic list-row-simple-horizontal-arrow
 data
   items
@@ -39,24 +39,25 @@ data
     expect(result.errors).toHaveLength(0);
   });
 
-  it('should handle invalid syntax and return errors', () => {
-    const result = renderToSVG({
+  it('should handle invalid syntax and return errors', async () => {
+    const result = await renderToSVG({
       input: 'invalid syntax....',
     });
 
     expect(result.errors.length).toBeGreaterThan(0);
   });
 
-  it('should accept options object', () => {
-    const result = renderToSVG({
-      input: {
-        template: 'list-row-simple-horizontal-arrow',
-        data: {
-          items: [
-            { label: 'Step 1', desc: 'Start' },
-            { label: 'Step 2', desc: 'In Progress' },
-          ],
-        },
+  it('should accept options object', async () => {
+    const result = await renderToSVG({
+      input: `infographic list-row-simple-horizontal-arrow
+data
+  items
+    - label Step 1
+      desc Start
+    - label Step 2
+      desc In Progress`,
+      options: {
+        // Additional options can be passed here
       },
     });
 
@@ -64,8 +65,8 @@ data
     expect(result.errors).toHaveLength(0);
   });
 
-  it('should render Chinese characters correctly', () => {
-    const result = renderToSVG({
+  it('should render Chinese characters correctly', async () => {
+    const result = await renderToSVG({
       input: `infographic list-row-simple-horizontal-arrow
 data
   items
@@ -82,14 +83,12 @@ data
     expect(result.errors).toHaveLength(0);
   });
 
-  it('should return warnings when present', () => {
-    const result = renderToSVG({
-      input: {
-        template: 'list-row-simple-horizontal-arrow',
-        data: {
-          items: [{ label: 'Test' }],
-        },
-      },
+  it('should return warnings when present', async () => {
+    const result = await renderToSVG({
+      input: `infographic list-row-simple-horizontal-arrow
+data
+  items
+    - label Test`,
     });
 
     expect(result.svg).toContain('<svg');
@@ -97,19 +96,17 @@ data
     expect(Array.isArray(result.warnings)).toBe(true);
   });
 
-  it('should render text content correctly using textContent in SSR', () => {
-    const result = renderToSVG({
-      input: {
-        template: 'list-row-simple-horizontal-arrow',
-        data: {
-          title: 'Main Title',
-          desc: 'Description text',
-          items: [
-            { label: 'Item 1', desc: 'First item' },
-            { label: 'Item 2', desc: 'Second item' },
-          ],
-        },
-      },
+  it('should render text content correctly using textContent in SSR', async () => {
+    const result = await renderToSVG({
+      input: `infographic list-row-simple-horizontal-arrow
+data
+  title Main Title
+  desc Description text
+  items
+    - label Item 1
+      desc First item
+    - label Item 2
+      desc Second item`,
     });
 
     expect(result.svg).toContain('<svg');
@@ -120,17 +117,15 @@ data
     expect(result.errors).toHaveLength(0);
   });
 
-  it('should handle special characters and Unicode in text', () => {
-    const result = renderToSVG({
-      input: {
-        template: 'list-row-simple-horizontal-arrow',
-        data: {
-          items: [
-            { label: '特殊字符 < > & "', desc: 'Test' },
-            { label: 'Emoji 😀🎉', desc: 'Unicode' },
-          ],
-        },
-      },
+  it('should handle special characters and Unicode in text', async () => {
+    const result = await renderToSVG({
+      input: `infographic list-row-simple-horizontal-arrow
+data
+  items
+    - label 特殊字符 < > & "
+      desc Test
+    - label Emoji 😀🎉
+      desc Unicode`,
     });
 
     expect(result.svg).toContain('<svg');
