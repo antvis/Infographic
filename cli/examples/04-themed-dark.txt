@@ -1,0 +1,20 @@
+infographic list-row-simple-horizontal-arrow
+theme dark
+  colorPrimary #61DDAA
+  colorBg #1F1F1F
+data
+  title Development Process
+  desc Software development lifecycle stages
+  items
+    - label Planning
+      desc Requirements gathering and analysis
+    - label Design
+      desc Architecture and system design
+    - label Implementation
+      desc Coding and development
+    - label Testing
+      desc Quality assurance and bug fixing
+    - label Deployment
+      desc Production release
+    - label Maintenance
+      desc Ongoing support and updates

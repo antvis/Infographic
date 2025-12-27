@@ -1,0 +1,29 @@
+infographic hierarchy-tree-horizontal
+data
+  title User Research
+  desc Understanding user needs and pain points through research
+  items
+    - label User Research
+      icon mingcute/user-question-line
+      value 100
+      children
+        - label Why users choose this music platform
+          icon mingcute/music-2-ai-line
+          value 80
+          children
+            - label Which channels users learned about platform
+              icon mingcute/ad-circle-line
+              value 70
+            - label What aspects attracted users
+              icon mingcute/mushroom-line
+              value 65
+        - label When users use this platform
+          icon mingcute/time-line
+          value 75
+          children
+            - label In what scenarios users engage
+              icon mingcute/calendar-time-add-line
+              value 60
+            - label Which features users utilize
+              icon mingcute/danmaku-line
+              value 55

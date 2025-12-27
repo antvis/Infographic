@@ -8,6 +8,7 @@ import type {
 } from '../types';
 import { decodeFontFamily, encodeFontFamily } from './font';
 import { isForeignObjectElement } from './recognizer';
+import { isNode } from './is-node';
 import { createElement, setAttributes } from './svg';
 
 export function getTextEntity(text: SVGElement): HTMLSpanElement | null {
@@ -161,6 +162,32 @@ export function getTextStyle(attributes: TextAttributes) {
 }
 
 function measureTextSpan(span: HTMLSpanElement) {
+  // SSR environment: use approximate calculation
+  // Check both isNode and SSR flag to avoid affecting tests
+  const isSSRMode = isNode && (global as any).__ANTV_INFOGRAPHIC_SSR__;
+  if (isSSRMode) {
+    const fontSize = parseInt(span.style.fontSize || '14') || 14;
+    const text = span.textContent || '';
+
+    // Use approximate calculation (based on average character width)
+    const avgCharWidth = fontSize * 0.6; // Average character width for English
+    const width = text.length * avgCharWidth;
+    const height = fontSize * 1.2; // Line height
+
+    return {
+      width,
+      height,
+      top: 0,
+      left: 0,
+      bottom: height,
+      right: width,
+      x: 0,
+      y: 0,
+      toJSON: () => ({}),
+    } as DOMRect;
+  }
+
+  // Browser environment or test environment: use precise measurement
   const parentNode = span.parentNode;
   span.style.visibility = 'hidden';
   document.body.appendChild(span);
@@ -172,13 +199,25 @@ function measureTextSpan(span: HTMLSpanElement) {
 }
 
 export function getTextContent(text: TextElement): string {
-  return getTextEntity(text)?.innerText || '';
+  const entity = getTextEntity(text);
+  if (!entity) return '';
+  // Use textContent in SSR environment (jsdom has limited innerText support)
+  // Check both isNode and SSR flag to avoid affecting tests
+  const isSSRMode = isNode && (global as any).__ANTV_INFOGRAPHIC_SSR__;
+  return isSSRMode ? (entity.textContent || '') : (entity.innerText || '');
 }
 
 export function setTextContent(text: TextElement, content: string): void {
   const entity = getTextEntity(text);
   if (entity) {
-    entity.innerText = content;
+    // Use textContent in SSR environment (jsdom has limited innerText support)
+    // Check both isNode and SSR flag to avoid affecting tests
+    const isSSRMode = isNode && (global as any).__ANTV_INFOGRAPHIC_SSR__;
+    if (isSSRMode) {
+      entity.textContent = content;
+    } else {
+      entity.innerText = content;
+    }
   }
 }
 

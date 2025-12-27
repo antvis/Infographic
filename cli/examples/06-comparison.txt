@@ -1,0 +1,21 @@
+infographic compare-binary-horizontal-simple-fold
+data
+  title Product Analysis vs Competition
+  desc Comparative analysis to identify gaps and improvement areas
+  items
+    - label Our Product
+      children
+        - label Architecture Upgrade
+          desc Brand marketing strategy focuses on brand output
+        - label System Optimization
+          desc Improve performance and user experience
+        - label Feature Enhancement
+          desc Add new capabilities based on user feedback
+    - label Competitor Analysis
+      children
+        - label Market Position
+          desc Strong presence in target segments
+        - label Technology Stack
+          desc Modern and scalable infrastructure
+        - label User Acquisition
+          desc Effective growth strategies

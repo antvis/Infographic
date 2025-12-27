@@ -3,11 +3,18 @@ dist
 esm
 lib
 tsconfig.tsbuildinfo
-
+tsconfig.*.tsbuildinfo
 pnpm-lock.yaml
 package-lock.json
 coverage
-
+.DS_Store
 .claude
 .docusaurus
 build
+
+# CLI package build artifacts
+cli/node_modules
+cli/esm
+cli/lib
+cli/coverage
+cli/tsconfig.tsbuildinfo
