@@ -8,6 +8,8 @@ const TRANSLATIONS = {
     copyButton: '复制',
     pngButton: 'PNG',
     svgButton: 'SVG',
+    fullscreenButton: '全屏',
+    exitFullscreenButton: '退出全屏',
     pngExported: 'PNG 已导出',
     svgExported: 'SVG 已导出',
   },
@@ -16,6 +18,8 @@ const TRANSLATIONS = {
     copyButton: 'Copy',
     pngButton: 'PNG',
     svgButton: 'SVG',
+    fullscreenButton: 'Fullscreen',
+    exitFullscreenButton: 'Exit',
     pngExported: 'PNG exported',
     svgExported: 'SVG exported',
   },
@@ -36,8 +40,10 @@ export function PreviewPanel({
 }) {
   const texts = useLocaleBundle(TRANSLATIONS);
   const [displaySyntax, setDisplaySyntax] = useState(syntax);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const debounceTimerRef = useRef<number>(0);
   const infographicRef = useRef<InfographicHandle>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Clear existing timer
@@ -78,8 +84,16 @@ export function PreviewPanel({
     onExportSuccess(texts.svgExported);
   };
 
+  const handleToggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
+  };
+
   return (
-    <div className="bg-card dark:bg-card-dark rounded-lg shadow-lg p-4 flex flex-col">
+    <div
+      ref={containerRef}
+      className={`bg-card dark:bg-card-dark rounded-lg shadow-lg p-4 flex flex-col ${
+        isFullscreen ? 'fixed top-16 left-0 right-0 bottom-0 z-50 rounded-none' : ''
+      }`}>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-primary dark:text-primary-dark">
           {texts.title}
@@ -99,6 +113,11 @@ export function PreviewPanel({
             onClick={handleExportSVG}
             className="px-3 py-1.5 text-sm bg-link hover:bg-link-dark text-white rounded transition-colors">
             {texts.svgButton}
+          </button>
+          <button
+            onClick={handleToggleFullscreen}
+            className="px-3 py-1.5 text-sm bg-secondary hover:bg-secondary-dark dark:bg-secondary-dark dark:hover:bg-secondary text-primary dark:text-primary-dark rounded transition-colors">
+            {isFullscreen ? texts.exitFullscreenButton : texts.fullscreenButton}
           </button>
         </div>
       </div>

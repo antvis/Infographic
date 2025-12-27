@@ -39,6 +39,7 @@ export {
   getFonts,
   getPalette,
   getPaletteColor,
+  getPaletteNames,
   registerFont,
   registerPalette,
   registerPattern,

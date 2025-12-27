@@ -40,6 +40,8 @@ interface PageProps {
     | 'unknown';
   languages?: Languages | null;
   showFooter?: boolean;
+  showSidebar?: boolean;
+  showTitle?: boolean;
   topNavOptions?: {
     hideBrandWhenHeroVisible?: boolean;
     overlayOnHome?: boolean;
@@ -55,6 +57,8 @@ export function Page({
   section,
   languages = null,
   showFooter = true,
+  showSidebar = true,
+  showTitle = true,
   topNavOptions,
 }: PageProps) {
   const {asPath} = useRouter();
@@ -74,7 +78,7 @@ export function Page({
   } else {
     content = (
       <div className="ps-0">
-        {!['examples', 'ai', 'icon'].includes(section) && (
+        { showTitle && !['examples', 'ai', 'icon'].includes(section) && (
           <div>
             <PageHeading
               title={title}
@@ -87,13 +91,13 @@ export function Page({
         )}
         <div
           className={cn(
-            ['examples', 'ai', 'icon'].includes(section)
+             toc.length === 0 || ['examples', 'ai', 'icon'].includes(section)
               ? 'px-0'
               : 'px-5 sm:px-12'
           )}>
           <div
             className={cn(
-              ['examples', 'ai', 'icon'].includes(section)
+              toc.length === 0 || ['examples', 'ai', 'icon'].includes(section)
                 ? 'w-full'
                 : 'max-w-7xl mx-auto'
             )}>
@@ -111,14 +115,13 @@ export function Page({
     );
   }
 
-  let hasColumns = true;
-  let showSidebar = true;
-  let showToc = true;
+  let hasColumns = showSidebar === false ? false : true;
+  let showToc = toc.length > 0;
   if (isHomePage) {
     hasColumns = false;
     showSidebar = false;
     showToc = false;
-  } else if (section === 'examples' || section === 'ai' || section === 'icon') {
+  } else if (section === 'examples' || section === 'ai' || section === 'icon' || section === 'editor') {
     showToc = false;
     hasColumns = false;
     showSidebar = false;

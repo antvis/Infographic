@@ -5,6 +5,7 @@ import {PreviewPanel} from './PreviewPanel';
 import {CopyToast, useCopyToast} from 'components/CopyToast';
 import {useLocaleBundle} from 'hooks/useTranslation';
 import {generateShareUrl, extractContentFromUrl} from './utils';
+import { motion } from 'framer-motion';
 
 const DEFAULT_SYNTAX = `infographic list-row-simple-horizontal-arrow
 data
@@ -21,7 +22,7 @@ const STORAGE_KEY = 'live-editor-syntax';
 const TRANSLATIONS = {
   'zh-CN': {
     title: 'Live Editor',
-    description: '编辑 AntV Infographic 语法并查看实时预览',
+    description: '编辑 AntV Infographic Syntax 并查看实时预览',
     resetButton: '重置为默认',
     shareButton: '分享',
     imageCopied: '图片已复制到剪贴板',
@@ -30,7 +31,7 @@ const TRANSLATIONS = {
   },
   'en-US': {
     title: 'Live Editor',
-    description: 'Edit AntV Infographic syntax and see real-time preview',
+    description: 'Edit AntV Infographic Syntax and see real-time preview',
     resetButton: 'Reset to Default',
     shareButton: 'Share',
     imageCopied: 'Image copied to clipboard',
@@ -102,31 +103,28 @@ export function EditorContent() {
   };
 
   return (
-    <div className="relative isolate overflow-hidden bg-wash dark:bg-wash-dark">
-      <div className="relative mx-auto max-w-7xl px-5 sm:px-12 py-12 lg:py-16">
-        <header className="mb-8 space-y-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-4xl md:text-5xl font-display font-bold leading-tight text-primary dark:text-primary-dark">
-              {texts.title}
-            </h1>
-            <div className="flex gap-2">
-              <button
-                onClick={handleShare}
-                className="px-4 py-2 text-sm bg-link hover:bg-link-dark text-white rounded transition-colors">
-                {texts.shareButton}
-              </button>
-              <button
-                onClick={handleReset}
-                className="px-4 py-2 text-sm bg-secondary hover:bg-secondary-dark dark:bg-secondary-dark dark:hover:bg-secondary text-primary dark:text-primary-dark rounded transition-colors">
-                {texts.resetButton}
-              </button>
-            </div>
-          </div>
-          <p className="text-lg text-secondary dark:text-secondary-dark leading-relaxed">
+     <div className="relative isolate overflow-hidden min-h-screen bg-wash dark:bg-gradient-to-b dark:from-gray-95 dark:via-gray-95 dark:to-gray-90 text-primary dark:text-primary-dark selection:bg-link/20 selection:dark:bg-link-dark/20">
+      {/* Background decorations */}
+      <div className="pointer-events-none absolute -left-32 -top-40 h-96 w-96 rounded-full bg-gradient-to-br from-link/20 via-link/5 to-transparent blur-3xl" />
+      <div className="pointer-events-none absolute -right-32 top-20 h-96 w-96 rounded-full bg-gradient-to-br from-purple-40/15 via-transparent to-link/5 blur-3xl" />
+
+      {/* Header Area */}
+      <motion.header
+        id="editor-hero-anchor"
+        className="pt-20 pb-12 px-5 sm:px-12 max-w-7xl mx-auto text-center md:text-left relative z-10">
+        <motion.div
+          initial={{opacity: 0, y: 20}}
+          animate={{opacity: 1, y: 0}}
+          transition={{duration: 0.6}}>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight mb-6 text-primary dark:text-primary-dark">
+            {texts.title}
+          </h1>
+          <p className="text-lg lg:text-xl text-secondary dark:text-secondary-dark leading-relaxed">
             {texts.description}
           </p>
-        </header>
-
+        </motion.div>
+      </motion.header>
+      <div className="px-5 sm:px-12 pb-20 max-w-[90rem] mx-auto relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-[600px]">
           <EditorPanel value={syntax} onChange={setSyntax} />
           <PreviewPanel

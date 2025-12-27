@@ -13,3 +13,7 @@ export function getPalette(type: string): Palette | undefined {
 export function getPalettes(): Palette[] {
   return Array.from(PALETTE_REGISTRY.values());
 }
+
+export function getPaletteNames(): string[] {
+  return Array.from(PALETTE_REGISTRY.keys());
+}

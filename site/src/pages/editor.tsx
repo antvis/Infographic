@@ -6,7 +6,14 @@ export default function LiveEditorPage() {
     <Page
       toc={[]}
       routeTree={{title: 'Live Editor', path: '/editor', routes: []}}
-      meta={{title: 'Live Editor - AntV Infographic'}}
+      meta={{titleForTitleTag: 'Live Editor'}}
+      topNavOptions={{
+        hideBrandWhenHeroVisible: true,
+        overlayOnHome: true,
+        heroAnchorId: 'editor-hero-anchor',
+      }}
+      showTitle={false}
+      showSidebar={false}
       section="editor">
       <EditorContent />
     </Page>
