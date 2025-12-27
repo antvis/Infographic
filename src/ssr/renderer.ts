@@ -1,11 +1,10 @@
 import { setupDOM } from './dom-shim';
 import { Infographic } from '../runtime/Infographic';
-import type { InfographicOptions, ParsedInfographicOptions } from '../options';
+import type { InfographicOptions } from '../options';
 import { parseSyntax, type SyntaxError } from '../syntax';
 import type { Data, ItemDatum } from '../types';
 import { preloadResource } from '../resource/loader';
 import { exportToSVG } from '../exporter/svg';
-import { isCompleteParsedInfographicOptions } from '../runtime/utils';
 
 export interface SSRRenderOptions {
   /** Input: Antv Infographic Syntax string */
@@ -109,7 +108,7 @@ export async function renderToSVG(
     infographic.on('warning', (warning: SyntaxError) => {
       warnings.push(warning);
     });
-    let svgResultPromise = new Promise<string>((resolve, reject) => {
+    const svgResultPromise = new Promise<string>((resolve, reject) => {
       infographic.on('rendered', async ({ node }) => {
         try {
           // 6. Export SVG after resources are preloaded
