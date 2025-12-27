@@ -42,6 +42,7 @@ interface PageProps {
   showFooter?: boolean;
   showSidebar?: boolean;
   showTitle?: boolean;
+  showTopNav?: boolean;
   topNavOptions?: {
     hideBrandWhenHeroVisible?: boolean;
     overlayOnHome?: boolean;
@@ -59,6 +60,7 @@ export function Page({
   showFooter = true,
   showSidebar = true,
   showTitle = true,
+  showTopNav = true,
   topNavOptions,
 }: PageProps) {
   const {asPath} = useRouter();
@@ -71,6 +73,17 @@ export function Page({
   const version = meta.version;
   const description = meta.description || route?.description || '';
   const isHomePage = cleanedPath === '/';
+  const [hideTopNav, setHideTopNav] = React.useState(false);
+
+  React.useEffect(() => {
+    const handleFullscreenChange = (e: Event) => {
+      const customEvent = e as CustomEvent<{fullscreen: boolean}>;
+      setHideTopNav(customEvent.detail.fullscreen);
+    };
+
+    window.addEventListener('preview-fullscreen', handleFullscreenChange);
+    return () => window.removeEventListener('preview-fullscreen', handleFullscreenChange);
+  }, []);
 
   let content;
   if (isHomePage) {
@@ -146,14 +159,16 @@ export function Page({
         searchOrder={searchOrder}
       />
       {/* <SocialBanner /> */}
-      <TopNav
-        section={section}
-        routeTree={routeTree}
-        breadcrumbs={breadcrumbs}
-        hideBrandWhenHeroVisible={topNavHideBrand}
-        overlayOnHome={topNavOverlay}
-        heroAnchorId={topNavHeroAnchorId}
-      />
+      {showTopNav && !hideTopNav && (
+        <TopNav
+          section={section}
+          routeTree={routeTree}
+          breadcrumbs={breadcrumbs}
+          hideBrandWhenHeroVisible={topNavHideBrand}
+          overlayOnHome={topNavOverlay}
+          heroAnchorId={topNavHeroAnchorId}
+        />
+      )}
       <div
         className={cn(
           hasColumns &&

@@ -5,6 +5,9 @@ import {useMemo, useState, useCallback, useEffect} from 'react';
 import type {Diagnostic} from '@codemirror/lint';
 import type {EditorView} from '@codemirror/view';
 import type {SyntaxError} from '@antv/infographic';
+import {IconRestart} from 'components/Icon/IconRestart';
+import {IconLink} from 'components/Icon/IconLink';
+import {IconClose} from 'components/Icon/IconClose';
 
 const TRANSLATIONS = {
   'zh-CN': {
@@ -14,6 +17,9 @@ const TRANSLATIONS = {
     templateLabel: '模板',
     themeLabel: '主题',
     paletteLabel: '配色',
+    resetButton: '重置',
+    shareButton: '分享',
+    clearButton: '清空',
   },
   'en-US': {
     title: 'Syntax Editor',
@@ -22,15 +28,22 @@ const TRANSLATIONS = {
     templateLabel: 'Template',
     themeLabel: 'Theme',
     paletteLabel: 'Palette',
+    resetButton: 'Reset',
+    shareButton: 'Share',
+    clearButton: 'Clear',
   },
 };
 
 export function EditorPanel({
   value,
   onChange,
+  onShare,
+  onReset,
 }: {
   value: string;
   onChange: (value: string) => void;
+  onShare: () => void;
+  onReset: () => void;
 }) {
   const texts = useLocaleBundle(TRANSLATIONS);
   const templates = useMemo(() => getTemplates().sort(), []);
@@ -40,6 +53,10 @@ export function EditorPanel({
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [selectedTheme, setSelectedTheme] = useState('');
   const [selectedPalette, setSelectedPalette] = useState('');
+
+  const handleClear = () => {
+    onChange('');
+  };
 
   // Extract current config from syntax
   useEffect(() => {
@@ -238,82 +255,125 @@ export function EditorPanel({
   };
 
   return (
-    <div className="bg-card dark:bg-card-dark rounded-lg shadow-lg p-4 flex flex-col">
-      <div className="flex items-center mb-4">
-        <h2 className="text-lg font-semibold text-primary dark:text-primary-dark">
+    <div className="bg-card dark:bg-card-dark rounded-xl shadow-xl flex flex-col h-full overflow-hidden border border-border dark:border-border-dark">
+      <div className="flex items-center justify-between px-4 py-3 bg-wash dark:bg-wash-dark border-b border-border dark:border-border-dark">
+        <h2 className="text-base font-semibold text-primary dark:text-primary-dark flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-link animate-pulse" />
           {texts.title}
         </h2>
+        <div className="flex gap-2">
+          <button
+            onClick={handleClear}
+            title={texts.clearButton}
+            className="p-1.5 text-secondary hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-all"
+            aria-label={texts.clearButton}>
+            <IconClose className="w-5 h-5" />
+          </button>
+          <button
+            onClick={onReset}
+            title={texts.resetButton}
+            className="p-1.5 text-secondary hover:text-link hover:bg-link/10 rounded-md transition-all"
+            aria-label={texts.resetButton}>
+            <IconRestart className="w-5 h-5" />
+          </button>
+          <div className="w-[1px] h-4 bg-border dark:bg-border-dark self-center mx-1" />
+          <button
+            onClick={onShare}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium bg-link hover:bg-link-dark text-white rounded-md transition-all shadow-sm hover:shadow-md">
+            <IconLink className="w-4 h-4" />
+            {texts.shareButton}
+          </button>
+        </div>
       </div>
-      <div className="flex-1 border border-border dark:border-border-dark rounded overflow-hidden mb-4">
+      <div className="flex-1 relative group overflow-auto">
         <CodeEditor
           ariaLabel={texts.editorAria}
-          className="h-full"
+          className="h-full text-sm"
           language="yaml"
           onChange={onChange}
           value={value}
           linterFn={linter}
+          fullHeight={true}
         />
       </div>
-      <div className="border-t border-border dark:border-border-dark pt-4">
-        <h3 className="text-sm font-semibold text-primary dark:text-primary-dark mb-3">
-          {texts.configTitle}
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="flex flex-col gap-1">
+      <div className="px-4 py-4 bg-wash dark:bg-wash-dark border-t border-border dark:border-border-dark">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="flex flex-col gap-1.5">
             <label
               htmlFor="template-select"
-              className="text-xs text-secondary dark:text-secondary-dark">
+              className="text-[11px] uppercase tracking-wider font-bold text-tertiary dark:text-tertiary-dark">
               {texts.templateLabel}
             </label>
-            <select
-              id="template-select"
-              value={selectedTemplate}
-              onChange={(e) => handleTemplateChange(e.target.value)}
-              className="px-3 py-1.5 text-sm bg-wash dark:bg-wash-dark border border-border dark:border-border-dark rounded text-primary dark:text-primary-dark focus:outline-none focus:ring-2 focus:ring-link dark:focus:ring-link-dark">
-              {templates.map((template) => (
-                <option key={template} value={template}>
-                  {template}
-                </option>
-              ))}
-            </select>
+            <div className="relative group">
+              <select
+                id="template-select"
+                value={selectedTemplate}
+                onChange={(e) => handleTemplateChange(e.target.value)}
+                className="w-full pl-3 pr-8 py-2 text-sm bg-card dark:bg-card-dark border border-border dark:border-border-dark rounded-md text-primary dark:text-primary-dark appearance-none focus:outline-none focus:ring-2 focus:ring-link/50 transition-all cursor-pointer">
+                {templates.map((template) => (
+                  <option key={template} value={template}>
+                    {template}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-tertiary">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1.5">
             <label
               htmlFor="theme-select"
-              className="text-xs text-secondary dark:text-secondary-dark">
+              className="text-[11px] uppercase tracking-wider font-bold text-tertiary dark:text-tertiary-dark">
               {texts.themeLabel}
             </label>
-            <select
-              id="theme-select"
-              value={selectedTheme}
-              onChange={(e) => handleThemeChange(e.target.value)}
-              className="px-3 py-1.5 text-sm bg-wash dark:bg-wash-dark border border-border dark:border-border-dark rounded text-primary dark:text-primary-dark focus:outline-none focus:ring-2 focus:ring-link dark:focus:ring-link-dark">
-              <option value="">default</option>
-              {themes.map((theme) => (
-                <option key={theme} value={theme}>
-                  {theme}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              <select
+                id="theme-select"
+                value={selectedTheme}
+                onChange={(e) => handleThemeChange(e.target.value)}
+                className="w-full pl-3 pr-8 py-2 text-sm bg-card dark:bg-card-dark border border-border dark:border-border-dark rounded-md text-primary dark:text-primary-dark appearance-none focus:outline-none focus:ring-2 focus:ring-link/50 transition-all cursor-pointer">
+                <option value="">default</option>
+                {themes.map((theme) => (
+                  <option key={theme} value={theme}>
+                    {theme}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-tertiary">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1.5">
             <label
               htmlFor="palette-select"
-              className="text-xs text-secondary dark:text-secondary-dark">
+              className="text-[11px] uppercase tracking-wider font-bold text-tertiary dark:text-tertiary-dark">
               {texts.paletteLabel}
             </label>
-            <select
-              id="palette-select"
-              value={selectedPalette}
-              onChange={(e) => handlePaletteChange(e.target.value)}
-              className="px-3 py-1.5 text-sm bg-wash dark:bg-wash-dark border border-border dark:border-border-dark rounded text-primary dark:text-primary-dark focus:outline-none focus:ring-2 focus:ring-link dark:focus:ring-link-dark">
-              <option value="">default</option>
-              {palettes.map((palette) => (
-                <option key={palette} value={palette}>
-                  {palette}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              <select
+                id="palette-select"
+                value={selectedPalette}
+                onChange={(e) => handlePaletteChange(e.target.value)}
+                className="w-full pl-3 pr-8 py-2 text-sm bg-card dark:bg-card-dark border border-border dark:border-border-dark rounded-md text-primary dark:text-primary-dark appearance-none focus:outline-none focus:ring-2 focus:ring-link/50 transition-all cursor-pointer">
+                <option value="">default</option>
+                {palettes.map((palette) => (
+                  <option key={palette} value={palette}>
+                    {palette}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-tertiary">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -45,7 +45,7 @@ export function EditorContent() {
   const [syntax, setSyntax] = useState(DEFAULT_SYNTAX);
   const [error, setError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
-  const {message: copyHint, show: showCopyHint} = useCopyToast();
+  const {message: copyHint, show: showCopyHint} = useCopyToast(2500);
   const texts = useLocaleBundle(TRANSLATIONS);
 
   // Load from URL or localStorage on mount
@@ -75,6 +75,26 @@ export function EditorContent() {
     localStorage.setItem(STORAGE_KEY, syntax);
   }, [syntax, mounted]);
 
+  // Debounced URL update when content is edited (if URL has content param)
+  useEffect(() => {
+    if (!mounted) return;
+    if (typeof window === 'undefined') return;
+
+    // Check if current URL has content parameter
+    const hasContentParam = window.location.search.includes('content=') || window.location.hash.includes('content=');
+    if (!hasContentParam) return;
+
+    // Debounce URL update (same delay as preview: 300ms)
+    const timer = setTimeout(() => {
+      const shareUrl = generateShareUrl(syntax);
+      if (shareUrl) {
+        window.history.replaceState(null, '', shareUrl);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [syntax, mounted]);
+
   const handleReset = () => {
     setSyntax(DEFAULT_SYNTAX);
     if (typeof window !== 'undefined') {
@@ -94,8 +114,10 @@ export function EditorContent() {
     try {
       await navigator.clipboard.writeText(shareUrl);
       showCopyHint(texts.linkCopied);
-      // Update URL without reload
-      router.replace(shareUrl, undefined, {shallow: true});
+      // Use native history API to update URL without triggering re-render
+      if (typeof window !== 'undefined') {
+        window.history.replaceState(null, '', shareUrl);
+      }
     } catch (e) {
       console.error('Failed to copy share link:', e);
       showCopyHint(texts.shareFailed);
@@ -111,22 +133,27 @@ export function EditorContent() {
       {/* Header Area */}
       <motion.header
         id="editor-hero-anchor"
-        className="pt-20 pb-12 px-5 sm:px-12 max-w-7xl mx-auto text-center md:text-left relative z-10">
+        className="pt-16 pb-8 px-5 sm:px-12 max-w-7xl mx-auto text-center md:text-left relative z-10">
         <motion.div
           initial={{opacity: 0, y: 20}}
           animate={{opacity: 1, y: 0}}
           transition={{duration: 0.6}}>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight mb-6 text-primary dark:text-primary-dark">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold leading-tight mb-4 text-primary dark:text-primary-dark">
             {texts.title}
           </h1>
-          <p className="text-lg lg:text-xl text-secondary dark:text-secondary-dark leading-relaxed">
+          <p className="text-base lg:text-lg text-secondary dark:text-secondary-dark leading-relaxed">
             {texts.description}
           </p>
         </motion.div>
       </motion.header>
-      <div className="px-5 sm:px-12 pb-20 max-w-[90rem] mx-auto relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-[600px]">
-          <EditorPanel value={syntax} onChange={setSyntax} />
+      <div className="px-5 sm:px-12 pb-10 max-w-[100rem] mx-auto relative z-10 h-[calc(100vh-220px)] min-h-[700px]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+          <EditorPanel
+            value={syntax}
+            onChange={setSyntax}
+            onShare={handleShare}
+            onReset={handleReset}
+          />
           <PreviewPanel
             syntax={syntax}
             onError={setError}

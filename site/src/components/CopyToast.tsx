@@ -50,7 +50,7 @@ export function CopyToast({
           exit={{opacity: 0, y: 12}}
           transition={{duration: 0.25}}
           className={cn(
-            'fixed bottom-8 right-8 rounded-full bg-link dark:bg-link-dark text-white px-5 py-2.5 shadow-lg font-medium text-sm',
+            'fixed bottom-8 right-8 z-[2000] rounded-full bg-link dark:bg-link-dark text-white px-5 py-2.5 shadow-lg font-medium text-sm',
             className
           )}>
           ✓ {message}

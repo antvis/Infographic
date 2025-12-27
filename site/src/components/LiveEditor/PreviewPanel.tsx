@@ -1,6 +1,8 @@
 import {Infographic, InfographicHandle} from 'components/Infographic';
 import {useEffect, useRef, useState} from 'react';
 import {useLocaleBundle} from 'hooks/useTranslation';
+import {IconCopy} from 'components/Icon/IconCopy';
+import {IconDownload} from 'components/Icon/IconDownload';
 
 const TRANSLATIONS = {
   'zh-CN': {
@@ -9,7 +11,7 @@ const TRANSLATIONS = {
     pngButton: 'PNG',
     svgButton: 'SVG',
     fullscreenButton: '全屏',
-    exitFullscreenButton: '退出全屏',
+    exitFullscreenButton: '退出',
     pngExported: 'PNG 已导出',
     svgExported: 'SVG 已导出',
   },
@@ -41,6 +43,7 @@ export function PreviewPanel({
   const texts = useLocaleBundle(TRANSLATIONS);
   const [displaySyntax, setDisplaySyntax] = useState(syntax);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [zoom, setZoom] = useState(1);
   const debounceTimerRef = useRef<number>(0);
   const infographicRef = useRef<InfographicHandle>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -85,54 +88,175 @@ export function PreviewPanel({
   };
 
   const handleToggleFullscreen = () => {
-    setIsFullscreen(!isFullscreen);
+    const newFullscreen = !isFullscreen;
+    setIsFullscreen(newFullscreen);
+    // Emit event for parent to handle topnav visibility
+    if (newFullscreen) {
+      window.dispatchEvent(new CustomEvent('preview-fullscreen', {detail: {fullscreen: true}}));
+    } else {
+      window.dispatchEvent(new CustomEvent('preview-fullscreen', {detail: {fullscreen: false}}));
+    }
   };
+
+  const handleZoomIn = () => {
+    setZoom((prev) => Math.min(prev + 0.1, 2));
+  };
+
+  const handleZoomOut = () => {
+    setZoom((prev) => Math.max(prev - 0.1, 0.5));
+  };
+
+  const handleResetZoom = () => {
+    setZoom(1);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isFullscreen) {
+        setIsFullscreen(false);
+        window.dispatchEvent(new CustomEvent('preview-fullscreen', {detail: {fullscreen: false}}));
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreen]);
+
+  // Clean up fullscreen state on unmount
+  useEffect(() => {
+    return () => {
+      if (isFullscreen) {
+        window.dispatchEvent(new CustomEvent('preview-fullscreen', {detail: {fullscreen: false}}));
+      }
+    };
+  }, [isFullscreen]);
+
+  // Handle wheel zoom with Command/Ctrl key
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      // Check if Command (Mac) or Ctrl (Windows/Linux) is pressed
+      if (e.metaKey || e.ctrlKey) {
+        e.preventDefault();
+
+        // Determine zoom direction (deltaY negative = zoom in, positive = zoom out)
+        const delta = e.deltaY > 0 ? -0.1 : 0.1;
+
+        setZoom((prev) => {
+          const newZoom = prev + delta;
+          return Math.min(Math.max(newZoom, 0.5), 2);
+        });
+      }
+    };
+
+    container.addEventListener('wheel', handleWheel, {passive: false});
+    return () => container.removeEventListener('wheel', handleWheel);
+  }, []);
 
   return (
     <div
       ref={containerRef}
-      className={`bg-card dark:bg-card-dark rounded-lg shadow-lg p-4 flex flex-col ${
-        isFullscreen ? 'fixed top-16 left-0 right-0 bottom-0 z-50 rounded-none' : ''
+      className={`bg-card dark:bg-card-dark rounded-xl shadow-xl flex flex-col h-full overflow-hidden border border-border dark:border-border-dark transition-all duration-300 ${
+        isFullscreen ? 'fixed inset-0 z-[1000] rounded-none' : ''
       }`}>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-primary dark:text-primary-dark">
+      <div className="flex items-center justify-between px-4 py-3 bg-wash dark:bg-wash-dark border-b border-border dark:border-border-dark">
+        <h2 className="text-base font-semibold text-primary dark:text-primary-dark flex items-center gap-2">
+          <span className={`w-2 h-2 rounded-full ${error ? 'bg-red-500' : 'bg-green-500'}`} />
           {texts.title}
         </h2>
         <div className="flex gap-2">
           <button
             onClick={handleCopy}
-            className="px-3 py-1.5 text-sm bg-link hover:bg-link-dark text-white rounded transition-colors">
-            {texts.copyButton}
+            title={texts.copyButton}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-secondary hover:text-link hover:bg-link/10 rounded-md transition-all"
+            aria-label={texts.copyButton}>
+            <IconCopy className="w-4 h-4" />
+            <span className="hidden sm:inline">{texts.copyButton}</span>
           </button>
+          <div className="w-[1px] h-4 bg-border dark:bg-border-dark self-center mx-1" />
           <button
             onClick={handleExportPNG}
-            className="px-3 py-1.5 text-sm bg-link hover:bg-link-dark text-white rounded transition-colors">
+            className="flex items-center gap-1 px-2 py-1.5 text-xs font-bold text-white bg-pink-500 hover:bg-pink-600 rounded transition-all"
+            aria-label={texts.pngButton}>
+            <IconDownload className="w-3.5 h-3.5" />
             {texts.pngButton}
           </button>
           <button
             onClick={handleExportSVG}
-            className="px-3 py-1.5 text-sm bg-link hover:bg-link-dark text-white rounded transition-colors">
+            className="flex items-center gap-1 px-2 py-1.5 text-xs font-bold text-white bg-indigo-500 hover:bg-indigo-600 rounded transition-all"
+            aria-label={texts.svgButton}>
+            <IconDownload className="w-3.5 h-3.5" />
             {texts.svgButton}
-          </button>
-          <button
-            onClick={handleToggleFullscreen}
-            className="px-3 py-1.5 text-sm bg-secondary hover:bg-secondary-dark dark:bg-secondary-dark dark:hover:bg-secondary text-primary dark:text-primary-dark rounded transition-colors">
-            {isFullscreen ? texts.exitFullscreenButton : texts.fullscreenButton}
           </button>
         </div>
       </div>
-      {error && (
-        <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded text-red-800 dark:text-red-200 text-sm">
-          {error}
+      <div className="flex-1 relative bg-white dark:bg-gray-900 overflow-hidden flex items-center justify-center">
+        {error && (
+          <div className="absolute top-4 left-4 right-4 z-10 p-3 bg-red-50/90 dark:bg-red-900/40 backdrop-blur-sm border border-red-200 dark:border-red-800 rounded-lg text-red-800 dark:text-red-200 text-sm shadow-lg">
+            <div className="font-bold mb-1 flex items-center gap-1.5">
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+              Error
+            </div>
+            {error}
+          </div>
+        )}
+        {/* Floating Control Bar */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-3 py-2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-border dark:border-border-dark rounded-lg shadow-lg">
+          <button
+            onClick={handleZoomOut}
+            title="Zoom Out"
+            className="p-1.5 text-secondary hover:text-link hover:bg-link/10 rounded transition-all"
+            aria-label="Zoom Out">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7" />
+            </svg>
+          </button>
+          <button
+            onClick={handleResetZoom}
+            title="Reset Zoom"
+            className="px-2 py-1 text-xs font-mono font-medium text-secondary hover:text-link hover:bg-link/10 rounded transition-all min-w-[3rem] text-center">
+            {Math.round(zoom * 100)}%
+          </button>
+          <button
+            onClick={handleZoomIn}
+            title="Zoom In"
+            className="p-1.5 text-secondary hover:text-link hover:bg-link/10 rounded transition-all"
+            aria-label="Zoom In">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+            </svg>
+          </button>
+          <div className="w-[1px] h-5 bg-border dark:bg-border-dark" />
+          <button
+            onClick={handleToggleFullscreen}
+            title={isFullscreen ? texts.exitFullscreenButton : texts.fullscreenButton}
+            className="p-1.5 text-secondary hover:text-link hover:bg-link/10 rounded transition-all"
+            aria-label={isFullscreen ? texts.exitFullscreenButton : texts.fullscreenButton}>
+            {isFullscreen ? (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
+                <path d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM9 9l6 6m0-6-6 6"/>
+              </svg>
+            ) : (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" />
+              </svg>
+            )}
+          </button>
         </div>
-      )}
-      <div className="flex-1 w-full flex items-center justify-center border border-border dark:border-border-dark rounded overflow-auto">
-        <Infographic
-          ref={infographicRef}
-          options={displaySyntax}
-          onError={handleError}
-          enableEditor={true}
-        />
+        <div className="w-full h-full p-8 flex items-center justify-center overflow-auto">
+          <div style={{transform: `scale(${zoom})`, transformOrigin: 'center', transition: 'transform 0.2s ease'}}>
+            <Infographic
+              ref={infographicRef}
+              options={displaySyntax}
+              onError={handleError}
+              enableEditor={true}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
