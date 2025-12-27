@@ -5,11 +5,19 @@ import {useLocaleBundle} from 'hooks/useTranslation';
 const TRANSLATIONS = {
   'zh-CN': {
     title: '实时预览',
-    copyButton: '复制图片',
+    copyButton: '复制',
+    pngButton: 'PNG',
+    svgButton: 'SVG',
+    pngExported: 'PNG 已导出',
+    svgExported: 'SVG 已导出',
   },
   'en-US': {
     title: 'Live Preview',
-    copyButton: 'Copy Image',
+    copyButton: 'Copy',
+    pngButton: 'PNG',
+    svgButton: 'SVG',
+    pngExported: 'PNG exported',
+    svgExported: 'SVG exported',
   },
 };
 
@@ -18,11 +26,13 @@ export function PreviewPanel({
   onError,
   error,
   onCopySuccess,
+  onExportSuccess,
 }: {
   syntax: string;
   onError: (error: string | null) => void;
   error: string | null;
   onCopySuccess: () => void;
+  onExportSuccess: (message: string) => void;
 }) {
   const texts = useLocaleBundle(TRANSLATIONS);
   const [displaySyntax, setDisplaySyntax] = useState(syntax);
@@ -58,17 +68,39 @@ export function PreviewPanel({
     }
   };
 
+  const handleExportPNG = async () => {
+    await infographicRef.current?.exportPNG();
+    onExportSuccess(texts.pngExported);
+  };
+
+  const handleExportSVG = async () => {
+    await infographicRef.current?.exportSVG();
+    onExportSuccess(texts.svgExported);
+  };
+
   return (
     <div className="bg-card dark:bg-card-dark rounded-lg shadow-lg p-4 flex flex-col">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-primary dark:text-primary-dark">
           {texts.title}
         </h2>
-        <button
-          onClick={handleCopy}
-          className="px-3 py-1.5 text-sm bg-link hover:bg-link-dark text-white rounded transition-colors">
-          {texts.copyButton}
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={handleCopy}
+            className="px-3 py-1.5 text-sm bg-link hover:bg-link-dark text-white rounded transition-colors">
+            {texts.copyButton}
+          </button>
+          <button
+            onClick={handleExportPNG}
+            className="px-3 py-1.5 text-sm bg-link hover:bg-link-dark text-white rounded transition-colors">
+            {texts.pngButton}
+          </button>
+          <button
+            onClick={handleExportSVG}
+            className="px-3 py-1.5 text-sm bg-link hover:bg-link-dark text-white rounded transition-colors">
+            {texts.svgButton}
+          </button>
+        </div>
       </div>
       {error && (
         <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded text-red-800 dark:text-red-200 text-sm">

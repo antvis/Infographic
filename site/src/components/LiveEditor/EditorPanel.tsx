@@ -1,7 +1,10 @@
 import {useLocaleBundle} from 'hooks/useTranslation';
 import {CodeEditor} from 'components/MDX/CodeEditor';
-import {getTemplates} from '@antv/infographic';
-import {useMemo, useState} from 'react';
+import {getTemplates, parseSyntax} from '@antv/infographic';
+import {useMemo, useState, useCallback} from 'react';
+import type {Diagnostic} from '@codemirror/lint';
+import type {EditorView} from '@codemirror/view';
+import type {SyntaxError} from '@antv/infographic';
 
 const TRANSLATIONS = {
   'zh-CN': {
@@ -26,6 +29,53 @@ export function EditorPanel({
   const texts = useLocaleBundle(TRANSLATIONS);
   const templates = useMemo(() => getTemplates().sort(), []);
   const [selectedTemplate, setSelectedTemplate] = useState('');
+
+  // Create linter function for CodeMirror diagnostics
+  const linter = useCallback(
+    (view: EditorView): Diagnostic[] => {
+      const content = view.state.doc.toString();
+      const {errors, options} = parseSyntax(content);
+      const diagnostics: Diagnostic[] = errors.map((error: SyntaxError) => {
+        // Calculate position from line number
+        const line = error.line - 1; // Convert 1-indexed to 0-indexed
+        const lineObj = view.state.doc.line(Math.max(1, Math.min(line + 1, view.state.doc.lines)));
+        const from = lineObj.from;
+        const to = lineObj.to;
+
+        return {
+          from,
+          to,
+          severity: 'error' as const,
+          message: `${error.code}: ${error.message}${error.raw ? ` (${error.raw})` : ''}`,
+        };
+      });
+
+      // Check if template exists
+      if (options.template) {
+        const availableTemplates = templates;
+        if (!availableTemplates.includes(options.template)) {
+          // Find the line with "infographic [template-name]"
+          const lines = content.split('\n');
+          const templateLineIndex = lines.findIndex(line =>
+            line.trim().startsWith('infographic ') && line.includes(options.template!)
+          );
+
+          if (templateLineIndex >= 0) {
+            const lineObj = view.state.doc.line(templateLineIndex + 1);
+            diagnostics.push({
+              from: lineObj.from,
+              to: lineObj.to,
+              severity: 'error' as const,
+              message: `unknown_template: Template "${options.template}" not found. Available templates can be selected from the dropdown.`,
+            });
+          }
+        }
+      }
+
+      return diagnostics;
+    },
+    [templates]
+  );
 
   const handleTemplateChange = (template: string) => {
     setSelectedTemplate(template);
@@ -73,6 +123,7 @@ export function EditorPanel({
           language="yaml"
           onChange={onChange}
           value={value}
+          linterFn={linter}
         />
       </div>
     </div>
