@@ -8,6 +8,7 @@ import {
   fetchWithCache,
   join,
   normalizeFontWeightName,
+  splitFontFamily,
 } from '../utils';
 
 interface FontFaceAttributes {
@@ -92,20 +93,21 @@ export async function embedFonts(svg: SVGSVGElement, embedResources = true) {
 function collectUsedFonts(svg: SVGSVGElement) {
   const usedFonts = new Set<string>();
 
-  const svgFontFamily = svg.getAttribute('font-family');
-  if (svgFontFamily) {
-    const decodedFontFamily = decodeFontFamily(svgFontFamily);
-    if (decodedFontFamily) {
-      usedFonts.add(decodedFontFamily);
-    }
-  }
+  const addFamilies = (fontFamilyString: string | null | undefined) => {
+    if (!fontFamilyString) return;
+    splitFontFamily(fontFamilyString).forEach((family) => {
+      const decodedFontFamily = decodeFontFamily(family);
+      if (decodedFontFamily) usedFonts.add(decodedFontFamily);
+    });
+  };
+
+  addFamilies(svg.getAttribute('font-family'));
 
   const textElements =
     svg.querySelectorAll<HTMLSpanElement>('foreignObject span');
 
   for (const span of textElements) {
-    const fontFamily = decodeFontFamily(span.style.fontFamily);
-    if (fontFamily) usedFonts.add(fontFamily);
+    addFamilies(span.style.fontFamily);
   }
 
   return usedFonts;
@@ -146,10 +148,13 @@ export async function parseFontFamily(fontFamily: string) {
  */
 export function getActualLoadedFontFace(fontFamily: string) {
   const fonts: FontFace[] = [];
+  const families = splitFontFamily(fontFamily).map((family) =>
+    decodeFontFamily(family),
+  );
 
   document.fonts.forEach((font) => {
     if (
-      decodeFontFamily(font.family) === decodeFontFamily(fontFamily) &&
+      families.includes(decodeFontFamily(font.family)) &&
       font.status === 'loaded'
     ) {
       fonts.push(font);

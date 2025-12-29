@@ -1,14 +1,21 @@
 import type { Font } from '../../types';
-import { decodeFontFamily, encodeFontFamily } from '../../utils';
+import {
+  decodeFontFamily,
+  encodeFontFamily,
+  splitFontFamily,
+} from '../../utils';
 
 const FONT_REGISTRY: Map<string, Font> = new Map();
 
 export let DEFAULT_FONT = 'Alibaba PuHuiTi';
 
 export function getFont(font: string) {
-  const fontObj = FONT_REGISTRY.get(decodeFontFamily(font));
-  if (!fontObj) return null;
-  return fontObj;
+  const families = splitFontFamily(font);
+  for (const family of families) {
+    const fontObj = FONT_REGISTRY.get(decodeFontFamily(family));
+    if (fontObj) return fontObj;
+  }
+  return null;
 }
 
 export function getFonts() {
@@ -46,6 +53,6 @@ export function registerFont(font: Font): Font {
 export function unregisterFont(font: string) {
   const fontObj = getFont(font);
   if (!fontObj) return null;
-  FONT_REGISTRY.delete(font);
+  FONT_REGISTRY.delete(decodeFontFamily(fontObj.fontFamily));
   return fontObj;
 }
