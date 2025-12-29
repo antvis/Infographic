@@ -2,11 +2,16 @@
 title: 自定义数据项
 ---
 
-数据项开发同样有一定复杂度，AntV Infographic 为[数据项](/learn/design#item)准备了专用 AI 提示词，便于用大模型快速生成代码。
+数据项开发同样有一定复杂度，AntV Infographic 为[数据项](/learn/design#item)整理了可直接复用的 skill，基于 any-skills 管理，因此 Claude Code 或 Codex 都能读取并使用这些技能来生成代码。
 
 ## 开发提示词 {#development-prompt}
 
-提示词位于 AntV Infographic [GitHub 仓库](https://github.com/antvis/infographic)的中 [src/designs/items/prompt.md](https://github.com/antvis/Infographic/blob/main/src/designs/items/prompt.md) 文件中。其中包含以下内容：
+数据项相关的规则与模板已整理为 skill 的参考文档，位于：
+
+- `.skills/infographic-item-generator/SKILL.md`
+- `.skills/infographic-item-generator/references/item-prompt.md`
+
+其中包含以下内容：
 
 - 数据项核心概念
 - 设计要求（完整性、自适应、数值处理）
@@ -17,4 +22,26 @@ title: 自定义数据项
 - positionH/V 处理
 - 常见问题和最佳实践
 
-> 使用方法与[自定义结构](/learn/custom-structure)类似，生成后请在 Dev 环境验证效果。
+## 使用方法 {#usage}
+
+### 方法一：使用 skills（推荐） {#use-cli-ai}
+
+在 Claude Code 或 Codex 中**一次性提出需求**即可，例如：
+
+```bash
+请使用 skill: infographic-item-generator，帮我开发一个带图标与数值的卡片式数据项。
+```
+
+生成后 AI 会直接创建数据项文件并完成导出，只需在 Dev 环境验证效果即可。
+
+### 方法二：在 AI 对话中手动使用 {#use-chat}
+
+如果你更偏好手动复制提示内容，可以直接读取参考文档：
+
+```bash
+cat .skills/infographic-item-generator/references/item-prompt.md
+```
+
+将内容粘贴给 AI 后，描述需求并生成代码。
+
+无论采用哪种方式，提交前都请在 Dev 环境验证效果。

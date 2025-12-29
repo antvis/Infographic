@@ -2,11 +2,16 @@
 title: Custom Items
 ---
 
-Data item development also has a certain level of complexity. AntV Infographic has prepared a dedicated AI prompt for [data items](/learn/design#item), making it easy to quickly generate code using large language models.
+Data item development also has a certain level of complexity. AntV Infographic provides reusable skills for [data items](/learn/design#item), managed by any-skills, so both Claude Code and Codex can read and use them to generate code.
 
 ## Development Prompt {#development-prompt}
 
-The prompt is located in the [src/designs/items/prompt.md](https://github.com/antvis/Infographic/blob/main/src/designs/items/prompt.md) file in the AntV Infographic [GitHub repository](https://github.com/antvis/infographic). It contains the following:
+Item rules and templates are packaged as a skill. The key files are:
+
+- `.skills/infographic-item-generator/SKILL.md`
+- `.skills/infographic-item-generator/references/item-prompt.md`
+
+They include the following:
 
 - Core concepts of data items
 - Design requirements (completeness, responsiveness, numerical processing)
@@ -17,4 +22,26 @@ The prompt is located in the [src/designs/items/prompt.md](https://github.com/an
 - positionH/V handling
 - Common issues and best practices
 
-> Usage is similar to [Custom Structure](/learn/custom-structure). Please verify the results in the Dev environment after generation.
+## Usage {#usage}
+
+### Method 1: Use skills (Recommended) {#use-cli-ai}
+
+In Claude Code or Codex, submit your request in one shot, for example:
+
+```bash
+Please use skill: infographic-item-generator to build a card-style item with icon and value.
+```
+
+After generation, the AI will create the item file and update exports. You only need to verify the result in the Dev environment.
+
+### Method 2: Manual use in an AI chat {#use-chat}
+
+If you prefer to paste the reference yourself, read the skill reference:
+
+```bash
+cat .skills/infographic-item-generator/references/item-prompt.md
+```
+
+Paste the content into your AI chat, then describe your requirements and generate code.
+
+Regardless of which method you use, please verify the results in the Dev environment before submitting.
