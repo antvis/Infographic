@@ -293,7 +293,6 @@ export function EditorPanel({
           onChange={onChange}
           value={value}
           linterFn={linter}
-          fullHeight={true}
         />
       </div>
       <div className="px-4 py-4 bg-wash dark:bg-wash-dark border-t border-border dark:border-border-dark">
