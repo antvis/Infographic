@@ -1,6 +1,15 @@
-# 信息图结构生成 Agent 提示词
+# 信息图结构组件生成规范
 
-你是一个专业的信息图结构组件生成专家。你的任务是根据用户需求，生成符合框架规范的结构组件代码。
+本文件用于指导生成符合框架规范的 Structure 组件代码。
+
+## 目录
+- 框架核心概念
+- 结构分类体系
+- 技术规范
+- 代码生成要求
+- 生成流程
+- 参考示例
+- 输出格式
 
 ## 框架核心概念
 
@@ -203,9 +212,9 @@ export interface BaseItemProps {
 
 ```tsx
 <ShapesGroup>
-  <Rect width="100" height="100" />
-  <Rect x="100" width="100" height="100" />
-  <Rect x="200" width="100" height="100" />
+  <Rect width={100} height={100} />
+  <Rect x={100} width={100} height={100} />
+  <Rect x={200} width={100} height={100} />
 </ShapesGroup>
 ```
 
@@ -230,25 +239,29 @@ export interface BaseItemProps {
 - **ItemLabel**: 数据项标签
 
   ```tsx
-  <ItemLabel text="标签" x={0} y={0} />
+  <ItemLabel indexes={[0]} x={0} y={0}>
+    标签
+  </ItemLabel>
   ```
 
 - **ItemDesc**: 数据项描述
 
   ```tsx
-  <ItemDesc text="描述" x={0} y={0} />
+  <ItemDesc indexes={[0]} x={0} y={0}>
+    描述
+  </ItemDesc>
   ```
 
 - **ItemIcon**: 数据项图标
 
   ```tsx
-  <ItemIcon x={0} y={0} width={40} height={40} />
+  <ItemIcon indexes={[0]} x={0} y={0} size={40} />
   ```
 
 - **ItemValue**: 数据项数值
 
   ```tsx
-  <ItemValue value={100} x={0} y={0} />
+  <ItemValue indexes={[0]} value={100} x={0} y={0} />
   ```
 
 - **ItemIconCircle**: 圆形图标组件
@@ -730,7 +743,7 @@ registerStructure('some-structure', {
 14. **对于复杂布局计算**，可以使用 d3 的布局算法（如 `d3.hierarchy`, `d3.tree`, `d3.forceSimulation`）
 15. **空数据处理**：当 `items.length === 0` 时，应该提供友好的空状态（如单个添加按钮）
 
-### 6. 按钮布局原则
+### 7. 按钮布局原则
 
 **BtnAdd (添加按钮)**:
 
@@ -750,7 +763,7 @@ registerStructure('some-structure', {
 - **纵向布局**: BtnAdd 在数据项上方或下方水平居中，BtnRemove 在数据项左侧或右侧
 - **其他布局**: 根据视觉平衡和交互便利性灵活调整
 
-### 7. 布局计算要点
+### 8. 布局计算要点
 
 - **元素尺寸获取**: 使用 `getElementBounds()` 获取元素尺寸用于计算
 - **坐标系统**: x 向右为正，y 向下为正
@@ -768,7 +781,7 @@ registerStructure('some-structure', {
   - 力导向布局: `d3.forceSimulation()`
   - 层次数据: `d3.hierarchy()`
 
-### 8. 命名规范
+### 9. 命名规范
 
 > 支持的类型：List, Compare, Sequence, hierarchy, relation, geo, chart
 
@@ -777,7 +790,7 @@ registerStructure('some-structure', {
 - **Props 接口**: 组件名 + `Props`，如 `ListRowProps`
 - **变量命名**: 使用有意义的名称，如 `itemElements`, `btnElements`, `decorElements`
 
-### 9. 参数设计指导
+### 10. 参数设计指导
 
 **常用参数及其默认值**:
 
@@ -1045,5 +1058,3 @@ registerStructure('example', {
 ```
 
 ---
-
-现在，请告诉我你想要生成什么类型的结构组件？

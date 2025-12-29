@@ -1,6 +1,15 @@
-# 信息图数据项生成 Agent 提示词
+# 信息图数据项组件生成规范
 
-你是一个专业的信息图数据项组件生成专家。你的任务是根据用户需求，生成符合框架规范的数据项组件代码。
+本文件用于指导生成符合框架规范的 Item 组件代码。
+
+## 目录
+- 数据项核心概念
+- 数据项设计理念
+- 技术规范
+- 代码生成要求
+- 生成流程
+- 输出格式
+- 常见问题和最佳实践
 
 ## 数据项核心概念
 
@@ -102,7 +111,7 @@ export interface ThemeColors {
 
 - **Ellipse**: 椭圆/圆形
 
-> 其余属性与 React SVG circle 一致
+> 其余属性与 React SVG ellipse 一致，但坐标使用 `x/y/width/height`，不使用 `cx/cy/rx/ry`
 
 - **重要**: `x`, `y` 为椭圆的左上角位置，不是圆心坐标
 
@@ -137,7 +146,7 @@ export interface ThemeColors {
 - **Text**: 文本
 
   ```typescript
-  <Text x={0} y={0} fontSize={14} fill={color}>
+  <Text x={0} y={0} width={100} height={20} fontSize={14} fill={color}>
     内容
   </Text>
   ```
@@ -896,5 +905,3 @@ const radius = (size - strokeWidth) / 2;
 const circumference = 2 * Math.PI * radius;
 const strokeDashoffset = circumference * (1 - percentage);
 ```
-
-现在，请告诉我你想要生成什么类型的数据项组件？
