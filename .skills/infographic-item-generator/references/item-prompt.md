@@ -400,9 +400,9 @@ import { getItemProps } from './utils';
 // import roundPolygon, { xxx } from 'round-polygon';
 ```
 
-### 6. values 字段规则
+### 6. composites 字段规则
 
-在 `registerItem` 时，需要传入 `values` 字段，表示当前组件使用了哪些封装组件。`values` 的值基于代码实现中使用的组件来确定：
+在 `registerItem` 时，需要传入 `composites` 字段，表示当前组件使用了哪些封装组件。`composites` 的值基于代码实现中使用的组件来确定：
 
 - **ItemLabel** → `"label"`
 - **ItemDesc** → `"desc"`
@@ -416,19 +416,19 @@ import { getItemProps } from './utils';
 // 如果组件使用了 ItemLabel 和 ItemDesc
 registerItem('simple-text', {
   component: SimpleText,
-  values: ['label', 'desc'],
+  composites: ['label', 'desc'],
 });
 
 // 如果组件使用了 ItemIcon, ItemLabel, ItemValue 和 ItemDesc
 registerItem('full-card', {
   component: FullCard,
-  values: ['icon', 'label', 'value', 'desc'],
+  composites: ['icon', 'label', 'value', 'desc'],
 });
 
 // 如果组件使用了 Illus, ItemLabel 和 ItemDesc
 registerItem('illus-item', {
   component: IllusItem,
-  values: ['illus', 'label', 'desc'],
+  composites: ['illus', 'label', 'desc'],
 });
 ```
 
@@ -519,7 +519,7 @@ export const [ItemName]: ComponentType<[ItemName]Props> = (props) => {
 
 registerItem('[item-name]', {
   component: [ItemName],
-  values: ['label', 'desc', 'icon', 'value', 'illus'] // 根据组件实际使用的组件来确定
+  composites: ['label', 'desc', 'icon', 'value', 'illus'] // 根据组件实际使用的组件来确定
 });
 ```
 
@@ -764,7 +764,7 @@ const quarterCirclePath = isFlipped
 6. **支持 positionH/V 对齐方式**（根据设计需求）
 7. **避免出现元素坐标为负值的情况**
 8. **条件渲染可选元素**（icon、label、desc、value）
-9. **注册组件时必须提供 values 字段**，根据实际使用的封装组件确定值
+9. **注册组件时必须提供 composites 字段**，根据实际使用的封装组件确定值
 
 ### 11. 命名规范
 
