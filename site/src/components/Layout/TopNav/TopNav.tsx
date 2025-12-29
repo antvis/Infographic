@@ -41,7 +41,7 @@ const TRANSLATIONS = {
     home: 'Home',
     learn: 'Learn',
     reference: 'Reference',
-    examples: 'Examples',
+    examples: 'Gallery',
     icon: 'Icon',
     ai: 'AI',
     enterprise: 'Enterprise',
@@ -381,7 +381,7 @@ export default function TopNav({
                 <NavItem isActive={section === 'reference'} url="/reference">
                   {navTexts.reference}
                 </NavItem>
-                <NavItem isActive={section === 'examples'} url="/examples">
+                <NavItem isActive={section === 'examples'} url="/gallery">
                   {navTexts.examples}
                 </NavItem>
                 <NavItem isActive={section === 'icon'} url="/icon">
@@ -487,7 +487,7 @@ export default function TopNav({
                       url="/reference">
                       {navTexts.reference}
                     </NavItem>
-                    <NavItem isActive={section === 'examples'} url="/examples">
+                    <NavItem isActive={section === 'examples'} url="/gallery">
                       {navTexts.examples}
                     </NavItem>
                     <NavItem isActive={section === 'icon'} url="/icon">

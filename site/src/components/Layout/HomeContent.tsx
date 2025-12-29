@@ -649,7 +649,7 @@ export function HomeContent(): JSX.Element {
           <Center>
             <Para>{sectionContent.playground.note}</Para>
             <div className="flex justify-start w-full lg:justify-center">
-              <CTA color="gray" icon="framework" href="/examples">
+              <CTA color="gray" icon="framework" href="/gallery">
                 {sectionContent.playground.cta}
               </CTA>
             </div>

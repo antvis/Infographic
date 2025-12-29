@@ -220,7 +220,7 @@ export async function getStaticPaths() {
       }
       const segments = getSegments(file);
       const path = segments.join('/');
-      return path !== 'ai' && path !== 'examples';
+      return path !== 'ai' && path !== 'examples' && path !== 'gallery';
     })
     .map((file) => ({
       params: {

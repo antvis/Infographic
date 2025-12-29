@@ -31,7 +31,7 @@
   <a href="https://infographic.antv.vision/learn">
     <img src="https://img.shields.io/badge/Docs-722ED1?style=for-the-badge" alt="Docs" />
   </a>
-  <a href="https://infographic.antv.vision/examples">
+  <a href="https://infographic.antv.vision/gallery">
     <img src="https://img.shields.io/badge/Gallery-13C2C2?style=for-the-badge" alt="Gallery" />
   </a>
   <a href="./prompt.md">

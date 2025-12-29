@@ -121,7 +121,7 @@ export function Footer() {
         </div>
         <div className="flex flex-col">
           <FooterLink isHeader={true}>{translations.more.header}</FooterLink>
-          <FooterLink href="/examples">
+          <FooterLink href="/gallery">
             {translations.more.moreExamples}
           </FooterLink>
           <FooterLink href="/ai">{translations.more.aiInfographic}</FooterLink>

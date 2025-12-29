@@ -5,7 +5,7 @@ export default function ExampleDetail() {
   return (
     <Page
       toc={[]}
-      routeTree={{title: '示例', path: '/examples', routes: []}}
+      routeTree={{title: '示例', path: '/gallery', routes: []}}
       meta={{title: '示例'}}
       section="examples"
       showFooter={false}>
