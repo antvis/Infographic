@@ -116,6 +116,10 @@ export async function getStaticProps(context) {
   // Read MDX from the file.
   let path = (context.params.markdownPath || []).join('/') || 'index';
 
+  if (path.startsWith('_next')) {
+    return {notFound: true};
+  }
+
   // Try to load both Chinese and English versions
   let mdx, mdxEn;
   let hasEnglish = false;
@@ -127,7 +131,8 @@ export async function getStaticProps(context) {
     try {
       mdx = fs.readFileSync(rootDir + path + '/index.md', 'utf8');
     } catch (e) {
-      throw new Error(`No Chinese markdown file found for path: ${path}`);
+      // Instead of throwing, return 404
+      return {notFound: true};
     }
   }
 

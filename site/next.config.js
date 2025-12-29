@@ -5,6 +5,7 @@ const nextConfig = {
   pageExtensions: ['jsx', 'js', 'ts', 'tsx', 'mdx', 'md'],
   reactStrictMode: true,
   output: 'export',
+  trailingSlash: true,
   images: {
     // Static export needs unoptimized images
     unoptimized: true,
@@ -14,13 +15,13 @@ const nextConfig = {
     reactCompiler: true,
   },
   env: {},
-  webpack: (config, {dev, isServer, ...options}) => {
+  webpack: (config, {isServer}) => {
     if (process.env.ANALYZE) {
       const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
       config.plugins.push(
         new BundleAnalyzerPlugin({
           analyzerMode: 'static',
-          reportFilename: options.isServer
+          reportFilename: isServer
             ? '../analyze/server.html'
             : './analyze/client.html',
         })
