@@ -124,3 +124,47 @@ export function App() {
   return <div ref={containerRef} />;
 }
 ```
+
+### Using in Vue {#using-in-vue}
+
+In Vue 3, you can create an instance in the `onMounted` lifecycle hook and mount it to a `ref`:
+
+```vue
+<template>
+  <div ref="containerRef"></div>
+</template>
+
+<script setup>
+import {ref, onMounted, onBeforeUnmount} from 'vue';
+import {Infographic} from '@antv/infographic';
+
+const containerRef = ref(null);
+let infographic = null;
+
+onMounted(() => {
+  infographic = new Infographic({
+    container: containerRef.value,
+    width: '100%',
+    height: '100%',
+  });
+
+  infographic.render(`
+    infographic list-row-simple-horizontal-arrow
+    data
+      items
+        - label Step 1
+          desc Start
+        - label Step 2
+          desc In Progress
+        - label Step 3
+          desc Complete
+  `);
+});
+
+onBeforeUnmount(() => {
+  if (infographic) {
+    infographic.destroy();
+  }
+});
+</script>
+```
