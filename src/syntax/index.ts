@@ -41,12 +41,15 @@ export function parseSyntax(input: string): SyntaxParseResult {
   }
 
   if (!infographicNode && !mergedEntries.template) {
-    const entries = Object.entries(ast.entries);
-    const firstLine = entries.reduce((min, [, node]) => {
-      if (node.line < min) return node.line;
-      return min;
-    }, Number.POSITIVE_INFINITY);
-    const firstEntry = entries.find(([, node]) => node.line === firstLine);
+    const firstEntry = Object.entries(ast.entries).reduce(
+      (first, current) => {
+        if (!first || current[1].line < first[1].line) {
+          return current;
+        }
+        return first;
+      },
+      undefined as [string, SyntaxNode] | undefined,
+    );
     if (firstEntry && getTemplate(firstEntry[0])) {
       const [templateKey, templateNode] = firstEntry;
       templateFromInfographic = templateKey;
