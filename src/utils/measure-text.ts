@@ -52,13 +52,12 @@ function resolveLineHeight(
       const value = Number.parseFloat(trimmed);
       return Number.isFinite(value) ? value : fontSize * 1.4;
     }
-    const numeric = Number(trimmed);
-    if (!Number.isFinite(numeric)) return fontSize * 1.4;
-    return numeric > 4 ? numeric : numeric * fontSize;
+    lineHeight = Number(trimmed);
   }
-  const numeric = Number(lineHeight);
-  if (!Number.isFinite(numeric)) return fontSize * 1.4;
-  return numeric > 4 ? numeric : numeric * fontSize;
+  if (typeof lineHeight !== 'number' || !Number.isFinite(lineHeight)) {
+    return fontSize * 1.4;
+  }
+  return lineHeight > 4 ? lineHeight : lineHeight * fontSize;
 }
 
 function measureTextInBrowser(
@@ -77,8 +76,7 @@ function measureTextInBrowser(
 ) {
   const lines = content.split(/\r?\n/);
   const normalizedFamily = encodeFontFamily(fontFamily);
-  const normalizedWeight =
-    fontWeight === undefined || fontWeight === null ? 'normal' : fontWeight;
+  const normalizedWeight = fontWeight || 'normal';
   const lineHeightPx = resolveLineHeight(fontSize, lineHeight);
 
   const context = getCanvasContext();
