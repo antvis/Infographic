@@ -1,14 +1,143 @@
-import {InfographicOptions} from '@antv/infographic';
 import {DATASET} from './datasets';
 
-// 1. 提取公共配置，避免重复
-const COMMON_OPTIONS = {
-  theme: 'light',
-  themeConfig: {
-    palette: 'antv',
-  },
-  padding: 20,
+export type GalleryTemplate = {
+  template: string;
+  syntax: string;
+};
+
+const COMMON_THEME = {
+  type: 'light',
+  palette: 'antv',
 } as const;
+
+const DATA_KEY_ORDER = ['title', 'desc', 'items'] as const;
+const ITEM_KEY_ORDER = [
+  'label',
+  'value',
+  'desc',
+  'time',
+  'icon',
+  'illus',
+  'children',
+] as const;
+const INLINE_ITEM_KEYS = ['label', 'value', 'time', 'desc'] as const;
+const INDENT = '  ';
+
+const orderKeys = (obj: Record<string, any>, preferred: readonly string[]) => {
+  const ordered: string[] = [];
+  const preferredSet = new Set(preferred);
+  preferred.forEach((key) => {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      ordered.push(key);
+    }
+  });
+  Object.keys(obj)
+    .filter((key) => !preferredSet.has(key))
+    .sort()
+    .forEach((key) => ordered.push(key));
+  return ordered;
+};
+
+const stringifyScalar = (value: unknown) => {
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' || typeof value === 'boolean') {
+    return String(value);
+  }
+  return String(value);
+};
+
+function stringifyArray(items: any[], indentLevel: number) {
+  const lines: string[] = [];
+  const indent = INDENT.repeat(indentLevel);
+
+  items.forEach((item) => {
+    if (item === undefined || item === null) return;
+
+    if (Array.isArray(item)) {
+      lines.push(`${indent}- ${item.map(stringifyScalar).join(' ')}`);
+      return;
+    }
+
+    if (typeof item === 'object') {
+      const record = item as Record<string, any>;
+      const inlineKey = INLINE_ITEM_KEYS.find(
+        (key) =>
+          record[key] !== undefined &&
+          record[key] !== null &&
+          typeof record[key] !== 'object'
+      );
+      if (inlineKey) {
+        lines.push(
+          `${indent}- ${inlineKey} ${stringifyScalar(record[inlineKey])}`
+        );
+      } else {
+        lines.push(`${indent}-`);
+      }
+      const omit = inlineKey ? new Set([inlineKey]) : new Set<string>();
+      const nested = stringifyObject(
+        record,
+        indentLevel + 1,
+        ITEM_KEY_ORDER,
+        omit
+      );
+      if (nested.length) {
+        lines.push(...nested);
+      }
+      return;
+    }
+
+    lines.push(`${indent}- ${stringifyScalar(item)}`);
+  });
+
+  return lines;
+}
+
+function stringifyObject(
+  obj: Record<string, any>,
+  indentLevel: number,
+  keyOrder: readonly string[],
+  omitKeys: Set<string> = new Set()
+) {
+  const lines: string[] = [];
+  const indent = INDENT.repeat(indentLevel);
+  const keys = orderKeys(obj, keyOrder);
+
+  keys.forEach((key) => {
+    if (omitKeys.has(key)) return;
+    const value = obj[key];
+    if (value === undefined || value === null) return;
+
+    if (Array.isArray(value)) {
+      if (value.length === 0) return;
+      lines.push(`${indent}${key}`);
+      lines.push(...stringifyArray(value, indentLevel + 1));
+      return;
+    }
+
+    if (typeof value === 'object') {
+      const nested = stringifyObject(value, indentLevel + 1, []);
+      if (nested.length === 0) return;
+      lines.push(`${indent}${key}`);
+      lines.push(...nested);
+      return;
+    }
+
+    lines.push(`${indent}${key} ${stringifyScalar(value)}`);
+  });
+
+  return lines;
+}
+
+const buildSyntax = (template: string, data: Record<string, any>) => {
+  const lines: string[] = [`infographic ${template}`];
+  if (data && Object.keys(data).length > 0) {
+    lines.push('data');
+    lines.push(...stringifyObject(data, 1, DATA_KEY_ORDER));
+  }
+  lines.push(`theme ${COMMON_THEME.type}`);
+  lines.push(`${INDENT}palette ${COMMON_THEME.palette}`);
+  return lines.join('\n');
+};
 
 const HIERARCHY_TREE_STRUCTURES = [
   'tech-style',
@@ -199,42 +328,32 @@ const TEMPLATE_ENTRIES: [string, any][] = [
   ['chart-wordcloud-rotate', DATASET.WORD_CLOUD],
 ];
 
-// 4. 构建完整对象列表
-// 辅助函数：将元组转换为完整的 InfographicOptions 对象
-const createOption = ([template, data]: [string, any]): InfographicOptions => ({
-  ...COMMON_OPTIONS,
-  template,
-  data,
-});
-
-// 5. 核心逻辑：分类与排序
+// 4. 核心逻辑：分类与排序
 // 使用 Map 提高查找效率，避免多次遍历数组
 const allTemplatesMap = new Map(
-  TEMPLATE_ENTRIES.map((entry) => [entry[0], createOption(entry)])
+  TEMPLATE_ENTRIES.map(([template, data]) => [
+    template,
+    buildSyntax(template, data),
+  ])
 );
 
-// 5.1 提取 Premium 模版 (按指定顺序)
+// 4.1 提取 Premium 模版 (按指定顺序)
 const premiumTemplates = PREMIUM_TEMPLATE_KEYS.map((key) => {
-  const template = allTemplatesMap.get(key);
-  if (template) {
-    allTemplatesMap.delete(key); // 取出后从 Map 中删除，剩下的即为 Normal
-    return template;
+  const syntax = allTemplatesMap.get(key);
+  if (syntax) {
+    allTemplatesMap.delete(key);
+    return {template: key, syntax};
   }
   return null;
-}).filter(Boolean) as InfographicOptions[];
+}).filter(Boolean) as GalleryTemplate[];
 
-// 5.2 提取 Normal 模版 (剩余的按字母顺序排序)
-const normalTemplates = Array.from(allTemplatesMap.values()).sort((a, b) => {
-  const titleA = a.template || '';
-  const titleB = b.template || '';
-  return titleA.localeCompare(titleB);
-});
+// 4.2 提取 Normal 模版 (剩余的按字母顺序排序)
+const normalTemplates = Array.from(allTemplatesMap.entries())
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([template, syntax]) => ({template, syntax}));
 
-// 6. 导出结果
-export const BUILTIN_TEMPLATES: InfographicOptions[] =
-  TEMPLATE_ENTRIES.map(createOption);
-
-export const TEMPLATES: InfographicOptions[] = [
+// 5. 导出结果
+export const TEMPLATES: GalleryTemplate[] = [
   ...premiumTemplates,
   ...normalTemplates,
 ];

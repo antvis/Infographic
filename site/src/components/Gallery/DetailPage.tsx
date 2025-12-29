@@ -1,4 +1,3 @@
-import {InfographicOptions} from '@antv/infographic';
 import {motion} from 'framer-motion';
 import {
   AlertCircle,
@@ -9,8 +8,9 @@ import {
   RotateCcw,
 } from 'lucide-react';
 import {useRouter} from 'next/router';
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useLocaleBundle} from '../../hooks/useTranslation';
+import {Infographic} from '../Infographic';
 import {CodeEditor} from '../MDX/CodeEditor';
 import {TEMPLATES} from './templates';
 
@@ -18,93 +18,31 @@ const TRANSLATIONS = {
   'zh-CN': {
     back: '返回素材库',
     templateLabel: '模板',
-    fileLabel: 'index.js',
+    fileLabel: 'syntax.txt',
     errorBadge: '错误',
     reset: '重置代码',
     copy: '复制',
     copySuccess: '已复制',
     status: (line: number) => `第 ${line} 行，第 1 列`,
-    footer: 'UTF-8 • JavaScript',
+    footer: 'UTF-8 • Syntax',
     errors: {
-      syntax: '语法错误：配置无效',
       render: (msg: string) => `渲染错误：${msg}`,
-      execution: (msg: string) => `执行错误：${msg}`,
     },
   },
   'en-US': {
     back: 'Back to Gallery',
     templateLabel: 'Template',
-    fileLabel: 'index.js',
+    fileLabel: 'syntax.txt',
     errorBadge: 'Error',
     reset: 'Reset Code',
     copy: 'Copy',
     copySuccess: 'Copied',
     status: (line: number) => `Line ${line}, Col 1`,
-    footer: 'UTF-8 • JavaScript',
+    footer: 'UTF-8 • Syntax',
     errors: {
-      syntax: 'Syntax Error: Invalid configuration object',
       render: (msg: string) => `Render Error: ${msg}`,
-      execution: (msg: string) => `Execution Error: ${msg}`,
     },
   },
-};
-
-const generateJavaScriptCode = async (config: Partial<InfographicOptions>) => {
-  const options = {
-    container: '#container',
-    ...config,
-  };
-  const code = `import { Infographic } from '@antv/infographic';
-
-const infographic = new Infographic(${JSON.stringify(options, null, 2)});
-
-infographic.render();`;
-
-  try {
-    const prettier = await import('prettier/standalone');
-    const parserBabel = await import('prettier/plugins/babel');
-
-    return await prettier.format(code, {
-      parser: 'babel',
-      plugins: [parserBabel],
-      semi: true,
-      singleQuote: true,
-      tabWidth: 2,
-    });
-  } catch (error) {
-    console.error('Format error:', error);
-    return code;
-  }
-};
-
-const parseConfigFromCode = (code: string) => {
-  try {
-    const match = code.match(/new\s+Infographic\s*\(\s*\{([\s\S]*?)\}\s*\)/);
-
-    if (!match || !match[1]) {
-      return null;
-    }
-
-    let configStr = match[1].trim();
-    const lines = configStr.split('\n');
-    const filteredLines = lines.filter((line) => {
-      const trimmed = line.trim();
-      return (
-        !trimmed.startsWith('container:') &&
-        !trimmed.startsWith('"container":') &&
-        !trimmed.startsWith("'container':")
-      );
-    });
-
-    configStr = filteredLines.join('\n');
-    const jsonStr = `{${configStr}}`;
-    const config = new Function(`return ${jsonStr}`)();
-
-    return config;
-  } catch (e) {
-    console.error('Parse error:', e);
-    return null;
-  }
 };
 
 export default function DetailPage() {
@@ -117,69 +55,17 @@ export default function DetailPage() {
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-
-  const containerRef = useRef<HTMLDivElement>(null);
-  const infographicRef = useRef<any>(null);
   const detailTexts = useLocaleBundle(TRANSLATIONS);
 
   // Initialize code template
   useEffect(() => {
-    const initialize = async () => {
-      const initialCode = await generateJavaScriptCode(initialTemplate);
-      setCode(initialCode);
-    };
-    initialize();
+    setCode(initialTemplate.syntax);
+    setError(null);
   }, [initialTemplate]);
-
-  useEffect(() => {
-    if (!containerRef.current || !code) return;
-
-    try {
-      containerRef.current.innerHTML = '';
-
-      if (infographicRef.current) {
-        infographicRef.current.destroy?.();
-        infographicRef.current = null;
-      }
-      const config = parseConfigFromCode(code);
-
-      if (!config) {
-        setError(detailTexts.errors.syntax);
-        return;
-      }
-
-      import('@antv/infographic')
-        .then(({Infographic}) => {
-          const infographic = new Infographic({
-            container: containerRef.current,
-            ...config,
-            width: '100%',
-            height: '100%',
-          });
-
-          infographic.render();
-          infographicRef.current = infographic;
-          setError(null);
-        })
-        .catch((err) => {
-          console.error('Render error:', err);
-          setError(detailTexts.errors.render(err.message));
-        });
-    } catch (err: any) {
-      console.error('Execution error:', err);
-      setError(detailTexts.errors.execution(err.message));
-    }
-
-    return () => {
-      if (infographicRef.current) {
-        infographicRef.current.destroy?.();
-        infographicRef.current = null;
-      }
-    };
-  }, [code, detailTexts.errors]);
 
   const handleCodeChange = (e: string) => {
     setCode(e);
+    setError(null);
   };
 
   const handleCopy = () => {
@@ -190,6 +76,10 @@ export default function DetailPage() {
 
   const handleBack = () => {
     router.back();
+  };
+
+  const handleRenderError = (err: Error | null) => {
+    setError(err ? detailTexts.errors.render(err.message) : null);
   };
 
   return (
@@ -225,10 +115,21 @@ export default function DetailPage() {
 
             {/* Canvas container */}
             <div
-              id="container"
-              ref={containerRef}
               className="w-full h-full p-8 flex items-center justify-center"
-              style={{minHeight: '600px'}}></div>
+              style={{minHeight: '600px'}}>
+              {code ? (
+                <Infographic
+                  init={{
+                    width: '100%',
+                    height: '100%',
+                    padding: 20,
+                    editable: true,
+                  }}
+                  onError={handleRenderError}
+                  options={code}
+                />
+              ) : null}
+            </div>
 
             {/* Error banner */}
             {error && (
@@ -264,9 +165,10 @@ export default function DetailPage() {
 
           <div className="flex items-center gap-2">
             <button
-              onClick={async () =>
-                setCode(await generateJavaScriptCode(initialTemplate))
-              }
+              onClick={() => {
+                setCode(initialTemplate.syntax);
+                setError(null);
+              }}
               className="p-2 text-tertiary dark:text-tertiary-dark hover:text-primary hover:dark:text-primary-dark hover:bg-gray-40/5 dark:hover:bg-gray-60/5 rounded-md transition-colors"
               title={detailTexts.reset}>
               <RotateCcw className="w-4 h-4" />
@@ -289,7 +191,7 @@ export default function DetailPage() {
           <div className="h-full overflow-auto custom-scrollbar">
             <CodeEditor
               className="w-full resize-none font-mono text-sm lg:text-[15px] text-secondary dark:text-secondary-dark bg-transparent focus:outline-none selection:bg-link/20 dark:selection:bg-link-dark/20"
-              language={'javascript'}
+              language={'plaintext'}
               onChange={handleCodeChange}
               value={code}
             />

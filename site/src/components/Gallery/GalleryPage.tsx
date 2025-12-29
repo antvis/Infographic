@@ -5,7 +5,7 @@ import {useRouter} from 'next/router';
 import {useMemo, useState} from 'react';
 import {useLocaleBundle} from '../../hooks/useTranslation';
 import {Infographic} from '../Infographic';
-import {TEMPLATES} from './templates';
+import {GalleryTemplate, TEMPLATES} from './templates';
 
 const TRANSLATIONS = {
   'zh-CN': {
@@ -126,7 +126,7 @@ const GalleryCard = ({
   useLabel,
   typeDisplayNames,
 }: {
-  item: any;
+  item: GalleryTemplate;
   onClick: (id: string) => void;
   useLabel: string;
   typeDisplayNames: DisplayNameMap;
@@ -169,7 +169,8 @@ const GalleryCard = ({
 
           <div className="w-full h-full pointer-events-none flex items-center justify-center">
             <Infographic
-              options={{width: '100%', height: '100%', padding: 20, ...item}}
+              init={{width: '100%', height: '100%', padding: 20}}
+              options={item.syntax}
             />
           </div>
 
@@ -377,7 +378,7 @@ export default function GalleryPage() {
                     <GalleryCard
                       key={item.template}
                       item={item}
-                      onClick={() => handleCardClick(item.template!)}
+                      onClick={handleCardClick}
                       useLabel={galleryTexts.useTemplate}
                       typeDisplayNames={TYPE_DISPLAY_NAMES}
                     />
