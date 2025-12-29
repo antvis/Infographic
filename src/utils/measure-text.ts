@@ -2,8 +2,105 @@ import { measureText as measure, registerFont } from 'measury';
 import AlibabaPuHuiTi from 'measury/fonts/AlibabaPuHuiTi-Regular';
 import { TextProps } from '../jsx';
 import { DEFAULT_FONT } from '../renderer';
+import { encodeFontFamily } from './font';
+import { isNode } from './is-node';
 
-registerFont(AlibabaPuHuiTi);
+if (isNode) {
+  registerFont(AlibabaPuHuiTi);
+}
+
+const canUseDOM =
+  !isNode && typeof window !== 'undefined' && typeof document !== 'undefined';
+let canvasContext: CanvasRenderingContext2D | null = null;
+let measureSpan: HTMLSpanElement | null = null;
+
+function getCanvasContext() {
+  if (!canUseDOM) return null;
+  if (canvasContext) return canvasContext;
+  const canvas = document.createElement('canvas');
+  canvasContext = canvas.getContext('2d');
+  return canvasContext;
+}
+
+function getMeasureSpan() {
+  if (!canUseDOM || !document.body) return null;
+  if (measureSpan) return measureSpan;
+  measureSpan = document.createElement('span');
+  measureSpan.style.position = 'absolute';
+  measureSpan.style.top = '-10000px';
+  measureSpan.style.left = '-10000px';
+  measureSpan.style.visibility = 'hidden';
+  measureSpan.style.pointerEvents = 'none';
+  measureSpan.style.whiteSpace = 'pre';
+  measureSpan.style.display = 'inline-block';
+  measureSpan.style.padding = '0';
+  measureSpan.style.margin = '0';
+  document.body.appendChild(measureSpan);
+  return measureSpan;
+}
+
+function resolveLineHeight(
+  fontSize: number,
+  lineHeight: number | string | undefined,
+) {
+  if (lineHeight === undefined || lineHeight === null) {
+    return fontSize * 1.4;
+  }
+  if (typeof lineHeight === 'string') {
+    const trimmed = lineHeight.trim();
+    if (trimmed.endsWith('px')) {
+      const value = Number.parseFloat(trimmed);
+      return Number.isFinite(value) ? value : fontSize * 1.4;
+    }
+    const numeric = Number(trimmed);
+    if (!Number.isFinite(numeric)) return fontSize * 1.4;
+    return numeric > 4 ? numeric : numeric * fontSize;
+  }
+  const numeric = Number(lineHeight);
+  if (!Number.isFinite(numeric)) return fontSize * 1.4;
+  return numeric > 4 ? numeric : numeric * fontSize;
+}
+
+function measureTextInBrowser(
+  content: string,
+  {
+    fontFamily,
+    fontSize,
+    fontWeight,
+    lineHeight,
+  }: {
+    fontFamily: string;
+    fontSize: number;
+    fontWeight: string | number;
+    lineHeight: number | string | undefined;
+  },
+) {
+  const lines = content.split(/\r?\n/);
+  const normalizedFamily = encodeFontFamily(fontFamily);
+  const normalizedWeight =
+    fontWeight === undefined || fontWeight === null ? 'normal' : fontWeight;
+  const lineHeightPx = resolveLineHeight(fontSize, lineHeight);
+
+  const context = getCanvasContext();
+  if (context) {
+    context.font = `${normalizedWeight} ${fontSize}px ${normalizedFamily}`;
+    const width = lines.reduce((maxWidth, line) => {
+      const metrics = context.measureText(line);
+      return Math.max(maxWidth, metrics.width);
+    }, 0);
+    return { width, height: lineHeightPx * Math.max(lines.length, 1) };
+  }
+
+  const span = getMeasureSpan();
+  if (!span) return null;
+  span.style.fontFamily = normalizedFamily;
+  span.style.fontSize = `${fontSize}px`;
+  span.style.fontWeight = String(normalizedWeight);
+  span.style.lineHeight = `${lineHeightPx}px`;
+  span.textContent = content;
+  const rect = span.getBoundingClientRect();
+  return { width: rect.width, height: rect.height };
+}
 
 export function measureText(
   text: string | number | undefined = '',
@@ -13,9 +110,6 @@ export function measureText(
     return { width: attrs.width, height: attrs.height };
   }
 
-  let width = 0;
-  let height = 0;
-
   const {
     fontFamily = DEFAULT_FONT,
     fontSize = 14,
@@ -23,16 +117,21 @@ export function measureText(
     lineHeight = 1.4,
   } = attrs;
 
-  const metrics = measure(text.toString(), {
+  const content = text.toString();
+  const options = {
     fontFamily,
-    fontSize: +fontSize,
+    fontSize: parseFloat(fontSize.toString()),
     fontWeight,
     lineHeight,
-  });
+  };
+  const fallback = () => measure(content, options);
+  const metrics = canUseDOM
+    ? (measureTextInBrowser(content, options) ?? fallback())
+    : fallback();
 
   // 额外添加 1% 宽高
-  width ||= Math.ceil(metrics.width * 1.01);
-  height ||= Math.ceil(metrics.height * 1.01);
-
-  return { width, height };
+  return {
+    width: Math.ceil(metrics.width * 1.01),
+    height: Math.ceil(metrics.height * 1.01),
+  };
 }
