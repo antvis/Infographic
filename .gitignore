@@ -11,3 +11,5 @@ coverage
 .claude
 .docusaurus
 build
+.codex/skills
+.claude/skills
