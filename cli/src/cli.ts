@@ -50,7 +50,7 @@ function parseArgs(): CLIArgs {
  */
 function showHelp(): void {
   console.log(`
-@antv/infographic-cli - Server-Side Rendering Tool
+@antv/infographic-cli - Render AntV Infographic Syntax to SVG in command line
 
 Usage:
   infographic <input-file> [options]
@@ -68,7 +68,7 @@ Examples:
   infographic input.txt --output output.svg
 
 Input File Format:
-  The input file should contain AntV Infographic Syntax (YAML-like format).
+  The input file should contain AntV Infographic Syntax
   Example:
     infographic list-row-simple-horizontal-arrow
     data
@@ -80,6 +80,7 @@ Input File Format:
         - label Step 3
           desc Complete
 
+The Syntax: https://infographic.antv.vision/learn/infographic-syntax/
 For more information: https://github.com/antvis/Infographic
   `);
 }

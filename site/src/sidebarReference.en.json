@@ -21,6 +21,10 @@
         {
           "title": "Exports",
           "path": "/reference/infographic-exports"
+        },
+        {
+          "title": "Non-Browser Rendering",
+          "path": "/reference/non-browser-rendering"
         }
       ]
     },
