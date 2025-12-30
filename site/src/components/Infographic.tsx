@@ -1,6 +1,7 @@
 import {InfographicOptions, Infographic as Renderer} from '@antv/infographic';
 import {useTheme} from 'hooks/useTheme';
 import {
+  CSSProperties,
   forwardRef,
   useCallback,
   useEffect,
@@ -22,8 +23,10 @@ export const Infographic = forwardRef<
     init?: Partial<InfographicOptions>;
     onError?: (error: Error | null) => void;
     enableEditor?: boolean;
+    className?: string;
+    style?: CSSProperties;
   }
->(({init, onError, options, enableEditor = false}, ref) => {
+>(({init, onError, options, enableEditor = false, className, style}, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const instanceRef = useRef<Renderer | null>(null);
   const theme = useTheme();
@@ -186,9 +189,10 @@ export const Infographic = forwardRef<
 
   return (
     <div
-      className="w-full h-full"
+      className={['w-full h-full', className].filter(Boolean).join(' ')}
       ref={containerRef}
       onDoubleClick={handleCopy}
+      style={style}
     />
   );
 });

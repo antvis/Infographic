@@ -301,20 +301,22 @@ export function PreviewPanel({
             )}
           </button>
         </div>
-        <div className="w-full h-full p-8 flex items-center justify-center overflow-auto">
-          <div
+        <div
+          className={`w-full h-full p-8 ${
+            zoom === 1 ? 'overflow-auto' : 'overflow-hidden'
+          }`}>
+          <Infographic
+            ref={infographicRef}
+            options={displaySyntax}
+            onError={handleError}
+            enableEditor={true}
+            className="w-full h-full flex items-center justify-center"
             style={{
               transform: `scale(${zoom})`,
               transformOrigin: 'center',
               transition: 'transform 0.2s ease',
-            }}>
-            <Infographic
-              ref={infographicRef}
-              options={displaySyntax}
-              onError={handleError}
-              enableEditor={true}
-            />
-          </div>
+            }}
+          />
         </div>
       </div>
     </div>
