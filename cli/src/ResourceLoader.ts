@@ -1,8 +1,8 @@
-import {loadSVGResource } from '@antv/infographic';
+import {loadSVGResource, ResourceConfig } from '@antv/infographic';
 const svgTextCache = new Map<string, string>();
 const pendingRequests = new Map<string, Promise<string | null>>();
 
-export const resourceLoader = (async (config: any) => {
+export const resourceLoader = (async (config: ResourceConfig) => {
   const {data, scene} = config;
 
   try {
@@ -58,7 +58,6 @@ export const resourceLoader = (async (config: any) => {
       try {
         svgText = await fetchPromise;
       } catch (error) {
-        pendingRequests.delete(key);
         console.error(`Error loading resource ${key}:`, error);
         return null;
       } finally {
