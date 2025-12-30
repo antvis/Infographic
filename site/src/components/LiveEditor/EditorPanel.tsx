@@ -7,6 +7,7 @@ import {
 } from '@antv/infographic';
 import type {Diagnostic} from '@codemirror/lint';
 import type {EditorView} from '@codemirror/view';
+import {Select} from 'antd';
 import {TEMPLATES} from 'components/Gallery/templates';
 import {IconClose} from 'components/Icon/IconClose';
 import {IconLink} from 'components/Icon/IconLink';
@@ -343,6 +344,8 @@ const TRANSLATIONS = {
     resetButton: '重置',
     shareButton: '分享',
     clearButton: '清空',
+    searchPlaceholder: '搜索',
+    noResults: '无匹配选项',
   },
   'en-US': {
     title: 'Syntax Editor',
@@ -354,8 +357,14 @@ const TRANSLATIONS = {
     resetButton: 'Reset',
     shareButton: 'Share',
     clearButton: 'Clear',
+    searchPlaceholder: 'Search',
+    noResults: 'No results',
   },
 };
+
+const UNKNOWN_TEMPLATE_VALUE = '__unknown_template__';
+const DEFAULT_THEME_VALUE = '__default_theme__';
+const DEFAULT_PALETTE_VALUE = '__default_palette__';
 
 export function EditorPanel({
   value,
@@ -372,6 +381,34 @@ export function EditorPanel({
   const templates = useMemo(() => getTemplates().sort(), []);
   const themes = useMemo(() => getThemes().sort(), []);
   const palettes = useMemo(() => Object.keys(getPalettes()).sort(), []);
+
+  const templateOptions = useMemo(
+    () => [
+      {value: UNKNOWN_TEMPLATE_VALUE, label: 'unknown'},
+      ...templates.map((template) => ({value: template, label: template})),
+    ],
+    [templates]
+  );
+  const themeOptions = useMemo(
+    () => [
+      {
+        value: DEFAULT_THEME_VALUE,
+        label: 'default',
+      },
+      ...themes.map((theme) => ({value: theme, label: theme})),
+    ],
+    [themes]
+  );
+  const paletteOptions = useMemo(
+    () => [
+      {
+        value: DEFAULT_PALETTE_VALUE,
+        label: 'default',
+      },
+      ...palettes.map((palette) => ({value: palette, label: palette})),
+    ],
+    [palettes]
+  );
 
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [selectedTheme, setSelectedTheme] = useState('');
@@ -622,31 +659,31 @@ export function EditorPanel({
   };
 
   return (
-    <div className="bg-card dark:bg-card-dark rounded-xl shadow-xl flex flex-col h-full overflow-hidden border border-border dark:border-border-dark">
-      <div className="flex items-center justify-between px-4 py-3 bg-wash dark:bg-wash-dark border-b border-border dark:border-border-dark">
+    <div className="bg-card dark:bg-card-dark rounded-2xl shadow-nav dark:shadow-nav-dark flex flex-col h-full overflow-hidden border border-border dark:border-border-dark">
+      <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 bg-wash dark:bg-wash-dark border-b border-border dark:border-border-dark">
         <h2 className="text-base font-semibold text-primary dark:text-primary-dark flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-link animate-pulse" />
           {texts.title}
         </h2>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
           <button
             onClick={handleClear}
             title={texts.clearButton}
-            className="p-1.5 text-secondary hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-all"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border dark:border-border-dark text-secondary dark:text-secondary-dark bg-white/80 dark:bg-gray-900/60 hover:border-red-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
             aria-label={texts.clearButton}>
-            <IconClose className="w-5 h-5" />
+            <IconClose className="w-4 h-4" />
           </button>
           <button
             onClick={onReset}
             title={texts.resetButton}
-            className="p-1.5 text-secondary hover:text-link hover:bg-link/10 rounded-md transition-all"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border dark:border-border-dark text-secondary dark:text-secondary-dark bg-white/80 dark:bg-gray-900/60 hover:border-link hover:text-link hover:bg-link/10 dark:hover:border-link-dark dark:hover:text-link-dark transition"
             aria-label={texts.resetButton}>
-            <IconRestart className="w-5 h-5" />
+            <IconRestart className="w-4 h-4" />
           </button>
-          <div className="w-[1px] h-4 bg-border dark:bg-border-dark self-center mx-1" />
+          <div className="w-[1px] h-5 bg-border dark:bg-border-dark self-center mx-1" />
           <button
             onClick={onShare}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium bg-link hover:bg-link-dark text-white rounded-md transition-all shadow-sm hover:shadow-md">
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white rounded-full bg-gradient-to-r from-link to-link/80 dark:from-link-dark dark:to-link-dark/90 shadow-sm hover:shadow-md transition">
             <IconLink className="w-4 h-4" />
             {texts.shareButton}
           </button>
@@ -662,112 +699,69 @@ export function EditorPanel({
           linterFn={linter}
         />
       </div>
-      <div className="px-4 py-4 bg-wash dark:bg-wash-dark border-t border-border dark:border-border-dark">
+      <div className="px-5 py-4 bg-wash dark:bg-wash-dark border-t border-border dark:border-border-dark">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <label
               htmlFor="template-select"
-              className="text-[11px] uppercase tracking-wider font-bold text-tertiary dark:text-tertiary-dark">
+              className="text-xs font-semibold text-secondary dark:text-secondary-dark">
               {texts.templateLabel}
             </label>
-            <div className="relative group">
-              <select
-                id="template-select"
-                value={selectedTemplate}
-                onChange={(e) => handleTemplateChange(e.target.value)}
-                className="w-full pl-3 pr-8 py-2 text-sm bg-card dark:bg-card-dark border border-border dark:border-border-dark rounded-md text-primary dark:text-primary-dark appearance-none focus:outline-none focus:ring-2 focus:ring-link/50 transition-all cursor-pointer">
-                <option value="">unknown</option>
-                {templates.map((template) => (
-                  <option key={template} value={template}>
-                    {template}
-                  </option>
-                ))}
-              </select>
-              <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-tertiary">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </div>
-            </div>
+            <Select
+              id="template-select"
+              value={selectedTemplate || UNKNOWN_TEMPLATE_VALUE}
+              onChange={(next) => {
+                if (typeof next !== 'string') return;
+                handleTemplateChange(
+                  next === UNKNOWN_TEMPLATE_VALUE ? '' : next
+                );
+              }}
+              className="w-full"
+              showSearch
+              optionFilterProp="label"
+              notFoundContent={texts.noResults}
+              options={templateOptions}
+            />
           </div>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <label
               htmlFor="theme-select"
-              className="text-[11px] uppercase tracking-wider font-bold text-tertiary dark:text-tertiary-dark">
+              className="text-xs font-semibold text-secondary dark:text-secondary-dark">
               {texts.themeLabel}
             </label>
-            <div className="relative">
-              <select
-                id="theme-select"
-                value={selectedTheme}
-                onChange={(e) => handleThemeChange(e.target.value)}
-                className="w-full pl-3 pr-8 py-2 text-sm bg-card dark:bg-card-dark border border-border dark:border-border-dark rounded-md text-primary dark:text-primary-dark appearance-none focus:outline-none focus:ring-2 focus:ring-link/50 transition-all cursor-pointer">
-                <option value="">default</option>
-                {themes.map((theme) => (
-                  <option key={theme} value={theme}>
-                    {theme}
-                  </option>
-                ))}
-              </select>
-              <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-tertiary">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </div>
-            </div>
+            <Select
+              id="theme-select"
+              value={selectedTheme || DEFAULT_THEME_VALUE}
+              onChange={(next) => {
+                if (typeof next !== 'string') return;
+                handleThemeChange(next === DEFAULT_THEME_VALUE ? '' : next);
+              }}
+              className="w-full"
+              showSearch
+              optionFilterProp="label"
+              notFoundContent={texts.noResults}
+              options={themeOptions}
+            />
           </div>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             <label
               htmlFor="palette-select"
-              className="text-[11px] uppercase tracking-wider font-bold text-tertiary dark:text-tertiary-dark">
+              className="text-xs font-semibold text-secondary dark:text-secondary-dark">
               {texts.paletteLabel}
             </label>
-            <div className="relative">
-              <select
-                id="palette-select"
-                value={selectedPalette}
-                onChange={(e) => handlePaletteChange(e.target.value)}
-                className="w-full pl-3 pr-8 py-2 text-sm bg-card dark:bg-card-dark border border-border dark:border-border-dark rounded-md text-primary dark:text-primary-dark appearance-none focus:outline-none focus:ring-2 focus:ring-link/50 transition-all cursor-pointer">
-                <option value="">default</option>
-                {palettes.map((palette) => (
-                  <option key={palette} value={palette}>
-                    {palette}
-                  </option>
-                ))}
-              </select>
-              <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-tertiary">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </div>
-            </div>
+            <Select
+              id="palette-select"
+              value={selectedPalette || DEFAULT_PALETTE_VALUE}
+              onChange={(next) => {
+                if (typeof next !== 'string') return;
+                handlePaletteChange(next === DEFAULT_PALETTE_VALUE ? '' : next);
+              }}
+              className="w-full"
+              showSearch
+              optionFilterProp="label"
+              notFoundContent={texts.noResults}
+              options={paletteOptions}
+            />
           </div>
         </div>
       </div>

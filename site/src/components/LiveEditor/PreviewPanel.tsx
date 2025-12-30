@@ -166,7 +166,7 @@ export function PreviewPanel({
   return (
     <div
       ref={containerRef}
-      className={`bg-card dark:bg-card-dark rounded-xl shadow-xl flex flex-col h-full overflow-hidden border border-border dark:border-border-dark transition-all duration-300 ${
+      className={`bg-card dark:bg-card-dark rounded-2xl shadow-nav dark:shadow-nav-dark flex flex-col h-full overflow-hidden border border-border dark:border-border-dark transition-all duration-300 ${
         isFullscreen ? 'fixed inset-0 z-[1000] rounded-none' : ''
       }`}>
       <div className="flex items-center justify-between px-4 py-3 bg-wash dark:bg-wash-dark border-b border-border dark:border-border-dark">
