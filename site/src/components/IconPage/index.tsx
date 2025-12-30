@@ -1,13 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
+import {Button, Input, Select} from 'antd';
 import {CopyToast, useCopyToast} from 'components/CopyToast';
 import {Page} from 'components/Layout/Page';
 import {motion} from 'framer-motion';
-import {Check, Copy, Link2, RefreshCw, Search} from 'lucide-react';
+import {Check, Copy, Link2, Search} from 'lucide-react';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {useLocaleBundle} from '../../hooks/useTranslation';
 import {IconCopy} from '../Icon/IconCopy';
 import {IconEllipsis} from '../Icon/IconEllipsis';
-import {Select} from '../ui/select';
 
 const TRANSLATIONS = {
   'zh-CN': {
@@ -181,29 +181,37 @@ function IconCard({
       </div>
       {!isPlaceholder && (
         <div className="absolute inset-x-3 bottom-3 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-all duration-200 bg-white/80 dark:bg-gray-900/90 rounded-xl px-3 py-2 border border-gray-100 dark:border-gray-800 shadow-lg">
-          <button
+          <Button
+            type="text"
+            size="small"
             onClick={copyUrl}
-            className="inline-flex items-center gap-1 text-xs text-primary dark:text-primary-dark hover:text-link dark:hover:text-link"
+            icon={
+              copying === 'url' ? (
+                <Check className="w-3 h-3" />
+              ) : (
+                <Link2 className="w-3 h-3" />
+              )
+            }
+            className="h-auto px-1 text-xs"
             title={iconTexts.copyLink}>
-            {copying === 'url' ? (
-              <Check className="w-3 h-3" />
-            ) : (
-              <Link2 className="w-3 h-3" />
-            )}
             {iconTexts.link}
-          </button>
+          </Button>
           <span className="h-4 w-px bg-gray-200 dark:bg-gray-800" />
-          <button
+          <Button
+            type="text"
+            size="small"
             onClick={copySvg}
-            className="inline-flex items-center gap-1 text-xs text-primary dark:text-primary-dark hover:text-link dark:hover:text-link"
+            icon={
+              copying === 'svg' ? (
+                <Check className="w-3 h-3" />
+              ) : (
+                <Copy className="w-3 h-3" />
+              )
+            }
+            className="h-auto px-1 text-xs"
             title={iconTexts.copySvg}>
-            {copying === 'svg' ? (
-              <Check className="w-3 h-3" />
-            ) : (
-              <Copy className="w-3 h-3" />
-            )}
             {iconTexts.svgLabel}
-          </button>
+          </Button>
         </div>
       )}
     </motion.div>
@@ -360,42 +368,36 @@ export function IconPageContent() {
                 <div className="px-6 py-5 space-y-5">
                   <div className="flex flex-col gap-3">
                     <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
-                      <div className="flex-1 flex items-center gap-3 bg-gray-5 dark:bg-gray-900 rounded-xl px-4 py-3 border border-gray-100 dark:border-gray-800">
-                        <Search className="w-4 h-4 text-gray-400" />
-                        <input
-                          type="text"
-                          value={query}
-                          onChange={(e) => setQuery(e.target.value)}
-                          onKeyDown={(e) =>
-                            e.key === 'Enter' && fetchIcons(query)
-                          }
-                          placeholder={searchTexts.placeholder}
-                          className="w-full bg-transparent border-none focus:outline-none focus:ring-0 text-primary dark:text-primary-dark placeholder:text-gray-400 dark:placeholder:text-gray-600 text-sm"
-                        />
-                      </div>
+                      <Input
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        onPressEnter={() => fetchIcons(query)}
+                        placeholder={searchTexts.placeholder}
+                        prefix={<Search className="w-4 h-4 text-gray-400" />}
+                        allowClear
+                        size="large"
+                        className="flex-1"
+                      />
                       <div className="flex items-center gap-3">
-                        <button
-                          onClick={() => fetchIcons(query)}
-                          disabled={loading}
-                          className="shrink-0 inline-flex items-center gap-2 px-4 py-3 rounded-xl text-white font-medium text-sm shadow-md hover:shadow-lg transition disabled:opacity-60 disabled:cursor-not-allowed bg-gradient-to-r from-link to-link/90 dark:from-link-dark dark:to-link-dark/90 hover:from-link/90 hover:to-link/80 dark:hover:from-link-dark/90 dark:hover:to-link-dark/80">
-                          {loading ? (
-                            <>
-                              <RefreshCw className="w-4 h-4 animate-spin" />
-                              {searchTexts.buttonLoading}
-                            </>
-                          ) : (
-                            <>
-                              <Search className="w-4 h-4" />
-                              {searchTexts.button}
-                            </>
-                          )}
-                        </button>
+                        <Button
+                          type="primary"
+                          size="large"
+                          loading={loading}
+                          icon={<Search className="w-4 h-4" />}
+                          onClick={() => fetchIcons(query)}>
+                          {loading
+                            ? searchTexts.buttonLoading
+                            : searchTexts.button}
+                        </Button>
                         <Select
                           value={String(topK)}
-                          onValueChange={(value) => setTopK(Number(value))}
-                          placeholder={searchTexts.topKOption(topK)}
-                          width={80}
-                          className="shrink-0 bg-white dark:bg-gray-900 text-sm border-gray-200 dark:border-gray-800"
+                          onChange={(value) => {
+                            if (typeof value !== 'string') return;
+                            setTopK(Number(value));
+                          }}
+                          size="large"
+                          style={{width: 100}}
+                          className="shrink-0"
                           options={[1, 5, 10, 20].map((option) => ({
                             value: String(option),
                             label: searchTexts.topKOption(option),
@@ -470,11 +472,12 @@ export function IconPageContent() {
                       <h3 className="text-lg font-semibold text-primary dark:text-primary-dark">
                         {sidebarTexts.endpoint}
                       </h3>
-                      <button
+                      <Button
+                        size="small"
                         onClick={copyEndpoint}
-                        className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-5 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 text-sm text-secondary dark:text-secondary-dark hover:text-link hover:border-link transition">
-                        <IconCopy className="w-4 h-4" />
-                      </button>
+                        icon={<IconCopy className="w-4 h-4" />}
+                        className="h-9 px-3"
+                      />
                     </div>
                     <div className="bg-gray-5 dark:bg-gray-90 p-4 rounded-lg font-mono text-sm overflow-x-auto border border-gray-10 dark:border-gray-80 text-secondary dark:text-secondary-dark">
                       <span className="text-blue-600 dark:text-blue-400 font-bold mr-2">

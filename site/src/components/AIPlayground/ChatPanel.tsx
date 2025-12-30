@@ -1,14 +1,9 @@
 import {InfographicOptions} from '@antv/infographic';
+import {Tooltip} from 'antd';
 import {motion} from 'framer-motion';
 import {useEffect, useRef, useState} from 'react';
 import {useLocaleBundle} from '../../hooks/useTranslation';
 import {IconErrorCircle} from '../Icon/IconErrorCircle';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '../ui/tooltip';
 
 const TRANSLATIONS = {
   'zh-CN': {
@@ -167,185 +162,183 @@ export function ChatPanel({
         </div>
       </div>
 
-      <TooltipProvider delayDuration={150}>
-        <div
-          ref={historyRef}
-          className="flex-1 overflow-y-auto pr-1 py-1 mb-4 scrollbar-thin scrollbar-thumb-gray-20 dark:scrollbar-thumb-gray-60 scrollbar-track-transparent">
-          {history.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-gray-20 dark:border-gray-60 bg-gradient-to-br from-gray-5 to-transparent dark:from-gray-80 dark:to-transparent p-6 text-sm text-secondary dark:text-secondary-dark">
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-br from-link/10 to-link/5 dark:from-link-dark/10 dark:to-link-dark/5 flex items-center justify-center">
-                  <svg
-                    className="w-5 h-5 text-link dark:text-link-dark"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </div>
-                <div className="flex-1">
-                  <p className="font-semibold text-primary dark:text-primary-dark mb-1.5 text-base">
-                    {chatTexts.emptyTitle}
-                  </p>
-                  <p className="text-sm leading-relaxed">
-                    {chatTexts.emptyDescription}
-                  </p>
-                </div>
+      <div
+        ref={historyRef}
+        className="flex-1 overflow-y-auto pr-1 py-1 mb-4 scrollbar-thin scrollbar-thumb-gray-20 dark:scrollbar-thumb-gray-60 scrollbar-track-transparent">
+        {history.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-gray-20 dark:border-gray-60 bg-gradient-to-br from-gray-5 to-transparent dark:from-gray-80 dark:to-transparent p-6 text-sm text-secondary dark:text-secondary-dark">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-br from-link/10 to-link/5 dark:from-link-dark/10 dark:to-link-dark/5 flex items-center justify-center">
+                <svg
+                  className="w-5 h-5 text-link dark:text-link-dark"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-primary dark:text-primary-dark mb-1.5 text-base">
+                  {chatTexts.emptyTitle}
+                </p>
+                <p className="text-sm leading-relaxed">
+                  {chatTexts.emptyDescription}
+                </p>
               </div>
             </div>
-          ) : (
-            <div className="space-y-4 pr-1">
-              {history.map((item) => {
-                const isError = item.status === 'error';
-                const disabledByRequest =
-                  isGenerating && item.status !== 'pending';
-                const disabled =
-                  disabledByRequest ||
-                  item.status === 'pending' ||
-                  (!item.syntax && !item.config && !isError);
-                const showError = item.status === 'error';
-                const isExpanded = expandedId === item.id;
-                const errorMessage = item.error || chatTexts.apiKeyError;
+          </div>
+        ) : (
+          <div className="space-y-4 pr-1">
+            {history.map((item) => {
+              const isError = item.status === 'error';
+              const disabledByRequest =
+                isGenerating && item.status !== 'pending';
+              const disabled =
+                disabledByRequest ||
+                item.status === 'pending' ||
+                (!item.syntax && !item.config && !isError);
+              const showError = item.status === 'error';
+              const isExpanded = expandedId === item.id;
+              const errorMessage = item.error || chatTexts.apiKeyError;
 
-                const handleSelect = () => {
-                  if (isError || disabled) return;
-                  handleCardClick(item.id, item.syntax, item.config, disabled);
-                };
+              const handleSelect = () => {
+                if (isError || disabled) return;
+                handleCardClick(item.id, item.syntax, item.config, disabled);
+              };
 
-                return (
-                  <div
-                    key={item.id}
-                    role="button"
-                    tabIndex={disabled || isError ? -1 : 0}
-                    aria-disabled={disabled || isError}
-                    onKeyDown={(e) => {
-                      if ((e.key === 'Enter' || e.key === ' ') && !disabled) {
-                        e.preventDefault();
-                        handleSelect();
-                      }
-                    }}
-                    onClick={handleSelect}
-                    className={`group relative w-full rounded-2xl border text-left transition-all duration-300 ease-out ${
-                      showError ? 'px-3 py-3' : 'px-4 py-4'
-                    } ${
-                      disabled || isError
-                        ? 'border-border dark:border-border-dark bg-card dark:bg-card-dark opacity-60 cursor-not-allowed'
-                        : isExpanded
-                        ? 'border-link/70 dark:border-link-dark/60 bg-wash dark:bg-wash-dark shadow-[0_18px_45px_-30px_rgba(22,35,70,0.32),0_12px_32px_-22px_rgba(77,116,202,0.55),0_0_0_1px_rgba(255,255,255,0.35)] dark:shadow-[0_18px_48px_-30px_rgba(0,0,0,0.55),0_12px_32px_-22px_rgba(120,150,220,0.5),0_0_0_1px_rgba(255,255,255,0.06)] -translate-y-0.5 cursor-pointer'
-                        : 'border-border dark:border-border-dark bg-wash dark:bg-wash-dark hover:border-link/40 dark:hover:border-link-dark/50 cursor-pointer'
-                    }`}>
-                    <div className="flex items-center gap-3">
-                      <div className="flex-1 min-w-0">
-                        <div
-                          className={`overflow-hidden transition-[max-height] duration-200 ease-in-out ${
-                            isExpanded ? 'max-h-[260px]' : 'max-h-[24px]'
+              return (
+                <div
+                  key={item.id}
+                  role="button"
+                  tabIndex={disabled || isError ? -1 : 0}
+                  aria-disabled={disabled || isError}
+                  onKeyDown={(e) => {
+                    if ((e.key === 'Enter' || e.key === ' ') && !disabled) {
+                      e.preventDefault();
+                      handleSelect();
+                    }
+                  }}
+                  onClick={handleSelect}
+                  className={`group relative w-full rounded-2xl border text-left transition-all duration-300 ease-out ${
+                    showError ? 'px-3 py-3' : 'px-4 py-4'
+                  } ${
+                    disabled || isError
+                      ? 'border-border dark:border-border-dark bg-card dark:bg-card-dark opacity-60 cursor-not-allowed'
+                      : isExpanded
+                      ? 'border-link/70 dark:border-link-dark/60 bg-wash dark:bg-wash-dark shadow-[0_18px_45px_-30px_rgba(22,35,70,0.32),0_12px_32px_-22px_rgba(77,116,202,0.55),0_0_0_1px_rgba(255,255,255,0.35)] dark:shadow-[0_18px_48px_-30px_rgba(0,0,0,0.55),0_12px_32px_-22px_rgba(120,150,220,0.5),0_0_0_1px_rgba(255,255,255,0.06)] -translate-y-0.5 cursor-pointer'
+                      : 'border-border dark:border-border-dark bg-wash dark:bg-wash-dark hover:border-link/40 dark:hover:border-link-dark/50 cursor-pointer'
+                  }`}>
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div
+                        className={`overflow-hidden transition-[max-height] duration-200 ease-in-out ${
+                          isExpanded ? 'max-h-[260px]' : 'max-h-[24px]'
+                        }`}>
+                        <p
+                          className={`text-[13px] leading-relaxed text-secondary dark:text-secondary-dark ${
+                            isExpanded ? '' : 'line-clamp-1'
                           }`}>
-                          <p
-                            className={`text-[13px] leading-relaxed text-secondary dark:text-secondary-dark ${
-                              isExpanded ? '' : 'line-clamp-1'
-                            }`}>
-                            {item.text}
-                          </p>
-                        </div>
+                          {item.text}
+                        </p>
                       </div>
+                    </div>
 
-                      <div className="flex-shrink-0 flex items-center gap-2 self-center">
-                        {item.status === 'pending' && (
+                    <div className="flex-shrink-0 flex items-center gap-2 self-center">
+                      {item.status === 'pending' && (
+                        <svg
+                          className="w-4 h-4 text-tertiary dark:text-tertiary-dark animate-spin"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor">
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="9"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                          />
+                          <path
+                            className="opacity-80"
+                            fill="currentColor"
+                            d="M12 3a9 9 0 00-9 9h3a6 6 0 016-6V3z"
+                          />
+                        </svg>
+                      )}
+
+                      {showError ? (
+                        <>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onRetry(item.id, item.text);
+                            }}
+                            type="button"
+                            className="inline-flex items-center justify-center h-7 px-2 text-[11px] font-semibold text-red-500 dark:text-red-400 hover:underline">
+                            {chatTexts.retry}
+                          </button>
+                          <Tooltip
+                            placement="topRight"
+                            mouseEnterDelay={0.15}
+                            title={
+                              <div className="whitespace-pre-wrap break-words text-xs leading-relaxed max-w-xs">
+                                {errorMessage}
+                              </div>
+                            }>
+                            <span className="inline-flex">
+                              <IconErrorCircle className="w-4 h-4 text-red-500 dark:text-red-400" />
+                            </span>
+                          </Tooltip>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onDelete(item.id);
+                            }}
+                            type="button"
+                            aria-label={chatTexts.deleteAria}
+                            className="inline-flex items-center justify-center h-8 w-8 text-tertiary dark:text-tertiary-dark hover:text-primary dark:hover:text-primary-dark transition-colors">
+                            <svg
+                              className="w-3.5 h-3.5"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round">
+                              <path d="M6 6l12 12" />
+                              <path d="M6 18L18 6" />
+                            </svg>
+                          </button>
+                        </>
+                      ) : (
+                        !disabled && (
                           <svg
-                            className="w-4 h-4 text-tertiary dark:text-tertiary-dark animate-spin"
+                            className="w-4 h-4 text-link dark:text-link-dark transition-all duration-200 group-hover:translate-x-0.5"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor">
-                            <circle
-                              className="opacity-25"
-                              cx="12"
-                              cy="12"
-                              r="9"
-                              stroke="currentColor"
-                              strokeWidth="3"
-                            />
                             <path
-                              className="opacity-80"
-                              fill="currentColor"
-                              d="M12 3a9 9 0 00-9 9h3a6 6 0 016-6V3z"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 5l7 7-7 7"
                             />
                           </svg>
-                        )}
-
-                        {showError ? (
-                          <>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onRetry(item.id, item.text);
-                              }}
-                              type="button"
-                              className="inline-flex items-center justify-center h-7 px-2 text-[11px] font-semibold text-red-500 dark:text-red-400 hover:underline">
-                              {chatTexts.retry}
-                            </button>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <span className="inline-flex">
-                                  <IconErrorCircle className="w-4 h-4 text-red-500 dark:text-red-400" />
-                                </span>
-                              </TooltipTrigger>
-                              <TooltipContent side="top" align="end">
-                                <div className="whitespace-pre-wrap break-words text-xs leading-relaxed max-w-xs">
-                                  {errorMessage}
-                                </div>
-                              </TooltipContent>
-                            </Tooltip>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onDelete(item.id);
-                              }}
-                              type="button"
-                              aria-label={chatTexts.deleteAria}
-                              className="inline-flex items-center justify-center h-8 w-8 text-tertiary dark:text-tertiary-dark hover:text-primary dark:hover:text-primary-dark transition-colors">
-                              <svg
-                                className="w-3.5 h-3.5"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round">
-                                <path d="M6 6l12 12" />
-                                <path d="M6 18L18 6" />
-                              </svg>
-                            </button>
-                          </>
-                        ) : (
-                          !disabled && (
-                            <svg
-                              className="w-4 h-4 text-link dark:text-link-dark transition-all duration-200 group-hover:translate-x-0.5"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor">
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M9 5l7 7-7 7"
-                              />
-                            </svg>
-                          )
-                        )}
-                      </div>
+                        )
+                      )}
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </TooltipProvider>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
 
       <div className="mt-4 space-y-3">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">

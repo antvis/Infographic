@@ -1,16 +1,35 @@
+import {ConfigProvider, theme as antdTheme} from 'antd';
 import {AppProps} from 'next/app';
 import {useRouter} from 'next/router';
 import Script from 'next/script';
-import {useEffect} from 'react';
+import {useEffect, useMemo} from 'react';
+import colors from '../../colors';
 import {ContentReloader} from '../components/ContentReloader';
 import '../components/ResourceLoader';
+import {useTheme} from '../hooks/useTheme';
 import {GA_MEASUREMENT_ID, pageview} from '../utils/analytics';
 
+import 'antd/dist/reset.css';
 import '../styles/index.css';
 import '../styles/sandpack.css';
 
 export default function MyApp({Component, pageProps}: AppProps) {
   const router = useRouter();
+  const themeMode = useTheme();
+  const antdConfig = useMemo(
+    () => ({
+      algorithm:
+        themeMode === 'dark'
+          ? antdTheme.darkAlgorithm
+          : antdTheme.defaultAlgorithm,
+      token: {
+        colorPrimary: colors.link,
+        colorLink: colors.link,
+        colorInfo: colors.link,
+      },
+    }),
+    [themeMode]
+  );
 
   useEffect(() => {
     // Taken from StackOverflow. Trying to detect both Safari desktop and mobile.
@@ -59,7 +78,9 @@ export default function MyApp({Component, pageProps}: AppProps) {
         }}
       />
       {process.env.NODE_ENV === 'development' && <ContentReloader />}
-      <Component {...pageProps} />
+      <ConfigProvider theme={antdConfig}>
+        <Component {...pageProps} />
+      </ConfigProvider>
     </>
   );
 }

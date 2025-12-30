@@ -1,16 +1,11 @@
 'use client';
 
+import {Tooltip} from 'antd';
 import cn from 'classnames';
 import {ReactNode, useCallback, useEffect, useRef, useState} from 'react';
 import {useFullscreen} from '../../../hooks/useFullscreen';
 import {IconErrorCircle} from '../../Icon/IconErrorCircle';
 import {IconRestart} from '../../Icon/IconRestart';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '../../ui/tooltip';
 
 interface BrowserChromeProps {
   children: ReactNode;
@@ -130,25 +125,23 @@ export function BrowserChrome({
           <div className="w-full leading-snug flex flex-row items-center justify-center truncate">
             {/* 锁图标或错误图标 */}
             {error ? (
-              <TooltipProvider delayDuration={150}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="inline-flex">
-                      <IconErrorCircle className="text-red-500 dark:text-red-400 me-1" />
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom" className="max-w-xs">
-                    <div className="space-y-1">
-                      {errorTitle && (
-                        <div className="font-semibold">{errorTitle}</div>
-                      )}
-                      <div className="font-mono text-[11px] break-words whitespace-pre-wrap leading-relaxed">
-                        {error}
-                      </div>
+              <Tooltip
+                placement="bottom"
+                mouseEnterDelay={0.15}
+                title={
+                  <div className="space-y-1 max-w-xs">
+                    {errorTitle && (
+                      <div className="font-semibold">{errorTitle}</div>
+                    )}
+                    <div className="font-mono text-[11px] break-words whitespace-pre-wrap leading-relaxed">
+                      {error}
                     </div>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+                  </div>
+                }>
+                <span className="inline-flex">
+                  <IconErrorCircle className="text-red-500 dark:text-red-400 me-1" />
+                </span>
+              </Tooltip>
             ) : (
               <svg
                 className="text-tertiary dark:text-tertiary-dark me-1 opacity-60"

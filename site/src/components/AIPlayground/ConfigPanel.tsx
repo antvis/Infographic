@@ -1,8 +1,7 @@
+import {Modal, Select} from 'antd';
 import Image from 'next/image';
 import {useEffect, useState} from 'react';
 import {useLocaleBundle} from '../../hooks/useTranslation';
-import {Dialog, DialogContent, DialogTitle} from '../ui/dialog';
-import {Select} from '../ui/select';
 import {DEFAULT_CONFIG, PROVIDER_OPTIONS} from './constants';
 import {fetchModels} from './Service';
 import {AIConfig, AIProvider} from './types';
@@ -128,135 +127,135 @@ export function ConfigPanel({
   }, [draft.provider, draft.baseUrl, draft.apiKey, open, draft.model, isAntv]);
 
   return (
-    <Dialog open={open} onOpenChange={(next) => !next && onClose()}>
-      <DialogContent
-        containerClassName="items-start justify-center pt-14"
-        className="w-full max-w-4xl bg-white dark:bg-gray-900 border border-border dark:border-border-dark shadow-2xl rounded-3xl px-10 py-7 overflow-y-auto">
-        <div className="flex flex-col gap-6">
-          <div className="flex items-start justify-between gap-4">
-            <div className="space-y-1">
-              <DialogTitle className="text-2xl font-bold text-primary dark:text-primary-dark">
-                {configTexts.title}
-              </DialogTitle>
-            </div>
+    <Modal
+      open={open}
+      onCancel={onClose}
+      footer={null}
+      title={configTexts.title}>
+      <div className="flex flex-col gap-6">
+        <div className="grid gap-4">
+          <div className="space-y-2 text-base">
+            <label className="block text-sm font-semibold">
+              {configTexts.provider}
+            </label>
+            <Select
+              value={draft.provider}
+              onChange={(next) => {
+                if (typeof next !== 'string') return;
+                handlePresetSelect(next);
+              }}
+              placeholder={
+                PROVIDER_OPTIONS.find((item) => item.value === draft.provider)
+                  ?.label || configTexts.providerPlaceholder
+              }
+              className="w-full"
+              options={PROVIDER_OPTIONS.map((item) => ({
+                value: item.value,
+                label: (
+                  <span className="inline-flex items-center gap-2">
+                    {item.logo ? (
+                      <Image
+                        src={item.logo}
+                        alt={item.label}
+                        width={16}
+                        height={16}
+                        className="object-contain"
+                      />
+                    ) : null}
+                    {item.label}
+                  </span>
+                ),
+              }))}>
+              {/* fallback to children API when options is empty */}
+            </Select>
           </div>
 
-          <div className="grid gap-4">
-            <div className="space-y-2 text-base">
-              <label className="block text-sm font-semibold">
-                {configTexts.provider}
-              </label>
-              <Select
-                value={draft.provider}
-                onValueChange={handlePresetSelect}
-                placeholder={
-                  PROVIDER_OPTIONS.find((item) => item.value === draft.provider)
-                    ?.label || configTexts.providerPlaceholder
-                }
-                options={PROVIDER_OPTIONS.map((item) => ({
-                  value: item.value,
-                  label: (
-                    <span className="inline-flex items-center gap-2">
-                      {item.logo ? (
-                        <Image
-                          src={item.logo}
-                          alt={item.label}
-                          width={16}
-                          height={16}
-                          className="object-contain"
-                        />
-                      ) : null}
-                      {item.label}
-                    </span>
-                  ),
-                }))}>
-                {/* fallback to children API when options is empty */}
-              </Select>
+          {isAntv ? (
+            <div className="space-y-2 text-base rounded-xl border border-dashed border-border dark:border-border-dark bg-wash dark:bg-wash-dark px-4 py-3">
+              <p className="text-sm text-secondary dark:text-secondary-dark">
+                {configTexts.presetNotice}
+              </p>
             </div>
-
-            {isAntv ? (
-              <div className="space-y-2 text-base rounded-xl border border-dashed border-border dark:border-border-dark bg-wash dark:bg-wash-dark px-4 py-3">
-                <p className="text-sm text-secondary dark:text-secondary-dark">
-                  {configTexts.presetNotice}
-                </p>
+          ) : (
+            <>
+              <div className="space-y-2 text-base">
+                <label className="block text-sm font-semibold">
+                  {configTexts.baseUrl}
+                </label>
+                <input
+                  value={draft.baseUrl}
+                  onChange={(e) =>
+                    setDraft({...draft, baseUrl: e.target.value})
+                  }
+                  className="w-full rounded-xl border border-border dark:border-border-dark bg-wash dark:bg-wash-dark px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary text-base"
+                  placeholder="https://api.openai.com/v1"
+                />
               </div>
-            ) : (
-              <>
-                <div className="space-y-2 text-base">
-                  <label className="block text-sm font-semibold">
-                    {configTexts.baseUrl}
-                  </label>
-                  <input
-                    value={draft.baseUrl}
-                    onChange={(e) =>
-                      setDraft({...draft, baseUrl: e.target.value})
-                    }
-                    className="w-full rounded-xl border border-border dark:border-border-dark bg-wash dark:bg-wash-dark px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary text-base"
-                    placeholder="https://api.openai.com/v1"
-                  />
-                </div>
 
-                <div className="space-y-2 text-base">
-                  <label className="block text-sm font-semibold">
-                    {configTexts.apiKey}
-                  </label>
-                  <input
-                    value={draft.apiKey}
-                    onChange={(e) =>
-                      setDraft({...draft, apiKey: e.target.value})
-                    }
-                    className="w-full rounded-xl border border-border dark:border-border-dark bg-wash dark:bg-wash-dark px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary text-base"
-                    placeholder="sk-..."
-                    type="password"
-                  />
-                </div>
+              <div className="space-y-2 text-base">
+                <label className="block text-sm font-semibold">
+                  {configTexts.apiKey}
+                </label>
+                <input
+                  value={draft.apiKey}
+                  onChange={(e) => setDraft({...draft, apiKey: e.target.value})}
+                  className="w-full rounded-xl border border-border dark:border-border-dark bg-wash dark:bg-wash-dark px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary text-base"
+                  placeholder="sk-..."
+                  type="password"
+                />
+              </div>
 
-                <div className="space-y-2 text-base">
-                  <label className="block text-sm font-semibold">
-                    {configTexts.model}
-                  </label>
-                  <Select
-                    value={draft.model}
-                    disabled={loadingModels}
-                    placeholder={configTexts.modelPlaceholder}
-                    options={(models.length
-                      ? models
-                      : [draft.model || configTexts.customOption]
-                    ).map((item) => ({
-                      value: item,
-                      label: item,
-                    }))}
-                    onValueChange={(next) => setDraft({...draft, model: next})}
-                  />
-                  {loadingModels ? (
-                    <p className="text-xs text-secondary dark:text-secondary-dark">
-                      {configTexts.fetchingModels}
-                    </p>
-                  ) : null}
-                </div>
-              </>
-            )}
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => onSave(draft)}
-              className="flex-1 py-3 rounded-full bg-link text-white dark:bg-brand-dark font-bold hover:bg-opacity-80 active:scale-[.98] transition shadow-secondary-button-stroke">
-              {configTexts.save}
-            </button>
-            <button
-              onClick={() => setDraft(DEFAULT_CONFIG)}
-              className="px-4 py-3 rounded-full text-primary dark:text-primary-dark shadow-secondary-button-stroke dark:shadow-secondary-button-stroke-dark hover:bg-gray-40/5 active:bg-gray-40/10 hover:dark:bg-gray-60/5 active:dark:bg-gray-60/10 font-bold">
-              {configTexts.reset}
-            </button>
-            <button
-              onClick={onClose}
-              className="px-4 py-3 rounded-full text-primary dark:text-primary-dark shadow-secondary-button-stroke dark:shadow-secondary-button-stroke-dark hover:bg-gray-40/5 active:bg-gray-40/10 hover:dark:bg-gray-60/5 active:dark:bg-gray-60/10 font-bold">
-              {configTexts.cancel}
-            </button>
-          </div>
+              <div className="space-y-2 text-base">
+                <label className="block text-sm font-semibold">
+                  {configTexts.model}
+                </label>
+                <Select
+                  value={draft.model}
+                  disabled={loadingModels}
+                  loading={loadingModels}
+                  placeholder={configTexts.modelPlaceholder}
+                  className="w-full"
+                  options={(models.length
+                    ? models
+                    : [draft.model || configTexts.customOption]
+                  ).map((item) => ({
+                    value: item,
+                    label: item,
+                  }))}
+                  showSearch
+                  onChange={(next) => {
+                    if (typeof next !== 'string') return;
+                    setDraft({...draft, model: next});
+                  }}
+                />
+                {loadingModels ? (
+                  <p className="text-xs text-secondary dark:text-secondary-dark">
+                    {configTexts.fetchingModels}
+                  </p>
+                ) : null}
+              </div>
+            </>
+          )}
         </div>
-      </DialogContent>
-    </Dialog>
+
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => onSave(draft)}
+            className="flex-1 py-3 rounded-full bg-link text-white dark:bg-brand-dark font-bold hover:bg-opacity-80 active:scale-[.98] transition shadow-secondary-button-stroke">
+            {configTexts.save}
+          </button>
+          <button
+            onClick={() => setDraft(DEFAULT_CONFIG)}
+            className="px-4 py-3 rounded-full text-primary dark:text-primary-dark shadow-secondary-button-stroke dark:shadow-secondary-button-stroke-dark hover:bg-gray-40/5 active:bg-gray-40/10 hover:dark:bg-gray-60/5 active:dark:bg-gray-60/10 font-bold">
+            {configTexts.reset}
+          </button>
+          <button
+            onClick={onClose}
+            className="px-4 py-3 rounded-full text-primary dark:text-primary-dark shadow-secondary-button-stroke dark:shadow-secondary-button-stroke-dark hover:bg-gray-40/5 active:bg-gray-40/10 hover:dark:bg-gray-60/5 active:dark:bg-gray-60/10 font-bold">
+            {configTexts.cancel}
+          </button>
+        </div>
+      </div>
+    </Modal>
   );
 }
