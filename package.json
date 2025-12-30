@@ -46,7 +46,7 @@
   "scripts": {
     "build": "run-s clean build:esm build:cjs build:umd size",
     "build:cjs": "tsc --module commonjs --outDir lib",
-    "build:esm": "tsc --module ESNext --outDir esm && node scripts/fix-esm-imports.mjs",
+    "build:esm": "tsc --module ESNext --outDir esm && tsc-alias",
     "build:site": "npm --prefix site run build:static",
     "build:umd": "vite build",
     "build:watch": "tsc -p tsconfig.json --watch",
@@ -137,6 +137,7 @@
     "rollup": "^4.53.2",
     "rollup-plugin-visualizer": "^6.0.5",
     "size-limit": "^11.2.0",
+    "tsc-alias": "^1.8.16",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.43.0",
     "vite": "^7.1.5",

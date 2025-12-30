@@ -1,4 +1,4 @@
-import camelCase from 'lodash-es/camelCase';
+import { camelCase } from 'lodash-es';
 import { TextProps } from '../editor';
 import type {
   TextAttributes,
