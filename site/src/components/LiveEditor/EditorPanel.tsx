@@ -1,13 +1,336 @@
-import {useLocaleBundle} from 'hooks/useTranslation';
-import {CodeEditor} from 'components/MDX/CodeEditor';
-import {getTemplates, getThemes, getPalettes, parseSyntax} from '@antv/infographic';
-import {useMemo, useState, useCallback, useEffect} from 'react';
+import type {SyntaxError} from '@antv/infographic';
+import {
+  getPalettes,
+  getTemplates,
+  getThemes,
+  parseSyntax,
+} from '@antv/infographic';
 import type {Diagnostic} from '@codemirror/lint';
 import type {EditorView} from '@codemirror/view';
-import type {SyntaxError} from '@antv/infographic';
-import {IconRestart} from 'components/Icon/IconRestart';
-import {IconLink} from 'components/Icon/IconLink';
+import {TEMPLATES} from 'components/Gallery/templates';
 import {IconClose} from 'components/Icon/IconClose';
+import {IconLink} from 'components/Icon/IconLink';
+import {IconRestart} from 'components/Icon/IconRestart';
+import {CodeEditor} from 'components/MDX/CodeEditor';
+import {useLocaleBundle} from 'hooks/useTranslation';
+import {useCallback, useEffect, useMemo, useState} from 'react';
+import {DEFAULT_SYNTAX} from './defaultSyntax';
+
+const CATEGORY_STORAGE_KEY = 'live-editor-category-data';
+type TemplateCategory =
+  | 'list'
+  | 'timeline'
+  | 'hierarchy'
+  | 'compare'
+  | 'swot'
+  | 'wordcloud'
+  | 'chart'
+  | 'quadrant'
+  | 'relation';
+
+const TEMPLATE_SYNTAX_MAP = new Map(
+  TEMPLATES.map(({template, syntax}) => [template, syntax])
+);
+
+const CATEGORY_DEFAULT_TEMPLATES: Record<
+  Exclude<TemplateCategory, 'list'>,
+  string
+> = {
+  timeline: 'list-column-simple-vertical-arrow',
+  hierarchy: 'hierarchy-tree-tech-style-capsule-item',
+  compare: 'compare-binary-horizontal-simple-fold',
+  swot: 'compare-swot',
+  wordcloud: 'chart-wordcloud',
+  chart: 'chart-bar-plain-text',
+  quadrant: 'quadrant-quarter-simple-card',
+  relation: 'relation-circle-icon-badge',
+};
+
+const getLeadingSpaces = (line: string) => line.match(/^\s*/)?.[0].length ?? 0;
+
+const getDataBlockRange = (lines: string[]) => {
+  const dataIndex = lines.findIndex(
+    (line) => line.trim().startsWith('data') && getLeadingSpaces(line) === 0
+  );
+  if (dataIndex < 0) return null;
+  const baseIndent = getLeadingSpaces(lines[dataIndex]);
+  let end = dataIndex + 1;
+  for (; end < lines.length; end++) {
+    const line = lines[end];
+    if (!line.trim()) continue;
+    const indent = getLeadingSpaces(line);
+    if (indent <= baseIndent) break;
+  }
+  return {start: dataIndex, end};
+};
+
+const extractDataBlock = (syntax: string) => {
+  const lines = syntax.split('\n');
+  const range = getDataBlockRange(lines);
+  if (!range) return '';
+  return lines.slice(range.start, range.end).join('\n');
+};
+
+const getTemplateFromSyntax = (syntax: string) => {
+  const firstLine =
+    syntax
+      .split('\n')
+      .map((line) => line.trim())
+      .find((line) => line.length > 0) ?? '';
+  if (firstLine.startsWith('infographic ')) {
+    return firstLine.slice('infographic '.length).trim();
+  }
+  if (firstLine.startsWith('template ')) {
+    return firstLine.slice('template '.length).trim();
+  }
+  return '';
+};
+
+const getCategoryForTemplate = (
+  template: string | null | undefined
+): TemplateCategory | null => {
+  if (!template) return null;
+  if (template === 'compare-swot') return 'swot';
+  if (template.startsWith('hierarchy-')) return 'hierarchy';
+  if (template.startsWith('compare-')) return 'compare';
+  if (template.startsWith('swot-')) return 'swot';
+  if (template.startsWith('chart-wordcloud')) return 'wordcloud';
+  if (template.startsWith('chart-')) return 'chart';
+  if (template.startsWith('quadrant-')) return 'quadrant';
+  if (template.startsWith('relation-')) return 'relation';
+  if (template.startsWith('list-column-')) return 'timeline';
+  return 'list';
+};
+
+const getDefaultDataBlockForCategory = (category: TemplateCategory) => {
+  if (category === 'list') return extractDataBlock(DEFAULT_SYNTAX);
+  const template = CATEGORY_DEFAULT_TEMPLATES[category];
+  const syntax = TEMPLATE_SYNTAX_MAP.get(template);
+  if (syntax) return extractDataBlock(syntax);
+  return extractDataBlock(DEFAULT_SYNTAX);
+};
+
+const readCategoryStore = (): Record<string, string> => {
+  if (typeof window === 'undefined') return {};
+  try {
+    const raw = localStorage.getItem(CATEGORY_STORAGE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object') return {};
+    return parsed as Record<string, string>;
+  } catch (error) {
+    console.warn('Failed to read live editor category data.', error);
+    return {};
+  }
+};
+
+const writeCategoryStore = (store: Record<string, string>) => {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(CATEGORY_STORAGE_KEY, JSON.stringify(store));
+  } catch (error) {
+    console.warn('Failed to store live editor category data.', error);
+  }
+};
+
+const getStoredCategoryData = (category: TemplateCategory) => {
+  const store = readCategoryStore();
+  const value = store[category];
+  return typeof value === 'string' ? value : '';
+};
+
+const setStoredCategoryData = (
+  category: TemplateCategory,
+  dataBlock: string
+) => {
+  if (!dataBlock.trim()) return;
+  const store = readCategoryStore();
+  store[category] = dataBlock;
+  writeCategoryStore(store);
+};
+
+const stripChildrenFromItemsInDataBlock = (dataBlock: string) => {
+  if (!dataBlock.trim()) return dataBlock;
+  const lines = dataBlock.split('\n');
+  const itemsIndex = lines.findIndex((line) => line.trim() === 'items');
+  if (itemsIndex < 0) return dataBlock;
+
+  const itemsIndent = getLeadingSpaces(lines[itemsIndex]);
+  const itemIndent = itemsIndent + 2;
+  const childIndent = itemIndent + 2;
+  let i = itemsIndex + 1;
+
+  while (i < lines.length) {
+    const line = lines[i];
+    const trimmed = line.trim();
+    if (!trimmed) {
+      i += 1;
+      continue;
+    }
+    const indent = getLeadingSpaces(line);
+    if (indent <= itemsIndent) break;
+
+    if (indent === itemIndent && trimmed.startsWith('-')) {
+      let j = i + 1;
+      while (j < lines.length) {
+        const next = lines[j];
+        const nextTrimmed = next.trim();
+        if (!nextTrimmed) {
+          j += 1;
+          continue;
+        }
+        const nextIndent = getLeadingSpaces(next);
+        if (nextIndent <= itemsIndent) break;
+        if (nextIndent === itemIndent && nextTrimmed.startsWith('-')) break;
+        if (nextIndent === childIndent && nextTrimmed.startsWith('children')) {
+          let k = j + 1;
+          while (k < lines.length) {
+            const childLine = lines[k];
+            const childTrimmed = childLine.trim();
+            if (!childTrimmed) {
+              k += 1;
+              continue;
+            }
+            const childIndent = getLeadingSpaces(childLine);
+            if (childIndent <= nextIndent) break;
+            k += 1;
+          }
+          lines.splice(j, k - j);
+          continue;
+        }
+        j += 1;
+      }
+      i = j;
+      continue;
+    }
+
+    i += 1;
+  }
+
+  return lines.join('\n');
+};
+
+const ensureChartValuesInDataBlock = (dataBlock: string) => {
+  if (!dataBlock.trim()) return dataBlock;
+  const lines = dataBlock.split('\n');
+  const itemsIndex = lines.findIndex((line) => line.trim() === 'items');
+  if (itemsIndex < 0) return dataBlock;
+
+  const itemsIndent = getLeadingSpaces(lines[itemsIndex]);
+  const itemIndent = itemsIndent + 2;
+  let itemIndex = 0;
+  let i = itemsIndex + 1;
+
+  while (i < lines.length) {
+    const line = lines[i];
+    const trimmed = line.trim();
+    if (!trimmed) {
+      i += 1;
+      continue;
+    }
+    const indent = getLeadingSpaces(line);
+    if (indent <= itemsIndent) break;
+
+    if (indent === itemIndent && trimmed.startsWith('-')) {
+      const itemStart = i;
+      let hasValue = trimmed.startsWith('- value ');
+      let j = i + 1;
+
+      for (; j < lines.length; j += 1) {
+        const next = lines[j];
+        const nextTrimmed = next.trim();
+        if (!nextTrimmed) continue;
+        const nextIndent = getLeadingSpaces(next);
+        if (nextIndent <= itemsIndent) break;
+        if (nextIndent === itemIndent && nextTrimmed.startsWith('-')) break;
+        if (nextIndent === itemIndent + 2 && nextTrimmed.startsWith('value ')) {
+          hasValue = true;
+        }
+      }
+
+      if (!hasValue) {
+        const value = (itemIndex + 1) * 10;
+        lines.splice(
+          itemStart + 1,
+          0,
+          `${' '.repeat(itemIndent + 2)}value ${value}`
+        );
+        j += 1;
+      }
+
+      itemIndex += 1;
+      i = j;
+      continue;
+    }
+
+    i += 1;
+  }
+
+  return lines.join('\n');
+};
+
+const normalizeDataBlockForCategory = (
+  category: TemplateCategory,
+  dataBlock: string
+) => {
+  if (category === 'chart') {
+    const stripped = stripChildrenFromItemsInDataBlock(dataBlock);
+    return ensureChartValuesInDataBlock(stripped);
+  }
+  return dataBlock;
+};
+
+const findDataInsertIndex = (lines: string[]) => {
+  let insertIndex = 0;
+  for (let i = 0; i < lines.length; i++) {
+    const trimmed = lines[i].trim();
+    if (!trimmed) continue;
+    if (trimmed.startsWith('infographic ') || trimmed.startsWith('template ')) {
+      insertIndex = i + 1;
+      continue;
+    }
+    if (trimmed.startsWith('theme ')) {
+      return i;
+    }
+  }
+  return insertIndex;
+};
+
+const replaceDataBlock = (syntax: string, nextDataBlock: string) => {
+  if (!nextDataBlock) return syntax;
+  const lines = syntax.split('\n');
+  const range = getDataBlockRange(lines);
+  const blockLines = nextDataBlock.split('\n');
+  if (range) {
+    lines.splice(range.start, range.end - range.start, ...blockLines);
+  } else {
+    const insertIndex = findDataInsertIndex(lines);
+    lines.splice(insertIndex, 0, ...blockLines);
+  }
+  return lines.join('\n');
+};
+
+const replaceTemplateLine = (syntax: string, template: string) => {
+  const trimmed = syntax.trim();
+  if (!trimmed) return `infographic ${template}`;
+  const lines = syntax.split('\n');
+  const templateLineIndex = lines.findIndex((line) => {
+    const trimmedLine = line.trim();
+    return (
+      trimmedLine.startsWith('infographic ') ||
+      trimmedLine.startsWith('template ')
+    );
+  });
+  if (templateLineIndex >= 0) {
+    const indent = lines[templateLineIndex].match(/^\s*/)?.[0] || '';
+    const keyword = lines[templateLineIndex].trim().startsWith('template ')
+      ? 'template'
+      : 'infographic';
+    lines[templateLineIndex] = `${indent}${keyword} ${template}`;
+    return lines.join('\n');
+  }
+  return `infographic ${template}\n${syntax}`;
+};
 
 const TRANSLATIONS = {
   'zh-CN': {
@@ -62,7 +385,10 @@ export function EditorPanel({
   const findInsertionPoint = (lines: string[]): number => {
     let insertIndex = 0;
     for (let i = 0; i < lines.length; i++) {
-      if (lines[i].trim().startsWith('infographic ') || lines[i].trim().startsWith('template ')) {
+      if (
+        lines[i].trim().startsWith('infographic ') ||
+        lines[i].trim().startsWith('template ')
+      ) {
         insertIndex = i + 1;
       }
       if (lines[i].trim().startsWith('data')) {
@@ -119,6 +445,20 @@ export function EditorPanel({
     }
   }, [value, templates, themes, palettes]);
 
+  useEffect(() => {
+    const currentTemplate = getTemplateFromSyntax(value);
+    const category = getCategoryForTemplate(currentTemplate);
+    if (!category) return;
+    const rawDataBlock = extractDataBlock(value);
+    if (!rawDataBlock) return;
+    const dataBlock = normalizeDataBlockForCategory(category, rawDataBlock);
+    if (dataBlock !== rawDataBlock) {
+      onChange(replaceDataBlock(value, dataBlock));
+      return;
+    }
+    setStoredCategoryData(category, dataBlock);
+  }, [value, onChange]);
+
   // Create linter function for CodeMirror diagnostics
   const linter = useCallback(
     (view: EditorView): Diagnostic[] => {
@@ -127,7 +467,9 @@ export function EditorPanel({
       const diagnostics: Diagnostic[] = errors.map((error: SyntaxError) => {
         // Calculate position from line number
         const line = error.line - 1; // Convert 1-indexed to 0-indexed
-        const lineObj = view.state.doc.line(Math.max(1, Math.min(line + 1, view.state.doc.lines)));
+        const lineObj = view.state.doc.line(
+          Math.max(1, Math.min(line + 1, view.state.doc.lines))
+        );
         const from = lineObj.from;
         const to = lineObj.to;
 
@@ -135,7 +477,9 @@ export function EditorPanel({
           from,
           to,
           severity: 'error' as const,
-          message: `${error.code}: ${error.message}${error.raw ? ` (${error.raw})` : ''}`,
+          message: `${error.code}: ${error.message}${
+            error.raw ? ` (${error.raw})` : ''
+          }`,
         };
       });
 
@@ -145,8 +489,10 @@ export function EditorPanel({
         if (!availableTemplates.includes(options.template)) {
           // Find the line with "infographic [template-name]"
           const lines = content.split('\n');
-          const templateLineIndex = lines.findIndex(line =>
-            line.trim().startsWith('infographic ') && line.includes(options.template!)
+          const templateLineIndex = lines.findIndex(
+            (line) =>
+              line.trim().startsWith('infographic ') &&
+              line.includes(options.template!)
           );
 
           if (templateLineIndex >= 0) {
@@ -168,22 +514,39 @@ export function EditorPanel({
 
   const handleTemplateChange = (template: string) => {
     setSelectedTemplate(template);
-    // Replace the template in the syntax
-    const lines = value.split('\n');
-    if (lines[0].startsWith('infographic ')) {
-      lines[0] = `infographic ${template}`;
-      onChange(lines.join('\n'));
-    } else {
-      // Insert at the beginning if no template line exists
-      onChange(`infographic ${template}\n${value}`);
+    const currentTemplate = getTemplateFromSyntax(value);
+    const currentCategory = getCategoryForTemplate(currentTemplate);
+    const nextCategory = getCategoryForTemplate(template);
+    let nextSyntax = replaceTemplateLine(value, template);
+    if (nextCategory && currentCategory !== nextCategory) {
+      if (currentCategory) {
+        const currentDataBlock = normalizeDataBlockForCategory(
+          currentCategory,
+          extractDataBlock(value)
+        );
+        if (currentDataBlock) {
+          setStoredCategoryData(currentCategory, currentDataBlock);
+        }
+      }
+      const storedDataBlock = getStoredCategoryData(nextCategory);
+      const baseDataBlock =
+        storedDataBlock || getDefaultDataBlockForCategory(nextCategory);
+      const nextDataBlock = normalizeDataBlockForCategory(
+        nextCategory,
+        baseDataBlock
+      );
+      nextSyntax = replaceDataBlock(nextSyntax, nextDataBlock);
     }
+    onChange(nextSyntax);
   };
 
   const handleThemeChange = (theme: string) => {
     setSelectedTheme(theme);
     // Update or insert theme in syntax
     const lines = value.split('\n');
-    const themeLineIndex = lines.findIndex((line) => line.trim().startsWith('theme'));
+    const themeLineIndex = lines.findIndex((line) =>
+      line.trim().startsWith('theme')
+    );
 
     if (themeLineIndex >= 0) {
       // Replace existing theme line
@@ -232,14 +595,20 @@ export function EditorPanel({
           endIndex++;
         }
         // Replace all lines (palette + colors) with single palette line
-        lines.splice(paletteLineIndex, endIndex - paletteLineIndex, `${indent}palette ${palette}`);
+        lines.splice(
+          paletteLineIndex,
+          endIndex - paletteLineIndex,
+          `${indent}palette ${palette}`
+        );
       } else {
         // It's "palette value" format, just replace the line
         lines[paletteLineIndex] = `${indent}palette ${palette}`;
       }
     } else {
       // No existing palette, insert new one
-      const themeLineIndex = lines.findIndex((line) => line.trim().startsWith('theme'));
+      const themeLineIndex = lines.findIndex((line) =>
+        line.trim().startsWith('theme')
+      );
       if (themeLineIndex >= 0) {
         const indent = lines[themeLineIndex].match(/^\s*/)?.[0] || '';
         lines.splice(themeLineIndex + 1, 0, `${indent}  palette ${palette}`);
@@ -315,8 +684,17 @@ export function EditorPanel({
                 ))}
               </select>
               <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-tertiary">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </div>
             </div>
@@ -341,8 +719,17 @@ export function EditorPanel({
                 ))}
               </select>
               <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-tertiary">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </div>
             </div>
@@ -367,8 +754,17 @@ export function EditorPanel({
                 ))}
               </select>
               <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-tertiary">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </div>
             </div>

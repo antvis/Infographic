@@ -1,21 +1,12 @@
-import {useState, useEffect} from 'react';
+import {CopyToast, useCopyToast} from 'components/CopyToast';
+import {motion} from 'framer-motion';
+import {useLocaleBundle} from 'hooks/useTranslation';
 import {useRouter} from 'next/router';
+import {useEffect, useState} from 'react';
+import {DEFAULT_SYNTAX} from './defaultSyntax';
 import {EditorPanel} from './EditorPanel';
 import {PreviewPanel} from './PreviewPanel';
-import {CopyToast, useCopyToast} from 'components/CopyToast';
-import {useLocaleBundle} from 'hooks/useTranslation';
-import {generateShareUrl, extractContentFromUrl} from './utils';
-import { motion } from 'framer-motion';
-
-const DEFAULT_SYNTAX = `infographic list-row-simple-horizontal-arrow
-data
-  items
-    - label 步骤 1
-      desc 开始
-    - label 步骤 2
-      desc 进行中
-    - label 步骤 3
-      desc 完成`;
+import {extractContentFromUrl, generateShareUrl} from './utils';
 
 const STORAGE_KEY = 'live-editor-syntax';
 
@@ -81,7 +72,9 @@ export function EditorContent() {
     if (typeof window === 'undefined') return;
 
     // Check if current URL has content parameter
-    const hasContentParam = window.location.search.includes('content=') || window.location.hash.includes('content=');
+    const hasContentParam =
+      window.location.search.includes('content=') ||
+      window.location.hash.includes('content=');
     if (!hasContentParam) return;
 
     // Debounce URL update (same delay as preview: 300ms)
@@ -125,7 +118,7 @@ export function EditorContent() {
   };
 
   return (
-     <div className="relative isolate overflow-hidden min-h-screen bg-wash dark:bg-gradient-to-b dark:from-gray-95 dark:via-gray-95 dark:to-gray-90 text-primary dark:text-primary-dark selection:bg-link/20 selection:dark:bg-link-dark/20">
+    <div className="relative isolate overflow-hidden min-h-screen bg-wash dark:bg-gradient-to-b dark:from-gray-95 dark:via-gray-95 dark:to-gray-90 text-primary dark:text-primary-dark selection:bg-link/20 selection:dark:bg-link-dark/20">
       {/* Background decorations */}
       <div className="pointer-events-none absolute -left-32 -top-40 h-96 w-96 rounded-full bg-gradient-to-br from-link/20 via-link/5 to-transparent blur-3xl" />
       <div className="pointer-events-none absolute -right-32 top-20 h-96 w-96 rounded-full bg-gradient-to-br from-purple-40/15 via-transparent to-link/5 blur-3xl" />
