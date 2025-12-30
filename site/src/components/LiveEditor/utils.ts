@@ -6,9 +6,13 @@ import pako from 'pako';
 export function compressToBase64(text: string): string {
   try {
     const compressed = pako.deflate(text, {level: 9});
-    const base64 = btoa(
-      String.fromCharCode.apply(null, Array.from(compressed))
-    );
+    const CHUNK_SIZE = 8192;
+    let binary = '';
+    for (let i = 0; i < compressed.length; i += CHUNK_SIZE) {
+      const chunk = compressed.subarray(i, i + CHUNK_SIZE);
+      binary += String.fromCharCode.apply(null, chunk as unknown as number[]);
+    }
+    const base64 = btoa(binary);
     // Make URL safe
     return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   } catch (e) {

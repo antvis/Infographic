@@ -72,9 +72,7 @@ export function EditorContent() {
     if (typeof window === 'undefined') return;
 
     // Check if current URL has content parameter
-    const hasContentParam =
-      window.location.search.includes('content=') ||
-      window.location.hash.includes('content=');
+    const hasContentParam = window.location.search.includes('content=');
     if (!hasContentParam) return;
 
     // Debounce URL update (same delay as preview: 300ms)

@@ -16,6 +16,11 @@ import {CodeEditor} from 'components/MDX/CodeEditor';
 import {useLocaleBundle} from 'hooks/useTranslation';
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {DEFAULT_SYNTAX} from './defaultSyntax';
+import {
+  findConfigInsertionIndex,
+  getPaletteFromSyntax,
+  updatePaletteInSyntax,
+} from './syntaxManager';
 
 const CATEGORY_STORAGE_KEY = 'live-editor-category-data';
 type TemplateCategory =
@@ -447,23 +452,6 @@ export function EditorPanel({
     onChange('');
   };
 
-  // Helper function to find insertion point for theme/palette
-  const findInsertionPoint = (lines: string[]): number => {
-    let insertIndex = 0;
-    for (let i = 0; i < lines.length; i++) {
-      if (
-        lines[i].trim().startsWith('infographic ') ||
-        lines[i].trim().startsWith('template ')
-      ) {
-        insertIndex = i + 1;
-      }
-      if (lines[i].trim().startsWith('data')) {
-        break;
-      }
-    }
-    return insertIndex;
-  };
-
   // Extract current config from syntax
   useEffect(() => {
     const lines = value.split('\n');
@@ -495,17 +483,9 @@ export function EditorPanel({
     }
 
     // Extract palette
-    const paletteLine = lines.find((line) => {
-      const trimmed = line.trim();
-      return trimmed.startsWith('palette ') && trimmed !== 'palette';
-    });
-    if (paletteLine) {
-      const palette = paletteLine.trim().substring('palette '.length).trim();
-      if (palette && paletteValues.includes(palette)) {
-        setSelectedPalette(palette);
-      } else {
-        setSelectedPalette('');
-      }
+    const palette = getPaletteFromSyntax(value);
+    if (palette && paletteValues.includes(palette)) {
+      setSelectedPalette(palette);
     } else {
       setSelectedPalette('');
     }
@@ -620,7 +600,7 @@ export function EditorPanel({
       lines[themeLineIndex] = `${indent}theme ${theme}`;
     } else {
       // Find insertion point using shared helper
-      const insertIndex = findInsertionPoint(lines);
+      const insertIndex = findConfigInsertionIndex(lines);
       lines.splice(insertIndex, 0, `theme ${theme}`);
     }
     onChange(lines.join('\n'));
@@ -628,82 +608,7 @@ export function EditorPanel({
 
   const handlePaletteChange = (palette: string) => {
     setSelectedPalette(palette);
-    // Update or insert palette in syntax
-    const lines = value.split('\n');
-
-    // Find existing palette line (could be "palette value" or just "palette")
-    let paletteLineIndex = -1;
-    for (let i = 0; i < lines.length; i++) {
-      const trimmed = lines[i].trim();
-      if (trimmed.startsWith('palette ') || trimmed === 'palette') {
-        paletteLineIndex = i;
-        break;
-      }
-    }
-
-    if (!palette) {
-      if (paletteLineIndex >= 0) {
-        const indent = lines[paletteLineIndex].match(/^\s*/)?.[0] || '';
-        const baseIndent = indent.length;
-        let endIndex = paletteLineIndex + 1;
-        while (endIndex < lines.length) {
-          const line = lines[endIndex];
-          const lineIndent = line.match(/^\s*/)?.[0]?.length || 0;
-          if (line.trim() && lineIndent <= baseIndent) {
-            break;
-          }
-          endIndex += 1;
-        }
-        lines.splice(paletteLineIndex, endIndex - paletteLineIndex);
-      }
-      onChange(lines.join('\n'));
-      return;
-    }
-
-    if (paletteLineIndex >= 0) {
-      // Found existing palette
-      const indent = lines[paletteLineIndex].match(/^\s*/)?.[0] || '';
-      const currentLine = lines[paletteLineIndex].trim();
-
-      if (currentLine === 'palette') {
-        // It's "palette" as object key with array of colors below
-        // Remove the palette line and all color items below it
-        let endIndex = paletteLineIndex + 1;
-        const baseIndent = indent.length;
-        while (endIndex < lines.length) {
-          const line = lines[endIndex];
-          const lineIndent = line.match(/^\s*/)?.[0]?.length || 0;
-          // Stop if we hit a line with same or less indentation (sibling or parent)
-          if (line.trim() && lineIndent <= baseIndent) {
-            break;
-          }
-          endIndex++;
-        }
-        // Replace all lines (palette + colors) with single palette line
-        lines.splice(
-          paletteLineIndex,
-          endIndex - paletteLineIndex,
-          `${indent}palette ${palette}`
-        );
-      } else {
-        // It's "palette value" format, just replace the line
-        lines[paletteLineIndex] = `${indent}palette ${palette}`;
-      }
-    } else {
-      // No existing palette, insert new one
-      const themeLineIndex = lines.findIndex((line) =>
-        line.trim().startsWith('theme')
-      );
-      if (themeLineIndex >= 0) {
-        const indent = lines[themeLineIndex].match(/^\s*/)?.[0] || '';
-        lines.splice(themeLineIndex + 1, 0, `${indent}  palette ${palette}`);
-      } else {
-        // Insert theme with palette
-        const insertIndex = findInsertionPoint(lines);
-        lines.splice(insertIndex, 0, `theme`, `  palette ${palette}`);
-      }
-    }
-    onChange(lines.join('\n'));
+    onChange(updatePaletteInSyntax(value, palette));
   };
 
   return (
