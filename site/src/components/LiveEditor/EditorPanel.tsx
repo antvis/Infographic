@@ -1,6 +1,6 @@
 import {useLocaleBundle} from 'hooks/useTranslation';
 import {CodeEditor} from 'components/MDX/CodeEditor';
-import {getTemplates, getThemes, getPaletteNames, parseSyntax} from '@antv/infographic';
+import {getTemplates, getThemes, getPalettes, parseSyntax} from '@antv/infographic';
 import {useMemo, useState, useCallback, useEffect} from 'react';
 import type {Diagnostic} from '@codemirror/lint';
 import type {EditorView} from '@codemirror/view';
@@ -48,7 +48,7 @@ export function EditorPanel({
   const texts = useLocaleBundle(TRANSLATIONS);
   const templates = useMemo(() => getTemplates().sort(), []);
   const themes = useMemo(() => getThemes().sort(), []);
-  const palettes = useMemo(() => getPaletteNames().sort(), []);
+  const palettes = useMemo(() => Object.keys(getPalettes()).sort(), []);
 
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [selectedTheme, setSelectedTheme] = useState('');
@@ -56,6 +56,20 @@ export function EditorPanel({
 
   const handleClear = () => {
     onChange('');
+  };
+
+  // Helper function to find insertion point for theme/palette
+  const findInsertionPoint = (lines: string[]): number => {
+    let insertIndex = 0;
+    for (let i = 0; i < lines.length; i++) {
+      if (lines[i].trim().startsWith('infographic ') || lines[i].trim().startsWith('template ')) {
+        insertIndex = i + 1;
+      }
+      if (lines[i].trim().startsWith('data')) {
+        break;
+      }
+    }
+    return insertIndex;
   };
 
   // Extract current config from syntax
@@ -176,16 +190,8 @@ export function EditorPanel({
       const indent = lines[themeLineIndex].match(/^\s*/)?.[0] || '';
       lines[themeLineIndex] = `${indent}theme ${theme}`;
     } else {
-      // Find insertion point (after infographic/template, before data)
-      let insertIndex = 0;
-      for (let i = 0; i < lines.length; i++) {
-        if (lines[i].trim().startsWith('infographic ') || lines[i].trim().startsWith('template ')) {
-          insertIndex = i + 1;
-        }
-        if (lines[i].trim().startsWith('data')) {
-          break;
-        }
-      }
+      // Find insertion point using shared helper
+      const insertIndex = findInsertionPoint(lines);
       lines.splice(insertIndex, 0, `theme ${theme}`);
     }
     onChange(lines.join('\n'));
@@ -239,15 +245,7 @@ export function EditorPanel({
         lines.splice(themeLineIndex + 1, 0, `${indent}  palette ${palette}`);
       } else {
         // Insert theme with palette
-        let insertIndex = 0;
-        for (let i = 0; i < lines.length; i++) {
-          if (lines[i].trim().startsWith('infographic ') || lines[i].trim().startsWith('template ')) {
-            insertIndex = i + 1;
-          }
-          if (lines[i].trim().startsWith('data')) {
-            break;
-          }
-        }
+        const insertIndex = findInsertionPoint(lines);
         lines.splice(insertIndex, 0, `theme`, `  palette ${palette}`);
       }
     }
@@ -309,6 +307,7 @@ export function EditorPanel({
                 value={selectedTemplate}
                 onChange={(e) => handleTemplateChange(e.target.value)}
                 className="w-full pl-3 pr-8 py-2 text-sm bg-card dark:bg-card-dark border border-border dark:border-border-dark rounded-md text-primary dark:text-primary-dark appearance-none focus:outline-none focus:ring-2 focus:ring-link/50 transition-all cursor-pointer">
+                <option value="">unknown</option>
                 {templates.map((template) => (
                   <option key={template} value={template}>
                     {template}

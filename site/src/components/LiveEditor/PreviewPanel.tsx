@@ -142,7 +142,7 @@ export function PreviewPanel({
         e.preventDefault();
 
         // Determine zoom direction (deltaY negative = zoom in, positive = zoom out)
-        const delta = e.deltaY > 0 ? -0.1 : 0.1;
+        const delta = Math.sign(e.deltaY) * -0.1;
 
         setZoom((prev) => {
           const newZoom = prev + delta;

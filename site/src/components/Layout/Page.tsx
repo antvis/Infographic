@@ -128,7 +128,7 @@ export function Page({
     );
   }
 
-  let hasColumns = showSidebar === false ? false : true;
+  let hasColumns = showSidebar;
   let showToc = toc.length > 0;
   if (isHomePage) {
     hasColumns = false;

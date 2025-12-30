@@ -10,10 +10,6 @@ export function getPalette(type: string): Palette | undefined {
   return PALETTE_REGISTRY.get(type);
 }
 
-export function getPalettes(): Palette[] {
-  return Array.from(PALETTE_REGISTRY.values());
-}
-
-export function getPaletteNames(): string[] {
-  return Array.from(PALETTE_REGISTRY.keys());
+export function getPalettes(): Record<string, Palette> {
+  return Object.fromEntries(PALETTE_REGISTRY);
 }
