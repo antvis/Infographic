@@ -6,7 +6,9 @@ import pako from 'pako';
 export function compressToBase64(text: string): string {
   try {
     const compressed = pako.deflate(text, {level: 9});
-    const base64 = btoa(String.fromCharCode.apply(null, Array.from(compressed)));
+    const base64 = btoa(
+      String.fromCharCode.apply(null, Array.from(compressed))
+    );
     // Make URL safe
     return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   } catch (e) {

@@ -1,8 +1,8 @@
-import {Infographic, InfographicHandle} from 'components/Infographic';
-import {useEffect, useRef, useState} from 'react';
-import {useLocaleBundle} from 'hooks/useTranslation';
 import {IconCopy} from 'components/Icon/IconCopy';
 import {IconDownload} from 'components/Icon/IconDownload';
+import {Infographic, InfographicHandle} from 'components/Infographic';
+import {useLocaleBundle} from 'hooks/useTranslation';
+import {useEffect, useRef, useState} from 'react';
 
 const TRANSLATIONS = {
   'zh-CN': {
@@ -92,9 +92,13 @@ export function PreviewPanel({
     setIsFullscreen(newFullscreen);
     // Emit event for parent to handle topnav visibility
     if (newFullscreen) {
-      window.dispatchEvent(new CustomEvent('preview-fullscreen', {detail: {fullscreen: true}}));
+      window.dispatchEvent(
+        new CustomEvent('preview-fullscreen', {detail: {fullscreen: true}})
+      );
     } else {
-      window.dispatchEvent(new CustomEvent('preview-fullscreen', {detail: {fullscreen: false}}));
+      window.dispatchEvent(
+        new CustomEvent('preview-fullscreen', {detail: {fullscreen: false}})
+      );
     }
   };
 
@@ -114,7 +118,9 @@ export function PreviewPanel({
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isFullscreen) {
         setIsFullscreen(false);
-        window.dispatchEvent(new CustomEvent('preview-fullscreen', {detail: {fullscreen: false}}));
+        window.dispatchEvent(
+          new CustomEvent('preview-fullscreen', {detail: {fullscreen: false}})
+        );
       }
     };
 
@@ -126,7 +132,9 @@ export function PreviewPanel({
   useEffect(() => {
     return () => {
       if (isFullscreen) {
-        window.dispatchEvent(new CustomEvent('preview-fullscreen', {detail: {fullscreen: false}}));
+        window.dispatchEvent(
+          new CustomEvent('preview-fullscreen', {detail: {fullscreen: false}})
+        );
       }
     };
   }, [isFullscreen]);
@@ -163,7 +171,11 @@ export function PreviewPanel({
       }`}>
       <div className="flex items-center justify-between px-4 py-3 bg-wash dark:bg-wash-dark border-b border-border dark:border-border-dark">
         <h2 className="text-base font-semibold text-primary dark:text-primary-dark flex items-center gap-2">
-          <span className={`w-2 h-2 rounded-full ${error ? 'bg-red-500' : 'bg-green-500'}`} />
+          <span
+            className={`w-2 h-2 rounded-full ${
+              error ? 'bg-red-500' : 'bg-green-500'
+            }`}
+          />
           {texts.title}
         </h2>
         <div className="flex gap-2">
@@ -197,7 +209,11 @@ export function PreviewPanel({
           <div className="absolute top-4 left-4 right-4 z-10 p-3 bg-red-50/90 dark:bg-red-900/40 backdrop-blur-sm border border-red-200 dark:border-red-800 rounded-lg text-red-800 dark:text-red-200 text-sm shadow-lg">
             <div className="font-bold mb-1 flex items-center gap-1.5">
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                  clipRule="evenodd"
+                />
               </svg>
               Error
             </div>
@@ -211,8 +227,17 @@ export function PreviewPanel({
             title="Zoom Out"
             className="p-1.5 text-secondary hover:text-link hover:bg-link/10 rounded transition-all"
             aria-label="Zoom Out">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7" />
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7"
+              />
             </svg>
           </button>
           <button
@@ -226,29 +251,63 @@ export function PreviewPanel({
             title="Zoom In"
             className="p-1.5 text-secondary hover:text-link hover:bg-link/10 rounded transition-all"
             aria-label="Zoom In">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"
+              />
             </svg>
           </button>
           <div className="w-[1px] h-5 bg-border dark:bg-border-dark" />
           <button
             onClick={handleToggleFullscreen}
-            title={isFullscreen ? texts.exitFullscreenButton : texts.fullscreenButton}
+            title={
+              isFullscreen ? texts.exitFullscreenButton : texts.fullscreenButton
+            }
             className="p-1.5 text-secondary hover:text-link hover:bg-link/10 rounded transition-all"
-            aria-label={isFullscreen ? texts.exitFullscreenButton : texts.fullscreenButton}>
+            aria-label={
+              isFullscreen ? texts.exitFullscreenButton : texts.fullscreenButton
+            }>
             {isFullscreen ? (
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-                <path d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM9 9l6 6m0-6-6 6"/>
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24">
+                <path d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM9 9l6 6m0-6-6 6" />
               </svg>
             ) : (
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"
+                />
               </svg>
             )}
           </button>
         </div>
         <div className="w-full h-full p-8 flex items-center justify-center overflow-auto">
-          <div style={{transform: `scale(${zoom})`, transformOrigin: 'center', transition: 'transform 0.2s ease'}}>
+          <div
+            style={{
+              transform: `scale(${zoom})`,
+              transformOrigin: 'center',
+              transition: 'transform 0.2s ease',
+            }}>
             <Infographic
               ref={infographicRef}
               options={displaySyntax}
