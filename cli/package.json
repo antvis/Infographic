@@ -39,7 +39,8 @@
   },
   "dependencies": {
     "@antv/infographic": "file:../",
-    "jsdom": "^27.0.0"
+    "linkedom": "^0.18.12",
+    "svgo": "^4.0.0"
   },
   "devDependencies": {
     "@types/node": "^24.3.1",

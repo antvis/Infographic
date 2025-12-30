@@ -68,14 +68,14 @@ async function preloadResources(
 export async function renderToSVG(
   options: SSRRenderOptions,
 ): Promise<SSRRenderResult> {
-  // 1. Initialize jsdom environment
-  const globalDom = setupDOM();
+  // 1. Initialize linkedom environment
+  const { document: globalDocument } = setupDOM();
 
   const errors: SyntaxError[] = [];
   const warnings: SyntaxError[] = [];
 
   // 2. Create virtual container (not added to DOM)
-  const container = globalDom.window.document.getElementById('container') as HTMLElement;
+  const container = globalDocument.getElementById('container') as HTMLElement;
 
   // 3. Prepare options (disable editor for SSR)
   const ssrOptions: Partial<InfographicOptions> = {
@@ -89,19 +89,20 @@ export async function renderToSVG(
     const { options: parsedOptions, errors: parseErrors, warnings: parseWarnings } = parseSyntax(options.input);
     errors.push(...parseErrors);
     warnings.push(...parseWarnings);
-    const infographic = new Infographic({ ...ssrOptions, ...parsedOptions });
     if (!parsedOptions.data || !parsedOptions.data.items) {
       errors.push({
-        code: 'invalid_options',
-        message: 'Invalid options',
+        code: 'bad_syntax',
+        message: 'Invalid syntax: data.items is required',
         path: '',
         line: 0,
-      } as any);
+      } as SyntaxError);
       return { svg: '', errors, warnings };
     }
     // 5. Preload resources on rendering
     await preloadResources(parsedOptions.data || {});
-     // Collect errors and warnings from event emitters
+    const infographic = new Infographic({ ...ssrOptions, ...parsedOptions });
+
+    // Collect errors and warnings from event emitters
     infographic.on('error', (error: SyntaxError) => {
       errors.push(error);
     });
@@ -122,7 +123,14 @@ export async function renderToSVG(
     });
     infographic.render();
     const svg = await svgResultPromise;
-    return { svg, errors, warnings };
+    try {
+      const svgo = await import('svgo');
+      const optimized = svgo.optimize(svg);
+      return { svg: optimized.data, errors, warnings };
+    } catch (e) {
+      // ignore svgo error
+      return { svg, errors, warnings };
+    }
   } catch (error) {
     errors.push({
       code: 'render_error',

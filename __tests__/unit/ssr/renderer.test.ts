@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { renderToSVG } from '../../../src/ssr';
 import { parseSyntax } from '../../../src/syntax';
+import { getPalette } from '../../../src/renderer/palettes';
 
 describe('SSR Renderer', () => {
   it('should parse syntax correctly', () => {
@@ -33,10 +34,12 @@ data
     - label Step 3
       desc Complete`,
     });
-
-    expect(result.svg).toContain('<svg');
-    expect(result.svg).toContain('Step 1');
+    console.log(result.svg);
     expect(result.errors).toHaveLength(0);
+    expect(result.svg).toContain('<svg');
+    expect(result.svg).toContain('Step 1</span>');
+    expect(result.svg).toContain('Step 2</span>');
+    expect(result.svg).toContain('Step 3</span>');
   });
 
   it('should handle invalid syntax and return errors', async () => {
@@ -58,6 +61,9 @@ data
       desc In Progress`,
       options: {
         // Additional options can be passed here
+        themeConfig: {
+          palette: getPalette('spectral'),
+        },
       },
     });
 
@@ -79,7 +85,9 @@ data
     });
 
     expect(result.svg).toContain('<svg');
-    expect(result.svg).toContain('步骤 1');
+    expect(result.svg).toContain('步骤 1</span>');
+    expect(result.svg).toContain('步骤 2</span>');
+    expect(result.svg).toContain('步骤 3</span>');
     expect(result.errors).toHaveLength(0);
   });
 
@@ -129,8 +137,25 @@ data
     });
 
     expect(result.svg).toContain('<svg');
-    expect(result.svg).toContain('特殊字符');
-    expect(result.svg).toContain('Emoji');
+    // Special characters should be properly escaped in XML/SVG
+    expect(result.svg).toContain('特殊字符 &lt; &gt; &amp; &quot;');
+    expect(result.svg).toContain('Emoji 😀🎉');
+    expect(result.errors).toHaveLength(0);
+  });
+
+  it('should place xmlns on span element', async () => {
+    const result = await renderToSVG({
+      input: `infographic list-row-simple-horizontal-arrow
+data
+  items
+    - label Test Text`,
+    });
+
+    // xmlns should be on the span element (HTML content)
+    expect(result.svg).toContain('<span xmlns="http://www.w3.org/1999/xhtml"');
+
+    expect(result.svg).not.toContain('<foreignObject xmlns="http://www.w3.org/1999/xhtml"');
+    expect(result.svg).toContain('<span xmlns="http://www.w3.org/1999/xhtml"');
     expect(result.errors).toHaveLength(0);
   });
 });
