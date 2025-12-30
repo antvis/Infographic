@@ -365,6 +365,21 @@ const TRANSLATIONS = {
 const UNKNOWN_TEMPLATE_VALUE = '__unknown_template__';
 const DEFAULT_THEME_VALUE = '__default_theme__';
 const DEFAULT_PALETTE_VALUE = '__default_palette__';
+const CUSTOM_PALETTES = [
+  {
+    label: 'Sunset',
+    value: '#e76f51 #f4a261 #e9c46a #2a9d8f #264653',
+  },
+  {
+    label: 'Deep Sea',
+    value:
+      '#001219 #005f73 #0a9396 #94d2bd #ee9b00 #ca6702 #bb3e03 #ae2012 #9b2226',
+  },
+  {
+    label: 'Slate Mint',
+    value: '#0f172a #334155 #38bdf8 #a7f3d0 #fbbf24',
+  },
+];
 
 export function EditorPanel({
   value,
@@ -380,7 +395,17 @@ export function EditorPanel({
   const texts = useLocaleBundle(TRANSLATIONS);
   const templates = useMemo(() => getTemplates().sort(), []);
   const themes = useMemo(() => getThemes().sort(), []);
-  const palettes = useMemo(() => Object.keys(getPalettes()).sort(), []);
+  const paletteNames = useMemo(
+    () =>
+      Object.keys(getPalettes())
+        .filter((palette) => palette !== 'antv')
+        .sort(),
+    []
+  );
+  const paletteValues = useMemo(
+    () => [...paletteNames, ...CUSTOM_PALETTES.map((palette) => palette.value)],
+    [paletteNames]
+  );
 
   const templateOptions = useMemo(
     () => [
@@ -405,9 +430,13 @@ export function EditorPanel({
         value: DEFAULT_PALETTE_VALUE,
         label: 'default',
       },
-      ...palettes.map((palette) => ({value: palette, label: palette})),
+      ...paletteNames.map((palette) => ({value: palette, label: palette})),
+      ...CUSTOM_PALETTES.map((palette) => ({
+        value: palette.value,
+        label: palette.label,
+      })),
     ],
-    [palettes]
+    [paletteNames]
   );
 
   const [selectedTemplate, setSelectedTemplate] = useState('');
@@ -472,7 +501,7 @@ export function EditorPanel({
     });
     if (paletteLine) {
       const palette = paletteLine.trim().substring('palette '.length).trim();
-      if (palette && palettes.includes(palette)) {
+      if (palette && paletteValues.includes(palette)) {
         setSelectedPalette(palette);
       } else {
         setSelectedPalette('');
@@ -480,7 +509,7 @@ export function EditorPanel({
     } else {
       setSelectedPalette('');
     }
-  }, [value, templates, themes, palettes]);
+  }, [value, templates, themes, paletteValues]);
 
   useEffect(() => {
     const currentTemplate = getTemplateFromSyntax(value);
@@ -610,6 +639,25 @@ export function EditorPanel({
         paletteLineIndex = i;
         break;
       }
+    }
+
+    if (!palette) {
+      if (paletteLineIndex >= 0) {
+        const indent = lines[paletteLineIndex].match(/^\s*/)?.[0] || '';
+        const baseIndent = indent.length;
+        let endIndex = paletteLineIndex + 1;
+        while (endIndex < lines.length) {
+          const line = lines[endIndex];
+          const lineIndent = line.match(/^\s*/)?.[0]?.length || 0;
+          if (line.trim() && lineIndent <= baseIndent) {
+            break;
+          }
+          endIndex += 1;
+        }
+        lines.splice(paletteLineIndex, endIndex - paletteLineIndex);
+      }
+      onChange(lines.join('\n'));
+      return;
     }
 
     if (paletteLineIndex >= 0) {
