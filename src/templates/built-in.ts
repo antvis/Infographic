@@ -1,5 +1,6 @@
 import { hierarchyMindmapTemplates } from './hierarchy-mindmap';
 import { hierarchyTreeTemplates } from './hierarchy-tree';
+import { listZigzagTemplates } from './list-zigzag';
 import { registerTemplate } from './registry';
 import { sequenceStairsTemplates } from './sequence-stairs';
 import type { TemplateOptions } from './types';
@@ -807,6 +808,7 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
   ...hierarchyMindmapTemplates,
   ...sequenceStairsTemplates,
   ...wordCloudTemplate,
+  ...listZigzagTemplates,
 };
 
 Object.entries(BUILT_IN_TEMPLATES).forEach(([name, options]) => {

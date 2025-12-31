@@ -14,6 +14,7 @@ export * from './list-pyramid';
 export * from './list-row';
 export * from './list-sector';
 export * from './list-waterfall';
+export * from './list-zigzag';
 export * from './quadrant';
 export * from './registry';
 export { getStructure, getStructures, registerStructure } from './registry';
