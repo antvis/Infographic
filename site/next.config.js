@@ -5,7 +5,6 @@ const nextConfig = {
   pageExtensions: ['jsx', 'js', 'ts', 'tsx', 'mdx', 'md'],
   reactStrictMode: true,
   output: 'export',
-  trailingSlash: true,
   images: {
     // Static export needs unoptimized images
     unoptimized: true,
