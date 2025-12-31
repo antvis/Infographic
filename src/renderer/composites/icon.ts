@@ -1,28 +1,17 @@
 import { ParsedInfographicOptions } from '../../options';
 import { loadResource, ResourceConfig } from '../../resource';
 import type { DynamicAttributes } from '../../themes';
-import type { IconAttributes, IconElement } from '../../types';
+import type { IconAttributes, ItemDatum } from '../../types';
 import { createIconElement, getAttributes } from '../../utils';
 import { parseDynamicAttributes } from '../utils';
-
-export function renderIcon(
-  svg: SVGSVGElement,
-  node: SVGElement,
-  value: string | ResourceConfig | undefined,
-  attrs: DynamicAttributes<IconAttributes> = {},
-): IconElement | null {
-  if (!value) return null;
-  const parsedAttrs = parseDynamicAttributes(node, attrs);
-
-  return createIcon(svg, node, value, parsedAttrs);
-}
 
 export function renderItemIcon(
   svg: SVGSVGElement,
   node: SVGElement,
-  value: string | ResourceConfig | undefined,
+  datum: ItemDatum,
   options: ParsedInfographicOptions,
 ) {
+  const value = datum.icon;
   if (!value) return null;
   const { themeConfig } = options;
   const attrs: DynamicAttributes<IconAttributes> = {
@@ -30,7 +19,7 @@ export function renderItemIcon(
   };
 
   const parsedAttrs = parseDynamicAttributes(node, attrs);
-  return createIcon(svg, node, value, parsedAttrs);
+  return createIcon(svg, node, value, parsedAttrs, datum);
 }
 
 function createIcon(
@@ -38,9 +27,10 @@ function createIcon(
   node: SVGElement,
   value: string | ResourceConfig,
   attrs: IconAttributes,
+  datum?: ItemDatum,
 ) {
   // load async
-  loadResource(svg, 'icon', value);
+  loadResource(svg, 'icon', value, datum);
 
   return createIconElement(value, {
     ...getAttributes(node, [

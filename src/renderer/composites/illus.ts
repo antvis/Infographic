@@ -5,7 +5,7 @@ import {
   parseResourceConfig,
   type ResourceConfig,
 } from '../../resource';
-import type { IllusAttributes, IllusElement } from '../../types';
+import type { IllusAttributes, IllusElement, ItemDatum } from '../../types';
 import {
   createElement,
   getAttributes,
@@ -19,6 +19,7 @@ export function renderIllus(
   svg: SVGSVGElement,
   node: SVGElement,
   value: string | ResourceConfig | undefined,
+  datum?: ItemDatum,
 ): IllusElement | null {
   if (!value) return null;
   const config = parseResourceConfig(value);
@@ -27,7 +28,7 @@ export function renderIllus(
   const id = getResourceId(config)!;
   const clipPathId = createClipPath(svg, node, id);
 
-  loadResource(svg, 'illus', config);
+  loadResource(svg, 'illus', config, datum);
 
   const { data, color } = config;
   return createIllusElement(
@@ -39,6 +40,15 @@ export function renderIllus(
     },
     data,
   );
+}
+
+export function renderItemIllus(
+  svg: SVGSVGElement,
+  node: SVGElement,
+  datum: ItemDatum,
+) {
+  const value = datum.illus;
+  return renderIllus(svg, node, value, datum);
 }
 
 function createClipPath(

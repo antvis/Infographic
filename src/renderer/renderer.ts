@@ -25,6 +25,7 @@ import {
   renderButtonsGroup,
   renderIllus,
   renderItemIcon,
+  renderItemIllus,
   renderItemText,
   renderShape,
   renderStaticShape,
@@ -146,6 +147,7 @@ function fill(svg: SVGSVGElement, options: ParsedInfographicOptions) {
     if (element.dataset.elementType?.startsWith('item-')) {
       const indexes = getItemIndexes(element.dataset.indexes || '0');
       const itemType = element.dataset.elementType.replace('item-', '');
+      const datum = getDatumByIndexes(data, indexes);
 
       if (isItemLabel(element) || isItemDesc(element) || isItemValue(element)) {
         const modified = renderItemText(
@@ -155,22 +157,14 @@ function fill(svg: SVGSVGElement, options: ParsedInfographicOptions) {
         );
         return upsert(element, modified);
       }
+      if (!datum) return;
       if (isItemIllus(element)) {
-        const modified = renderIllus(
-          svg,
-          element,
-          getDatumByIndexes(data, indexes)?.illus,
-        );
+        const modified = renderItemIllus(svg, element, datum);
         return upsert(element, modified);
       }
 
       if (isItemIcon(element)) {
-        const modified = renderItemIcon(
-          svg,
-          element,
-          getDatumByIndexes(data, indexes)?.icon,
-          options,
-        );
+        const modified = renderItemIcon(svg, element, datum, options);
         return upsert(element, modified);
       }
     }

@@ -1,3 +1,4 @@
+import type { ItemDatum } from '../types';
 import { getOrCreateDefs } from '../utils';
 import {
   loadImageBase64Resource,
@@ -12,34 +13,41 @@ import { getResourceId, parseResourceConfig } from './utils';
 async function getResource(
   scene: ResourceScene,
   config: string | ResourceConfig,
+  datum?: ItemDatum,
 ): Promise<Resource | null> {
   const cfg = parseResourceConfig(config);
   if (!cfg) return null;
   cfg.scene ||= scene;
   const { source, data, format, encoding } = cfg;
 
-  if (source === 'inline') {
-    const isDataURI = data.startsWith('data:');
-    if (format === 'svg' && encoding === 'raw') {
-      return loadSVGResource(data);
+  let resource: Resource | null = null;
+  try {
+    if (source === 'inline') {
+      const isDataURI = data.startsWith('data:');
+      if (format === 'svg' && encoding === 'raw') {
+        resource = loadSVGResource(data);
+      } else if (format === 'svg' && isDataURI) {
+        resource = await loadImageBase64Resource(data);
+      } else if (isDataURI || format === 'image') {
+        resource = await loadImageBase64Resource(data);
+      } else {
+        resource = loadSVGResource(data);
+      }
+    } else if (source === 'remote') {
+      resource = await loadRemoteResource(data, format);
+    } else if (source === 'search') {
+      resource = await loadSearchResource(data, format);
+    } else {
+      const customLoader = getCustomResourceLoader();
+      if (customLoader) resource = await customLoader(cfg);
     }
-    if (format === 'svg' && isDataURI) {
-      return await loadImageBase64Resource(data);
-    }
-    if (isDataURI || format === 'image') {
-      return await loadImageBase64Resource(data);
-    }
-    return loadSVGResource(data);
-  } else if (source === 'remote') {
-    return await loadRemoteResource(data, format);
-  } else if (source === 'search') {
-    return await loadSearchResource(data, format);
-  } else {
-    const customLoader = getCustomResourceLoader();
-    if (customLoader) return await customLoader(cfg);
+  } catch {
+    resource = null;
   }
 
-  return null;
+  if (resource) return resource;
+
+  return await loadSearchResource(getFallbackQuery(cfg, scene, datum), format);
 }
 
 const RESOURCE_MAP = new Map<string, Resource>();
@@ -53,6 +61,7 @@ export async function loadResource(
   svg: SVGSVGElement | null,
   scene: ResourceScene,
   config: string | ResourceConfig,
+  datum?: ItemDatum,
 ): Promise<string | null> {
   if (!svg) return null;
   const cfg = parseResourceConfig(config);
@@ -61,7 +70,7 @@ export async function loadResource(
 
   const resource = RESOURCE_MAP.has(id)
     ? RESOURCE_MAP.get(id) || null
-    : await getResource(scene, cfg);
+    : await getResource(scene, cfg, datum);
 
   if (!resource) return null;
 
@@ -75,4 +84,29 @@ export async function loadResource(
   map.set(id, resource);
 
   return id;
+}
+
+function getFallbackQuery(
+  cfg: ResourceConfig,
+  scene: ResourceScene,
+  datum?: ItemDatum,
+): string {
+  const defaultQuery = scene === 'illus' ? 'illustration' : 'icon';
+  const datumQuery =
+    normalizeQuery(datum?.label) || normalizeQuery(datum?.desc);
+  if (datumQuery) return datumQuery;
+
+  const data = normalizeQuery(cfg.data);
+  if (!data) return defaultQuery;
+  if (cfg.source === 'inline') return defaultQuery;
+  if (data.startsWith('data:')) return defaultQuery;
+  if (data.startsWith('<svg') || data.startsWith('<symbol'))
+    return defaultQuery;
+  return data;
+}
+
+function normalizeQuery(value?: string): string | null {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  return trimmed ? trimmed : null;
 }
