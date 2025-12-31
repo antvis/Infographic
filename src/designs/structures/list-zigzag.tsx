@@ -222,8 +222,6 @@ const createListZigzag = (config: ZigzagConfig) => {
       }
       const btnX = anchor.x - btnBounds.width / 2;
       const btnY = anchor.y - btnBounds.height / 2;
-      const offsetX = Math.max(0, -btnX);
-      const offsetY = Math.max(0, -btnY);
       return (
         <FlexLayout
           id="infographic-container"
@@ -232,7 +230,7 @@ const createListZigzag = (config: ZigzagConfig) => {
           alignItems="center"
         >
           {titleContent}
-          <Group x={offsetX} y={offsetY}>
+          <Group>
             <Arrow colorPrimary={colorPrimary} colorShadow={colorShadow} />
             <ItemsGroup />
             <BtnsGroup>
@@ -289,16 +287,8 @@ const createListZigzag = (config: ZigzagConfig) => {
     const addOffset =
       Math.max(itemBounds.width, itemBounds.height) * 0.45 + itemGap;
 
-    let minX = 0;
-    let minY = 0;
-    const trackMin = (x: number, y: number) => {
-      if (x < minX) minX = x;
-      if (y < minY) minY = y;
-    };
-
     const toItemPosition = (point: AnchorPoint) => {
       const { x, y, centerY } = getAnchoredPosition(point, itemBounds);
-      trackMin(x, y);
       return { x, y, centerY };
     };
 
@@ -325,7 +315,6 @@ const createListZigzag = (config: ZigzagConfig) => {
       const btnRemoveY = isTop
         ? itemPosition.y - btnBounds.height / 2
         : itemPosition.y + itemBounds.height - btnBounds.height / 2;
-      trackMin(btnRemoveX, btnRemoveY);
       btnElements.push(
         <BtnRemove indexes={indexes} x={btnRemoveX} y={btnRemoveY} />,
       );
@@ -337,7 +326,6 @@ const createListZigzag = (config: ZigzagConfig) => {
         firstAnchor.x - startDirection.x * addOffset - btnBounds.width / 2;
       const firstAddY =
         firstAnchor.y - startDirection.y * addOffset - btnBounds.height / 2;
-      trackMin(firstAddX, firstAddY);
       btnElements.push(<BtnAdd indexes={[0]} x={firstAddX} y={firstAddY} />);
 
       for (let index = 0; index < anchorPoints.length - 1; index++) {
@@ -347,7 +335,6 @@ const createListZigzag = (config: ZigzagConfig) => {
         const midY = (current.y + next.y) / 2;
         const midAddX = midX - btnBounds.width / 2;
         const midAddY = midY - btnBounds.height / 2;
-        trackMin(midAddX, midAddY);
         btnElements.push(
           <BtnAdd indexes={[index + 1]} x={midAddX} y={midAddY} />,
         );
@@ -358,7 +345,6 @@ const createListZigzag = (config: ZigzagConfig) => {
         lastAnchor.x + endDirection.x * addOffset - btnBounds.width / 2;
       const lastAddY =
         lastAnchor.y + endDirection.y * addOffset - btnBounds.height / 2;
-      trackMin(lastAddX, lastAddY);
       btnElements.push(
         <BtnAdd indexes={[layoutCount]} x={lastAddX} y={lastAddY} />,
       );
