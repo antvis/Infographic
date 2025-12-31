@@ -194,6 +194,10 @@ interface ItemDatum {
 - list-column-done-list
 - list-column-vertical-icon-arrow
 - list-column-simple-vertical-arrow
+- list-zigzag-down-compact-card
+- list-zigzag-down-simple
+- list-zigzag-up-compact-card
+- list-zigzag-up-simple
 
 **Template Selection Guidelines:**
 - For strict sequential order: processes/steps/development trends → `sequence-*` series
