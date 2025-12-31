@@ -46,6 +46,7 @@ export const Composite = () => {
     data: 'list',
     theme: 'light' as const,
     colorPrimary: '#FF356A',
+    enablePrimary: true,
     enablePalette: true,
     useHandDrawn: false,
   };
@@ -76,7 +77,9 @@ export const Composite = () => {
     },
   );
 
-  const initialValues = storedValues || defaultValues;
+  const initialValues = storedValues
+    ? { ...defaultValues, ...storedValues }
+    : defaultValues;
 
   const [form] = Form.useForm<{
     structure: string;
@@ -85,6 +88,7 @@ export const Composite = () => {
     data: string;
     theme: 'light' | 'dark';
     colorPrimary: string;
+    enablePrimary: boolean;
     enablePalette: boolean;
     useHandDrawn: boolean;
   }>();
@@ -166,6 +170,7 @@ export const Composite = () => {
       data,
       theme,
       colorPrimary,
+      enablePrimary,
       enablePalette,
       useHandDrawn,
     } = watch;
@@ -212,13 +217,15 @@ export const Composite = () => {
         items: item2Obj ? [itemObj, item2Obj] : [itemObj],
       },
       data: DATA.find((it) => it.key === data)?.value,
-      themeConfig: {
-        colorPrimary,
-      },
+      themeConfig: {},
     };
 
     if (useHandDrawn) {
       value.theme = 'hand-drawn';
+    }
+
+    if (enablePrimary) {
+      value.themeConfig.colorPrimary = colorPrimary;
     }
 
     if (theme === 'dark') {
@@ -326,7 +333,10 @@ export const Composite = () => {
                 name="colorPrimary"
                 normalize={(value) => value.toHexString()}
               >
-                <ColorPicker />
+                <ColorPicker disabled={!watch?.enablePrimary} />
+              </Form.Item>
+              <Form.Item name="enablePrimary" valuePropName="checked">
+                <Checkbox>启用主色</Checkbox>
               </Form.Item>
               <Form.Item name="enablePalette" valuePropName="checked">
                 <Checkbox>启用色板</Checkbox>

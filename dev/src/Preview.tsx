@@ -44,8 +44,9 @@ export const Preview = () => {
   const storedValues = getStoredValues<{
     template: string;
     data: keyof typeof DATA;
-    theme: 'light' | 'dark';
+    theme: 'light' | 'dark' | 'hand-drawn';
     colorPrimary: string;
+    enablePrimary: boolean;
     enablePalette: boolean;
   }>(STORAGE_KEY, (stored) => {
     const fallbacks: any = {};
@@ -68,42 +69,41 @@ export const Preview = () => {
   const initialData = storedValues?.data || 'list';
   const initialTheme = storedValues?.theme || 'light';
   const initialColorPrimary = storedValues?.colorPrimary || '#FF356A';
+  const initialEnablePrimary = storedValues?.enablePrimary ?? true;
   const initialEnablePalette = storedValues?.enablePalette || false;
 
   const [template, setTemplate] = useState(initialTemplate);
   const [data, setData] = useState<keyof typeof DATA>(initialData);
   const [theme, setTheme] = useState<string>(initialTheme);
   const [colorPrimary, setColorPrimary] = useState(initialColorPrimary);
+  const [enablePrimary, setEnablePrimary] = useState(initialEnablePrimary);
   const [enablePalette, setEnablePalette] = useState(initialEnablePalette);
   const [customData, setCustomData] = useState<string>(() =>
     JSON.stringify(DATA[initialData].value, null, 2),
   );
   const [dataError, setDataError] = useState<string>('');
 
-  const [themeConfig, setThemeConfig] = useState<ThemeConfig>(() => {
-    const config: ThemeConfig = {
-      colorPrimary: initialColorPrimary,
-    };
-    if (initialTheme === 'dark') {
+  const themeConfig = useMemo<ThemeConfig | undefined>(() => {
+    const config: ThemeConfig = {};
+    if (enablePrimary) {
+      config.colorPrimary = colorPrimary;
+    }
+    if (theme === 'dark') {
       config.colorBg = '#333';
     }
-    if (initialEnablePalette) {
+    if (enablePalette) {
       config.palette = [
-        '#1783FF',
-        '#00C9C9',
-        '#F0884D',
-        '#D580FF',
-        '#7863FF',
-        '#60C42D',
-        '#BD8F24',
-        '#FF80CA',
-        '#2491B3',
-        '#17C76F',
-        '#70CAF8',
+        '#f94144',
+        '#f3722c',
+        '#f8961e',
+        '#f9c74f',
+        '#90be6d',
+        '#43aa8b',
+        '#577590',
       ];
     }
     return config;
-  });
+  }, [enablePrimary, colorPrimary, theme, enablePalette]);
 
   // Save to localStorage when values change
   useEffect(() => {
@@ -112,9 +112,10 @@ export const Preview = () => {
       data,
       theme,
       colorPrimary,
+      enablePrimary,
       enablePalette,
     });
-  }, [template, data, theme, colorPrimary, enablePalette]);
+  }, [template, data, theme, colorPrimary, enablePrimary, enablePalette]);
 
   // Get current template configuration
   const templateConfig = useMemo(() => {
@@ -277,40 +278,26 @@ export const Preview = () => {
               <Form.Item label="主色">
                 <ColorPicker
                   value={colorPrimary}
+                  disabled={!enablePrimary}
                   onChange={(color) => {
                     const hexColor = color.toHexString();
                     setColorPrimary(hexColor);
-                    setThemeConfig((pre) => ({
-                      ...pre,
-                      colorPrimary: hexColor,
-                    }));
                   }}
                 />
               </Form.Item>
               <Form.Item>
                 <Checkbox
+                  checked={enablePrimary}
+                  onChange={(e) => setEnablePrimary(e.target.checked)}
+                >
+                  启用主色
+                </Checkbox>
+              </Form.Item>
+              <Form.Item>
+                <Checkbox
                   checked={enablePalette}
                   onChange={(e) => {
-                    const checked = e.target.checked;
-                    setEnablePalette(checked);
-                    setThemeConfig((pre) => ({
-                      ...pre,
-                      palette: checked
-                        ? [
-                            '#1783FF',
-                            '#00C9C9',
-                            '#F0884D',
-                            '#D580FF',
-                            '#7863FF',
-                            '#60C42D',
-                            '#BD8F24',
-                            '#FF80CA',
-                            '#2491B3',
-                            '#17C76F',
-                            '#70CAF8',
-                          ]
-                        : [],
-                    }));
+                    setEnablePalette(e.target.checked);
                   }}
                 >
                   启用色板
