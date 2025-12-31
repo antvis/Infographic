@@ -38,13 +38,13 @@ export const AlignLayout = createLayout<AlignLayoutProps>(
       if (horizontal !== undefined) {
         switch (horizontal) {
           case 'left':
-            childProps.x = 0; // 相对容器
+            childProps.x = -bounds.x; // 相对容器边界
             break;
           case 'center':
-            childProps.x = (containerWidth - bounds.width) / 2;
+            childProps.x = (containerWidth - bounds.width) / 2 - bounds.x;
             break;
           case 'right':
-            childProps.x = containerWidth - bounds.width;
+            childProps.x = containerWidth - bounds.width - bounds.x;
             break;
         }
       } else if (childProps.x === undefined) {
@@ -56,13 +56,13 @@ export const AlignLayout = createLayout<AlignLayoutProps>(
       if (vertical !== undefined) {
         switch (vertical) {
           case 'top':
-            childProps.y = 0;
+            childProps.y = -bounds.y;
             break;
           case 'middle':
-            childProps.y = (containerHeight - bounds.height) / 2;
+            childProps.y = (containerHeight - bounds.height) / 2 - bounds.y;
             break;
           case 'bottom':
-            childProps.y = containerHeight - bounds.height;
+            childProps.y = containerHeight - bounds.height - bounds.y;
             break;
         }
       } else if (childProps.y === undefined) {

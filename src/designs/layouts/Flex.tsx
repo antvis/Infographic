@@ -136,6 +136,8 @@ export const FlexLayout = createLayout<FlexLayoutProps>(
         const bounds = lineBounds[childIndex];
         const childMainSize = isRow ? bounds.width : bounds.height;
         const childCrossSize = isRow ? bounds.height : bounds.width;
+        const mainOffset = isRow ? bounds.x : bounds.y;
+        const crossOffset = isRow ? bounds.y : bounds.x;
 
         let crossPos = currentCrossPos;
         if (hasContainerSize) {
@@ -155,14 +157,14 @@ export const FlexLayout = createLayout<FlexLayoutProps>(
         let x: number, y: number;
         if (isRow) {
           x = isReverse
-            ? containerWidth - currentMainPos - childMainSize
-            : currentMainPos;
-          y = crossPos;
+            ? containerWidth - currentMainPos - childMainSize - mainOffset
+            : currentMainPos - mainOffset;
+          y = crossPos - crossOffset;
         } else {
-          x = crossPos;
+          x = crossPos - crossOffset;
           y = isReverse
-            ? containerHeight - currentMainPos - childMainSize
-            : currentMainPos;
+            ? containerHeight - currentMainPos - childMainSize - mainOffset
+            : currentMainPos - mainOffset;
         }
 
         const clonedChild = cloneElement(child, { x, y });
