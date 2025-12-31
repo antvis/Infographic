@@ -21,7 +21,10 @@ data
       desc 说明
       icon mdi/rocket-launch
 theme
-  palette #3b82f6 #8b5cf6 #f97316
+  palette
+    - #3b82f6
+    - #8b5cf6
+    - #f97316
 \`\`\`
 
 ## 语法要点
@@ -31,9 +34,10 @@ theme
 - 键值对使用「键 值」形式，数组通过 \`-\` 分项
 - icon 值直接提供关键词或图标名（如 \`mdi/chart-line\`）
 - data 应包含 title/desc/items（根据语义可省略不必要字段）
-- data.items 可包含 label(string)/value(number)/desc(string)/icon(string)/children(object) 等字段，children 表示层级结构
+- data.items 可包含 label(string)/value(number)/desc(string)/icon(string)/children(array) 等字段，children 表示层级结构
 - 对比类模板（名称以 \`compare-\` 开头）应构建两个根节点，所有对比项作为这两个根节点的 children，确保结构清晰
-- 可以添加 theme 来切换色板或深浅色；
+- theme 可用 \`theme <theme-name>\`，或使用 block 自定义 palette 等；不写即默认主题，可选：dark、hand-drawn
+- 根据语义选择模板：列表用 list-*，顺序用 sequence-*，对比用 compare-*，层级用 hierarchy-*，统计用 chart-*，象限用 quadrant-*，关系用 relation-*
 - 严禁输出 JSON、Markdown、解释或额外文本
 
 ## 模板 (template)
