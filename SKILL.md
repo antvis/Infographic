@@ -408,6 +408,9 @@ AntVInfographic.registerResourceLoader(async (config) => {
     height: '100%',
   });
   infographic.render(`{syntax}`);
+  document.fonts?.ready.then(() => {
+    infographic.render(`{syntax}`);
+  }).catch(() => {});
 </script>
 ```
 
