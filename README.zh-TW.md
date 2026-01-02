@@ -1,4 +1,4 @@
-<img src="https://gw.alipayobjects.com/zos/antfincdn/R8sN%24GNdh6/language.svg" width="18"> [簡體中文](./README.zh-CN.md) | 繁體中文 | [English](/README.md)
+<img src="https://gw.alipayobjects.com/zos/antfincdn/R8sN%24GNdh6/language.svg" width="18"> [簡體中文](./README.zh-CN.md) | 繁體中文 | [English](./README.md)
 
 <div align="center">
 
