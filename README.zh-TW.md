@@ -34,7 +34,7 @@
   <a href="https://infographic.antv.vision/gallery">
     <img src="https://img.shields.io/badge/%E7%AF%84%E4%BE%8B-13C2C2?style=for-the-badge" alt="範例" />
   </a>
-  <a href="./prompt.zh-CN.md">
+  <a href="./prompt.zh-TW.md">
     <img src="https://img.shields.io/badge/Prompt-FA8C16?style=for-the-badge" alt="Prompt" />
   </a>
   <a href="https://infographic.antv.vision/ai">
