@@ -410,7 +410,7 @@ AntVInfographic.registerResourceLoader(async (config) => {
   infographic.render(`{syntax}`);
   document.fonts?.ready.then(() => {
     infographic.render(`{syntax}`);
-  }).catch(() => {});
+  }).catch((error) => console.error('Error waiting for fonts to load:', error));
 </script>
 ```
 
