@@ -60,8 +60,8 @@ VERSION=0.2.4 # 将 VERSION 替换为最新版本号，例如 0.2.4
 BASE_URL=https://github.com/antvis/Infographic/archive/refs/tags
 mkdir -p .claude/skills
 
-curl -L -o skills.zip "$BASE_URL/$VERSION/skills.zip"
-tar -xf skills.zip -C .claude/skills
+curl -L --fail -o skills.zip "$BASE_URL/$VERSION/skills.zip"
+unzip -q -o skills.zip -d .claude/skills
 rm -f skills.zip
 `,
       codexTitle: 'Codex',
@@ -148,8 +148,8 @@ VERSION=0.2.4 # Replace <VERSION> with the latest tag, e.g. 0.2.4
 BASE_URL=https://github.com/antvis/Infographic/archive/refs/tags
 mkdir -p .claude/skills
 
-curl -L -o skills.zip "$BASE_URL/$VERSION/skills.zip"
-tar -xf skills.zip -C .claude/skills
+curl -L --fail -o skills.zip "$BASE_URL/$VERSION/skills.zip"
+unzip -q -o skills.zip -d .claude/skills
 rm -f skills.zip`,
       codexTitle: 'Codex',
       codexCommands: `# Replace <SKILL> with the skill name, e.g. infographic-creator
