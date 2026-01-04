@@ -113,10 +113,10 @@ for (const chunk of chunks) {
 
 AntV Infographic provides skills to integrate with AI agents:
 
-- **infographic-generator**: Create an HTML file that renders an infographic
-- **infographic-syntax-generator**: Generate infographic syntax from descriptions
-- **infographic-structure-generator**: Generate custom structure designs
-- **infographic-item-generator**: Generate custom item designs
+- **infographic-creator**: Create an HTML file that renders an infographic
+- **infographic-syntax-creator**: Generate infographic syntax from descriptions
+- **infographic-structure-creator**: Generate custom structure designs
+- **infographic-item-creator**: Generate custom item designs
 - **infographic-template-updater**: (For developers) update the template library
 
 ### Claude Code
@@ -140,9 +140,9 @@ rm -f skills.zip
 > Enter codex
 
 ```codex
-# Replace <SKILL> with the skill name, e.g. infographic-generator
+# Replace <SKILL> with the skill name, e.g. infographic-creator
 # https://github.com/antvis/Infographic/tree/main/.skills/<SKILL>
-$skill-installer install https://github.com/antvis/Infographic/tree/main/.skills/infographic-generator
+$skill-installer install https://github.com/antvis/Infographic/tree/main/.skills/infographic-creator
 ```
 
 ## 💬 Community & Communication

@@ -32,19 +32,19 @@ const TRANSLATIONS = {
         '以下 skills 帮助你生成语法、结构与模板，适配 Codex / Claude Code。',
       items: [
         {
-          name: 'infographic-generator',
+          name: 'infographic-creator',
           desc: '创建渲染信息图的 HTML 文件',
         },
         {
-          name: 'infographic-syntax-generator',
+          name: 'infographic-syntax-creator',
           desc: '根据描述生成信息图语法',
         },
         {
-          name: 'infographic-structure-generator',
+          name: 'infographic-structure-creator',
           desc: '生成自定义的结构设计',
         },
         {
-          name: 'infographic-item-generator',
+          name: 'infographic-item-creator',
           desc: '生成自定义的数据项设计',
         },
         {
@@ -120,19 +120,19 @@ $skill-installer install https://github.com/antvis/Infographic/tree/main/.skills
         'These skills help you generate syntax, structures, and templates for infographics.',
       items: [
         {
-          name: 'infographic-generator',
+          name: 'infographic-creator',
           desc: 'Create an HTML file that renders an infographic',
         },
         {
-          name: 'infographic-syntax-generator',
+          name: 'infographic-syntax-creator',
           desc: 'Generate infographic syntax from descriptions',
         },
         {
-          name: 'infographic-structure-generator',
+          name: 'infographic-structure-creator',
           desc: 'Generate custom structure designs',
         },
         {
-          name: 'infographic-item-generator',
+          name: 'infographic-item-creator',
           desc: 'Generate custom item designs',
         },
         {
@@ -152,9 +152,9 @@ curl -L -o skills.zip "$BASE_URL/$VERSION/skills.zip"
 tar -xf skills.zip -C ./claude/skills
 rm -f skills.zip`,
       codexTitle: 'Codex',
-      codexCommands: `# Replace <SKILL> with the skill name, e.g. infographic-generator
+      codexCommands: `# Replace <SKILL> with the skill name, e.g. infographic-creator
 # https://github.com/antvis/Infographic/tree/main/.skills/<SKILL>
-$skill-installer install https://github.com/antvis/Infographic/tree/main/.skills/infographic-generator
+$skill-installer install https://github.com/antvis/Infographic/tree/main/.skills/infographic-creator
 `,
     },
     preview: {

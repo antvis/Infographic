@@ -29,7 +29,7 @@ title: 自定义结构
 在 Claude Code 或 Codex 中**一次性提出需求**即可，例如：
 
 ```bash
-请使用 skill: infographic-structure-generator，帮我开发一个循环流程结构。数据项围成一个圆形排列，相邻项之间有箭头连接，形成闭环。每个数据项可以添加、删除。
+请使用 skill: infographic-structure-creator，帮我开发一个循环流程结构。数据项围成一个圆形排列，相邻项之间有箭头连接，形成闭环。每个数据项可以添加、删除。
 ```
 
 生成后 AI 会直接创建结构文件并完成导出，只需在 Dev 环境验证布局与交互即可。

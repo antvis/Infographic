@@ -29,7 +29,7 @@ title: 自定义数据项
 在 Claude Code 或 Codex 中**一次性提出需求**即可，例如：
 
 ```bash
-请使用 skill: infographic-item-generator，帮我开发一个带图标与数值的卡片式数据项。
+请使用 skill: infographic-item-creator，帮我开发一个带图标与数值的卡片式数据项。
 ```
 
 生成后 AI 会直接创建数据项文件并完成导出，只需在 Dev 环境验证效果即可。
