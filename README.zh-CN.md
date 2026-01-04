@@ -79,13 +79,13 @@ const infographic = new Infographic({
 infographic.render(`
 infographic list-row-simple-horizontal-arrow
 data
-  items:
-    - label: Step 1
-      desc: Start
-    - label: Step 2
-      desc: In Progress
-    - label: Step 3
-      desc: Complete
+  items
+    - label Step 1
+      desc Start
+    - label Step 2
+      desc In Progress
+    - label Step 3
+      desc Complete
 `);
 ```
 
