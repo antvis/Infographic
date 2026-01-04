@@ -61,7 +61,7 @@ BASE_URL=https://github.com/antvis/Infographic/archive/refs/tags
 mkdir -p .claude/skills
 
 curl -L -o skills.zip "$BASE_URL/$VERSION/skills.zip"
-tar -xf skills.zip -C ./claude/skills
+tar -xf skills.zip -C .claude/skills
 rm -f skills.zip
 `,
       codexTitle: 'Codex',
@@ -149,7 +149,7 @@ BASE_URL=https://github.com/antvis/Infographic/archive/refs/tags
 mkdir -p .claude/skills
 
 curl -L -o skills.zip "$BASE_URL/$VERSION/skills.zip"
-tar -xf skills.zip -C ./claude/skills
+tar -xf skills.zip -C .claude/skills
 rm -f skills.zip`,
       codexTitle: 'Codex',
       codexCommands: `# Replace <SKILL> with the skill name, e.g. infographic-creator
