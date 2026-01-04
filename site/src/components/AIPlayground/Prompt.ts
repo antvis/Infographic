@@ -77,6 +77,7 @@ theme
 - hierarchy-tree-tech-style-capsule-item
 - hierarchy-tree-curved-line-rounded-rect-node
 - hierarchy-tree-tech-style-badge-card
+- hierarchy-structure
 - chart-column-simple
 - chart-bar-plain-text
 - chart-line-plain-text

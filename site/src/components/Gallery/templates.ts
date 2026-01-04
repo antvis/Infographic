@@ -289,6 +289,7 @@ const TEMPLATE_ENTRIES: [string, any][] = [
   ['quadrant-quarter-simple-card', DATASET.QUADRANT],
   ['quadrant-quarter-circular', DATASET.QUADRANT],
   ['quadrant-simple-illus', DATASET.QUADRANT],
+  ['hierarchy-structure', DATASET.HIERARCHY_STRUCTURE],
   ['hierarchy-tree-tech-style-capsule-item', DATASET.HIERARCHY],
   ['hierarchy-tree-dashed-line-capsule-item', DATASET.HIERARCHY],
   ['hierarchy-tree-distributed-origin-capsule-item', DATASET.HIERARCHY],
