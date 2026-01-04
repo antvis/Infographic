@@ -8,8 +8,8 @@ title: 自定义结构
 
 结构相关的规则与模板已整理为 skill 的参考文档，位于：
 
-- `.skills/infographic-structure-generator/SKILL.md`
-- `.skills/infographic-structure-generator/references/structure-prompt.md`
+- `.skills/infographic-structure-creator/SKILL.md`
+- `.skills/infographic-structure-creator/references/structure-prompt.md`
 
 其中包含以下内容：
 
@@ -39,7 +39,7 @@ title: 自定义结构
 如果你更偏好手动复制提示内容，可以直接读取参考文档：
 
 ```bash
-cat .skills/infographic-structure-generator/references/structure-prompt.md
+cat .skills/infographic-structure-creator/references/structure-prompt.md
 ```
 
 将内容粘贴给 AI 后，描述需求并生成代码。

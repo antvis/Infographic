@@ -1,5 +1,5 @@
 ---
-name: infographic-creation
+name: infographic-creator
 description: Create beautiful infographics based on the given text content. Use this when users request creating infographics.
 ---
 

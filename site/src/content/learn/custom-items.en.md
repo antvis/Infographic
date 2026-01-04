@@ -8,8 +8,8 @@ Data item development also has a certain level of complexity. AntV Infographic p
 
 Item rules and templates are packaged as a skill. The key files are:
 
-- `.skills/infographic-item-generator/SKILL.md`
-- `.skills/infographic-item-generator/references/item-prompt.md`
+- `.skills/infographic-item-creator/SKILL.md`
+- `.skills/infographic-item-creator/references/item-prompt.md`
 
 They include the following:
 
@@ -29,7 +29,7 @@ They include the following:
 In Claude Code or Codex, submit your request in one shot, for example:
 
 ```bash
-Please use skill: infographic-item-generator to build a card-style item with icon and value.
+Please use skill: infographic-item-creator to build a card-style item with icon and value.
 ```
 
 After generation, the AI will create the item file and update exports. You only need to verify the result in the Dev environment.
@@ -39,7 +39,7 @@ After generation, the AI will create the item file and update exports. You only 
 If you prefer to paste the reference yourself, read the skill reference:
 
 ```bash
-cat .skills/infographic-item-generator/references/item-prompt.md
+cat .skills/infographic-item-creator/references/item-prompt.md
 ```
 
 Paste the content into your AI chat, then describe your requirements and generate code.

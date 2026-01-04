@@ -8,8 +8,8 @@ title: 自定义数据项
 
 数据项相关的规则与模板已整理为 skill 的参考文档，位于：
 
-- `.skills/infographic-item-generator/SKILL.md`
-- `.skills/infographic-item-generator/references/item-prompt.md`
+- `.skills/infographic-item-creator/SKILL.md`
+- `.skills/infographic-item-creator/references/item-prompt.md`
 
 其中包含以下内容：
 
@@ -39,7 +39,7 @@ title: 自定义数据项
 如果你更偏好手动复制提示内容，可以直接读取参考文档：
 
 ```bash
-cat .skills/infographic-item-generator/references/item-prompt.md
+cat .skills/infographic-item-creator/references/item-prompt.md
 ```
 
 将内容粘贴给 AI 后，描述需求并生成代码。
