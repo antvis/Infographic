@@ -109,6 +109,42 @@ for (const chunk of chunks) {
 
 <img src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*e_PFSZrR9AQAAAAASdAAAAgAemJ7AQ/original" width="480" alt="AntV Infographic Streaming Rendering">
 
+## 🔧 Skills Integration
+
+AntV Infographic provides skills to integrate with AI agents:
+
+- **infographic-generator**: Create an HTML file that renders an infographic
+- **infographic-syntax-generator**: Generate infographic syntax from descriptions
+- **infographic-structure-generator**: Generate custom structure designs
+- **infographic-item-generator**: Generate custom item designs
+- **infographic-template-updater**: (For developers) update the template library
+
+### Claude Code
+
+> We don't have a Claude marketplace entry yet, so install manually.
+
+```bash
+set -e
+
+VERSION=0.2.4 # Replace <VERSION> with the latest tag, e.g. 0.2.4
+BASE_URL=https://github.com/antvis/Infographic/archive/refs/tags
+mkdir -p ./claude/skills
+
+curl -L -o skills.zip "$BASE_URL/$VERSION/skills.zip"
+tar -xf skills.zip -C ./claude/skills
+rm -f skills.zip
+```
+
+### Codex
+
+> Enter codex
+
+```codex
+# Replace <SKILL> with the skill name, e.g. infographic-generator
+# https://github.com/antvis/Infographic/tree/main/.skills/<SKILL>
+$skill-installer install https://github.com/antvis/Infographic/tree/main/.skills/infographic-generator
+```
+
 ## 💬 Community & Communication
 
 - Submit your questions or suggestions on GitHub
