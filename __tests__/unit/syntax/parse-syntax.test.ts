@@ -73,6 +73,31 @@ infographic sales-dashboard
     expect(result.options.data?.items?.[0]?.label).toBe('Revenue');
   });
 
+  it('uses first-line template shorthand when the name is registered', () => {
+    const input = `
+list-row-horizontal-icon-arrow
+data
+  items
+    - label Step 1
+`;
+    const result = parseSyntax(input);
+    expect(result.errors).toHaveLength(0);
+    expect(result.options.template).toBe('list-row-horizontal-icon-arrow');
+    expect(result.options.data?.items?.[0]?.label).toBe('Step 1');
+  });
+
+  it('skip first-line template shorthand when the name is not registered', () => {
+    const input = `
+unknown-template-name
+data
+  items
+    - label Step 1
+`;
+    const result = parseSyntax(input);
+    expect(result.errors).toHaveLength(1);
+    expect(result.options.template).toBeUndefined();
+  });
+
   it('parses nested data and design/theme shorthand', () => {
     const input = `
 infographic sales-dashboard

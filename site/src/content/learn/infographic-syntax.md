@@ -86,6 +86,7 @@ data
 - `structure [name]`、`item [name]`、`title [name]` 省略 `type`
 - 对象数组使用 `-` 换行（如 `data.items`），简单数组使用行内写法（如 `palette`）
 - 容器相关配置写在 `new Infographic({ ... })`（如 `width`、`height`、`padding`、`editable`），语法中只写 `template`/`design`/`theme`
+- 也可以在首行直接写模板名（需为已注册模板），等同于 `infographic <template-name>`
 
 ### template {#template}
 
@@ -93,6 +94,18 @@ data
 
 ```plain
 infographic <template-name>
+```
+
+首行直接写模板名的简写方式：
+
+```plain
+list-row-horizontal-icon-arrow
+data
+  items
+    - label Step 1
+      desc Start
+    - label Step 2
+      desc In Progress
 ```
 
 ### design {#design}
