@@ -12,12 +12,14 @@ Update public template lists and gallery mappings when new templates are added i
 ## Workflow
 
 1. Collect new template names from the added `src/templates/*.ts` file (object keys).
+   - If templates are composed via spreads (e.g. `...listZigzagTemplates`), also confirm the final keys in `src/templates/built-in.ts`.
 2. Update template lists:
    - `SKILL.md` in the "Available Templates" list.
    - `site/src/components/AIPlayground/Prompt.ts` in the template list.
    Keep existing ordering/grouping; add new `list-*` entries near other list templates.
 3. Update gallery mapping in `site/src/components/Gallery/templates.ts`:
-   - Add entries to `TEMPLATE_ENTRIES` with the correct dataset (most list templates use `DATASET.LIST`).
+   - Add entries to `TEMPLATE_ENTRIES` with the correct dataset.
+   - Prefer matching the dataset used by similar templates (e.g. hierarchy -> `DATASET.HIERARCHY`, compare -> `DATASET.PROS_CONS`, chart -> `DATASET.CHART`, list -> `DATASET.LIST`).
    - If the template should be featured, add it to `PREMIUM_TEMPLATE_KEYS` in the desired order.
 4. Sanity check with `rg -n "<template-name>"` across the three files to confirm presence.
 
@@ -25,4 +27,4 @@ Update public template lists and gallery mappings when new templates are added i
 
 - Do not remove or rename existing entries.
 - Keep template names exact and lower-case.
-- If a template fits a different dataset, follow the dataset used by similar templates.
+- If a template needs example data, update or extend `site/src/components/Gallery/datasets.ts` to match its structure.
