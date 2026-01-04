@@ -1,9 +1,4 @@
-import {
-  Data,
-  getItems,
-  getStructures,
-  InfographicOptions,
-} from '@antv/infographic';
+import { getItems, getStructures, InfographicOptions } from '@antv/infographic';
 import Editor from '@monaco-editor/react';
 import {
   Button,
@@ -17,22 +12,10 @@ import {
 } from 'antd';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Infographic } from './Infographic';
-import {
-  COMPARE_DATA,
-  HIERARCHY_DATA,
-  LIST_DATA,
-  SWOT_DATA,
-  WORD_CLOUD_DATA,
-} from './data';
+import { DATA_OPTIONS, type DataKey } from './dataConfig';
 import { getStoredValues, setStoredValues } from './utils/storage';
 
-const DATA: { label: string; key: string; value: Data }[] = [
-  { label: '列表数据', key: 'list', value: LIST_DATA },
-  { label: '层级数据', key: 'hierarchy', value: HIERARCHY_DATA },
-  { label: '对比数据', key: 'compare', value: COMPARE_DATA },
-  { label: 'SWOT数据', key: 'swot', value: SWOT_DATA },
-  { label: '词云数据', key: 'wordcloud', value: WORD_CLOUD_DATA },
-];
+const DATA = DATA_OPTIONS;
 
 const items = getItems();
 const structures = getStructures();
@@ -85,7 +68,7 @@ export const Composite = () => {
     structure: string;
     item: string;
     item2: string;
-    data: string;
+    data: DataKey;
     theme: 'light' | 'dark';
     colorPrimary: string;
     enablePrimary: boolean;
