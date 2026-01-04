@@ -21,6 +21,10 @@
         {
           "title": "导出内容",
           "path": "/reference/infographic-exports"
+        },
+        {
+          "title": "非浏览器中渲染",
+          "path": "/reference/non-browser-rendering"
         }
       ]
     },

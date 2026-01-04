@@ -37,11 +37,11 @@ export const isRoughVolume = (element: SVGElement) =>
 export function isForeignObjectElement(
   element: any,
 ): element is SVGForeignObjectElement {
-  return element.tagName === 'foreignObject';
+  return element.tagName?.toLowerCase() === 'foreignobject';
 }
 
 export function isTextEntity(element: any): element is HTMLSpanElement {
-  return element.tagName === 'SPAN';
+  return element.tagName?.toLowerCase() === 'span';
 }
 
 export function isEditableText(node: SVGElement): node is TextElement {

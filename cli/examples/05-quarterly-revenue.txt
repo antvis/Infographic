@@ -1,0 +1,22 @@
+infographic quadrant-quarter-simple-card
+data
+  title Quarterly Revenue Overview
+  desc Business revenue data by quarter
+  items
+    - label Q1
+      value 68
+      desc First quarter performance
+      icon lucide/calendar
+    - label Q2
+      value 82
+      desc Second quarter growth
+      icon lucide/trending-up
+    - label Q3
+      value 91
+      desc Third quarter acceleration
+      icon lucide/rocket
+    - label Q4
+      value 105
+      desc Fourth quarter achievement
+      icon lucide/trophy
+theme antv

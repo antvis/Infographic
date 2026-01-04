@@ -1,4 +1,4 @@
-import { measureText as measure, registerFont } from 'measury';
+import { measureText as measure, registerFont as registerFontInMeasury } from 'measury';
 import AlibabaPuHuiTi from 'measury/fonts/AlibabaPuHuiTi-Regular';
 import { TextProps } from '../jsx';
 import { DEFAULT_FONT } from '../renderer';
@@ -6,7 +6,7 @@ import { encodeFontFamily } from './font';
 import { isNode } from './is-node';
 
 if (isNode) {
-  registerFont(AlibabaPuHuiTi);
+  registerFontInMeasury(AlibabaPuHuiTi);
 }
 
 const canUseDOM =
@@ -107,7 +107,7 @@ export function measureText(
   if (attrs.width && attrs.height) {
     return { width: attrs.width, height: attrs.height };
   }
-
+  
   const {
     fontFamily = DEFAULT_FONT,
     fontSize = 14,
@@ -126,7 +126,6 @@ export function measureText(
   const metrics = canUseDOM
     ? (measureTextInBrowser(content, options) ?? fallback())
     : fallback();
-
   // 额外添加 1% 宽高
   return {
     width: Math.ceil(metrics.width * 1.01),

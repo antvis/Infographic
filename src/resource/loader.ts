@@ -53,6 +53,19 @@ async function getResource(
 const RESOURCE_MAP = new Map<string, Resource>();
 const RESOURCE_LOAD_MAP = new WeakMap<SVGSVGElement, Map<string, SVGElement>>();
 
+export async function preloadResource(
+  scene: ResourceScene,
+  config: string | ResourceConfig,
+): Promise<void> {
+  const cfg = parseResourceConfig(config);
+  if (!cfg) return;
+  const id = getResourceId(cfg)!;
+
+  if (!RESOURCE_MAP.has(id)) {
+    const resource = await getResource(scene, cfg).catch(() => null);
+    if (resource) RESOURCE_MAP.set(id, resource);
+  }
+}
 /**
  * load resource into svg defs
  * @returns resource ref id
@@ -70,8 +83,7 @@ export async function loadResource(
 
   const resource = RESOURCE_MAP.has(id)
     ? RESOURCE_MAP.get(id) || null
-    : await getResource(scene, cfg, datum);
-
+    : await getResource(scene, cfg, datum).catch(() => null);
   if (!resource) return null;
 
   if (!RESOURCE_LOAD_MAP.has(svg)) RESOURCE_LOAD_MAP.set(svg, new Map());

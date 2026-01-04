@@ -1,4 +1,4 @@
-import pkg from '../package.json';
+import pkg from '../package.json' with { type: 'json' };
 
 export const VERSION = pkg.version;
 export * from './designs';
@@ -47,6 +47,7 @@ export {
   setDefaultFont,
 } from './renderer';
 export { loadSVGResource, registerResourceLoader } from './resource';
+export type * from './resource/types';
 export { Infographic } from './runtime';
 export { parseSyntax } from './syntax';
 export { getTemplate, getTemplates, registerTemplate } from './templates';

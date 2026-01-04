@@ -82,7 +82,6 @@ export function getOrCreateDefs(
   const defs = svg.querySelector<SVGDefsElement>(selector);
 
   if (defs) return defs;
-
   const newDefs = createElement<SVGDefsElement>('defs');
   if (defsId) newDefs.id = defsId;
   svg.prepend(newDefs);

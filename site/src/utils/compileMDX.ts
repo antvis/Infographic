@@ -3,7 +3,7 @@ import {MDXComponents} from 'components/MDX/MDXComponents';
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ~~~~ IMPORTANT: BUMP THIS IF YOU CHANGE ANY CODE BELOW ~~~
-const DISK_CACHE_BREAKER = 10;
+const DISK_CACHE_BREAKER = 12;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 export default async function compileMDX(
@@ -142,7 +142,7 @@ export default async function compileMDX(
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   // @ts-expect-error -- default exports is existed after eval
-  const reactTree = fakeExports.default({});
+  const reactTree = fakeExports.default({components: MDXComponents});
 
   // Pre-process MDX output and serialize it.
   let {toc, children} = prepareMDX(reactTree.props.children);

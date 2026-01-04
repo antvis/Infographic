@@ -1,0 +1,30 @@
+infographic sequence-timeline-rounded-rect-node
+data
+  title Internet Technology Evolution
+  desc Key milestones from Web 1.0 to AI era
+  items
+    - time 1991
+      label World Wide Web
+      desc Tim Berners-Lee launched the first website
+      icon mdi/web
+    - time 2004
+      label Web 2.0 Rise
+      desc Social media and user-generated content
+      icon mdi/account-multiple
+    - time 2007
+      label Mobile Internet
+      desc iPhone release changed the world
+      icon mdi/cellphone
+    - time 2015
+      label Cloud Native
+      desc Containers and microservices adoption
+      icon mdi/cloud
+    - time 2020
+      label Low-Code Platforms
+      desc Visual development lowering barriers
+      icon mdi/application-brackets
+    - time 2023
+      label AI Large Models
+      desc ChatGPT sparked generative AI revolution
+      icon mdi/brain
+theme antv

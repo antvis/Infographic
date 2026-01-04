@@ -167,4 +167,36 @@ onBeforeUnmount(() => {
   }
 });
 </script>
+
+### Using in Node.js (Non-Browser Rendering)
+
+In Node.js environments (such as SSR, SSG, CLI tools), you can use the `ssr` module to render infographics to SVG strings:
+
+```ts
+import { renderToSVG } from '@antv/infographic/ssr';
+
+async function renderInfographic() {
+  const result = await renderToSVG({
+    input: `
+infographic list-row-simple-horizontal-arrow
+data
+  items:
+    - label: Step 1
+      desc: Start
+    - label: Step 2
+      desc: In Progress
+    - label: Step 3
+      desc: Complete
+`,
+  });
+
+  console.log(result.svg);
+  console.log('Errors:', result.errors);
+  console.log('Warnings:', result.warnings);
+}
+
+renderInfographic();
+```
+
+See [Non-Browser Rendering](/reference/non-browser-rendering) for more details.
 ```

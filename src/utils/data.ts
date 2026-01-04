@@ -1,4 +1,4 @@
-import get from 'lodash-es/get';
+import { get } from 'lodash-es';
 import type { Data, ItemDatum } from '../types';
 
 /**

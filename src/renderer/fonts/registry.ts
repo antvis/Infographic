@@ -3,7 +3,7 @@ import {
   decodeFontFamily,
   encodeFontFamily,
   splitFontFamily,
-} from '../../utils';
+} from '../../utils/font';
 
 const FONT_REGISTRY: Map<string, Font> = new Map();
 

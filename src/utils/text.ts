@@ -1,4 +1,4 @@
-import camelCase from 'lodash-es/camelCase';
+import { camelCase } from 'lodash-es';
 import { TextProps } from '../editor';
 import type {
   TextAttributes,
@@ -8,7 +8,10 @@ import type {
 } from '../types';
 import { decodeFontFamily, encodeFontFamily } from './font';
 import { isForeignObjectElement } from './recognizer';
+import { isNode } from './is-node';
 import { createElement, setAttributes } from './svg';
+import { measureText } from './measure-text';
+import { DEFAULT_FONT } from '../renderer/fonts';
 
 export function getTextEntity(text: SVGElement): HTMLSpanElement | null {
   if (!isForeignObjectElement(text)) return null;
@@ -20,6 +23,8 @@ export function createTextElement(
   attributes: TextAttributes,
 ): TextElement {
   const entity = document.createElement('span');
+  // Set xmlns on the span element (HTML content)
+  entity.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
   const foreignObject = createElement<SVGForeignObjectElement>(
     'foreignObject',
     { overflow: 'visible' },
@@ -46,7 +51,6 @@ export function updateTextElement(
 
   if (entity) {
     Object.assign(entity.style, getTextStyle(attributes));
-
     if (!width || !height) {
       const rect = measureTextSpan(entity);
       if (!width && !text.hasAttribute('width')) width = String(rect.width);
@@ -153,14 +157,56 @@ export function getTextStyle(attributes: TextAttributes) {
         : +lineHeight;
   if (letterSpacing) style.letterSpacing = `${letterSpacing}px`;
   if (strokeWidth) style.strokeWidth = `${strokeWidth}px`;
-  style.fontFamily = fontFamily
-    ? encodeFontFamily(fontFamily)
-    : fontFamily || '';
+  if (fontFamily) {
+    style.fontFamily = encodeFontFamily(fontFamily);
+  }
 
   return style;
 }
 
 function measureTextSpan(span: HTMLSpanElement) {
+  // SSR environment: use measury library for accurate text measurement
+  // Check both isNode and SSR flag to avoid affecting tests
+  const isSSRMode = isNode && (global as any).__ANTV_INFOGRAPHIC_SSR__;
+  if (isSSRMode) {
+    const text = span.textContent || '';
+    const fontSize = parseFloat(span.style.fontSize || '14');
+    const fontFamily = span.style.fontFamily || DEFAULT_FONT;
+    const fontWeight = span.style.fontWeight || 'normal';
+    const lineHeightStyle = span.style.lineHeight || '1.4';
+
+    // Parse line height
+    let lineHeight: number;
+    if (lineHeightStyle.endsWith('px')) {
+      lineHeight = parseFloat(lineHeightStyle);
+    } else {
+      const factor = parseFloat(lineHeightStyle);
+      lineHeight = isNaN(factor) ? fontSize * 1.4 : (factor < 4 ? fontSize * factor : factor);
+    }
+
+    const metrics = measureText(text, {
+      fontFamily: encodeFontFamily(fontFamily),
+      fontSize,
+      fontWeight,
+      lineHeight,
+    });
+
+    const width = metrics.width;
+    const height = metrics.height;
+    return {
+      width,
+      height,
+      top: 0,
+      left: 0,
+      bottom: height,
+      right: width,
+      x: 0,
+      y: 0,
+      toJSON: () => ({}),
+    } as DOMRect;
+  }
+
+  // Browser environment or test environment: use precise measurement
   const parentNode = span.parentNode;
   span.style.visibility = 'hidden';
   document.body.appendChild(span);
@@ -172,13 +218,25 @@ function measureTextSpan(span: HTMLSpanElement) {
 }
 
 export function getTextContent(text: TextElement): string {
-  return getTextEntity(text)?.innerText || '';
+  const entity = getTextEntity(text);
+  if (!entity) return '';
+  // Use textContent in SSR environment (jsdom has limited innerText support)
+  // Check both isNode and SSR flag to avoid affecting tests
+  const isSSRMode = isNode && (global as any).__ANTV_INFOGRAPHIC_SSR__;
+  return isSSRMode ? (entity.textContent || '') : (entity.innerText || '');
 }
 
 export function setTextContent(text: TextElement, content: string): void {
   const entity = getTextEntity(text);
   if (entity) {
-    entity.innerText = content;
+    // Use textContent in SSR environment (jsdom has limited innerText support)
+    // Check both isNode and SSR flag to avoid affecting tests
+    const isSSRMode = isNode && (global as any).__ANTV_INFOGRAPHIC_SSR__;
+    if (isSSRMode) {
+      entity.textContent = content;
+    } else {
+      entity.innerText = content;
+    }
   }
 }
 

@@ -3,7 +3,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
   server: {
-    host: 'local.alipay.com',
+    // host: 'local.alipay.com',
   },
   plugins: [tsconfigPaths()],
   optimizeDeps: {
