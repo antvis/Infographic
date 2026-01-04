@@ -809,6 +809,15 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
   ...sequenceStairsTemplates,
   ...wordCloudTemplate,
   ...listZigzagTemplates,
+  'hierarchy-structure': {
+    design: {
+      title: 'default',
+      structure: {
+        type: 'hierarchy-structure',
+      },
+      item: 'simple',
+    },
+  },
 };
 
 Object.entries(BUILT_IN_TEMPLATES).forEach(([name, options]) => {
