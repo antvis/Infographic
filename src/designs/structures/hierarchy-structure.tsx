@@ -75,6 +75,8 @@ export interface HierarchyStructureProps extends BaseStructureProps {
   pillColumns?: number;
   /** Columns for flat rows (no groups). */
   ungroupedColumns?: number;
+  /** Position of the layer label block. */
+  layerLabelPosition?: 'left' | 'right';
   /** Padding inside right content container. */
   rowPadding?: number;
   /** Padding inside each group container. */
@@ -116,6 +118,7 @@ export const HierarchyStructure: ComponentType<HierarchyStructureProps> = (
     pillGap = 14,
     pillColumns = 2,
     ungroupedColumns = 6,
+    layerLabelPosition = 'left',
     rowPadding = 20,
     groupPadding = 16,
     labelPaddingX = 28,
@@ -153,6 +156,7 @@ export const HierarchyStructure: ComponentType<HierarchyStructureProps> = (
   const themeColors = getThemeColors(options.themeConfig);
   const decorElements: JSXElement[] = [];
   const itemElements: JSXElement[] = [];
+  const isLabelOnRight = layerLabelPosition === 'right';
 
   const rowBackgroundAlpha = 0.12;
   const rowBorderAlpha = 0.55;
@@ -388,9 +392,9 @@ export const HierarchyStructure: ComponentType<HierarchyStructureProps> = (
     const contentWidth = contentInnerWidth + rowPadding * 2;
     const contentHeight = contentInnerHeight + rowPadding * 2;
     const rowHeight = Math.max(labelHeight, contentHeight);
-    const labelX = 0;
+    const contentX = isLabelOnRight ? 0 : labelWidth + labelGap;
+    const labelX = isLabelOnRight ? contentX + contentWidth + labelGap : 0;
     const labelY = rowY + (rowHeight - labelHeight) / 2;
-    const contentX = labelWidth + labelGap;
     const contentY = rowY + (rowHeight - contentHeight) / 2;
 
     renderRowFrame(
@@ -511,7 +515,9 @@ export const HierarchyStructure: ComponentType<HierarchyStructureProps> = (
       groupX += groupWidth + groupGap;
     });
 
-    const rowWidth = contentX + contentWidth;
+    const rowWidth = isLabelOnRight
+      ? labelX + labelWidth
+      : contentX + contentWidth;
     return { rowWidth, rowHeight };
   };
 
@@ -540,9 +546,9 @@ export const HierarchyStructure: ComponentType<HierarchyStructureProps> = (
     const contentWidth = contentInnerWidth + rowPadding * 2;
     const contentHeight = contentInnerHeight + rowPadding * 2;
     const rowHeight = Math.max(labelHeight, contentHeight);
-    const labelX = 0;
+    const contentX = isLabelOnRight ? 0 : labelWidth + labelGap;
+    const labelX = isLabelOnRight ? contentX + contentWidth + labelGap : 0;
     const labelY = rowY + (rowHeight - labelHeight) / 2;
-    const contentX = labelWidth + labelGap;
     const contentY = rowY + (rowHeight - contentHeight) / 2;
 
     renderRowFrame(
@@ -609,7 +615,9 @@ export const HierarchyStructure: ComponentType<HierarchyStructureProps> = (
       });
     }
 
-    const rowWidth = contentX + contentWidth;
+    const rowWidth = isLabelOnRight
+      ? labelX + labelWidth
+      : contentX + contentWidth;
     return { rowWidth, rowHeight };
   };
 
@@ -646,5 +654,5 @@ export const HierarchyStructure: ComponentType<HierarchyStructureProps> = (
 
 registerStructure('hierarchy-structure', {
   component: HierarchyStructure,
-  composites: ['title', 'item'],
+  composites: ['title'],
 });
