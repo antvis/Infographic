@@ -12,10 +12,8 @@ import {
 } from 'antd';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Infographic } from './Infographic';
-import { DATA_OPTIONS, type DataKey } from './dataConfig';
+import { DATA_KEYS, DATASET, DEFAULT_DATA_KEY, type DataKey } from './data';
 import { getStoredValues, setStoredValues } from './utils/storage';
-
-const DATA = DATA_OPTIONS;
 
 const items = getItems();
 const structures = getStructures();
@@ -26,7 +24,7 @@ export const Composite = () => {
   const defaultValues = {
     structure: structures[0] || 'list-grid',
     item: items[0] || 'circular-progress',
-    data: 'list',
+    data: DEFAULT_DATA_KEY,
     theme: 'light' as const,
     colorPrimary: '#FF356A',
     enablePrimary: true,
@@ -51,7 +49,7 @@ export const Composite = () => {
       }
 
       // Validate data
-      const dataKeys = DATA.map((d) => d.key);
+      const dataKeys = DATA_KEYS;
       if (stored.data && !dataKeys.includes(stored.data)) {
         fallbacks.data = dataKeys[0];
       }
@@ -199,7 +197,7 @@ export const Composite = () => {
         structure: structureObj,
         items: item2Obj ? [itemObj, item2Obj] : [itemObj],
       },
-      data: DATA.find((it) => it.key === data)?.value,
+      data: DATASET[data],
       themeConfig: {},
     };
 
@@ -297,8 +295,8 @@ export const Composite = () => {
               </Form.Item>
               <Form.Item label="数据" name="data">
                 <Select
-                  options={DATA.map(({ label, key }) => ({
-                    label,
+                  options={DATA_KEYS.map((key) => ({
+                    label: key,
                     value: key,
                   }))}
                 />

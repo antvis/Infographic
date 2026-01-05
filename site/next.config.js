@@ -12,6 +12,7 @@ const nextConfig = {
   experimental: {
     scrollRestoration: true,
     reactCompiler: true,
+    externalDir: true,
   },
   env: {},
   webpack: (config, {isServer}) => {

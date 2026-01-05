@@ -2,40 +2,25 @@ import { getTemplate, getTemplates, ThemeConfig } from '@antv/infographic';
 import Editor from '@monaco-editor/react';
 import { Button, Card, Checkbox, ColorPicker, Form, Select } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
+import { getDataByTemplate } from '../../shared/template-data';
 import { Infographic } from './Infographic';
-import {
-  DATA_BY_KEY,
-  PREVIEW_DATA_KEYS,
-  type PreviewDataKey,
-} from './dataConfig';
+import { DATA_KEYS, DATASET, DEFAULT_DATA_KEY, type DataKey } from './data';
 import { getStoredValues, setStoredValues } from './utils/storage';
 
 const templates = getTemplates();
 const STORAGE_KEY = 'preview-form-values';
 
-const TEMPLATE_DATA_MATCHERS: Array<[string, PreviewDataKey]> = [
-  ['hierarchy-structure', 'hierarchy-structure'],
-  ['hierarchy-', 'hierarchy'],
-  ['compare-', 'compare'],
-  ['swot-', 'swot'],
-  ['chart-wordcloud', 'wordcloud'],
-];
-const getDefaultDataString = (key: PreviewDataKey) =>
-  JSON.stringify(DATA_BY_KEY[key].value, null, 2);
-const getDataByTemplate = (nextTemplate: string): PreviewDataKey => {
-  for (const [prefix, dataKey] of TEMPLATE_DATA_MATCHERS) {
-    if (nextTemplate.startsWith(prefix)) {
-      return dataKey;
-    }
-  }
-  return 'list';
-};
+const getDefaultDataString = (key: DataKey) =>
+  JSON.stringify(DATASET[key], null, 2);
+
+const resolvePreviewDataKey = (data: unknown) =>
+  DATA_KEYS.find((key) => DATASET[key] === data) ?? DEFAULT_DATA_KEY;
 
 export const Preview = () => {
   // Get stored values with validation
   const storedValues = getStoredValues<{
     template: string;
-    data: PreviewDataKey;
+    data: DataKey;
     theme: 'light' | 'dark' | 'hand-drawn';
     colorPrimary: string;
     enablePrimary: boolean;
@@ -49,7 +34,7 @@ export const Preview = () => {
     }
 
     // Validate data
-    const dataKeys = PREVIEW_DATA_KEYS;
+    const dataKeys = DATA_KEYS;
     if (stored.data && !dataKeys.includes(stored.data)) {
       fallbacks.data = dataKeys[0];
     }
@@ -58,20 +43,20 @@ export const Preview = () => {
   });
 
   const initialTemplate = storedValues?.template || templates[0];
-  const initialData = storedValues?.data || 'list';
+  const initialData = storedValues?.data || DEFAULT_DATA_KEY;
   const initialTheme = storedValues?.theme || 'light';
   const initialColorPrimary = storedValues?.colorPrimary || '#FF356A';
   const initialEnablePrimary = storedValues?.enablePrimary ?? true;
   const initialEnablePalette = storedValues?.enablePalette || false;
 
   const [template, setTemplate] = useState(initialTemplate);
-  const [data, setData] = useState<PreviewDataKey>(initialData);
+  const [data, setData] = useState<DataKey>(initialData);
   const [theme, setTheme] = useState<string>(initialTheme);
   const [colorPrimary, setColorPrimary] = useState(initialColorPrimary);
   const [enablePrimary, setEnablePrimary] = useState(initialEnablePrimary);
   const [enablePalette, setEnablePalette] = useState(initialEnablePalette);
   const [customData, setCustomData] = useState<string>(() =>
-    JSON.stringify(DATA_BY_KEY[initialData].value, null, 2),
+    JSON.stringify(DATASET[initialData], null, 2),
   );
   const [dataError, setDataError] = useState<string>('');
 
@@ -117,10 +102,14 @@ export const Preview = () => {
 
   const applyTemplate = (nextTemplate: string) => {
     const nextData = getDataByTemplate(nextTemplate);
+    const nextSelection = {
+      key: resolvePreviewDataKey(nextData),
+      data: nextData,
+    };
     setTemplate(nextTemplate);
-    if (nextData !== data) {
-      setData(nextData);
-      setCustomData(getDefaultDataString(nextData));
+    if (nextSelection.key !== data) {
+      setData(nextSelection.key);
+      setCustomData(JSON.stringify(nextSelection.data, null, 2));
       setDataError('');
     }
   };
@@ -153,7 +142,7 @@ export const Preview = () => {
       return parsed;
     } catch (error) {
       setDataError(error instanceof Error ? error.message : 'Invalid JSON');
-      return DATA_BY_KEY[data].value;
+      return DATASET[data];
     }
   }, [customData, data]);
 
@@ -243,8 +232,8 @@ export const Preview = () => {
               <Form.Item label="数据">
                 <Select
                   value={data}
-                  options={PREVIEW_DATA_KEYS.map((key) => ({
-                    label: DATA_BY_KEY[key].label,
+                  options={DATA_KEYS.map((key) => ({
+                    label: key,
                     value: key,
                   }))}
                   onChange={(value) => {
