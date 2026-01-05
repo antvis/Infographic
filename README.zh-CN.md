@@ -126,8 +126,8 @@ AntV Infographic 提供了多项能力，便于与 AI 大模型集成：
 ```bash
 set -e
 
-VERSION=0.2.4 # 将 VERSION 替换为最新版本号，例如 0.2.4
-BASE_URL=https://github.com/antvis/Infographic/archive/refs/tags
+VERSION=0.2.4 # 替换为最新版本号，例如 0.2.4
+BASE_URL=https://github.com/antvis/Infographic/releases/download
 mkdir -p .claude/skills
 
 curl -L --fail -o skills.zip "$BASE_URL/$VERSION/skills.zip"

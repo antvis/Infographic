@@ -56,8 +56,8 @@ const TRANSLATIONS = {
       claudeTitle: 'Claude Code',
       claudeCommands: `set -e
 
-VERSION=0.2.4 # 将 VERSION 替换为最新版本号，例如 0.2.4
-BASE_URL=https://github.com/antvis/Infographic/archive/refs/tags
+VERSION=0.2.4 # 替换为最新版本号，例如 0.2.4
+BASE_URL=https://github.com/antvis/Infographic/releases/download
 mkdir -p .claude/skills
 
 curl -L --fail -o skills.zip "$BASE_URL/$VERSION/skills.zip"
@@ -144,8 +144,8 @@ $skill-installer install https://github.com/antvis/Infographic/tree/main/.skills
       claudeTitle: 'Claude Code',
       claudeCommands: `set -e
 
-VERSION=0.2.4 # Replace <VERSION> with the latest tag, e.g. 0.2.4
-BASE_URL=https://github.com/antvis/Infographic/archive/refs/tags
+VERSION=0.2.4 # Replace with the latest tag, e.g. 0.2.4
+BASE_URL=https://github.com/antvis/Infographic/releases/download
 mkdir -p .claude/skills
 
 curl -L --fail -o skills.zip "$BASE_URL/$VERSION/skills.zip"
