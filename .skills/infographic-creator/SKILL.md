@@ -47,6 +47,7 @@ theme
 - `data` should contain title/desc/items (which can be omitted according to semantics)
 - `data.items` should contain label(string)/value(number)/desc(string)/icon(string)/children(object), where children represents the hierarchical structure
 - For comparison templates (template names starting with `compare-`), construct exactly two root nodes and place every comparison item under them as children to keep the hierarchy clear
+- For `hierarchy-structure`, `data.items` renders top-to-bottom (first item at the top) and supports up to 3 levels (root -> group -> item)
 - `theme` field is for customizing the theme of the infographic, including palette, font, etc.
   e.g. dark theme with custom palette:
   ```plain

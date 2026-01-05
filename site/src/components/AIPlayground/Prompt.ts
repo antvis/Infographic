@@ -36,6 +36,7 @@ theme
 - data 应包含 title/desc/items（根据语义可省略不必要字段）
 - data.items 可包含 label(string)/value(number)/desc(string)/icon(string)/children(array) 等字段，children 表示层级结构
 - 对比类模板（名称以 \`compare-\` 开头）应构建两个根节点，所有对比项作为这两个根节点的 children，确保结构清晰
+- hierarchy-structure 模板最多支持 3 层（根层 → 分组 → 子项），且 data.items 顺序即从上到下的层级顺序（第 1 个在最上）
 - theme 可用 \`theme <theme-name>\`，或使用 block 自定义 palette 等；不写即默认主题，可选：dark、hand-drawn
 - 根据语义选择模板：列表用 list-*，顺序用 sequence-*，对比用 compare-*，层级用 hierarchy-*，统计用 chart-*，象限用 quadrant-*，关系用 relation-*
 - 严禁输出 JSON、Markdown、解释或额外文本

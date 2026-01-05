@@ -34,6 +34,7 @@
 - `data.items` 常见字段：
   - `label`(string) / `value`(number) / `desc`(string) / `icon`(string) / `children`(array)
 - 对比类模板（名称以 `compare-` 开头）必须构建两个根节点，所有对比项作为这两个根节点的 children
+- `hierarchy-structure` 模板最多支持 3 层（根层 → 分组 → 子项），且 `data.items` 顺序即从上到下的层级顺序（第 1 个在最上）
 - `theme` 可用 `theme <theme-name>`，或使用 block 自定义 `palette` 等；不写即默认主题，可选主题名：`dark`、`hand-drawn`
 - icon 直接使用图标名（如 `mdi/chart-line`）
 - 禁止输出 JSON、Markdown 或解释性文字
@@ -50,34 +51,43 @@
 - 关系 → `relation-*`
 
 **可用模板**：
+
 - sequence-zigzag-steps-underline-text
 - sequence-horizontal-zigzag-underline-text
+- sequence-horizontal-zigzag-simple-illus
 - sequence-circular-simple
 - sequence-filter-mesh-simple
 - sequence-mountain-underline-text
 - sequence-cylinders-3d-simple
-- compare-binary-horizontal-simple-fold
-- compare-hierarchy-left-right-circle-node-pill-badge
-- quadrant-quarter-simple-card
-- quadrant-quarter-circular
-- list-grid-badge-card
-- list-grid-candy-card-lite
-- list-grid-ribbon-card
-- list-row-horizontal-icon-arrow
-- relation-circle-icon-badge
-- sequence-ascending-steps
-- compare-swot
 - sequence-color-snake-steps-horizontal-icon-line
 - sequence-pyramid-simple
-- list-sector-plain-text
 - sequence-roadmap-vertical-simple
+- sequence-roadmap-vertical-plain-text
 - sequence-zigzag-pucks-3d-simple
+- sequence-ascending-steps
 - sequence-ascending-stairs-3d-underline-text
+- sequence-snake-steps-compact-card
+- sequence-snake-steps-underline-text
+- sequence-snake-steps-simple
+- sequence-stairs-front-compact-card
+- sequence-stairs-front-pill-badge
+- sequence-timeline-simple
+- sequence-timeline-rounded-rect-node
+- sequence-timeline-simple-illus
+- compare-binary-horizontal-simple-fold
+- compare-hierarchy-left-right-circle-node-pill-badge
+- compare-swot
+- quadrant-quarter-simple-card
+- quadrant-quarter-circular
+- quadrant-simple-illus
+- relation-circle-icon-badge
+- relation-circle-circular-progress
 - compare-binary-horizontal-badge-card-arrow
 - compare-binary-horizontal-underline-text-vs
 - hierarchy-tree-tech-style-capsule-item
 - hierarchy-tree-curved-line-rounded-rect-node
 - hierarchy-tree-tech-style-badge-card
+- hierarchy-structure
 - chart-column-simple
 - chart-bar-plain-text
 - chart-line-plain-text
@@ -85,6 +95,20 @@
 - chart-pie-compact-card
 - chart-pie-donut-plain-text
 - chart-pie-donut-pill-badge
+- chart-wordcloud
+- list-grid-badge-card
+- list-grid-candy-card-lite
+- list-grid-ribbon-card
+- list-row-horizontal-icon-arrow
+- list-row-simple-illus
+- list-sector-plain-text
+- list-column-done-list
+- list-column-vertical-icon-arrow
+- list-column-simple-vertical-arrow
+- list-zigzag-down-compact-card
+- list-zigzag-down-simple
+- list-zigzag-up-compact-card
+- list-zigzag-up-simple
 
 ## 生成流程
 
