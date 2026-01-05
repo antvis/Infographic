@@ -30,6 +30,38 @@ const measureText = (
     </Text>,
   );
 
+const getMaxTextBounds = (
+  labels: string[],
+  fontSize: number,
+  fontWeight: 'normal' | 'bold',
+  fallbackText = ' ',
+) => {
+  const sampleBounds = measureText(fallbackText, fontSize, fontWeight);
+  let maxWidth = sampleBounds.width;
+  let maxHeight = sampleBounds.height;
+
+  labels.forEach((label) => {
+    const bounds = measureText(label || ' ', fontSize, fontWeight);
+    maxWidth = Math.max(maxWidth, bounds.width);
+    maxHeight = Math.max(maxHeight, bounds.height);
+  });
+
+  return { width: maxWidth, height: maxHeight };
+};
+
+const getPillDimensions = (
+  labels: string[],
+  fontSize: number,
+  paddingX: number,
+  paddingY: number,
+) => {
+  const bounds = getMaxTextBounds(labels, fontSize, 'normal', 'Item');
+  return {
+    pillWidth: bounds.width + paddingX * 2,
+    pillHeight: bounds.height + paddingY * 2,
+  };
+};
+
 export interface HierarchyStructureProps extends BaseStructureProps {
   /** Vertical gap between rows. */
   rowGap?: number;
@@ -141,25 +173,19 @@ export const HierarchyStructure: ComponentType<HierarchyStructureProps> = (
     );
 
     if (hasGroups) {
-      const allPills: string[] = [];
+      const pillLabels: string[] = [];
       children.forEach((child) => {
         (child.children || []).forEach((pill) => {
-          allPills.push(normalizeLabel(pill.label));
+          pillLabels.push(normalizeLabel(pill.label));
         });
       });
 
-      const samplePillBounds = measureText('Item', pillFontSize, 'normal');
-      let maxPillWidth = samplePillBounds.width;
-      let maxPillHeight = samplePillBounds.height;
-
-      allPills.forEach((pillLabel) => {
-        const bounds = measureText(pillLabel || ' ', pillFontSize, 'normal');
-        maxPillWidth = Math.max(maxPillWidth, bounds.width);
-        maxPillHeight = Math.max(maxPillHeight, bounds.height);
-      });
-
-      const pillWidth = maxPillWidth + pillPaddingX * 2;
-      const pillHeight = maxPillHeight + pillPaddingY * 2;
+      const { pillWidth, pillHeight } = getPillDimensions(
+        pillLabels,
+        pillFontSize,
+        pillPaddingX,
+        pillPaddingY,
+      );
 
       const groupMetrics = children.map((group) => {
         const groupLabel = normalizeLabel(group.label);
@@ -223,19 +249,13 @@ export const HierarchyStructure: ComponentType<HierarchyStructureProps> = (
       };
     }
 
-    const samplePillBounds = measureText('Item', pillFontSize, 'normal');
-    let maxPillWidth = samplePillBounds.width;
-    let maxPillHeight = samplePillBounds.height;
-
-    children.forEach((child) => {
-      const label = normalizeLabel(child.label);
-      const bounds = measureText(label || ' ', pillFontSize, 'normal');
-      maxPillWidth = Math.max(maxPillWidth, bounds.width);
-      maxPillHeight = Math.max(maxPillHeight, bounds.height);
-    });
-
-    const pillWidth = maxPillWidth + pillPaddingX * 2;
-    const pillHeight = maxPillHeight + pillPaddingY * 2;
+    const pillLabels = children.map((child) => normalizeLabel(child.label));
+    const { pillWidth, pillHeight } = getPillDimensions(
+      pillLabels,
+      pillFontSize,
+      pillPaddingX,
+      pillPaddingY,
+    );
     const columns =
       children.length > 0 ? Math.min(ungroupedColumns, children.length) : 0;
     const rows = columns > 0 ? Math.ceil(children.length / columns) : 0;
@@ -267,218 +287,37 @@ export const HierarchyStructure: ComponentType<HierarchyStructureProps> = (
     0,
   );
 
-  let currentY = 0;
-  let maxWidth = 0;
-
-  rowInfos.forEach((rowInfo, layerIndex) => {
+  const getRowColors = (layerIndex: number) => {
     const rowColor =
       getPaletteColor(options, [layerIndex]) ||
       themeColors.colorPrimary ||
       '#6c7dff';
-    const rowFill = applyAlpha(rowColor, rowBackgroundAlpha);
-    const rowStroke = applyAlpha(rowColor, rowBorderAlpha);
-    const groupFill = applyAlpha(rowColor, groupBackgroundAlpha);
-    const groupStroke = applyAlpha(rowColor, groupBorderAlpha);
-    const pillFill = applyAlpha(rowColor, pillBackgroundAlpha);
-    const pillStroke = applyAlpha(rowColor, pillBorderAlpha);
+    return {
+      rowFill: applyAlpha(rowColor, rowBackgroundAlpha),
+      rowStroke: applyAlpha(rowColor, rowBorderAlpha),
+      groupFill: applyAlpha(rowColor, groupBackgroundAlpha),
+      groupStroke: applyAlpha(rowColor, groupBorderAlpha),
+      pillFill: applyAlpha(rowColor, pillBackgroundAlpha),
+      pillStroke: applyAlpha(rowColor, pillBorderAlpha),
+    };
+  };
 
-    const layerLabel = rowInfo.label;
-    const layerIndexes = [layerIndex];
-    const labelWidth = maxLabelWidth;
-    const labelHeight = rowInfo.labelHeight;
-    const contentInnerHeight = rowInfo.contentInnerHeight;
-    const extraInnerWidth = Math.max(
-      0,
-      targetContentInnerWidth - rowInfo.contentInnerWidth,
-    );
-
-    if (rowInfo.hasGroups) {
-      const groupMetrics = rowInfo.groupMetrics || [];
-      const extraPerGroup =
-        groupMetrics.length > 0 ? extraInnerWidth / groupMetrics.length : 0;
-      const contentInnerWidth =
-        rowInfo.contentInnerWidth +
-        (groupMetrics.length > 0 ? extraInnerWidth : 0);
-      const contentWidth = contentInnerWidth + rowPadding * 2;
-      const contentHeight = contentInnerHeight + rowPadding * 2;
-      const rowHeight = Math.max(labelHeight, contentHeight);
-      const rowY = currentY;
-      const labelX = 0;
-      const labelY = rowY + (rowHeight - labelHeight) / 2;
-      const contentX = labelWidth + labelGap;
-      const contentY = rowY + (rowHeight - contentHeight) / 2;
-
-      decorElements.push(
-        <Rect
-          x={labelX}
-          y={rowY}
-          width={labelWidth}
-          height={rowHeight}
-          fill={rowFill}
-          stroke={rowStroke}
-          rx={rowRadius}
-          ry={rowRadius}
-          data-element-type="shape"
-        />,
-      );
-      decorElements.push(
-        <Rect
-          x={contentX}
-          y={contentY}
-          width={contentWidth}
-          height={contentHeight}
-          fill={rowFill}
-          stroke={rowStroke}
-          rx={rowRadius}
-          ry={rowRadius}
-          data-element-type="shape"
-        />,
-      );
-
-      itemElements.push(
-        <Text
-          x={labelX}
-          y={labelY}
-          width={labelWidth}
-          height={labelHeight}
-          fontSize={labelFontSize}
-          fontWeight="bold"
-          alignHorizontal="center"
-          alignVertical="middle"
-          fill={themeColors.colorText}
-          data-element-type={ElementTypeEnum.ItemLabel}
-          data-indexes={layerIndexes}
-        >
-          {layerLabel}
-        </Text>,
-      );
-
-      let groupX = contentX + rowPadding;
-      groupMetrics.forEach((metric, groupIndex) => {
-        const groupIndexes = [...layerIndexes, groupIndex];
-        const groupWidth = metric.width + extraPerGroup;
-        const groupY =
-          contentY + rowPadding + (contentInnerHeight - metric.height) / 2;
-
-        decorElements.push(
-          <Rect
-            x={groupX}
-            y={groupY}
-            width={groupWidth}
-            height={metric.height}
-            fill={groupFill}
-            stroke={groupStroke}
-            rx={groupRadius}
-            ry={groupRadius}
-            data-element-type="shape"
-          />,
-        );
-
-        const hasGroupChildren = metric.children.length > 0;
-        const titleY = hasGroupChildren ? groupY + groupPadding : groupY;
-        const titleHeight = hasGroupChildren
-          ? metric.titleHeight
-          : metric.height;
-        const titleAlignV = hasGroupChildren ? 'top' : 'middle';
-
-        itemElements.push(
-          <Text
-            x={groupX + groupPadding}
-            y={titleY}
-            width={groupWidth - groupPadding * 2}
-            height={titleHeight}
-            fontSize={groupTitleFontSize}
-            fontWeight="bold"
-            alignHorizontal="center"
-            alignVertical={titleAlignV}
-            fill={themeColors.colorText}
-            data-element-type={ElementTypeEnum.ItemLabel}
-            data-indexes={groupIndexes}
-          >
-            {metric.label}
-          </Text>,
-        );
-
-        if (metric.columns > 0) {
-          const innerWidth = groupWidth - groupPadding * 2;
-          const extraWidth = innerWidth - metric.contentWidth;
-          const columnExtra = extraWidth > 0 ? extraWidth / metric.columns : 0;
-          const pillWidth = metric.pillWidth + columnExtra;
-          const contentWidth =
-            metric.columns * pillWidth + (metric.columns - 1) * pillGap;
-          const contentOffsetX = (innerWidth - contentWidth) / 2;
-          const pillStartX =
-            groupX + groupPadding + Math.max(0, contentOffsetX);
-          const pillStartY =
-            groupY + groupPadding + metric.titleHeight + groupTitleGap;
-
-          metric.children.forEach((pill, pillIndex) => {
-            const pillIndexes = [...groupIndexes, pillIndex];
-            const rowIndex = Math.floor(pillIndex / metric.columns);
-            const colIndex = pillIndex % metric.columns;
-            const pillX = pillStartX + colIndex * (pillWidth + pillGap);
-            const pillY = pillStartY + rowIndex * (metric.pillHeight + pillGap);
-            const pillRx = Math.min(pillRadius, metric.pillHeight / 2);
-
-            decorElements.push(
-              <Rect
-                x={pillX}
-                y={pillY}
-                width={pillWidth}
-                height={metric.pillHeight}
-                fill={pillFill}
-                stroke={pillStroke}
-                rx={pillRx}
-                ry={pillRx}
-                data-element-type="shape"
-              />,
-            );
-
-            itemElements.push(
-              <Text
-                x={pillX}
-                y={pillY}
-                width={pillWidth}
-                height={metric.pillHeight}
-                fontSize={pillFontSize}
-                fontWeight="normal"
-                alignHorizontal="center"
-                alignVertical="middle"
-                fill={themeColors.colorText}
-                data-element-type={ElementTypeEnum.ItemLabel}
-                data-indexes={pillIndexes}
-              >
-                {normalizeLabel(pill.label)}
-              </Text>,
-            );
-          });
-        }
-
-        groupX += groupWidth + groupGap;
-      });
-
-      const rowWidth = contentX + contentWidth;
-      maxWidth = Math.max(maxWidth, rowWidth);
-      currentY += rowHeight + rowGap;
-      return;
-    }
-
-    const columns = rowInfo.columns || 0;
-    const pillWidthBase = rowInfo.pillWidth || 0;
-    const pillHeight = rowInfo.pillHeight || 0;
-    const extraPerColumn = columns > 0 ? extraInnerWidth / columns : 0;
-    const pillWidth = pillWidthBase + extraPerColumn;
-    const contentInnerWidth =
-      columns > 0 ? columns * pillWidth + (columns - 1) * pillGap : 0;
-    const contentWidth = contentInnerWidth + rowPadding * 2;
-    const contentHeight = contentInnerHeight + rowPadding * 2;
-    const rowHeight = Math.max(labelHeight, contentHeight);
-    const rowY = currentY;
-    const labelX = 0;
-    const labelY = rowY + (rowHeight - labelHeight) / 2;
-    const contentX = labelWidth + labelGap;
-    const contentY = rowY + (rowHeight - contentHeight) / 2;
-
+  const renderRowFrame = (
+    layerLabel: string,
+    layerIndexes: number[],
+    labelX: number,
+    labelY: number,
+    labelWidth: number,
+    labelHeight: number,
+    rowY: number,
+    rowHeight: number,
+    contentX: number,
+    contentY: number,
+    contentWidth: number,
+    contentHeight: number,
+    rowFill: string,
+    rowStroke: string,
+  ) => {
     decorElements.push(
       <Rect
         x={labelX}
@@ -523,6 +362,205 @@ export const HierarchyStructure: ComponentType<HierarchyStructureProps> = (
         {layerLabel}
       </Text>,
     );
+  };
+
+  const renderGroupedRow = (
+    rowInfo: (typeof rowInfos)[number],
+    layerIndex: number,
+    rowY: number,
+    rowColors: ReturnType<typeof getRowColors>,
+  ) => {
+    const groupMetrics = rowInfo.groupMetrics || [];
+    const layerLabel = rowInfo.label;
+    const layerIndexes = [layerIndex];
+    const labelWidth = maxLabelWidth;
+    const labelHeight = rowInfo.labelHeight;
+    const contentInnerHeight = rowInfo.contentInnerHeight;
+    const extraInnerWidth = Math.max(
+      0,
+      targetContentInnerWidth - rowInfo.contentInnerWidth,
+    );
+    const extraPerGroup =
+      groupMetrics.length > 0 ? extraInnerWidth / groupMetrics.length : 0;
+    const contentInnerWidth =
+      rowInfo.contentInnerWidth +
+      (groupMetrics.length > 0 ? extraInnerWidth : 0);
+    const contentWidth = contentInnerWidth + rowPadding * 2;
+    const contentHeight = contentInnerHeight + rowPadding * 2;
+    const rowHeight = Math.max(labelHeight, contentHeight);
+    const labelX = 0;
+    const labelY = rowY + (rowHeight - labelHeight) / 2;
+    const contentX = labelWidth + labelGap;
+    const contentY = rowY + (rowHeight - contentHeight) / 2;
+
+    renderRowFrame(
+      layerLabel,
+      layerIndexes,
+      labelX,
+      labelY,
+      labelWidth,
+      labelHeight,
+      rowY,
+      rowHeight,
+      contentX,
+      contentY,
+      contentWidth,
+      contentHeight,
+      rowColors.rowFill,
+      rowColors.rowStroke,
+    );
+
+    let groupX = contentX + rowPadding;
+    groupMetrics.forEach((metric, groupIndex) => {
+      const groupIndexes = [...layerIndexes, groupIndex];
+      const groupWidth = metric.width + extraPerGroup;
+      const groupY =
+        contentY + rowPadding + (contentInnerHeight - metric.height) / 2;
+
+      decorElements.push(
+        <Rect
+          x={groupX}
+          y={groupY}
+          width={groupWidth}
+          height={metric.height}
+          fill={rowColors.groupFill}
+          stroke={rowColors.groupStroke}
+          rx={groupRadius}
+          ry={groupRadius}
+          data-element-type="shape"
+        />,
+      );
+
+      const hasGroupChildren = metric.children.length > 0;
+      const titleY = hasGroupChildren ? groupY + groupPadding : groupY;
+      const titleHeight = hasGroupChildren ? metric.titleHeight : metric.height;
+      const titleAlignV = hasGroupChildren ? 'top' : 'middle';
+
+      itemElements.push(
+        <Text
+          x={groupX + groupPadding}
+          y={titleY}
+          width={groupWidth - groupPadding * 2}
+          height={titleHeight}
+          fontSize={groupTitleFontSize}
+          fontWeight="bold"
+          alignHorizontal="center"
+          alignVertical={titleAlignV}
+          fill={themeColors.colorText}
+          data-element-type={ElementTypeEnum.ItemLabel}
+          data-indexes={groupIndexes}
+        >
+          {metric.label}
+        </Text>,
+      );
+
+      if (metric.columns > 0) {
+        const innerWidth = groupWidth - groupPadding * 2;
+        const extraWidth = innerWidth - metric.contentWidth;
+        const columnExtra = extraWidth > 0 ? extraWidth / metric.columns : 0;
+        const pillWidth = metric.pillWidth + columnExtra;
+        const contentWidth =
+          metric.columns * pillWidth + (metric.columns - 1) * pillGap;
+        const contentOffsetX = (innerWidth - contentWidth) / 2;
+        const pillStartX = groupX + groupPadding + Math.max(0, contentOffsetX);
+        const pillStartY =
+          groupY + groupPadding + metric.titleHeight + groupTitleGap;
+
+        metric.children.forEach((pill, pillIndex) => {
+          const pillIndexes = [...groupIndexes, pillIndex];
+          const rowIndex = Math.floor(pillIndex / metric.columns);
+          const colIndex = pillIndex % metric.columns;
+          const pillX = pillStartX + colIndex * (pillWidth + pillGap);
+          const pillY = pillStartY + rowIndex * (metric.pillHeight + pillGap);
+          const pillRx = Math.min(pillRadius, metric.pillHeight / 2);
+
+          decorElements.push(
+            <Rect
+              x={pillX}
+              y={pillY}
+              width={pillWidth}
+              height={metric.pillHeight}
+              fill={rowColors.pillFill}
+              stroke={rowColors.pillStroke}
+              rx={pillRx}
+              ry={pillRx}
+              data-element-type="shape"
+            />,
+          );
+
+          itemElements.push(
+            <Text
+              x={pillX}
+              y={pillY}
+              width={pillWidth}
+              height={metric.pillHeight}
+              fontSize={pillFontSize}
+              fontWeight="normal"
+              alignHorizontal="center"
+              alignVertical="middle"
+              fill={themeColors.colorText}
+              data-element-type={ElementTypeEnum.ItemLabel}
+              data-indexes={pillIndexes}
+            >
+              {normalizeLabel(pill.label)}
+            </Text>,
+          );
+        });
+      }
+
+      groupX += groupWidth + groupGap;
+    });
+
+    const rowWidth = contentX + contentWidth;
+    return { rowWidth, rowHeight };
+  };
+
+  const renderUngroupedRow = (
+    rowInfo: (typeof rowInfos)[number],
+    layerIndex: number,
+    rowY: number,
+    rowColors: ReturnType<typeof getRowColors>,
+  ) => {
+    const layerLabel = rowInfo.label;
+    const layerIndexes = [layerIndex];
+    const labelWidth = maxLabelWidth;
+    const labelHeight = rowInfo.labelHeight;
+    const contentInnerHeight = rowInfo.contentInnerHeight;
+    const extraInnerWidth = Math.max(
+      0,
+      targetContentInnerWidth - rowInfo.contentInnerWidth,
+    );
+    const columns = rowInfo.columns || 0;
+    const pillWidthBase = rowInfo.pillWidth || 0;
+    const pillHeight = rowInfo.pillHeight || 0;
+    const extraPerColumn = columns > 0 ? extraInnerWidth / columns : 0;
+    const pillWidth = pillWidthBase + extraPerColumn;
+    const contentInnerWidth =
+      columns > 0 ? columns * pillWidth + (columns - 1) * pillGap : 0;
+    const contentWidth = contentInnerWidth + rowPadding * 2;
+    const contentHeight = contentInnerHeight + rowPadding * 2;
+    const rowHeight = Math.max(labelHeight, contentHeight);
+    const labelX = 0;
+    const labelY = rowY + (rowHeight - labelHeight) / 2;
+    const contentX = labelWidth + labelGap;
+    const contentY = rowY + (rowHeight - contentHeight) / 2;
+
+    renderRowFrame(
+      layerLabel,
+      layerIndexes,
+      labelX,
+      labelY,
+      labelWidth,
+      labelHeight,
+      rowY,
+      rowHeight,
+      contentX,
+      contentY,
+      contentWidth,
+      contentHeight,
+      rowColors.rowFill,
+      rowColors.rowStroke,
+    );
 
     if (columns > 0) {
       const pillStartX = contentX + rowPadding;
@@ -543,8 +581,8 @@ export const HierarchyStructure: ComponentType<HierarchyStructureProps> = (
             y={pillY}
             width={pillWidth}
             height={pillHeight}
-            fill={pillFill}
-            stroke={pillStroke}
+            fill={rowColors.pillFill}
+            stroke={rowColors.pillStroke}
             rx={pillRx}
             ry={pillRx}
             data-element-type="shape"
@@ -572,6 +610,18 @@ export const HierarchyStructure: ComponentType<HierarchyStructureProps> = (
     }
 
     const rowWidth = contentX + contentWidth;
+    return { rowWidth, rowHeight };
+  };
+
+  let currentY = 0;
+  let maxWidth = 0;
+
+  rowInfos.forEach((rowInfo, layerIndex) => {
+    const rowColors = getRowColors(layerIndex);
+    const { rowWidth, rowHeight } = rowInfo.hasGroups
+      ? renderGroupedRow(rowInfo, layerIndex, currentY, rowColors)
+      : renderUngroupedRow(rowInfo, layerIndex, currentY, rowColors);
+
     maxWidth = Math.max(maxWidth, rowWidth);
     currentY += rowHeight + rowGap;
   });
