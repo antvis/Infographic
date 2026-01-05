@@ -1,10 +1,20 @@
+let _isBrowser: boolean | undefined;
+
 export function isBrowser(): boolean {
+  if (_isBrowser !== undefined) {
+    return _isBrowser;
+  }
+
   if (typeof window === 'undefined' || typeof document === 'undefined') {
+    _isBrowser = false;
     return false;
   }
 
   const body = document.body;
-  if (!body) return false;
+  if (!body) {
+    _isBrowser = false;
+    return false;
+  }
 
   let hasRealLayout = false;
   try {
@@ -36,7 +46,10 @@ export function isBrowser(): boolean {
     hasRealLayout = false;
   }
 
-  if (!hasRealLayout) return false;
+  if (!hasRealLayout) {
+    _isBrowser = false;
+    return false;
+  }
 
   let hasRealCanvas = false;
   try {
@@ -45,7 +58,10 @@ export function isBrowser(): boolean {
     canvas.height = 50;
 
     const ctx = canvas.getContext('2d');
-    if (!ctx) return false;
+    if (!ctx) {
+      _isBrowser = false;
+      return false;
+    }
 
     ctx.font = '20px sans-serif';
     const metrics = ctx.measureText('Hello');
@@ -58,5 +74,6 @@ export function isBrowser(): boolean {
     hasRealCanvas = false;
   }
 
+  _isBrowser = hasRealCanvas;
   return hasRealCanvas;
 }

@@ -1,5 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { isBrowser } from '../../../src/utils/is-browser';
+
+async function loadIsBrowser() {
+  vi.resetModules();
+  return (await import('../../../src/utils/is-browser')).isBrowser;
+}
 
 describe('isBrowser', () => {
   afterEach(() => {
@@ -10,14 +14,16 @@ describe('isBrowser', () => {
     }
   });
 
-  it('returns false when window or document is missing', () => {
+  it('returns false when window or document is missing', async () => {
+    const isBrowser = await loadIsBrowser();
     vi.stubGlobal('window', undefined);
     vi.stubGlobal('document', undefined);
 
     expect(isBrowser()).toBe(false);
   });
 
-  it('returns false when layout validation fails', () => {
+  it('returns false when layout validation fails', async () => {
+    const isBrowser = await loadIsBrowser();
     const originalCreateElement = document.createElement.bind(document);
     vi.spyOn(document, 'createElement').mockImplementation(
       (tagName: string, options?: ElementCreationOptions) => {
@@ -50,7 +56,8 @@ describe('isBrowser', () => {
     expect(isBrowser()).toBe(false);
   });
 
-  it('returns false when canvas validation fails', () => {
+  it('returns false when canvas validation fails', async () => {
+    const isBrowser = await loadIsBrowser();
     const originalCreateElement = document.createElement.bind(document);
     vi.spyOn(document, 'createElement').mockImplementation(
       (tagName: string, options?: ElementCreationOptions) => {
@@ -80,7 +87,8 @@ describe('isBrowser', () => {
     expect(isBrowser()).toBe(false);
   });
 
-  it('returns true when layout and canvas are real', () => {
+  it('returns true when layout and canvas are real', async () => {
+    const isBrowser = await loadIsBrowser();
     const originalCreateElement = document.createElement.bind(document);
     vi.spyOn(document, 'createElement').mockImplementation(
       (tagName: string, options?: ElementCreationOptions) => {
