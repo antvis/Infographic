@@ -14,10 +14,11 @@ Update public template lists and gallery mappings when new templates are added i
 1. Collect new template names from the added `src/templates/*.ts` file (object keys).
    - If templates are composed via spreads (e.g. `...listZigzagTemplates`), also confirm the final keys in `src/templates/built-in.ts`.
 2. Update template lists:
-   - `SKILL.md` in the "Available Templates" list.
+   - `.skills/infographic-creator/SKILL.md` in the "Available Templates" list.
    - `site/src/components/AIPlayground/Prompt.ts` in the template list.
+   - `.skills/infographic-syntax-creator/references/prompt.md` in the template list.
    Keep existing ordering/grouping; add new `list-*` entries near other list templates.
-3. Sanity check with `rg -n "<template-name>"` across the three files to confirm presence.
+3. Sanity check with `rg -n "<template-name>"` across the above files to confirm presence.
 
 ## Notes
 
