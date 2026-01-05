@@ -3,19 +3,23 @@ import AlibabaPuHuiTi from 'measury/fonts/AlibabaPuHuiTi-Regular';
 import { TextProps } from '../jsx';
 import { DEFAULT_FONT } from '../renderer';
 import { encodeFontFamily } from './font';
+import { isBrowser } from './is-browser';
 import { isNode } from './is-node';
+
+let FONT_EXTEND_FACTOR = 1.01;
+
+export const setFontExtendFactor = (factor: number) => {
+  FONT_EXTEND_FACTOR = factor;
+};
 
 if (isNode) {
   registerFont(AlibabaPuHuiTi);
 }
 
-const canUseDOM =
-  !isNode && typeof window !== 'undefined' && typeof document !== 'undefined';
 let canvasContext: CanvasRenderingContext2D | null = null;
 let measureSpan: HTMLSpanElement | null = null;
 
 function getCanvasContext() {
-  if (!canUseDOM) return null;
   if (canvasContext) return canvasContext;
   const canvas = document.createElement('canvas');
   canvasContext = canvas.getContext('2d');
@@ -23,7 +27,7 @@ function getCanvasContext() {
 }
 
 function getMeasureSpan() {
-  if (!canUseDOM || !document.body) return null;
+  if (!document.body) return null;
   if (measureSpan) return measureSpan;
   measureSpan = document.createElement('span');
   measureSpan.style.position = 'absolute';
@@ -123,13 +127,13 @@ export function measureText(
     lineHeight,
   };
   const fallback = () => measure(content, options);
-  const metrics = canUseDOM
+  const metrics = isBrowser()
     ? (measureTextInBrowser(content, options) ?? fallback())
     : fallback();
 
   // 额外添加 1% 宽高
   return {
-    width: Math.ceil(metrics.width * 1.01),
-    height: Math.ceil(metrics.height * 1.01),
+    width: Math.ceil(metrics.width * FONT_EXTEND_FACTOR),
+    height: Math.ceil(metrics.height * FONT_EXTEND_FACTOR),
   };
 }
