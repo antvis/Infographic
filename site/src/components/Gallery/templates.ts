@@ -1,5 +1,5 @@
 import {getTemplates} from '@antv/infographic';
-import {getDataByTemplate} from '../../../../shared/template-data';
+import {getDataByTemplate} from '../../../../shared/get-template-data';
 
 export type GalleryTemplate = {
   template: string;

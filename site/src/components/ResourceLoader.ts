@@ -59,7 +59,6 @@ registerResourceLoader(async (config) => {
       try {
         svgText = await fetchPromise;
       } catch (error) {
-        pendingRequests.delete(key);
         console.error(`Error loading resource ${key}:`, error);
         return null;
       } finally {

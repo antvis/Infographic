@@ -2,7 +2,7 @@ import { getTemplate, getTemplates, ThemeConfig } from '@antv/infographic';
 import Editor from '@monaco-editor/react';
 import { Button, Card, Checkbox, ColorPicker, Form, Select } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
-import { getDataByTemplate } from '../../shared/template-data';
+import { getDataByTemplate } from '../../shared/get-template-data';
 import { Infographic } from './Infographic';
 import { DATA_KEYS, DATASET, DEFAULT_DATA_KEY, type DataKey } from './data';
 import { getStoredValues, setStoredValues } from './utils/storage';

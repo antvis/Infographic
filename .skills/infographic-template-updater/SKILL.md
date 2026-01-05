@@ -17,11 +17,7 @@ Update public template lists and gallery mappings when new templates are added i
    - `SKILL.md` in the "Available Templates" list.
    - `site/src/components/AIPlayground/Prompt.ts` in the template list.
    Keep existing ordering/grouping; add new `list-*` entries near other list templates.
-3. Update gallery mapping in `site/src/components/Gallery/templates.ts`:
-   - Add entries to `TEMPLATE_ENTRIES` with the correct dataset.
-   - Prefer matching the dataset used by similar templates (e.g. hierarchy -> `DATASET.HIERARCHY`, compare -> `DATASET.PROS_CONS`, chart -> `DATASET.CHART`, list -> `DATASET.LIST`).
-   - If the template should be featured, add it to `PREMIUM_TEMPLATE_KEYS` in the desired order.
-4. Sanity check with `rg -n "<template-name>"` across the three files to confirm presence.
+3. Sanity check with `rg -n "<template-name>"` across the three files to confirm presence.
 
 ## Notes
 
