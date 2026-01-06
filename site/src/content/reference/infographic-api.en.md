@@ -96,7 +96,7 @@ Export the infographic as an image and receive a `data:` URL string. This method
 toDataURL(options?: ExportOptions): Promise<string>
 ```
 
-`options` (see [ExportOptions](/reference/infographic-types#export-options)) accepts `{type: 'svg'; embedResources?: boolean}` or `{type: 'png'; dpr?: number}`. Defaults to PNG when omitted.
+`options` (see [ExportOptions](/reference/infographic-types#export-options)) accepts `{type: 'svg'; embedResources?: boolean; removeIds?: boolean}` or `{type: 'png'; dpr?: number}`. Defaults to PNG when omitted.
 
 **Example**:
 

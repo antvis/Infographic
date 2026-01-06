@@ -5,6 +5,11 @@ export interface SVGExportOptions {
    * @default true
    */
   embedResources?: boolean;
+  /**
+   * 是否移除 id 依赖（展开 <use> 并内联 defs 引用）
+   * @default false
+   */
+  removeIds?: boolean;
 }
 
 export interface PNGExportOptions {

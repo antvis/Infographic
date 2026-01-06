@@ -14,6 +14,7 @@ export {
   ZoomWheel,
 } from './editor/interactions';
 export { EditBar, Plugin, ResizeElement } from './editor/plugins';
+export { exportToSVG } from './exporter';
 export {
   Defs,
   Ellipse,
@@ -53,6 +54,11 @@ export { getTheme, getThemes, registerTheme } from './themes';
 export { parseSVG, setFontExtendFactor } from './utils';
 
 export type { EditBarOptions } from './editor';
+export type {
+  ExportOptions,
+  PNGExportOptions,
+  SVGExportOptions,
+} from './exporter';
 export type {
   Bounds,
   ComponentType,

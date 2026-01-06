@@ -110,7 +110,7 @@ getTypes(): string
 toDataURL(options?: ExportOptions): Promise<string>
 ```
 
-`options`（见 [ExportOptions](/reference/infographic-types#export-options)）支持 `{type: 'svg'; embedResources?: boolean}` 或 `{type: 'png'; dpr?: number}`，不传时默认导出 PNG。
+`options`（见 [ExportOptions](/reference/infographic-types#export-options)）支持 `{type: 'svg'; embedResources?: boolean; removeIds?: boolean}` 或 `{type: 'png'; dpr?: number}`，不传时默认导出 PNG。
 
 **示例：**
 
