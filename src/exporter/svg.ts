@@ -262,21 +262,8 @@ function createDefsDataUrl(svg: SVGSVGElement, ids: Set<string>) {
   });
   const defs = createElement<SVGDefsElement>('defs');
 
-  const appended = new Set<string>();
-  const defsList = Array.from(svg.querySelectorAll('defs'));
-  defsList.forEach((defsNode) => {
-    Array.from(defsNode.children).forEach((child) => {
-      const id = child.getAttribute('id');
-      if (!id || !collected.has(id) || appended.has(id)) return;
-      defs.appendChild(child.cloneNode(true));
-      appended.add(id);
-    });
-  });
-
-  collected.forEach((node, id) => {
-    if (appended.has(id)) return;
+  collected.forEach((node) => {
     defs.appendChild(node.cloneNode(true));
-    appended.add(id);
   });
 
   if (!defs.children.length) return null;
@@ -319,7 +306,7 @@ function escapeCssId(id: string) {
   if (globalThis.CSS && typeof globalThis.CSS.escape === 'function') {
     return globalThis.CSS.escape(id);
   }
-  return id.replace(/["\\]/g, '\\$&');
+  return id.replace(/([!"#$%&'()*+,./:;<=>?@[\]^`{|}~])/g, '\\$1');
 }
 
 function removeDefs(svg: SVGSVGElement) {
