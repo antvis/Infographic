@@ -1,5 +1,6 @@
 import type { ItemDatum } from '../types';
 import { getOrCreateDefs } from '../utils';
+import { getSvgLoadPromise, trackSvgLoadPromise } from './load-tracker';
 import {
   loadImageBase64Resource,
   loadRemoteResource,
@@ -67,24 +68,38 @@ export async function loadResource(
   const cfg = parseResourceConfig(config);
   if (!cfg) return null;
   const id = getResourceId(cfg)!;
+  const promiseKey = `resource:${id}`;
 
-  const resource = RESOURCE_MAP.has(id)
-    ? RESOURCE_MAP.get(id) || null
-    : await getResource(scene, cfg, datum);
+  const loadedMap = RESOURCE_LOAD_MAP.get(svg);
+  if (loadedMap?.has(id)) return id;
 
-  if (!resource) return null;
+  const existingPromise = getSvgLoadPromise<string | null>(svg, promiseKey);
+  if (existingPromise) return await existingPromise;
 
-  if (!RESOURCE_LOAD_MAP.has(svg)) RESOURCE_LOAD_MAP.set(svg, new Map());
-  const map = RESOURCE_LOAD_MAP.get(svg)!;
-  if (map.has(id)) return id;
+  const loadPromise = (async () => {
+    const resource = RESOURCE_MAP.has(id)
+      ? RESOURCE_MAP.get(id) || null
+      : await getResource(scene, cfg, datum);
 
-  const defs = getOrCreateDefs(svg);
-  resource.id = id;
-  defs.appendChild(resource);
-  map.set(id, resource);
+    if (!resource) return null;
 
-  return id;
+    if (!RESOURCE_LOAD_MAP.has(svg)) RESOURCE_LOAD_MAP.set(svg, new Map());
+    const map = RESOURCE_LOAD_MAP.get(svg)!;
+    if (map.has(id)) return id;
+
+    const defs = getOrCreateDefs(svg);
+    resource.id = id;
+    defs.appendChild(resource);
+    map.set(id, resource);
+
+    return id;
+  })();
+  trackSvgLoadPromise(svg, promiseKey, loadPromise);
+
+  return await loadPromise;
 }
+
+export { getSvgLoadPromises, waitForSvgLoads } from './load-tracker';
 
 function getFallbackQuery(
   cfg: ResourceConfig,

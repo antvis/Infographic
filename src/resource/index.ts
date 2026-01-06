@@ -1,4 +1,4 @@
-export { loadResource } from './loader';
+export { getSvgLoadPromises, loadResource, waitForSvgLoads } from './loader';
 export * from './loaders';
 export { registerResourceLoader } from './registry';
 export type * from './types';
