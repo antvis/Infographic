@@ -14,6 +14,13 @@ import { getPaletteColor, getThemeColors } from '../utils';
 import { registerStructure } from './registry';
 import type { BaseStructureProps } from './types';
 
+// Constants
+const FUNNEL_CORNER_RADIUS = 6;
+const ICON_SIZE = 32;
+const FUNNEL_LAYER_HEIGHT_RATIO = 1.25;
+const OVERLAP_DIST = 25;
+const TEXT_GAP = 15;
+
 // SequenceFunnel 的可配置属性
 export interface SequenceFunnelProps extends BaseStructureProps {
   gap?: number;
@@ -21,7 +28,7 @@ export interface SequenceFunnelProps extends BaseStructureProps {
   funnelWidth?: number;
   itemHeight?: number;
   // 新增：底部宽度比例（0~1），控制漏斗底部的收窄程度，避免变成尖角
-  // 默认为 0.2 (即底部宽度是顶部的 20%)
+  // 默认为 0.25 (即底部宽度是顶部的 25%)
   minBottomRatio?: number;
 }
 
@@ -37,7 +44,7 @@ export const SequenceFunnel: ComponentType<SequenceFunnelProps> = (props) => {
     minBottomRatio = 0.25, // 默认底部保留 25% 的宽度，形成梯形
     options,
   } = props;
-  
+
   const { title, desc, items = [] } = data;
 
   const titleContent = Title ? <Title title={title} desc={desc} /> : null;
@@ -55,9 +62,7 @@ export const SequenceFunnel: ComponentType<SequenceFunnelProps> = (props) => {
     );
   }
 
-  const radius = 6;
   const themeColors = getThemeColors(options.themeConfig);
-  const iconSize = 32;
 
   const itemElements: JSXElement[] = [];
   const funnelElements: JSXElement[] = [];
@@ -69,7 +74,7 @@ export const SequenceFunnel: ComponentType<SequenceFunnelProps> = (props) => {
   const itemAreaWidth = width - actualFunnelWidth;
 
   // 漏斗层高度
-  const funnelLayerHeight = itemHeight * 1.25;
+  const funnelLayerHeight = itemHeight * FUNNEL_LAYER_HEIGHT_RATIO;
   const totalHeight =
     items.length * funnelLayerHeight + (items.length - 1) * gap;
 
@@ -78,23 +83,22 @@ export const SequenceFunnel: ComponentType<SequenceFunnelProps> = (props) => {
 
   items.forEach((item, index) => {
     const indexes = [index];
-    
     // 获取颜色
     const color = getPaletteColor(options, [index]) || themeColors.colorPrimary;
 
     // 1. 计算当前层的梯形形状
     // 使用线性插值，从 actualFunnelWidth 收缩到 minFunnelPixelWidth
-    const { points, topWidth, bottomWidth } = calculateTrapezoidSegment(
+    const { points, topWidth } = calculateTrapezoidSegment(
       actualFunnelWidth,
       minFunnelPixelWidth,
       funnelLayerHeight,
       gap,
-      items.length,
+      totalHeight,
       index,
     );
 
     // 圆角处理
-    const rounded = roundPolygon(points, radius);
+    const rounded = roundPolygon(points, FUNNEL_CORNER_RADIUS);
     const segments = getSegments(rounded, 'AMOUNT', 10);
 
     // 坐标计算
@@ -105,29 +109,24 @@ export const SequenceFunnel: ComponentType<SequenceFunnelProps> = (props) => {
     // 在漏斗（倒梯形）中，顶边（topWidth）总是比底边（bottomWidth）宽
     // 所以右侧边缘的最外点是 topWidth 的一半
     const rightTopX = funnelCenterX + topWidth / 2;
-    
-    // 定义重叠量：背景要插入漏斗下方多少像素
-    const overlapDist = 25; 
-    // 定义文字与漏斗边缘的间距
-    const textGap = 15;
 
     // 背景卡片：
     // X 轴起点：从漏斗最宽处向左回缩 overlapDist，形成“插入”效果
-    const backgroundX = rightTopX - overlapDist;
+    const backgroundX = rightTopX - OVERLAP_DIST;
     // 宽度：填满剩余空间，但要补上左侧回缩的距离
-    const backgroundWidth = itemAreaWidth + overlapDist - 10; // -10 用于右侧留白
+    const backgroundWidth = itemAreaWidth + OVERLAP_DIST - 10; // -10 用于右侧留白
     const backgroundYOffset = (funnelLayerHeight - itemHeight) / 2;
     const backgroundY = funnelY + backgroundYOffset;
 
     // 文本内容 (Item)：
     // X 轴起点：不应该跟着背景向左缩，而应该在漏斗边缘右侧，避免被漏斗遮挡
-    const itemX = rightTopX + textGap;
-    const itemWidth = backgroundWidth - overlapDist - textGap;
+    const itemX = rightTopX + TEXT_GAP;
+    const itemWidth = backgroundWidth - OVERLAP_DIST - TEXT_GAP;
     const itemY = backgroundY;
 
     // 图标位置
-    const iconX = funnelCenterX - iconSize / 2;
-    const iconY = funnelY + funnelLayerHeight / 2 - iconSize / 2;
+    const iconX = funnelCenterX - ICON_SIZE / 2;
+    const iconY = funnelY + funnelLayerHeight / 2 - ICON_SIZE / 2;
 
     // 渲染顺序 1: 背景 (最底层)
     backgroundElements.push(
@@ -143,7 +142,8 @@ export const SequenceFunnel: ComponentType<SequenceFunnelProps> = (props) => {
     );
 
     // 渲染顺序 2: 漏斗形状 (中间层，覆盖在背景左侧之上)
-    const funnelColorId = `${color}-funnel-${index}`;
+    // 修复: 移除颜色中的 #，避免 ID 非法
+    const funnelColorId = `${color.replace('#', '')}-funnel-${index}`;
     funnelElements.push(
       <Defs>
         <linearGradient id={funnelColorId} x1="0%" y1="0%" x2="100%" y2="0%">
@@ -167,7 +167,7 @@ export const SequenceFunnel: ComponentType<SequenceFunnelProps> = (props) => {
         indexes={indexes}
         x={iconX}
         y={iconY}
-        size={iconSize}
+        size={ICON_SIZE}
         fill="#fff"
       />,
     );
@@ -215,13 +215,10 @@ function calculateTrapezoidSegment(
   minWidth: number,
   layerHeight: number,
   gap: number,
-  counts: number,
+  totalHeight: number,
   index: number,
 ) {
   const centerX = maxWidth / 2;
-  
-  // 整个视觉组件的总高度
-  const totalHeight = counts * layerHeight + (counts - 1) * gap;
 
   // 当前层顶部和底部的 Y 坐标（相对于总高度）
   const currentTopY = index * (layerHeight + gap);
@@ -230,7 +227,7 @@ function calculateTrapezoidSegment(
   // 线性插值计算宽度
   // Width = MaxWidth - (MaxWidth - MinWidth) * (Y / TotalHeight)
   const widthDiff = maxWidth - minWidth;
-  
+
   const topWidth = maxWidth - widthDiff * (currentTopY / totalHeight);
   const bottomWidth = maxWidth - widthDiff * (currentBottomY / totalHeight);
 
