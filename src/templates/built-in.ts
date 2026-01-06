@@ -310,6 +310,16 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
       colorPrimary: '#1677ff',
     },
   },
+  'sequence-funnel-simple': {
+    design: {
+      title: 'default',
+      structure: { type: 'sequence-funnel'},
+      items: [{ type: 'simple', showIcon: false, usePaletteColor: true}],
+    },
+    themeConfig: {
+      palette: '#1677ff',
+    },
+  },
   'list-row-horizontal-icon-line': {
     design: {
       title: 'default',
