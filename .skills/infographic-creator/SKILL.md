@@ -152,6 +152,7 @@ interface ItemDatum {
 - sequence-cylinders-3d-simple
 - sequence-color-snake-steps-horizontal-icon-line
 - sequence-pyramid-simple
+- sequence-funnel-simple
 - sequence-roadmap-vertical-simple
 - sequence-roadmap-vertical-plain-text
 - sequence-zigzag-pucks-3d-simple
