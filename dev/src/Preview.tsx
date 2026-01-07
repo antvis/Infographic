@@ -1,7 +1,7 @@
 import { getTemplate, getTemplates, ThemeConfig } from '@antv/infographic';
 import Editor from '@monaco-editor/react';
 import { Button, Card, Checkbox, ColorPicker, Form, Select } from 'antd';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getDataByTemplate } from '../../shared/get-template-data';
 import { Infographic } from './Infographic';
 import { DATA_KEYS, DATASET, DEFAULT_DATA_KEY, type DataKey } from './data';
@@ -43,11 +43,15 @@ export const Preview = () => {
   });
 
   const initialTemplate = storedValues?.template || templates[0];
-  const initialData = storedValues?.data || DEFAULT_DATA_KEY;
+  const templateData = getDataByTemplate(initialTemplate);
+  const initialData = storedValues?.data || resolvePreviewDataKey(templateData);
   const initialTheme = storedValues?.theme || 'light';
   const initialColorPrimary = storedValues?.colorPrimary || '#FF356A';
   const initialEnablePrimary = storedValues?.enablePrimary ?? true;
   const initialEnablePalette = storedValues?.enablePalette || false;
+  const initialDataValue = storedValues?.data
+    ? DATASET[initialData]
+    : templateData;
 
   const [template, setTemplate] = useState(initialTemplate);
   const [data, setData] = useState<DataKey>(initialData);
@@ -56,7 +60,7 @@ export const Preview = () => {
   const [enablePrimary, setEnablePrimary] = useState(initialEnablePrimary);
   const [enablePalette, setEnablePalette] = useState(initialEnablePalette);
   const [customData, setCustomData] = useState<string>(() =>
-    JSON.stringify(DATASET[initialData], null, 2),
+    JSON.stringify(initialDataValue, null, 2),
   );
   const [dataError, setDataError] = useState<string>('');
 
@@ -100,19 +104,22 @@ export const Preview = () => {
     return config ? JSON.stringify(config, null, 2) : '{}';
   }, [template, data]);
 
-  const applyTemplate = (nextTemplate: string) => {
-    const nextData = getDataByTemplate(nextTemplate);
-    const nextSelection = {
-      key: resolvePreviewDataKey(nextData),
-      data: nextData,
-    };
-    setTemplate(nextTemplate);
-    if (nextSelection.key !== data) {
-      setData(nextSelection.key);
-      setCustomData(JSON.stringify(nextSelection.data, null, 2));
-      setDataError('');
-    }
-  };
+  const applyTemplate = useCallback(
+    (nextTemplate: string) => {
+      const nextData = getDataByTemplate(nextTemplate);
+      const nextSelection = {
+        key: resolvePreviewDataKey(nextData),
+        data: nextData,
+      };
+      setTemplate(nextTemplate);
+      if (nextSelection.key !== data) {
+        setData(nextSelection.key);
+        setCustomData(JSON.stringify(nextSelection.data, null, 2));
+        setDataError('');
+      }
+    },
+    [data],
+  );
 
   const handleCopyTemplate = async () => {
     try {
@@ -176,7 +183,7 @@ export const Preview = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [template]);
+  }, [template, applyTemplate]);
 
   return (
     <div style={{ display: 'flex', gap: 16, padding: 16, flex: 1 }}>
