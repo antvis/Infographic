@@ -59,4 +59,6 @@ interface SVGOptions {
   attributes?: Record<string, string | number | boolean>;
   id?: string;
   className?: string;
+  /** 是否启用背景 */
+  background?: boolean;
 }

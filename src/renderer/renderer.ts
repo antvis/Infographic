@@ -95,8 +95,7 @@ function renderTemplate(svg: SVGSVGElement, options: ParsedInfographicOptions) {
 
   setSVG(svg, options);
 
-  const { themeConfig } = options;
-  renderBackground(svg, themeConfig?.colorBg);
+  renderBackground(svg, options);
 }
 
 function fill(svg: SVGSVGElement, options: ParsedInfographicOptions) {

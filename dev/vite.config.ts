@@ -5,9 +5,10 @@ export default defineConfig({
   server: {
     fs: {
       allow: ['..'],
-    }
+    },
+    port: 7080,
   },
-  plugins: [tsconfigPaths({root: "../"})],
+  plugins: [tsconfigPaths({ root: '../' })],
   optimizeDeps: {
     exclude: ['@antv/infographic', '@antv/hierarchy'],
   },
