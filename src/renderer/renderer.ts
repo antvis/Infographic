@@ -90,15 +90,9 @@ export class Renderer implements IRenderer {
         subtree: true,
       });
     } catch (error) {
-      if (
-        error instanceof Error &&
-        /document is not of type 'Node'/.test(error.message)
-      ) {
-        // Fallback for micro-app environments that proxy document.
-        postRender();
-      } else {
-        throw error;
-      }
+      // Fallback for micro-app environments that proxy document.
+      postRender();
+      console.log(error);
     }
 
     this.rendered = true;
