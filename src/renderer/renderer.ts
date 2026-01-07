@@ -92,7 +92,7 @@ export class Renderer implements IRenderer {
     } catch (error) {
       // Fallback for micro-app environments that proxy document.
       postRender();
-      console.log(error);
+      console.error(error);
     }
 
     this.rendered = true;
