@@ -79,8 +79,11 @@ export class Renderer implements IRenderer {
         });
       });
     });
-
-    observer.observe(document, {
+    
+    
+    
+    const target = this.options.container || document.body;
+    observer.observe(target, {
       childList: true,
       subtree: true,
     });
