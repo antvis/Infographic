@@ -69,7 +69,7 @@ function trackFontPromise(
 }
 
 function isLinkLoaded(link: HTMLLinkElement): boolean {
-  if (link.dataset.infographicFontLoaded === 'true') return true;
+  if (link.getAttribute('data-infographic-font-loaded') === 'true') return true;
   try {
     return !!link.sheet;
   } catch {
@@ -91,7 +91,7 @@ function getFontLoadPromise(
 
   const promise = new Promise<void>((resolve) => {
     const done = () => {
-      link.dataset.infographicFontLoaded = 'true';
+      link.setAttribute('data-infographic-font-loaded', 'true');
       resolve();
     };
     link.addEventListener('load', done, { once: true });
