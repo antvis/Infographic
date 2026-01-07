@@ -6,9 +6,15 @@
  */
 import roundPolygon, { getSegments } from 'round-polygon';
 import tinycolor from 'tinycolor2';
-import type { ComponentType, JSXElement } from '../../jsx';
+import type { ComponentType } from '../../jsx';
 import { Defs, Group, Point, Polygon, Rect } from '../../jsx';
-import { BtnsGroup, ItemIcon, ItemsGroup } from '../components';
+import {
+  BtnAdd,
+  BtnRemove,
+  BtnsGroup,
+  ItemIcon,
+  ItemsGroup,
+} from '../components';
 import { FlexLayout } from '../layouts';
 import { getPaletteColor, getThemeColors } from '../utils';
 import { registerStructure } from './registry';
@@ -64,11 +70,6 @@ export const SequenceFunnel: ComponentType<SequenceFunnelProps> = (props) => {
 
   const themeColors = getThemeColors(options.themeConfig);
 
-  const itemElements: JSXElement[] = [];
-  const funnelElements: JSXElement[] = [];
-  const backgroundElements: JSXElement[] = [];
-  const iconElements: JSXElement[] = [];
-
   // 计算各区域尺寸
   const actualFunnelWidth = funnelWidth ?? width * 0.55; // 稍微调窄一点漏斗，给右侧留更多空间
   const itemAreaWidth = width - actualFunnelWidth;
@@ -81,7 +82,7 @@ export const SequenceFunnel: ComponentType<SequenceFunnelProps> = (props) => {
   // 计算底部的最小像素宽度
   const minFunnelPixelWidth = actualFunnelWidth * minBottomRatio;
 
-  items.forEach((item, index) => {
+  const elements = items.map((item, index) => {
     const indexes = [index];
     // 获取颜色
     const color = getPaletteColor(options, [index]) || themeColors.colorPrimary;
@@ -128,64 +129,73 @@ export const SequenceFunnel: ComponentType<SequenceFunnelProps> = (props) => {
     const iconX = funnelCenterX - ICON_SIZE / 2;
     const iconY = funnelY + funnelLayerHeight / 2 - ICON_SIZE / 2;
 
-    // 渲染顺序 1: 背景 (最底层)
-    backgroundElements.push(
-      <Rect
-        x={backgroundX}
-        y={backgroundY}
-        width={backgroundWidth}
-        height={itemHeight}
-        ry="8" // 背景圆角稍微大一点，显得柔和
-        fill={tinycolor(color).setAlpha(0.1).toRgbString()} // 使用当前主题色的浅色背景
-        data-element-type="shape"
-      />,
-    );
-
-    // 渲染顺序 2: 漏斗形状 (中间层，覆盖在背景左侧之上)
-    // 修复: 移除颜色中的 #，避免 ID 非法
     const funnelColorId = `${color.replace('#', '')}-funnel-${index}`;
-    funnelElements.push(
-      <Defs>
-        <linearGradient id={funnelColorId} x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color={tinycolor(color).lighten(10).toString()} />
-          <stop offset="100%" stop-color={color} />
-        </linearGradient>
-      </Defs>,
-      <Polygon
-        points={segments}
-        fill={`url(#${funnelColorId})`}
-        y={funnelY}
-        data-element-type="shape"
-        // 添加轻微阴影效果增加层次感（可选，依赖环境支持 filter）
-        style={{ filter: 'drop-shadow(0px 2px 3px rgba(0,0,0,0.15))' }}
-      />,
-    );
 
-    // 渲染顺序 3: 图标 (顶层)
-    iconElements.push(
-      <ItemIcon
-        indexes={indexes}
-        x={iconX}
-        y={iconY}
-        size={ICON_SIZE}
-        fill="#fff"
-      />,
-    );
-
-    // 渲染顺序 4: 文本内容 (顶层)
-    itemElements.push(
-      <Item
-        indexes={indexes}
-        datum={item}
-        data={data}
-        x={itemX}
-        y={itemY}
-        width={itemWidth}
-        height={itemHeight}
-        positionV="middle"
-      />,
-    );
+    return {
+      background: (
+        <Rect
+          x={backgroundX}
+          y={backgroundY}
+          width={backgroundWidth}
+          height={itemHeight}
+          ry="8" // 背景圆角稍微大一点，显得柔和
+          fill={tinycolor(color).setAlpha(0.1).toRgbString()} // 使用当前主题色的浅色背景
+          data-element-type="shape"
+        />
+      ),
+      funnel: [
+        <Defs>
+          <linearGradient id={funnelColorId} x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop
+              offset="0%"
+              stopColor={tinycolor(color).lighten(10).toString()}
+            />
+            <stop offset="100%" stopColor={color} />
+          </linearGradient>
+        </Defs>,
+        <Polygon
+          points={segments}
+          fill={`url(#${funnelColorId})`}
+          y={funnelY}
+          data-element-type="shape"
+          // 添加轻微阴影效果增加层次感（可选，依赖环境支持 filter）
+          style={{ filter: 'drop-shadow(0px 2px 3px rgba(0,0,0,0.15))' }}
+        />,
+      ],
+      icon: (
+        <ItemIcon
+          indexes={indexes}
+          x={iconX}
+          y={iconY}
+          size={ICON_SIZE}
+          fill="#fff"
+        />
+      ),
+      item: (
+        <Item
+          indexes={indexes}
+          datum={item}
+          data={data}
+          x={itemX}
+          y={itemY}
+          width={itemWidth}
+          height={itemHeight}
+          positionV="middle"
+        />
+      ),
+      btnRemove: (
+        <BtnRemove
+          indexes={indexes}
+          x={backgroundX + backgroundWidth}
+          y={backgroundY}
+        />
+      ),
+    };
   });
+
+  const btnAdd = (
+    <BtnAdd indexes={[items.length]} x={width / 2} y={totalHeight + 10} />
+  );
 
   return (
     <FlexLayout
@@ -195,15 +205,18 @@ export const SequenceFunnel: ComponentType<SequenceFunnelProps> = (props) => {
       alignItems="center"
     >
       {titleContent}
-      <Group width={width} height={totalHeight}>
+      <Group width={width} height={totalHeight + 40}>
         {/* 背景最先渲染，位于底部 */}
-        <Group>{backgroundElements}</Group>
+        <Group>{elements.map((element) => element.background)}</Group>
         {/* 漏斗覆盖在背景之上 */}
-        <Group>{funnelElements}</Group>
+        <Group>{elements.flatMap((element) => element.funnel)}</Group>
         {/* 图标和文字在最上层 */}
-        <Group>{iconElements}</Group>
-        <ItemsGroup>{itemElements}</ItemsGroup>
-        <BtnsGroup />
+        <Group>{elements.map((element) => element.icon)}</Group>
+        <ItemsGroup>{elements.map((element) => element.item)}</ItemsGroup>
+        <BtnsGroup>
+          {elements.map((element) => element.btnRemove)}
+          {btnAdd}
+        </BtnsGroup>
       </Group>
     </FlexLayout>
   );
@@ -232,8 +245,8 @@ function calculateTrapezoidSegment(
   const bottomWidth = maxWidth - widthDiff * (currentBottomY / totalHeight);
 
   // 生成四个顶点 (梯形)
-  const p1: Point = { x: centerX - topWidth / 2, y: 0 };           // 左上
-  const p2: Point = { x: centerX + topWidth / 2, y: 0 };           // 右上
+  const p1: Point = { x: centerX - topWidth / 2, y: 0 }; // 左上
+  const p2: Point = { x: centerX + topWidth / 2, y: 0 }; // 右上
   const p3: Point = { x: centerX + bottomWidth / 2, y: layerHeight }; // 右下
   const p4: Point = { x: centerX - bottomWidth / 2, y: layerHeight }; // 左下
 
