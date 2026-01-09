@@ -198,7 +198,7 @@ export default function DetailPage({templateId}: {templateId?: string}) {
               value={code}
             />
             {/* Hidden pre tag for SEO */}
-            <pre className="hidden" aria-hidden="true">
+            <pre className="sr-only" aria-hidden="true">
               {code}
             </pre>
           </div>

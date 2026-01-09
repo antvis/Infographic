@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require('fs').promises;
 const path = require('path');
 const matter = require('gray-matter');
 const globby = require('globby');
@@ -15,13 +15,14 @@ async function generate() {
 
   let llmsFull = '';
   let llms = '# Documentation Index\n\n';
+  const seenUrls = new Set();
 
   // Sort files for consistent order
   files.sort();
 
   for (const file of files) {
     const filePath = path.join(CONTENT_DIR, file);
-    const content = fs.readFileSync(filePath, 'utf8');
+    const content = await fs.readFile(filePath, 'utf8');
     const {data, content: body} = matter(content);
 
     const title = data.title || file;
@@ -36,6 +37,8 @@ async function generate() {
     }
     // Ensure root slash if empty (though usually we want relative or absolute paths, let's keep it clean)
     if (!urlPath.startsWith('/')) urlPath = '/' + urlPath;
+
+    seenUrls.add(urlPath);
 
     llms += `- [${title}](${urlPath}) ${
       description ? '- ' + description : ''
@@ -58,7 +61,7 @@ async function generate() {
 
   for (const file of pageFiles) {
     const filePath = path.join(PAGES_DIR, file);
-    const content = fs.readFileSync(filePath, 'utf8');
+    const content = await fs.readFile(filePath, 'utf8');
 
     // Try to extract title from meta={{title: '...'}}
     const titleMatch = content.match(
@@ -90,17 +93,15 @@ async function generate() {
 
     // Avoid duplicates if markdown already covered it (unlikely for pages dir vs content dir overlap unless mapped)
     // But check if path already in llms (simple check)
-    if (llms.includes(`](${urlPath})`)) continue;
+    if (seenUrls.has(urlPath)) continue;
 
     llms += `- [${title}](${urlPath})\n`;
   }
 
   // Write files
-  if (!fs.existsSync(OUTPUT_DIR)) {
-    fs.mkdirSync(OUTPUT_DIR, {recursive: true});
-  }
-  fs.writeFileSync(path.join(OUTPUT_DIR, 'llms.txt'), llms);
-  fs.writeFileSync(path.join(OUTPUT_DIR, 'llms-full.txt'), llmsFull);
+  await fs.mkdir(OUTPUT_DIR, {recursive: true});
+  await fs.writeFile(path.join(OUTPUT_DIR, 'llms.txt'), llms);
+  await fs.writeFile(path.join(OUTPUT_DIR, 'llms-full.txt'), llmsFull);
 
   console.log(
     `Successfully generated llms.txt and llms-full.txt in ${OUTPUT_DIR}`
