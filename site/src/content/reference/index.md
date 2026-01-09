@@ -1,5 +1,5 @@
 ---
-title: AntV Infographic 简介
+title: 架构设计
 ---
 
 AntV Infographic 采用三层架构：JSX 渲染引擎、运行时、对外 API。下图为整体结构：
