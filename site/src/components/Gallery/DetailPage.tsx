@@ -45,22 +45,24 @@ const TRANSLATIONS = {
   },
 };
 
-export default function DetailPage() {
+export default function DetailPage({templateId}: {templateId?: string}) {
   const router = useRouter();
-  const {template} = router.query;
+  const template = templateId || router.query.template;
 
   const initialTemplate =
     TEMPLATES.find((t) => t.template === template) || TEMPLATES[0];
 
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState(initialTemplate?.syntax || '');
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const detailTexts = useLocaleBundle(TRANSLATIONS);
 
-  // Initialize code template
+  // Initialize code template only when template ID changes (client-side)
   useEffect(() => {
-    setCode(initialTemplate.syntax);
-    setError(null);
+    if (initialTemplate) {
+      setCode(initialTemplate.syntax);
+      setError(null);
+    }
   }, [initialTemplate]);
 
   const handleCodeChange = (e: string) => {
@@ -195,6 +197,10 @@ export default function DetailPage() {
               onChange={handleCodeChange}
               value={code}
             />
+            {/* Hidden pre tag for SEO */}
+            <pre className="hidden" aria-hidden="true">
+              {code}
+            </pre>
           </div>
 
           <div className="absolute bottom-0 left-0 right-0 px-4 py-2 bg-card/80 dark:bg-card-dark/80 backdrop-blur border-t border-primary/10 dark:border-primary-dark/10 text-[10px] text-tertiary dark:text-tertiary-dark flex justify-between items-center">
