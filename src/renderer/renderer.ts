@@ -121,7 +121,12 @@ function fill(svg: SVGSVGElement, options: ParsedInfographicOptions) {
       const modified = renderText(
         element,
         data.title || '',
-        Object.assign({}, themeConfig.base?.text, themeConfig.title),
+        Object.assign(
+          {},
+          themeConfig.base?.text,
+          themeConfig.title,
+          data.attributes?.title,
+        ),
       );
       return upsert(element, modified);
     }
@@ -129,12 +134,23 @@ function fill(svg: SVGSVGElement, options: ParsedInfographicOptions) {
       const modified = renderText(
         element,
         data.desc || '',
-        Object.assign({}, themeConfig.base?.text, themeConfig.desc),
+        Object.assign(
+          {},
+          themeConfig.base?.text,
+          themeConfig.desc,
+          data.attributes?.desc,
+        ),
       );
       return upsert(element, modified);
     }
     if (isIllus(element)) {
-      const modified = renderIllus(svg, element, data.illus?.[id]);
+      const modified = renderIllus(
+        svg,
+        element,
+        data.illus?.[id],
+        undefined,
+        data.attributes?.illus as Record<string, any> | undefined,
+      );
       return upsert(element, modified);
     }
 

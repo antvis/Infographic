@@ -1,7 +1,7 @@
 import { get, kebabCase } from 'lodash-es';
 import { ParsedInfographicOptions } from '../../options';
 import type { DynamicAttributes } from '../../themes';
-import type { TextAttributes } from '../../types';
+import type { ItemDatum, TextAttributes } from '../../types';
 import {
   createTextElement,
   encodeFontFamily,
@@ -47,11 +47,16 @@ export function renderItemText(
   if (!textShape) return null;
   const { data, themeConfig } = options;
   const indexes = getItemIndexes(node.dataset.indexes || '0');
-  const text = String(get(getDatumByIndexes(data, indexes), type, ''));
+  const datum = getDatumByIndexes(data, indexes) as ItemDatum | undefined;
+  const text = String(get(datum, type, ''));
+  const dataAttrs = datum?.attributes?.[type] as
+    | Record<string, any>
+    | undefined;
   const attrs = Object.assign(
     {},
     themeConfig.base?.text,
     themeConfig.item?.[type],
+    dataAttrs,
   );
 
   const staticAttrs = parseDynamicAttributes(textShape, attrs);
