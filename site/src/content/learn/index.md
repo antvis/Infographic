@@ -171,7 +171,7 @@ onBeforeUnmount(() => {
 
 ### 在 Node.js 中使用（非浏览器中渲染） {#在-node-js-中使用-非浏览器中渲染}
 
-在 Node.js 环境中（如 SSR、CLI 工具，以及给AI用的MCP、SKILLs等），可以使用 `ssr` 模块将信息图渲染为 SVG 字符串：
+在 Node.js 环境中（如 SSR，以及给AI用的MCP、SKILLs等），可以使用 `ssr` 模块将信息图渲染为 SVG 字符串：
 
 ```ts
 import { renderToSVG } from '@antv/infographic/ssr';

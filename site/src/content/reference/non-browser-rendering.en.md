@@ -1,6 +1,6 @@
 # Non-Browser Rendering
 
-Render infographics to SVG strings in Node.js environment, suitable for SSR, CLI tools, and other non-browser scenarios like AI MCPs and SKills.
+Render infographics to SVG strings in Node.js environment, suitable for SSR, and other non-browser scenarios like AI MCPs and SKills.
 
 ## Basic Usage
 
@@ -53,19 +53,16 @@ function renderToSVG(options: SSRRenderOptions): Promise<SSRRenderResult>;
 ### DOM Utility Functions
 
 ```ts
-import { setupDOM, teardownDOM, isSSR } from '@antv/infographic/ssr';
+import { setupDOM, isSSR } from '@antv/infographic/ssr';
 
-// Setup jsdom environment (call before rendering)
+// Setup jsdom environment (call before rendering, renderToSVG calls it automatically)
 setupDOM();
-
-// Cleanup jsdom environment (call after rendering)
-teardownDOM();
 
 // Check if currently in non-browser rendering mode
 isSSR(): boolean;
 ```
 
-> **Note**: `renderToSVG` automatically handles DOM environment setup and cleanup. If you need manual control, use `setupDOM` and `teardownDOM`.
+> **Note**: `renderToSVG` automatically handles DOM environment setup. The DOM environment is reused for performance, so you typically don't need to manually call `setupDOM`.
 
 ## Complete Example
 

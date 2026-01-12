@@ -1,6 +1,6 @@
 # 非浏览器中渲染
 
-在 Node.js 环境中将信息图渲染为 SVG 字符串，适用于 SSR、CLI 工具和给AI用的MCP、SKILLs等非浏览器场景。
+在 Node.js 环境中将信息图渲染为 SVG 字符串，适用于 SSR、给AI用的MCP、SKILLs等非浏览器场景。
 
 ## 基本用法
 
@@ -53,19 +53,16 @@ function renderToSVG(options: SSRRenderOptions): Promise<SSRRenderResult>;
 ### DOM 工具函数
 
 ```ts
-import { setupDOM, teardownDOM, isSSR } from '@antv/infographic/ssr';
+import { setupDOM, isSSR } from '@antv/infographic/ssr';
 
-// 设置 jsdom 环境（渲染前调用）
+// 设置 jsdom 环境（渲染前调用，renderToSVG 会自动调用）
 setupDOM();
-
-// 清理 jsdom 环境（渲染后调用）
-teardownDOM();
 
 // 检查当前是否在非浏览器渲染模式
 isSSR(): boolean;
 ```
 
-> **注意**：`renderToSVG` 会自动处理 DOM 环境的设置和清理。如果需要手动控制，可以使用 `setupDOM` 和 `teardownDOM`。
+> **注意**：`renderToSVG` 会自动处理 DOM 环境的设置。DOM 环境会复用以提高性能，通常不需要手动调用 `setupDOM`。
 
 ## 完整示例
 

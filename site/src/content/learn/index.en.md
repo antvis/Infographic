@@ -170,7 +170,7 @@ onBeforeUnmount(() => {
 
 ### Using in Node.js (Non-Browser Rendering)
 
-In Node.js environments (such as SSR, SSG, CLI tools), you can use the `ssr` module to render infographics to SVG strings:
+In Node.js environments (such as SSR, SSG), you can use the `ssr` module to render infographics to SVG strings:
 
 ```ts
 import { renderToSVG } from '@antv/infographic/ssr';

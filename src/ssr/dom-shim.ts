@@ -116,14 +116,3 @@ export function setupDOM(): { window: any; document: Document } {
 
   return { window, document };
 }
-
-/**
- * Teardown linkedom environment
- * Clears global references
- */
-export function teardownDOM(): void {
-  globalDoc = null;
-  globalWin = null;
-  isSSRMode = false;
-  delete (globalThis as any).__ANTV_INFOGRAPHIC_SSR__;
-}

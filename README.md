@@ -111,7 +111,7 @@ for (const chunk of chunks) {
 
 ## Non-Browser Rendering
 
-Render infographics to SVG strings in Node.js environment (SSR, CLI tools, etc.).
+Render infographics to SVG strings in Node.js environment (SSR, etc.).
 
 ```ts
 import { renderToSVG } from '@antv/infographic/ssr';
@@ -132,23 +132,6 @@ data
 
 console.log(result.svg);
 ```
-
-### CLI Tool
-
-For command-line usage, use the dedicated CLI package:
-
-```bash
-# Install globally
-npm install -g @antv/infographic-cli
-
-# Render to file
-infographic input.txt -o output.svg
-
-# Render to stdout
-infographic input.txt
-```
-
-See [@antv/infographic-cli](https://www.npmjs.com/package/@antv/infographic-cli) for more details.
 
 ## 💬 Community & Communication
 
