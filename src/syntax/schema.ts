@@ -47,6 +47,7 @@ itemDatumSchema.fields = {
 
 export const RelationSchema: ObjectSchema = object(
   {
+    id: string(),
     from: string(),
     to: string(),
     label: string(),

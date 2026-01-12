@@ -129,12 +129,16 @@ data
     - from Node B
       to Node C
       label Supports
+    - id edge-1
+      from Node C
+      to Node D
 `;
     const result = parseSyntax(input);
     expect(result.errors).toHaveLength(0);
     expect(result.options.data?.relations).toEqual([
       { from: 'Node A', to: 'Node B' },
       { from: 'Node B', to: 'Node C', label: 'Supports' },
+      { id: 'edge-1', from: 'Node C', to: 'Node D' },
     ]);
   });
 
