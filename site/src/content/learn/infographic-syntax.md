@@ -129,6 +129,63 @@ data
           icon activities-037_v1_lineal
 ```
 
+#### 关系图（relation-graph） {#data-relations}
+
+使用 `relations` 描述节点之间的关系。节点信息在 `items` 中定义，边信息在 `relations` 中定义。如果 item 没有 `id`，则使用 `label` 作为节点 id；当 id 重复时，以最后一个 item 为准。
+
+YAML 风格写法：
+
+```plain
+infographic relation-graph
+data
+  title Relation Graph Example
+  items
+    - label Node A
+      icon icon-a
+    - label Node B
+      icon icon-b
+  relations
+    - from Node A
+      to Node B
+```
+
+Mermaid 风格写法（类似 flowchart）：
+
+```plain
+infographic relation-graph
+data
+  items
+    - id A
+      label Node A
+    - id B
+      label Node B
+    - id C
+      label Node C
+  relations
+    A -> B
+    A <- C
+    A -> B -> C -> A
+```
+
+也可以省略 `items`，在 `relations` 中直接定义节点。未定义的节点 id 会自动创建，且 `label = id`。
+
+```plain
+infographic relation-graph
+data
+  relations
+    A - The Edge Between A and B -> B
+    B -> C[Label of C]
+    C -->|The Edge Between C and D| D
+```
+
+说明：
+
+- `A <- B` 会解析为 `{ from: 'B', to: 'A' }`。单向边不设置 `direction` 字段（默认视为 `forward`）。
+- `A -- B` 表示无向边（`direction: 'none'`），`A <--> B` 表示双向边（`direction: 'both'`）。
+- 允许多余的 `-`（如 `A ----> B`），`-.-`、`==>`、`--x`、`--o` 等会被规整为 `--` 或 `->`。
+- `id1(label)` / `id1([label])` 等节点样式等价于 `id1[label]`；`id@{...}` 的属性会被忽略。
+- `[]` 或 `| |` 内的边标签支持单/双引号包裹，用于包含特殊字符。
+
 ### theme {#theme}
 
 主题块用于切换主题与调整色板、字体与风格化能力。

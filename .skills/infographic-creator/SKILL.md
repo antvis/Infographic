@@ -46,6 +46,7 @@ theme
 - The icon value is provided directly with keywords or icon names (such as `mdi/chart-line`)
 - `data` should contain title/desc/items (which can be omitted according to semantics)
 - `data.items` should contain label(string)/value(number)/desc(string)/icon(string)/children(object), where children represents the hierarchical structure
+- `data.relations` describes graph edges with `from`/`to` (optional `label`/`direction`), typically used in relation templates; mermaid-style `A -> B` is supported when generating relation graphs
 - For comparison templates (template names starting with `compare-`), construct exactly two root nodes and place every comparison item under them as children to keep the hierarchy clear
 - For `hierarchy-structure`, `data.items` renders top-to-bottom (first item at the top) and supports up to 3 levels (root -> group -> item)
 - `theme` field is for customizing the theme of the infographic, including palette, font, etc.
@@ -97,6 +98,7 @@ interface Data {
   title?: string;
   desc?: string;
   items: ItemDatum[];
+  relations?: RelationDatum[];
   [key: string]: any;
 }
 
@@ -107,6 +109,14 @@ interface ItemDatum {
   value?: number;
   illus?: string;
   children?: ItemDatum[];
+  [key: string]: any;
+}
+
+interface RelationDatum {
+  from: string;
+  to: string;
+  label?: string;
+  direction?: 'forward' | 'both' | 'none';
   [key: string]: any;
 }
 ```

@@ -129,6 +129,63 @@ data
           icon activities-037_v1_lineal
 ```
 
+#### Relations (relation-graph) {#data-relations}
+
+Use `relations` to describe graph connections between nodes. Nodes live in `items`, and edges live in `relations`. If an item has no `id`, its `label` is treated as the node id. When ids repeat, the last item definition wins.
+
+YAML-style relations:
+
+```plain
+infographic relation-graph
+data
+  title Relation Graph Example
+  items
+    - label Node A
+      icon icon-a
+    - label Node B
+      icon icon-b
+  relations
+    - from Node A
+      to Node B
+```
+
+Mermaid-style relations (flowchart-like):
+
+```plain
+infographic relation-graph
+data
+  items
+    - id A
+      label Node A
+    - id B
+      label Node B
+    - id C
+      label Node C
+  relations
+    A -> B
+    A <- C
+    A -> B -> C -> A
+```
+
+You can also omit `items`, and define nodes directly in `relations`. Any undefined node id will be created automatically with `label = id`.
+
+```plain
+infographic relation-graph
+data
+  relations
+    A - The Edge Between A and B -> B
+    B -> C[Label of C]
+    C -->|The Edge Between C and D| D
+```
+
+Notes:
+
+- `A <- B` is parsed as `{ from: 'B', to: 'A' }`. For single-direction edges, the direction field is omitted (defaults to `forward`).
+- `A -- B` creates an undirected edge (`direction: 'none'`), and `A <--> B` creates a bidirectional edge (`direction: 'both'`).
+- Extra dashes are tolerated (e.g. `A ----> B`). Mermaid edge variants like `-.-`, `==>`, `--x`, `--o` are normalized to `--` or `->`.
+- Node styles like `id1(label)` / `id1([label])` are treated as `id1[label]`. Attribute syntax `id@{...}` is accepted but attributes are ignored.
+- Edge labels inside `[]` or `| |` can be wrapped in single/double quotes to include special characters.
+
 ### theme {#theme}
 
 The `theme` block switches themes and tweaks palettes, fonts, and stylization.
