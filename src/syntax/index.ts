@@ -1,6 +1,8 @@
 import type { InfographicOptions } from '../options';
+import type { ItemDatum } from '../types';
 import { mapWithSchema } from './mapper';
 import { parseSyntaxToAst } from './parser';
+import { parseRelationsNode } from './relations';
 import {
   DataSchema,
   DesignSchema,
@@ -9,6 +11,24 @@ import {
   ThemeSchema,
 } from './schema';
 import type { SyntaxNode, SyntaxParseResult } from './types';
+
+function normalizeItems(items: ItemDatum[]) {
+  const seen = new Set<string>();
+  const normalized: ItemDatum[] = [];
+  for (let index = items.length - 1; index >= 0; index -= 1) {
+    const item = items[index];
+    const id = item.id ?? item.label;
+    if (!id) {
+      normalized.push(item);
+      continue;
+    }
+    if (seen.has(id)) continue;
+    seen.add(id);
+    if (!item.id) item.id = id;
+    normalized.push(item);
+  }
+  return normalized.reverse();
+}
 
 function resolveTemplate(
   node: SyntaxNode | undefined,
@@ -75,8 +95,45 @@ export function parseSyntax(input: string): SyntaxParseResult {
 
   const dataNode = mergedEntries.data as SyntaxNode | undefined;
   if (dataNode) {
-    const data = mapWithSchema(dataNode, DataSchema, 'data', errors);
+    let relationsNode: SyntaxNode | undefined;
+    let dataNodeForMapping = dataNode;
+    if (dataNode.kind === 'object') {
+      const { relations, ...rest } = dataNode.entries;
+      relationsNode = relations;
+      dataNodeForMapping = { ...dataNode, entries: rest };
+    }
+    const data = mapWithSchema(dataNodeForMapping, DataSchema, 'data', errors);
     if (data) options.data = data;
+    if (relationsNode) {
+      const parsed = parseRelationsNode(
+        relationsNode,
+        errors,
+        'data.relations',
+      );
+      if (parsed.relations.length > 0 || parsed.items.length > 0) {
+        const current = (options.data ?? {}) as Record<string, any>;
+        const existingItems = Array.isArray(current.items)
+          ? (current.items as ItemDatum[])
+          : [];
+        const normalizedItems = normalizeItems(existingItems);
+        const itemMap = new Map<string, ItemDatum>();
+        normalizedItems.forEach((item) => {
+          if (item.id) itemMap.set(item.id, item);
+        });
+        parsed.items.forEach((item) => {
+          const existing = itemMap.get(item.id as string);
+          if (existing) {
+            if (!existing.label && item.label) existing.label = item.label;
+          } else {
+            normalizedItems.push(item);
+            itemMap.set(item.id as string, item);
+          }
+        });
+        current.items = normalizedItems;
+        current.relations = parsed.relations;
+        options.data = current as any;
+      }
+    }
   }
 
   const themeNode = mergedEntries.theme as SyntaxNode | undefined;

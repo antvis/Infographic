@@ -45,6 +45,16 @@ itemDatumSchema.fields = {
   children: array(itemDatumSchema),
 };
 
+export const RelationSchema: ObjectSchema = object(
+  {
+    from: string(),
+    to: string(),
+    label: string(),
+    direction: enumOf(['forward', 'both', 'none']),
+  },
+  { allowUnknown: true },
+);
+
 export const ThemeSchema = object(
   {
     type: string(),
@@ -101,6 +111,7 @@ export const DataSchema = object({
   title: string(),
   desc: string(),
   items: array(itemDatumSchema),
+  relations: array(RelationSchema),
 });
 
 export const TemplateSchema = object(

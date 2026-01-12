@@ -118,6 +118,181 @@ data
     });
   });
 
+  it('parses explicit relation items', () => {
+    const input = `
+data
+  items
+    - label Node A
+  relations
+    - from Node A
+      to Node B
+    - from Node B
+      to Node C
+      label Supports
+`;
+    const result = parseSyntax(input);
+    expect(result.errors).toHaveLength(0);
+    expect(result.options.data?.relations).toEqual([
+      { from: 'Node A', to: 'Node B' },
+      { from: 'Node B', to: 'Node C', label: 'Supports' },
+    ]);
+  });
+
+  it('parses mermaid-style relations and creates items', () => {
+    const input = `
+data
+  relations
+    A - The Edge Between A and B -> B
+    B -> C[Label of C]
+    C -->|The Edge Between C and D| D
+    D <- E
+`;
+    const result = parseSyntax(input);
+    expect(result.errors).toHaveLength(0);
+    expect(result.options.data?.items).toEqual([
+      { id: 'A', label: 'A' },
+      { id: 'B', label: 'B' },
+      { id: 'C', label: 'Label of C' },
+      { id: 'D', label: 'D' },
+      { id: 'E', label: 'E' },
+    ]);
+    expect(result.options.data?.relations).toEqual([
+      { from: 'A', to: 'B', label: 'The Edge Between A and B' },
+      { from: 'B', to: 'C' },
+      { from: 'C', to: 'D', label: 'The Edge Between C and D' },
+      { from: 'E', to: 'D' },
+    ]);
+  });
+
+  it('merges mermaid nodes with explicit items', () => {
+    const input = `
+data
+  items
+    - id C
+      label Explicit C
+    - label Node A
+  relations
+    A -> C[Implicit C]
+`;
+    const result = parseSyntax(input);
+    expect(result.errors).toHaveLength(0);
+    expect(result.options.data?.items).toEqual([
+      { id: 'C', label: 'Explicit C' },
+      { id: 'Node A', label: 'Node A' },
+      { id: 'A', label: 'A' },
+    ]);
+    expect(result.options.data?.relations).toEqual([{ from: 'A', to: 'C' }]);
+  });
+
+  it('tolerates extra dashes and mermaid edge variants', () => {
+    const input = `
+data
+  relations
+    A ----> B
+    B -.- C
+    C ==>|Edge Label| D
+    D --x E
+    E <--x F
+`;
+    const result = parseSyntax(input);
+    expect(result.errors).toHaveLength(0);
+    expect(result.options.data?.relations).toEqual([
+      { from: 'A', to: 'B' },
+      { from: 'B', to: 'C', direction: 'none' },
+      { from: 'C', to: 'D', label: 'Edge Label' },
+      { from: 'D', to: 'E' },
+      { from: 'E', to: 'F', direction: 'both' },
+    ]);
+  });
+
+  it('parses node styles and attributes as labels', () => {
+    const input = `
+data
+  relations
+    id1([Label Text]) -> id2(label text)
+    id3@{icon:"star"} --> id4["Quoted Label"]
+`;
+    const result = parseSyntax(input);
+    expect(result.errors).toHaveLength(0);
+    expect(result.options.data?.items).toEqual([
+      { id: 'id1', label: 'Label Text' },
+      { id: 'id2', label: 'label text' },
+      { id: 'id3', label: 'id3' },
+      { id: 'id4', label: 'Quoted Label' },
+    ]);
+    expect(result.options.data?.relations).toEqual([
+      { from: 'id1', to: 'id2' },
+      { from: 'id3', to: 'id4' },
+    ]);
+  });
+
+  it('supports quoted edge labels and escaped quotes', () => {
+    const input = `
+data
+  relations
+    A -->|"Edge: A -> B"| B
+    B -->|'"Quoted" edge'| C
+`;
+    const result = parseSyntax(input);
+    expect(result.errors).toHaveLength(0);
+    expect(result.options.data?.relations).toEqual([
+      { from: 'A', to: 'B', label: 'Edge: A -> B' },
+      { from: 'B', to: 'C', label: '"Quoted" edge' },
+    ]);
+  });
+
+  it('treats marker arrows as bidirectional when on both sides', () => {
+    const input = `
+data
+  relations
+    A <--x B
+    C x--x D
+`;
+    const result = parseSyntax(input);
+    expect(result.errors).toHaveLength(0);
+    expect(result.options.data?.relations).toEqual([
+      { from: 'A', to: 'B', direction: 'both' },
+      { from: 'C', to: 'D', direction: 'both' },
+    ]);
+  });
+
+  it('keeps parallel edges between the same nodes', () => {
+    const input = `
+data
+  relations
+    A -> B
+    A -> B
+`;
+    const result = parseSyntax(input);
+    expect(result.errors).toHaveLength(0);
+    expect(result.options.data?.relations).toEqual([
+      { from: 'A', to: 'B' },
+      { from: 'A', to: 'B' },
+    ]);
+  });
+
+  it('items override relation-defined nodes and repeated ids', () => {
+    const input = `
+data
+  relations
+    X -> Y[From Relations]
+  items
+    - id Y
+      label From Items
+    - id X
+      label First
+    - id X
+      label Second
+`;
+    const result = parseSyntax(input);
+    expect(result.errors).toHaveLength(0);
+    expect(result.options.data?.items).toEqual([
+      { id: 'Y', label: 'From Items' },
+      { id: 'X', label: 'Second' },
+    ]);
+    expect(result.options.data?.relations).toEqual([{ from: 'X', to: 'Y' }]);
+  });
+
   it('treats # and // as content, overrides repeated blocks, and reports unknown keys', () => {
     const input = `
 width 100 # comment

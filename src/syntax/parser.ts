@@ -40,6 +40,10 @@ function stripComments(content: string) {
   return content.trimEnd();
 }
 
+function looksLikeRelationExpression(text: string) {
+  return /[<>=o.x-]{2,}/.test(text);
+}
+
 function parseKeyValue(raw: string) {
   const text = raw.trim();
   if (!text) return null;
@@ -121,6 +125,51 @@ export function parseSyntaxToAst(input: string): ParseResult {
 
       const itemContent = trimmed.slice(1).trim();
       const itemNode = createObjectNode(lineNumber, itemContent || undefined);
+      parentNode.items.push(itemNode);
+      stack.push({
+        indent,
+        node: itemNode,
+        parent: parentNode,
+      });
+      return;
+    }
+
+    if (
+      parentFrame.key === 'relations' &&
+      !trimmed.startsWith('-') &&
+      looksLikeRelationExpression(trimmed)
+    ) {
+      if (parentNode.kind !== 'array') {
+        if (
+          parentNode.kind === 'object' &&
+          Object.keys(parentNode.entries).length === 0 &&
+          parentNode.value === undefined &&
+          parentFrame.parent &&
+          parentFrame.key
+        ) {
+          const arrayNode = createArrayNode(parentNode.line);
+          if (parentFrame.parent.kind === 'object') {
+            parentFrame.parent.entries[parentFrame.key] = arrayNode;
+          } else if (parentFrame.parent.kind === 'array') {
+            const indexInParent = parentFrame.parent.items.indexOf(parentNode);
+            if (indexInParent >= 0)
+              parentFrame.parent.items[indexInParent] = arrayNode;
+          }
+          parentFrame.node = arrayNode;
+          parentNode = arrayNode;
+        } else {
+          errors.push({
+            path: '',
+            line: lineNumber,
+            code: 'bad_list',
+            message: 'List item is not under an array container.',
+            raw: trimmed,
+          });
+          return;
+        }
+      }
+
+      const itemNode = createObjectNode(lineNumber, trimmed);
       parentNode.items.push(itemNode);
       stack.push({
         indent,
