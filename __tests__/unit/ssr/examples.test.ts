@@ -3,7 +3,7 @@ import { join } from 'path';
 import { describe, it, expect } from 'vitest';
 import { renderToSVG } from '../../../src/ssr';
 
-const EXAMPLES_DIR = join(__dirname, '../../../__tests__/ssr/examples');
+const EXAMPLES_DIR = join(__dirname, 'examples');
 
 const exampleFiles = [
   '01-basic-list.txt',
