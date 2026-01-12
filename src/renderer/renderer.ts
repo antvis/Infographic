@@ -149,7 +149,7 @@ function fill(svg: SVGSVGElement, options: ParsedInfographicOptions) {
         element,
         data.illus?.[id],
         undefined,
-        data.attributes?.illus as Record<string, any> | undefined,
+        data.attributes?.illus as Record<string, any>,
       );
       return upsert(element, modified);
     }
