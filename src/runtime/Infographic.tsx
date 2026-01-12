@@ -55,7 +55,7 @@ export class Infographic {
       warnings,
     } = parseSyntaxOptions(options);
     if (isInitial) {
-      this.initialOptions = cloneOptions(parsedOptions);
+      this.initialOptions = parsedOptions;
     }
 
     const base =
