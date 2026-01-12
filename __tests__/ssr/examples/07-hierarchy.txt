@@ -1,4 +1,4 @@
-infographic hierarchy-tree-horizontal
+infographic hierarchy-tree-lr-tech-style-capsule-item
 data
   title User Research
   desc Understanding user needs and pain points through research

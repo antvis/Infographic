@@ -14,9 +14,3 @@ build
 .codex/skills
 .claude/skills
 
-# CLI package build artifacts
-cli/node_modules
-cli/esm
-cli/lib
-cli/coverage
-cli/tsconfig.tsbuildinfo
