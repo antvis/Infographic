@@ -256,6 +256,23 @@ data
     ]);
   });
 
+  it('ignores incomplete relation lines', () => {
+    const input = `
+data
+  relations
+    A -->
+    B --> C
+`;
+    const result = parseSyntax(input);
+    expect(result.errors).toHaveLength(0);
+    expect(result.options.data?.items).toEqual([
+      { id: 'A', label: 'A' },
+      { id: 'B', label: 'B' },
+      { id: 'C', label: 'C' },
+    ]);
+    expect(result.options.data?.relations).toEqual([{ from: 'B', to: 'C' }]);
+  });
+
   it('keeps parallel edges between the same nodes', () => {
     const input = `
 data

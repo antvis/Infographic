@@ -169,11 +169,15 @@ function readEdge(text: string, startIndex: number): ParsedEdge | null {
 function parseRelationLine(text: string) {
   const relations: RelationDatum[] = [];
   const nodes: ParsedNode[] = [];
+  const nodeMap = new Map<string, ParsedNode>();
   let index = 0;
   const first = readNode(text, index);
   if (!first) return { relations, nodes };
   let current = first.node;
-  nodes.push(current);
+  if (!nodeMap.has(current.id)) {
+    nodeMap.set(current.id, current);
+    nodes.push(current);
+  }
   index = first.nextIndex;
 
   while (index < text.length) {
@@ -182,7 +186,6 @@ function parseRelationLine(text: string) {
     index = edge.nextIndex;
     const nextNode = readNode(text, index);
     if (!nextNode) break;
-    nodes.push(nextNode.node);
     index = nextNode.nextIndex;
 
     let from = current.id;
@@ -201,6 +204,15 @@ function parseRelationLine(text: string) {
     if (direction === 'both') relation.direction = 'both';
     if (direction === 'none') relation.direction = 'none';
     relations.push(relation);
+
+    if (!nodeMap.has(current.id)) {
+      nodeMap.set(current.id, current);
+      nodes.push(current);
+    }
+    if (!nodeMap.has(nextNode.node.id)) {
+      nodeMap.set(nextNode.node.id, nextNode.node);
+      nodes.push(nextNode.node);
+    }
     current = nextNode.node;
   }
 
