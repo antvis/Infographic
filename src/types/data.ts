@@ -17,6 +17,7 @@ export interface ItemDatum extends BaseDatum {
 }
 
 export interface RelationDatum extends BaseDatum {
+  id?: string;
   from: string;
   to: string;
   /**
@@ -26,13 +27,15 @@ export interface RelationDatum extends BaseDatum {
    * - 'none'：无方向
    */
   direction?: 'forward' | 'both' | 'none';
+  showArrow?: boolean;
+  arrowType?: 'arrow' | 'triangle' | 'diamond';
 }
 
 export interface Data {
   title?: string;
   desc?: string;
   items: ItemDatum[];
-  relations: RelationDatum[];
+  relations?: RelationDatum[];
   illus?: Record<string, string | ResourceConfig>;
   attributes?: Record<string, object>;
   [key: string]: any;

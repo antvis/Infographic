@@ -88,6 +88,7 @@
   },
   "dependencies": {
     "@antv/hierarchy": "^0.7.0",
+    "@antv/layout": "^2.0.0-beta.0",
     "css": "^3.0.0",
     "culori": "^4.0.2",
     "d3": "^7.9.0",

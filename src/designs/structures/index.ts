@@ -20,6 +20,7 @@ export * from './quadrant';
 export * from './registry';
 export { getStructure, getStructures, registerStructure } from './registry';
 export * from './relation-circle';
+export * from './relation-dagre-flow';
 export * from './relation-network';
 export * from './sequence-ascending-stairs-3d';
 export * from './sequence-ascending-steps';
