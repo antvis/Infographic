@@ -21,6 +21,7 @@ export * from './registry';
 export { getItem, getItems, registerItem } from './registry';
 export * from './RibbonCard';
 export * from './RoundedRectNode';
+export * from './SimpleCircleNode';
 export * from './SimpleHorizontalArrow';
 export * from './SimpleIllusItem';
 export * from './SimpleItem';

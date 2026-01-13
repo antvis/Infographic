@@ -80,6 +80,7 @@ declare global {
       symbol: SVGAttributes<SVGSymbolElement>;
       text: SVGAttributes<SVGTextElement>;
       textPath: SVGAttributes<SVGTextPathElement>;
+      title: SVGAttributes<SVGTitleElement>;
       tspan: SVGAttributes<SVGTSpanElement>;
       use: SVGAttributes<SVGUseElement>;
       view: SVGAttributes<SVGViewElement>;
