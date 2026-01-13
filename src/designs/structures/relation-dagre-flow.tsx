@@ -54,6 +54,39 @@ const DEFAULT_EDGE_SEP = 10;
 const DEFAULT_EDGE_WIDTH = 2;
 const DEFAULT_PADDING = 30;
 
+const checkUndirectedCycle = (
+  nodeIds: string[],
+  edges: { id: string; source: string; target: string }[],
+): boolean => {
+  const adj = new Map<string, { target: string; edgeId: string }[]>();
+  nodeIds.forEach((id) => adj.set(id, []));
+
+  for (const edge of edges) {
+    if (edge.source === edge.target) return true;
+    adj.get(edge.source)?.push({ target: edge.target, edgeId: edge.id });
+    adj.get(edge.target)?.push({ target: edge.source, edgeId: edge.id });
+  }
+
+  const visited = new Set<string>();
+  const dfs = (u: string, parentEdgeId: string | null): boolean => {
+    visited.add(u);
+    const neighbors = adj.get(u) || [];
+    for (const { target: v, edgeId } of neighbors) {
+      if (edgeId === parentEdgeId) continue;
+      if (visited.has(v)) return true;
+      if (dfs(v, edgeId)) return true;
+    }
+    return false;
+  };
+
+  for (const node of nodeIds) {
+    if (!visited.has(node)) {
+      if (dfs(node, null)) return true;
+    }
+  }
+  return false;
+};
+
 export const RelationDagreFlow: ComponentType<RelationDagreFlowProps> = (
   props,
 ) => {
@@ -179,6 +212,9 @@ export const RelationDagreFlow: ComponentType<RelationDagreFlowProps> = (
     target: string;
     relation: RelationDatum;
   }[];
+
+  const hasCycle = checkUndirectedCycle(Array.from(nodeIdSet), edges);
+  const finalEdgeRouting = hasCycle ? 'dagre' : edgeRouting;
 
   const layout = new DagreLayout({
     rankdir,
@@ -559,7 +595,7 @@ export const RelationDagreFlow: ComponentType<RelationDagreFlowProps> = (
           ],
         ];
       };
-      const useOrthRouting = edgeRouting === 'orth';
+      const useOrthRouting = finalEdgeRouting === 'orth';
       const orthEdge = useOrthRouting
         ? getOrthEdgePoints(String(edge.source), String(edge.target))
         : null;
