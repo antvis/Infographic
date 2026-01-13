@@ -27,7 +27,8 @@ export type SyntaxErrorCode =
   | 'invalid_value'
   | 'bad_indent'
   | 'bad_list'
-  | 'bad_syntax';
+  | 'bad_syntax'
+  | 'render_error';
 
 export interface SyntaxError {
   path: string;

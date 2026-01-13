@@ -165,7 +165,7 @@ export async function renderToSVG(
         message: error instanceof Error ? error.message : 'Unknown render error',
         path: '',
         line: 0,
-      } as any);
+      } as SyntaxError);
     }
     return { svg: '', errors, warnings };
   }
