@@ -1,5 +1,7 @@
 import { hierarchyMindmapTemplates } from './hierarchy-mindmap';
+import { hierarchyStructureTemplates } from './hierarchy-structure';
 import { hierarchyTreeTemplates } from './hierarchy-tree';
+import { listZigzagTemplates } from './list-zigzag';
 import { registerTemplate } from './registry';
 import { sequenceStairsTemplates } from './sequence-stairs';
 import type { TemplateOptions } from './types';
@@ -306,6 +308,16 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
     },
     themeConfig: {
       colorPrimary: '#1677ff',
+    },
+  },
+  'sequence-funnel-simple': {
+    design: {
+      title: 'default',
+      structure: { type: 'sequence-funnel'},
+      items: [{ type: 'simple', showIcon: false, usePaletteColor: true}],
+    },
+    themeConfig: {
+      palette: '#1677ff',
     },
   },
   'list-row-horizontal-icon-line': {
@@ -807,6 +819,8 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
   ...hierarchyMindmapTemplates,
   ...sequenceStairsTemplates,
   ...wordCloudTemplate,
+  ...listZigzagTemplates,
+  ...hierarchyStructureTemplates,
 };
 
 Object.entries(BUILT_IN_TEMPLATES).forEach(([name, options]) => {

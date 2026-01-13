@@ -1,0 +1,26 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⤵️ Checkout
+        uses: actions/checkout@v4
+
+      - name: 📦 Package skills
+        run: zip -r ../skills.zip .
+        working-directory: .skills
+
+      - name: 🚀 Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: skills.zip
+          generate_release_notes: true

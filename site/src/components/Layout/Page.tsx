@@ -19,6 +19,8 @@ import {TopNav} from './TopNav';
 
 import(/* webpackPrefetch: true */ '../MDX/CodeBlock/CodeBlock');
 
+const CUSTOM_PAGES = ['gallery', 'ai', 'icon', 'editor'];
+
 interface PageProps {
   children: React.ReactNode;
   toc: Array<TocItem>;
@@ -32,7 +34,7 @@ interface PageProps {
   section:
     | 'learn'
     | 'reference'
-    | 'examples'
+    | 'gallery'
     | 'ai'
     | 'icon'
     | 'home'
@@ -74,6 +76,7 @@ export function Page({
   const description = meta.description || route?.description || '';
   const isHomePage = cleanedPath === '/';
   const [hideTopNav, setHideTopNav] = React.useState(false);
+  const isFullWidthSection = CUSTOM_PAGES.includes(section);
 
   React.useEffect(() => {
     const handleFullscreenChange = (e: Event) => {
@@ -92,7 +95,7 @@ export function Page({
   } else {
     content = (
       <div className="ps-0">
-        {showTitle && !['examples', 'ai', 'icon'].includes(section) && (
+        {showTitle && !CUSTOM_PAGES.includes(section) && (
           <div>
             <PageHeading
               title={title}
@@ -103,18 +106,9 @@ export function Page({
             />
           </div>
         )}
-        <div
-          className={cn(
-            toc.length === 0 || ['examples', 'ai', 'icon'].includes(section)
-              ? 'px-0'
-              : 'px-5 sm:px-12'
-          )}>
+        <div className={cn(isFullWidthSection ? 'px-0' : 'px-5 sm:px-12')}>
           <div
-            className={cn(
-              toc.length === 0 || ['examples', 'ai', 'icon'].includes(section)
-                ? 'w-full'
-                : 'max-w-7xl mx-auto'
-            )}>
+            className={cn(isFullWidthSection ? 'w-full' : 'max-w-7xl mx-auto')}>
             <TocContext value={toc}>
               <LanguagesContext value={languages}>{children}</LanguagesContext>
             </TocContext>
@@ -136,7 +130,7 @@ export function Page({
     showSidebar = false;
     showToc = false;
   } else if (
-    section === 'examples' ||
+    section === 'gallery' ||
     section === 'ai' ||
     section === 'icon' ||
     section === 'editor'

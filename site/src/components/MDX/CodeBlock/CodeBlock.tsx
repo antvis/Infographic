@@ -24,6 +24,7 @@ export interface CodeBlockProps {
   };
   className?: string;
   isFromPackageImport?: boolean;
+  label?: string;
   noMargin?: boolean;
   noMarkers?: boolean;
   noShadow?: boolean;
@@ -47,40 +48,43 @@ const yamlLang = yaml();
 
 const CodeBlock = function CodeBlock({
   children,
+  className: blockClassName,
+  label,
   onLineHover,
   noMargin,
   noShadow,
   showCopy,
 }: CodeBlockProps) {
   const {
-    className = 'language-js',
+    className: languageClassName = 'language-js',
     children: codeProp = '',
     meta,
   } = (children as any)?.props ?? {};
   let code: string = typeof codeProp === 'string' ? codeProp : '';
   code = code.trimEnd();
   let lang = jsxLang;
-  const languageLabel = useLanguageLabel(className);
+  const defaultLanguageLabel = useLanguageLabel(languageClassName);
+  const languageLabel = label || defaultLanguageLabel;
   const {copied, handleCopy} = useCopyableCode(code);
   const showCopyButton = showCopy ?? shouldShowCopyButton(meta);
-  if (className === 'language-css') {
+  if (languageClassName === 'language-css') {
     lang = cssLang;
-  } else if (className === 'language-html') {
+  } else if (languageClassName === 'language-html') {
     lang = htmlLang;
   } else if (
-    className === 'language-ts' ||
-    className === 'language-typescript'
+    languageClassName === 'language-ts' ||
+    languageClassName === 'language-typescript'
   ) {
     lang = tsLang;
   } else if (
-    className === 'language-tsx' ||
-    className === 'language-typescriptreact'
+    languageClassName === 'language-tsx' ||
+    languageClassName === 'language-typescriptreact'
   ) {
     lang = tsxLang;
   } else if (
-    className === 'language-yaml' ||
-    className === 'language-yml' ||
-    className === 'language-syntax'
+    languageClassName === 'language-yaml' ||
+    languageClassName === 'language-yml' ||
+    languageClassName === 'language-syntax'
   ) {
     lang = yamlLang;
   }
@@ -244,7 +248,8 @@ const CodeBlock = function CodeBlock({
         'relative rounded-2xl h-full w-full overflow-x-auto flex flex-col shadow-lg bg-wash dark:bg-gray-95',
         !noMargin && 'my-8',
         noShadow &&
-          'shadow-none rounded-2xl overflow-hidden w-full flex bg-transparent'
+          'shadow-none rounded-2xl overflow-hidden w-full flex bg-transparent',
+        blockClassName
       )}
       style={{contain: 'content'}}>
       <CodeBlockHeader
@@ -253,10 +258,10 @@ const CodeBlock = function CodeBlock({
         onCopy={handleCopy}
         showCopy={showCopyButton}
       />
-      <div className="sp-wrapper">
-        <div className="sp-stack">
-          <div className="sp-code-editor">
-            <pre className="sp-cm sp-pristine sp-javascript flex align-start">
+      <div className="sp-wrapper flex flex-col flex-1 min-h-0">
+        <div className="sp-stack flex flex-col flex-1 min-h-0">
+          <div className="sp-code-editor flex flex-col flex-1 min-h-0">
+            <pre className="sp-cm sp-pristine sp-javascript flex align-start flex-1 min-h-0 h-full">
               <code
                 className="sp-pre-placeholder grow-[2]"
                 onMouseLeave={

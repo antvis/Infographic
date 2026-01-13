@@ -30,24 +30,28 @@ export function setSVGPadding(svg: SVGSVGElement, padding: ParsedPadding) {
     if (document.contains(svg)) {
       setSVGPaddingInBrowser(svg, padding);
     } else {
-      const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-          mutation.addedNodes.forEach((node) => {
-            if (node === svg || node.contains(svg)) {
-              waitForLayout(svg, () => {
-                setSVGPaddingInBrowser(svg, padding);
-              });
+      try {
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            mutation.addedNodes.forEach((node) => {
+              if (node === svg || node.contains(svg)) {
+                waitForLayout(svg, () => {
+                  setSVGPaddingInBrowser(svg, padding);
+                });
 
-              observer.disconnect();
-            }
+                observer.disconnect();
+              }
+            });
           });
         });
-      });
 
-      observer.observe(document, {
-        childList: true,
-        subtree: true,
-      });
+        observer.observe(document, {
+          childList: true,
+          subtree: true,
+        });
+      } catch {
+        setSVGPaddingInNode(svg, padding);
+      }
     }
   }
 }

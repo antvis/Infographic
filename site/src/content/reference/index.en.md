@@ -1,5 +1,5 @@
 ---
-title: AntV Infographic Overview
+title: Architecture Design
 ---
 
 AntV Infographic uses a three-layer architecture: JSX rendering engine, runtime, and external API. The overall structure is shown below:

@@ -184,6 +184,7 @@ export function PreviewPanel({
                     {previewValue ? (
                       <Infographic
                         ref={infographicRef}
+                        init={{editable: true}}
                         options={previewValue}
                         onError={(err) =>
                           onRenderError?.(err ? err.message : null)

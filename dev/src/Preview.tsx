@@ -1,51 +1,29 @@
 import { getTemplate, getTemplates, ThemeConfig } from '@antv/infographic';
 import Editor from '@monaco-editor/react';
 import { Button, Card, Checkbox, ColorPicker, Form, Select } from 'antd';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { getDataByTemplate } from '../../shared/get-template-data';
 import { Infographic } from './Infographic';
-import {
-  COMPARE_DATA,
-  HIERARCHY_DATA,
-  LIST_DATA,
-  SWOT_DATA,
-  WORD_CLOUD_DATA,
-} from './data';
+import { DATA_KEYS, DATASET, DEFAULT_DATA_KEY, type DataKey } from './data';
 import { getStoredValues, setStoredValues } from './utils/storage';
 
 const templates = getTemplates();
 const STORAGE_KEY = 'preview-form-values';
 
-const DATA = {
-  list: { label: '列表数据', value: LIST_DATA },
-  hierarchy: { label: '层级数据', value: HIERARCHY_DATA },
-  compare: { label: '对比数据', value: COMPARE_DATA },
-  swot: { label: 'SWOT 数据', value: SWOT_DATA },
-  wordcloud: { label: '词云数据', value: WORD_CLOUD_DATA },
-} as const;
-const TEMPLATE_DATA_MATCHERS: Array<[string, keyof typeof DATA]> = [
-  ['hierarchy-', 'hierarchy'],
-  ['compare-', 'compare'],
-  ['swot-', 'swot'],
-  ['chart-wordcloud', 'wordcloud'],
-];
-const getDefaultDataString = (key: keyof typeof DATA) =>
-  JSON.stringify(DATA[key].value, null, 2);
-const getDataByTemplate = (nextTemplate: string): keyof typeof DATA => {
-  for (const [prefix, dataKey] of TEMPLATE_DATA_MATCHERS) {
-    if (nextTemplate.startsWith(prefix)) {
-      return dataKey;
-    }
-  }
-  return 'list';
-};
+const getDefaultDataString = (key: DataKey) =>
+  JSON.stringify(DATASET[key], null, 2);
+
+const resolvePreviewDataKey = (data: unknown) =>
+  DATA_KEYS.find((key) => DATASET[key] === data) ?? DEFAULT_DATA_KEY;
 
 export const Preview = () => {
   // Get stored values with validation
   const storedValues = getStoredValues<{
     template: string;
-    data: keyof typeof DATA;
-    theme: 'light' | 'dark';
+    data: DataKey;
+    theme: 'light' | 'dark' | 'hand-drawn';
     colorPrimary: string;
+    enablePrimary: boolean;
     enablePalette: boolean;
   }>(STORAGE_KEY, (stored) => {
     const fallbacks: any = {};
@@ -56,7 +34,7 @@ export const Preview = () => {
     }
 
     // Validate data
-    const dataKeys = Object.keys(DATA) as (keyof typeof DATA)[];
+    const dataKeys = DATA_KEYS;
     if (stored.data && !dataKeys.includes(stored.data)) {
       fallbacks.data = dataKeys[0];
     }
@@ -65,45 +43,48 @@ export const Preview = () => {
   });
 
   const initialTemplate = storedValues?.template || templates[0];
-  const initialData = storedValues?.data || 'list';
+  const templateData = getDataByTemplate(initialTemplate);
+  const initialData = storedValues?.data || resolvePreviewDataKey(templateData);
   const initialTheme = storedValues?.theme || 'light';
   const initialColorPrimary = storedValues?.colorPrimary || '#FF356A';
+  const initialEnablePrimary = storedValues?.enablePrimary ?? true;
   const initialEnablePalette = storedValues?.enablePalette || false;
+  const initialDataValue = storedValues?.data
+    ? DATASET[initialData]
+    : templateData;
 
   const [template, setTemplate] = useState(initialTemplate);
-  const [data, setData] = useState<keyof typeof DATA>(initialData);
+  const [data, setData] = useState<DataKey>(initialData);
   const [theme, setTheme] = useState<string>(initialTheme);
   const [colorPrimary, setColorPrimary] = useState(initialColorPrimary);
+  const [enablePrimary, setEnablePrimary] = useState(initialEnablePrimary);
   const [enablePalette, setEnablePalette] = useState(initialEnablePalette);
   const [customData, setCustomData] = useState<string>(() =>
-    JSON.stringify(DATA[initialData].value, null, 2),
+    JSON.stringify(initialDataValue, null, 2),
   );
   const [dataError, setDataError] = useState<string>('');
 
-  const [themeConfig, setThemeConfig] = useState<ThemeConfig>(() => {
-    const config: ThemeConfig = {
-      colorPrimary: initialColorPrimary,
-    };
-    if (initialTheme === 'dark') {
+  const themeConfig = useMemo<ThemeConfig | undefined>(() => {
+    const config: ThemeConfig = {};
+    if (enablePrimary) {
+      config.colorPrimary = colorPrimary;
+    }
+    if (theme === 'dark') {
       config.colorBg = '#333';
     }
-    if (initialEnablePalette) {
+    if (enablePalette) {
       config.palette = [
-        '#1783FF',
-        '#00C9C9',
-        '#F0884D',
-        '#D580FF',
-        '#7863FF',
-        '#60C42D',
-        '#BD8F24',
-        '#FF80CA',
-        '#2491B3',
-        '#17C76F',
-        '#70CAF8',
+        '#f94144',
+        '#f3722c',
+        '#f8961e',
+        '#f9c74f',
+        '#90be6d',
+        '#43aa8b',
+        '#577590',
       ];
     }
     return config;
-  });
+  }, [enablePrimary, colorPrimary, theme, enablePalette]);
 
   // Save to localStorage when values change
   useEffect(() => {
@@ -112,9 +93,10 @@ export const Preview = () => {
       data,
       theme,
       colorPrimary,
+      enablePrimary,
       enablePalette,
     });
-  }, [template, data, theme, colorPrimary, enablePalette]);
+  }, [template, data, theme, colorPrimary, enablePrimary, enablePalette]);
 
   // Get current template configuration
   const templateConfig = useMemo(() => {
@@ -122,15 +104,22 @@ export const Preview = () => {
     return config ? JSON.stringify(config, null, 2) : '{}';
   }, [template, data]);
 
-  const applyTemplate = (nextTemplate: string) => {
-    const nextData = getDataByTemplate(nextTemplate);
-    setTemplate(nextTemplate);
-    if (nextData !== data) {
-      setData(nextData);
-      setCustomData(getDefaultDataString(nextData));
-      setDataError('');
-    }
-  };
+  const applyTemplate = useCallback(
+    (nextTemplate: string) => {
+      const nextData = getDataByTemplate(nextTemplate);
+      const nextSelection = {
+        key: resolvePreviewDataKey(nextData),
+        data: nextData,
+      };
+      setTemplate(nextTemplate);
+      if (nextSelection.key !== data) {
+        setData(nextSelection.key);
+        setCustomData(JSON.stringify(nextSelection.data, null, 2));
+        setDataError('');
+      }
+    },
+    [data],
+  );
 
   const handleCopyTemplate = async () => {
     try {
@@ -160,7 +149,7 @@ export const Preview = () => {
       return parsed;
     } catch (error) {
       setDataError(error instanceof Error ? error.message : 'Invalid JSON');
-      return DATA[data].value;
+      return DATASET[data];
     }
   }, [customData, data]);
 
@@ -194,7 +183,7 @@ export const Preview = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [template]);
+  }, [template, applyTemplate]);
 
   return (
     <div style={{ display: 'flex', gap: 16, padding: 16, flex: 1 }}>
@@ -250,8 +239,8 @@ export const Preview = () => {
               <Form.Item label="数据">
                 <Select
                   value={data}
-                  options={Object.entries(DATA).map(([key, { label }]) => ({
-                    label,
+                  options={DATA_KEYS.map((key) => ({
+                    label: key,
                     value: key,
                   }))}
                   onChange={(value) => {
@@ -277,40 +266,26 @@ export const Preview = () => {
               <Form.Item label="主色">
                 <ColorPicker
                   value={colorPrimary}
+                  disabled={!enablePrimary}
                   onChange={(color) => {
                     const hexColor = color.toHexString();
                     setColorPrimary(hexColor);
-                    setThemeConfig((pre) => ({
-                      ...pre,
-                      colorPrimary: hexColor,
-                    }));
                   }}
                 />
               </Form.Item>
               <Form.Item>
                 <Checkbox
+                  checked={enablePrimary}
+                  onChange={(e) => setEnablePrimary(e.target.checked)}
+                >
+                  启用主色
+                </Checkbox>
+              </Form.Item>
+              <Form.Item>
+                <Checkbox
                   checked={enablePalette}
                   onChange={(e) => {
-                    const checked = e.target.checked;
-                    setEnablePalette(checked);
-                    setThemeConfig((pre) => ({
-                      ...pre,
-                      palette: checked
-                        ? [
-                            '#1783FF',
-                            '#00C9C9',
-                            '#F0884D',
-                            '#D580FF',
-                            '#7863FF',
-                            '#60C42D',
-                            '#BD8F24',
-                            '#FF80CA',
-                            '#2491B3',
-                            '#17C76F',
-                            '#70CAF8',
-                          ]
-                        : [],
-                    }));
+                    setEnablePalette(e.target.checked);
                   }}
                 >
                   启用色板

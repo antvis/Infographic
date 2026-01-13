@@ -1,5 +1,5 @@
 ---
-name: infographic-creation
+name: infographic-creator
 description: Create beautiful infographics based on the given text content. Use this when users request creating infographics.
 ---
 
@@ -47,6 +47,7 @@ theme
 - `data` should contain title/desc/items (which can be omitted according to semantics)
 - `data.items` should contain label(string)/value(number)/desc(string)/icon(string)/children(object), where children represents the hierarchical structure
 - For comparison templates (template names starting with `compare-`), construct exactly two root nodes and place every comparison item under them as children to keep the hierarchy clear
+- For `hierarchy-structure`, `data.items` renders top-to-bottom (first item at the top) and supports up to 3 levels (root -> group -> item)
 - `theme` field is for customizing the theme of the infographic, including palette, font, etc.
   e.g. dark theme with custom palette:
   ```plain
@@ -151,6 +152,7 @@ interface ItemDatum {
 - sequence-cylinders-3d-simple
 - sequence-color-snake-steps-horizontal-icon-line
 - sequence-pyramid-simple
+- sequence-funnel-simple
 - sequence-roadmap-vertical-simple
 - sequence-roadmap-vertical-plain-text
 - sequence-zigzag-pucks-3d-simple
@@ -177,6 +179,7 @@ interface ItemDatum {
 - hierarchy-tree-tech-style-capsule-item
 - hierarchy-tree-curved-line-rounded-rect-node
 - hierarchy-tree-tech-style-badge-card
+- hierarchy-structure
 - chart-column-simple
 - chart-bar-plain-text
 - chart-line-plain-text
@@ -194,6 +197,10 @@ interface ItemDatum {
 - list-column-done-list
 - list-column-vertical-icon-arrow
 - list-column-simple-vertical-arrow
+- list-zigzag-down-compact-card
+- list-zigzag-down-simple
+- list-zigzag-up-compact-card
+- list-zigzag-up-simple
 
 **Template Selection Guidelines:**
 - For strict sequential order: processes/steps/development trends → `sequence-*` series
@@ -404,6 +411,9 @@ AntVInfographic.registerResourceLoader(async (config) => {
     height: '100%',
   });
   infographic.render(`{syntax}`);
+  document.fonts?.ready.then(() => {
+    infographic.render(`{syntax}`);
+  }).catch((error) => console.error('Error waiting for fonts to load:', error));
 </script>
 ```
 

@@ -16,7 +16,6 @@ import type {
   Selection,
   SelectionChangePayload,
 } from '../../types';
-import { getElementViewportBounds, getScreenCTM } from '../../utils';
 import { Plugin } from '../base';
 import {
   ElementAlign,
@@ -231,40 +230,65 @@ export class EditBar extends Plugin implements IPlugin {
   private placeEditBar(container: HTMLDivElement, selection: Selection) {
     if (selection.length === 0) return;
 
-    const svg = this.editor.getDocument();
     const combinedBounds = getCombinedBounds(
-      selection.map((element) => getElementViewportBounds(svg, element)),
+      selection.map((element) => element.getBoundingClientRect()),
     );
 
     const offsetParent =
       (container.offsetParent as HTMLElement | null) ??
       (document.documentElement as HTMLElement);
-    const parentRect = offsetParent.getBoundingClientRect();
     const viewportHeight = document.documentElement.clientHeight;
+    const viewportWidth = document.documentElement.clientWidth;
     const containerRect = container.getBoundingClientRect();
     const offset = 8;
-
-    const matrix = getScreenCTM(svg);
-    const anchorTop = new DOMPoint(
-      combinedBounds.x + combinedBounds.width / 2,
-      combinedBounds.y,
-    ).matrixTransform(matrix);
-    const anchorBottom = new DOMPoint(
-      combinedBounds.x + combinedBounds.width / 2,
-      combinedBounds.y + combinedBounds.height,
-    ).matrixTransform(matrix);
+    const anchorTop = {
+      x: combinedBounds.x + combinedBounds.width / 2,
+      y: combinedBounds.y,
+    };
+    const anchorBottom = {
+      x: anchorTop.x,
+      y: combinedBounds.y + combinedBounds.height,
+    };
 
     const clamp = (value: number, min: number, max: number) =>
       Math.min(Math.max(value, min), max);
-
-    let left = anchorTop.x - parentRect.left - containerRect.width / 2;
-    left = clamp(left, 0, Math.max(parentRect.width - containerRect.width, 0));
 
     // Use viewport space, not container space, to decide whether we have enough room above.
     const spaceAbove = anchorTop.y - offset;
     const spaceBelow = viewportHeight - anchorBottom.y - offset;
     const shouldPlaceAbove =
       spaceAbove >= containerRect.height || spaceAbove >= spaceBelow;
+
+    if (
+      offsetParent === document.body ||
+      offsetParent === document.documentElement
+    ) {
+      const scrollX = window.scrollX || document.documentElement.scrollLeft;
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      let left = scrollX + anchorTop.x - containerRect.width / 2;
+      left = clamp(
+        left,
+        scrollX,
+        scrollX + Math.max(viewportWidth - containerRect.width, 0),
+      );
+
+      let top = shouldPlaceAbove
+        ? scrollY + anchorTop.y - containerRect.height - offset
+        : scrollY + anchorBottom.y + offset;
+      top = clamp(
+        top,
+        scrollY,
+        scrollY + Math.max(viewportHeight - containerRect.height, 0),
+      );
+
+      container.style.left = `${left}px`;
+      container.style.top = `${top}px`;
+      return;
+    }
+
+    const parentRect = offsetParent.getBoundingClientRect();
+    let left = anchorTop.x - parentRect.left - containerRect.width / 2;
+    left = clamp(left, 0, Math.max(parentRect.width - containerRect.width, 0));
 
     let top = shouldPlaceAbove
       ? anchorTop.y - parentRect.top - containerRect.height - offset

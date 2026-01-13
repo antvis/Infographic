@@ -66,33 +66,40 @@ export class Renderer implements IRenderer {
     if (this.rendered) return svg;
 
     renderTemplate(svg, this.options);
+
     if (isSSRMode) {
       setView(svg, this.options);
       loadFonts(svg);
     } else {
       svg.style.visibility = 'hidden';
+      const postRender = () => {
+        setView(this.template, this.options);
+        loadFonts(this.template);
+        svg.style.visibility = '';
+      };
+
       const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
           mutation.addedNodes.forEach((node) => {
             if (node === svg || node.contains(svg)) {
-              // post render
-              setView(this.template, this.options);
-              loadFonts(this.template);
-
-              // disconnect observer
+              postRender();
               observer.disconnect();
-              svg.style.visibility = '';
             }
           });
         });
       });
 
-      observer.observe(document, {
-        childList: true,
-        subtree: true,
-      });
-
+      try {
+        observer.observe(document, {
+          childList: true,
+          subtree: true,
+        });
+      } catch (error) {
+        postRender();
+        console.error(error);
+      }
     }
+
     this.rendered = true;
     return svg;
   }
@@ -103,8 +110,7 @@ function renderTemplate(svg: SVGSVGElement, options: ParsedInfographicOptions) {
 
   setSVG(svg, options);
 
-  const { themeConfig } = options;
-  renderBackground(svg, themeConfig?.colorBg);
+  renderBackground(svg, options);
 }
 
 function fill(svg: SVGSVGElement, options: ParsedInfographicOptions) {
@@ -119,7 +125,12 @@ function fill(svg: SVGSVGElement, options: ParsedInfographicOptions) {
       const modified = renderText(
         element,
         data.title || '',
-        Object.assign({}, themeConfig.base?.text, themeConfig.title),
+        Object.assign(
+          {},
+          themeConfig.base?.text,
+          themeConfig.title,
+          data.attributes?.title,
+        ),
       );
       return upsert(element, modified);
     }
@@ -127,12 +138,23 @@ function fill(svg: SVGSVGElement, options: ParsedInfographicOptions) {
       const modified = renderText(
         element,
         data.desc || '',
-        Object.assign({}, themeConfig.base?.text, themeConfig.desc),
+        Object.assign(
+          {},
+          themeConfig.base?.text,
+          themeConfig.desc,
+          data.attributes?.desc,
+        ),
       );
       return upsert(element, modified);
     }
     if (isIllus(element)) {
-      const modified = renderIllus(svg, element, data.illus?.[id]);
+      const modified = renderIllus(
+        svg,
+        element,
+        data.illus?.[id],
+        undefined,
+        data.attributes?.illus as Record<string, any>,
+      );
       return upsert(element, modified);
     }
 

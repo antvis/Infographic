@@ -250,7 +250,7 @@ export default function GalleryPage() {
 
   // Jump to detail page
   const handleCardClick = (template: string) => {
-    router.push(`/gallery/example?template=${template}`);
+    router.push(`/gallery/${template}`);
   };
 
   return (

@@ -274,5 +274,5 @@ export const ChartWordCloud: ComponentType<ChartWordCloudProps> = (props) => {
 
 registerStructure('chart-wordcloud', {
   component: ChartWordCloud,
-  composites: ['item'],
+  composites: [],
 });

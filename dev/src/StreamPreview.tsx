@@ -54,38 +54,38 @@ data
       icon company-021_v1_lineal
 `,
   },
-  //   {
-  //     key: 'compare',
-  //     label: '对比',
-  //     code: `infographic compare-hierarchy-left-right-circle-node-pill-badge
-  // data
-  //   title 方案对比
-  //   desc 自研平台 vs 采购方案
-  //   items
-  //     - label 自研平台
-  //       children
-  //         - label 研发周期
-  //           desc 6-8个月
-  //           icon wrench
-  //         - label 灵活扩展
-  //           desc 组件化与可插拔
-  //           icon puzzle
-  //         - label 成本结构
-  //           desc 前期投入高
-  //           icon wallet
-  //     - label 采购方案
-  //       children
-  //         - label 上线速度
-  //           desc 2-4周
-  //           icon lightning
-  //         - label 能力边界
-  //           desc 依赖厂商支持
-  //           icon link
-  //         - label 成本结构
-  //           desc 订阅费用可控
-  //           icon receipt
-  // `,
-  //   },
+  {
+    key: 'compare',
+    label: '对比',
+    code: `infographic compare-hierarchy-left-right-circle-node-pill-badge
+  data
+    title 方案对比
+    desc 自研平台 vs 采购方案
+    items
+      - label 自研平台
+        children
+          - label 研发周期
+            desc 6-8个月
+            icon wrench
+          - label 灵活扩展
+            desc 组件化与可插拔
+            icon puzzle
+          - label 成本结构
+            desc 前期投入高
+            icon wallet
+      - label 采购方案
+        children
+          - label 上线速度
+            desc 2-4周
+            icon lightning
+          - label 能力边界
+            desc 依赖厂商支持
+            icon link
+          - label 成本结构
+            desc 订阅费用可控
+            icon receipt
+  `,
+  },
   {
     key: 'hierarchy',
     label: '层级',

@@ -1,5 +1,5 @@
 ---
-name: infographic-item-generator
+name: infographic-item-creator
 description: Generate or update infographic Item components for this repo (TypeScript/TSX in src/designs/items). Use when asked to design, implement, or modify data item visuals, layout logic, or registerItem composites.
 ---
 

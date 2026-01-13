@@ -3,9 +3,12 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
   server: {
-    // host: 'local.alipay.com',
+    fs: {
+      allow: ['..'],
+    },
+    port: 7080,
   },
-  plugins: [tsconfigPaths()],
+  plugins: [tsconfigPaths({ root: '../' })],
   optimizeDeps: {
     exclude: ['@antv/infographic', '@antv/hierarchy'],
   },

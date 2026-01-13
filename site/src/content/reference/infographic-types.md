@@ -82,6 +82,7 @@ type ExportOptions = SVGExportOptions | PNGExportOptions;
 | --------------- | --------- | ------ | ---------------------------- |
 | type            | `'svg'`   | **是** | 导出类型标识                 |
 | embedResources  | `boolean` | 否     | 是否内嵌远程资源，默认 `true` |
+| removeIds       | `boolean` | 否     | 是否移除 id 依赖，默认 `false` |
 
 ### PNGExportOptions {#png-export-options}
 

@@ -30,7 +30,7 @@ export function applyGradientStyle(
     }
   });
 
-  const id = getGradientId(config);
+  const id = getGradientId(actualConfig);
 
   if (type === 'linear-gradient') {
     const { angle = 0 } = actualConfig;

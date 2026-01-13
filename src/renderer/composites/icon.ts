@@ -14,8 +14,10 @@ export function renderItemIcon(
   const value = datum.icon;
   if (!value) return null;
   const { themeConfig } = options;
+  const dataAttrs = datum.attributes?.icon as Record<string, any> | undefined;
   const attrs: DynamicAttributes<IconAttributes> = {
     ...themeConfig.item?.icon,
+    ...dataAttrs,
   };
 
   const parsedAttrs = parseDynamicAttributes(node, attrs);

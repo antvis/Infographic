@@ -1,17 +1,20 @@
+import type { ParsedInfographicOptions } from '../../options';
 import { createElement, getElementByRole } from '../../utils';
 import { ElementTypeEnum } from '../constants';
 
 export function renderBackground(
   svg: SVGSVGElement,
-  background?: string,
+  options: ParsedInfographicOptions,
 ): void {
+  if (options.svg?.background === false) return;
+  const {
+    themeConfig: { colorBg: background },
+  } = options;
+  if (!background) return;
   const container = svg.parentElement;
+
   if (container) container.style.backgroundColor = background || 'none';
   const element = getElementByRole(svg, ElementTypeEnum.Background);
-
-  if (!background) {
-    return element?.remove();
-  }
 
   svg.style.backgroundColor = background;
 

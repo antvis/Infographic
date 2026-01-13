@@ -8,8 +8,8 @@ Structure development is relatively complex. AntV Infographic provides reusable 
 
 Structure rules and templates are packaged as a skill. The key files are:
 
-- `.skills/infographic-structure-generator/SKILL.md`
-- `.skills/infographic-structure-generator/references/structure-prompt.md`
+- `.skills/infographic-structure-creator/SKILL.md`
+- `.skills/infographic-structure-creator/references/structure-prompt.md`
 
 They include the following:
 
@@ -29,7 +29,7 @@ They include the following:
 In Claude Code or Codex, submit your request in one shot, for example:
 
 ```bash
-Please use skill: infographic-structure-generator to build a circular flow structure. Items are arranged in a circle with arrows between neighbors to form a loop. Each item can be added or removed.
+Please use skill: infographic-structure-creator to build a circular flow structure. Items are arranged in a circle with arrows between neighbors to form a loop. Each item can be added or removed.
 ```
 
 After generation, the AI will create the structure file and update exports. You only need to verify the layout and interactions in the Dev environment.
@@ -39,7 +39,7 @@ After generation, the AI will create the structure file and update exports. You 
 If you prefer to paste the reference yourself, read the skill reference:
 
 ```bash
-cat .skills/infographic-structure-generator/references/structure-prompt.md
+cat .skills/infographic-structure-creator/references/structure-prompt.md
 ```
 
 Paste the content into your AI chat, then describe your requirements and generate code.

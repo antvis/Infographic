@@ -82,6 +82,7 @@ type ExportOptions = SVGExportOptions | PNGExportOptions;
 | -------------- | ---------- | -------- | ------------------------------ |
 | type           | `'svg'`    | **Yes**  | Export format                  |
 | embedResources | `boolean`  | No       | Inline remote resources (default `true`) |
+| removeIds      | `boolean`  | No       | Remove id dependencies (default `false`) |
 
 ### PNGExportOptions {#png-export-options}
 

@@ -8,8 +8,8 @@ title: 自定义数据项
 
 数据项相关的规则与模板已整理为 skill 的参考文档，位于：
 
-- `.skills/infographic-item-generator/SKILL.md`
-- `.skills/infographic-item-generator/references/item-prompt.md`
+- `.skills/infographic-item-creator/SKILL.md`
+- `.skills/infographic-item-creator/references/item-prompt.md`
 
 其中包含以下内容：
 
@@ -29,7 +29,7 @@ title: 自定义数据项
 在 Claude Code 或 Codex 中**一次性提出需求**即可，例如：
 
 ```bash
-请使用 skill: infographic-item-generator，帮我开发一个带图标与数值的卡片式数据项。
+请使用 skill: infographic-item-creator，帮我开发一个带图标与数值的卡片式数据项。
 ```
 
 生成后 AI 会直接创建数据项文件并完成导出，只需在 Dev 环境验证效果即可。
@@ -39,7 +39,7 @@ title: 自定义数据项
 如果你更偏好手动复制提示内容，可以直接读取参考文档：
 
 ```bash
-cat .skills/infographic-item-generator/references/item-prompt.md
+cat .skills/infographic-item-creator/references/item-prompt.md
 ```
 
 将内容粘贴给 AI 后，描述需求并生成代码。

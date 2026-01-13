@@ -79,13 +79,13 @@ const infographic = new Infographic({
 infographic.render(`
 infographic list-row-simple-horizontal-arrow
 data
-  items:
-    - label: Step 1
-      desc: Start
-    - label: Step 2
-      desc: In Progress
-    - label: Step 3
-      desc: Complete
+  items
+    - label Step 1
+      desc Start
+    - label Step 2
+      desc In Progress
+    - label Step 3
+      desc Complete
 `);
 ```
 
@@ -131,6 +131,42 @@ data
 });
 
 console.log(result.svg);
+```
+
+## 🔧 Skills Integration
+
+AntV Infographic provides skills to integrate with AI agents:
+
+- **infographic-creator**: Create an HTML file that renders an infographic
+- **infographic-syntax-creator**: Generate infographic syntax from descriptions
+- **infographic-structure-creator**: Generate custom structure designs
+- **infographic-item-creator**: Generate custom item designs
+- **infographic-template-updater**: (For developers) update the template library
+
+### Claude Code
+
+> We don't have a Claude marketplace entry yet, so install manually.
+
+```bash
+set -e
+
+VERSION=0.2.4 # Replace with the latest tag, e.g. 0.2.4
+BASE_URL=https://github.com/antvis/Infographic/releases/download
+mkdir -p .claude/skills
+
+curl -L --fail -o skills.zip "$BASE_URL/$VERSION/skills.zip"
+unzip -q -o skills.zip -d .claude/skills
+rm -f skills.zip
+```
+
+### Codex
+
+> Enter codex
+
+```codex
+# Replace <SKILL> with the skill name, e.g. infographic-creator
+# https://github.com/antvis/Infographic/tree/main/.skills/<SKILL>
+$skill-installer install https://github.com/antvis/Infographic/tree/main/.skills/infographic-creator
 ```
 
 ## 💬 Community & Communication

@@ -32,7 +32,7 @@ const TRANSLATIONS = {
     home: '首页',
     learn: '文档',
     reference: '参考',
-    examples: '示例',
+    gallery: '示例',
     icon: '图标',
     editor: '编辑器',
     ai: 'AI',
@@ -42,7 +42,7 @@ const TRANSLATIONS = {
     home: 'Home',
     learn: 'Learn',
     reference: 'Reference',
-    examples: 'Gallery',
+    gallery: 'Gallery',
     icon: 'Icon',
     editor: 'Editor',
     ai: 'AI',
@@ -163,7 +163,7 @@ export default function TopNav({
   section:
     | 'learn'
     | 'reference'
-    | 'examples'
+    | 'gallery'
     | 'ai'
     | 'icon'
     | 'home'
@@ -384,8 +384,8 @@ export default function TopNav({
                 <NavItem isActive={section === 'reference'} url="/reference">
                   {navTexts.reference}
                 </NavItem>
-                <NavItem isActive={section === 'examples'} url="/gallery">
-                  {navTexts.examples}
+                <NavItem isActive={section === 'gallery'} url="/gallery">
+                  {navTexts.gallery}
                 </NavItem>
                 <NavItem isActive={section === 'icon'} url="/icon">
                   {navTexts.icon}
@@ -493,8 +493,8 @@ export default function TopNav({
                       url="/reference">
                       {navTexts.reference}
                     </NavItem>
-                    <NavItem isActive={section === 'examples'} url="/gallery">
-                      {navTexts.examples}
+                    <NavItem isActive={section === 'gallery'} url="/gallery">
+                      {navTexts.gallery}
                     </NavItem>
                     <NavItem isActive={section === 'icon'} url="/icon">
                       {navTexts.icon}

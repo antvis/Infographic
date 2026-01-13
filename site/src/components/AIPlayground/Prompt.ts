@@ -21,7 +21,10 @@ data
       desc 说明
       icon mdi/rocket-launch
 theme
-  palette #3b82f6 #8b5cf6 #f97316
+  palette
+    - #3b82f6
+    - #8b5cf6
+    - #f97316
 \`\`\`
 
 ## 语法要点
@@ -31,41 +34,52 @@ theme
 - 键值对使用「键 值」形式，数组通过 \`-\` 分项
 - icon 值直接提供关键词或图标名（如 \`mdi/chart-line\`）
 - data 应包含 title/desc/items（根据语义可省略不必要字段）
-- data.items 可包含 label(string)/value(number)/desc(string)/icon(string)/children(object) 等字段，children 表示层级结构
+- data.items 可包含 label(string)/value(number)/desc(string)/icon(string)/children(array) 等字段，children 表示层级结构
 - 对比类模板（名称以 \`compare-\` 开头）应构建两个根节点，所有对比项作为这两个根节点的 children，确保结构清晰
-- 可以添加 theme 来切换色板或深浅色；
+- hierarchy-structure 模板最多支持 3 层（根层 → 分组 → 子项），且 data.items 顺序即从上到下的层级顺序（第 1 个在最上）
+- theme 可用 \`theme <theme-name>\`，或使用 block 自定义 palette 等；不写即默认主题，可选：dark、hand-drawn
+- 根据语义选择模板：列表用 list-*，顺序用 sequence-*，对比用 compare-*，层级用 hierarchy-*，统计用 chart-*，象限用 quadrant-*，关系用 relation-*
 - 严禁输出 JSON、Markdown、解释或额外文本
 
 ## 模板 (template)
 
 - sequence-zigzag-steps-underline-text
 - sequence-horizontal-zigzag-underline-text
+- sequence-horizontal-zigzag-simple-illus
 - sequence-circular-simple
 - sequence-filter-mesh-simple
 - sequence-mountain-underline-text
 - sequence-cylinders-3d-simple
-- compare-binary-horizontal-simple-fold
-- compare-hierarchy-left-right-circle-node-pill-badge
-- quadrant-quarter-simple-card
-- quadrant-quarter-circular
-- list-grid-badge-card
-- list-grid-candy-card-lite
-- list-grid-ribbon-card
-- list-row-horizontal-icon-arrow
-- relation-circle-icon-badge
-- sequence-ascending-steps
-- compare-swot
 - sequence-color-snake-steps-horizontal-icon-line
 - sequence-pyramid-simple
-- list-sector-plain-text
+- sequence-funnel-simple
 - sequence-roadmap-vertical-simple
+- sequence-roadmap-vertical-plain-text
 - sequence-zigzag-pucks-3d-simple
+- sequence-ascending-steps
 - sequence-ascending-stairs-3d-underline-text
+- sequence-snake-steps-compact-card
+- sequence-snake-steps-underline-text
+- sequence-snake-steps-simple
+- sequence-stairs-front-compact-card
+- sequence-stairs-front-pill-badge
+- sequence-timeline-simple
+- sequence-timeline-rounded-rect-node
+- sequence-timeline-simple-illus
+- compare-binary-horizontal-simple-fold
+- compare-hierarchy-left-right-circle-node-pill-badge
+- compare-swot
+- quadrant-quarter-simple-card
+- quadrant-quarter-circular
+- quadrant-simple-illus
+- relation-circle-icon-badge
+- relation-circle-circular-progress
 - compare-binary-horizontal-badge-card-arrow
 - compare-binary-horizontal-underline-text-vs
 - hierarchy-tree-tech-style-capsule-item
 - hierarchy-tree-curved-line-rounded-rect-node
 - hierarchy-tree-tech-style-badge-card
+- hierarchy-structure
 - chart-column-simple
 - chart-bar-plain-text
 - chart-line-plain-text
@@ -73,6 +87,20 @@ theme
 - chart-pie-compact-card
 - chart-pie-donut-plain-text
 - chart-pie-donut-pill-badge
+- chart-wordcloud
+- list-grid-badge-card
+- list-grid-candy-card-lite
+- list-grid-ribbon-card
+- list-row-horizontal-icon-arrow
+- list-row-simple-illus
+- list-sector-plain-text
+- list-column-done-list
+- list-column-vertical-icon-arrow
+- list-column-simple-vertical-arrow
+- list-zigzag-down-compact-card
+- list-zigzag-down-simple
+- list-zigzag-up-compact-card
+- list-zigzag-up-simple
 
 ## 注意事项
 
