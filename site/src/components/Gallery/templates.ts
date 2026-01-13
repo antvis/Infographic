@@ -108,6 +108,22 @@ function stringifyObject(
     const value = obj[key];
     if (value === undefined || value === null) return;
 
+    if (key === 'relations' && Array.isArray(value)) {
+      if (value.length === 0) return;
+      lines.push(`${indent}${key}`);
+      value.forEach((relation: any) => {
+        const {from, to, label} = relation;
+        if (from && to) {
+          lines.push(
+            `${indent}${INDENT}${
+              label ? `${from} -${label}-> ${to}` : `${from} -> ${to}`
+            }`
+          );
+        }
+      });
+      return;
+    }
+
     if (Array.isArray(value)) {
       if (value.length === 0) return;
       lines.push(`${indent}${key}`);

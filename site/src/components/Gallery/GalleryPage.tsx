@@ -2,7 +2,7 @@ import {AnimatePresence, motion} from 'framer-motion';
 import {uniq} from 'lodash-es';
 import {ArrowRight, Filter, Layers, Sparkles, X} from 'lucide-react';
 import {useRouter} from 'next/router';
-import {useMemo, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {useLocaleBundle} from '../../hooks/useTranslation';
 import {Infographic} from '../Infographic';
 import {GalleryTemplate, TEMPLATES} from './templates';
@@ -203,6 +203,23 @@ export default function GalleryPage() {
   );
   const router = useRouter();
 
+  useEffect(() => {
+    if (!router.isReady) return;
+    const {filter} = router.query;
+    const nextFilters = filter
+      ? Array.isArray(filter)
+        ? filter
+        : [filter]
+      : [];
+
+    setActiveFilters((prev) => {
+      const isSame =
+        prev.length === nextFilters.length &&
+        prev.every((val) => nextFilters.includes(val));
+      return isSame ? prev : nextFilters;
+    });
+  }, [router.isReady, router.query]);
+
   const galleryTexts = useLocaleBundle(TRANSLATIONS);
   const TYPE_DISPLAY_NAMES = galleryTexts.types as DisplayNameMap;
   const SERIES_DISPLAY_NAMES = galleryTexts.series as DisplayNameMap;
@@ -243,9 +260,24 @@ export default function GalleryPage() {
 
   // Toggle logic
   const toggleFilter = (type: string) => {
-    setActiveFilters((prev) =>
-      prev.includes(type) ? prev.filter((c) => c !== type) : [...prev, type]
-    );
+    setActiveFilters((prev) => {
+      const next = prev.includes(type)
+        ? prev.filter((c) => c !== type)
+        : [...prev, type];
+
+      const query = {...router.query};
+      if (next.length > 0) {
+        query.filter = next;
+      } else {
+        delete query.filter;
+      }
+      router.replace({pathname: router.pathname, query}, undefined, {
+        shallow: true,
+        scroll: false,
+      });
+
+      return next;
+    });
   };
 
   // Jump to detail page
@@ -311,7 +343,16 @@ export default function GalleryPage() {
                     initial={{opacity: 0, scale: 0.8}}
                     animate={{opacity: 1, scale: 1}}
                     exit={{opacity: 0, scale: 0.8}}
-                    onClick={() => setActiveFilters([])}
+                    onClick={() => {
+                      setActiveFilters([]);
+                      const query = {...router.query};
+                      delete query.filter;
+                      router.replace(
+                        {pathname: router.pathname, query},
+                        undefined,
+                        {shallow: true, scroll: false}
+                      );
+                    }}
                     className="ml-2 p-1.5 text-tertiary dark:text-tertiary-dark hover:text-link hover:dark:text-link-dark hover:bg-gray-40/5 dark:hover:bg-gray-60/5 rounded-full transition-colors"
                     title={galleryTexts.clearFilters}>
                     <X className="w-4 h-4" />

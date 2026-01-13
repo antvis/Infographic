@@ -108,7 +108,7 @@ export default function DetailPage({templateId}: {templateId?: string}) {
         <div className="flex-1 overflow-auto flex items-center justify-center p-8 custom-scrollbar relative z-10">
           <div
             className="relative bg-card dark:bg-card-dark rounded-2xl shadow-nav dark:shadow-nav-dark border border-primary/10 dark:border-primary-dark/10 overflow-hidden transition-all duration-300"
-            style={{width: '100%', maxWidth: '1000px', minHeight: '640px'}}>
+            style={{width: '100%', height: '100%'}}>
             <div className="absolute top-4 right-4 opacity-0 hover:opacity-100 transition-opacity z-20">
               <button className="p-2 bg-card/90 dark:bg-card-dark/90 backdrop-blur rounded-lg shadow-secondary-button-stroke dark:shadow-secondary-button-stroke-dark border border-primary/10 dark:border-primary-dark/10 text-secondary dark:text-secondary-dark hover:text-primary hover:dark:text-primary-dark">
                 <Maximize2 className="w-4 h-4" />
