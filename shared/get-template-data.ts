@@ -28,7 +28,8 @@ export const getDataByTemplate = (
     return DATASET.CHART;
   }
   if (template.startsWith('relation-')) {
-    return DATASET.RELATION;
+    if (template.includes('orth')) return DATASET.SYSTEM_DIAGNOSE;
+    return DATASET.PROCESS;
   }
   if (template.startsWith('quadrant-')) {
     return DATASET.QUADRANT;
