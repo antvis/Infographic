@@ -44,6 +44,8 @@ export interface RelationDagreFlowProps extends BaseStructureProps {
   showArrow?: boolean;
   arrowType?: 'arrow' | 'triangle' | 'diamond';
   padding?: number;
+  edgeAnimation?: 'none' | 'ant-line';
+  edgeAnimationSpeed?: number;
 }
 
 const DEFAULT_NODE_SEP = 50;
@@ -73,6 +75,8 @@ export const RelationDagreFlow: ComponentType<RelationDagreFlowProps> = (
     showArrow = true,
     arrowType = 'triangle',
     padding = DEFAULT_PADDING,
+    edgeAnimation = 'none',
+    edgeAnimationSpeed = 1,
     options,
   } = props;
   const { title, desc, items = [] } = data;
@@ -274,7 +278,25 @@ export const RelationDagreFlow: ComponentType<RelationDagreFlowProps> = (
     const labelTextColor = themeColors?.colorText ?? defaultStroke;
     const arrowSize = Math.max(10, edgeWidth * 4);
     const isVertical = rankdir === 'TB' || rankdir === 'BT';
-    const dashArray = edgeStyle === 'dashed' ? edgeDashPattern : '';
+
+    const enableAnimation = edgeAnimation === 'ant-line';
+    const animationDashArray = enableAnimation ? edgeDashPattern : '';
+    const staticDashArray =
+      !enableAnimation && edgeStyle === 'dashed' ? edgeDashPattern : '';
+    const actualDashArray = enableAnimation
+      ? animationDashArray
+      : staticDashArray;
+
+    const dashPatternLength = enableAnimation
+      ? animationDashArray
+          .split(',')
+          .reduce((sum, val) => sum + parseFloat(val.trim() || '0'), 0)
+      : 0;
+    const animationDuration =
+      enableAnimation && dashPatternLength > 0
+        ? `${dashPatternLength / (edgeAnimationSpeed * 10)}s`
+        : '1s';
+
     const straightCornerRadius = edgeCornerRadius;
     const createStraightPath = (
       points: [number, number][],
@@ -581,16 +603,29 @@ export const RelationDagreFlow: ComponentType<RelationDagreFlowProps> = (
         pathD = createStraightPath(points, pointsOffsetX, pointsOffsetY);
       }
       if (!pathD) return;
-      decorElements.push(
+
+      const pathElement = (
         <Path
           d={pathD}
           stroke={edgeStroke}
           strokeWidth={edgeWidth}
-          strokeDasharray={dashArray}
+          strokeDasharray={actualDashArray}
           fill="none"
           data-element-type="shape"
-        />,
+        >
+          {enableAnimation && (
+            <animate
+              attributeName="stroke-dashoffset"
+              from={String(dashPatternLength)}
+              to="0"
+              dur={animationDuration}
+              repeatCount="indefinite"
+            />
+          )}
+        </Path>
       );
+
+      decorElements.push(pathElement);
       if (edgeColorMode === 'gradient') {
         const start = startPoint;
         const end = endPoint;
