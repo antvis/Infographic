@@ -69,8 +69,9 @@ export interface HierarchyTreeProps extends BaseStructureProps {
    * 节点着色模式：
    * - 'level': 按层级着色，同一层级的节点使用相同颜色
    * - 'branch': 按分支着色，根节点使用第一个颜色，二级节点及其子树使用不同颜色
+   * - 'group': 按分组着色，datum.group 相同的节点使用相同颜色
    * - 'node-flat': 按节点着色，每个节点使用不同颜色
-   * 默认 'node-flat'
+   * 默认 'branch'
    */
   colorMode?: HierarchyColorMode;
 }
@@ -114,6 +115,8 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
     orientation === 'bottom-top' || orientation === 'right-left' ? -1 : 1;
   const { title, desc } = data;
   const colorPrimary = getColorPrimary(options);
+  const groupColorIndexMap = new Map<string, number>();
+  let nextGroupColorIndex = 0;
 
   // 内置工具方法：数据预处理
   const normalizeItems = (items: Data['items']) => {
@@ -260,6 +263,27 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
     return { levelBounds, maxWidth, maxHeight };
   };
 
+  const getNodeColorIndexes = (nodeData: any, depth: number) => {
+    if (colorMode === 'group') {
+      const groupKey = String(nodeData?.group ?? '');
+      let groupIndex = groupColorIndexMap.get(groupKey);
+      if (groupIndex == null) {
+        groupIndex = nextGroupColorIndex;
+        groupColorIndexMap.set(groupKey, groupIndex);
+        nextGroupColorIndex += 1;
+      }
+      return [groupIndex];
+    }
+    return getHierarchyColorIndexes(
+      {
+        depth,
+        originalIndexes: nodeData._originalIndex,
+        flatIndex: nodeData._flatIndex,
+      },
+      colorMode,
+    );
+  };
+
   // 内置工具方法：渲染单个节点
   const renderNode = (
     node: any,
@@ -284,14 +308,7 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
     };
 
     // 计算节点颜色
-    const colorIndexes = getHierarchyColorIndexes(
-      {
-        depth,
-        originalIndexes: indexes,
-        flatIndex: nodeData._flatIndex,
-      },
-      colorMode,
-    );
+    const colorIndexes = getNodeColorIndexes(nodeData, depth);
     const nodeColor = getPaletteColor(options, colorIndexes);
     const nodeThemeColors = getThemeColors(
       {
@@ -435,22 +452,11 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
       let strokeColor = colorPrimary;
       if (edgeColorMode === 'gradient') {
         // 使用渐变色
-        const parentColorIndexes = getHierarchyColorIndexes(
-          {
-            depth: parent.depth,
-            originalIndexes: parent.data._originalIndex,
-            flatIndex: parent.data._flatIndex,
-          },
-          colorMode,
+        const parentColorIndexes = getNodeColorIndexes(
+          parent.data,
+          parent.depth,
         );
-        const childColorIndexes = getHierarchyColorIndexes(
-          {
-            depth,
-            originalIndexes: indexes,
-            flatIndex: nodeData._flatIndex,
-          },
-          colorMode,
-        );
+        const childColorIndexes = getNodeColorIndexes(nodeData, depth);
         const parentColor = getPaletteColor(options, parentColorIndexes);
         const childColor = getPaletteColor(options, childColorIndexes);
         const gradientId = `gradient-${parent.data._originalIndex.join('-')}-${indexes.join('-')}`;
@@ -528,13 +534,9 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
 
       // 添加连接点装饰
       if (edgeMarker === 'dot') {
-        const parentColorIndexes = getHierarchyColorIndexes(
-          {
-            depth: parent.depth,
-            originalIndexes: parent.data._originalIndex,
-            flatIndex: parent.data._flatIndex,
-          },
-          colorMode,
+        const parentColorIndexes = getNodeColorIndexes(
+          parent.data,
+          parent.depth,
         );
         const parentDotColor =
           edgeColorMode === 'gradient'

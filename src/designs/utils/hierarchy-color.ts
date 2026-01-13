@@ -1,7 +1,12 @@
 /**
  * 层级结构着色模式类型
  */
-export type HierarchyColorMode = 'level' | 'branch' | 'node' | 'node-flat';
+export type HierarchyColorMode =
+  | 'level'
+  | 'branch'
+  | 'node'
+  | 'node-flat'
+  | 'group';
 
 /**
  * 层级节点信息接口

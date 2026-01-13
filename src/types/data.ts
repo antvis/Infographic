@@ -14,6 +14,8 @@ export interface ItemDatum extends BaseDatum {
   illus?: string | ResourceConfig;
   /** for hierarchical structure */
   children?: ItemDatum[];
+  /** 图布局中用于分组，相同的 group 会使用同样的颜色 */
+  group?: string;
 }
 
 export interface RelationDatum extends BaseDatum {

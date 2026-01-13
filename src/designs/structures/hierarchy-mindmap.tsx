@@ -154,6 +154,8 @@ export const HierarchyMindmap: ComponentType<HierarchyMindmapProps> = (
   const titleContent = Title ? <Title title={title} desc={desc} /> : null;
   const colorPrimary = getColorPrimary(options);
   const btnBounds = getElementBounds(<BtnAdd indexes={[0]} />);
+  const groupColorIndexMap = new Map<string, number>();
+  let nextGroupColorIndex = 0;
 
   if (!items.length || !Items?.length) {
     return (
@@ -179,8 +181,18 @@ export const HierarchyMindmap: ComponentType<HierarchyMindmapProps> = (
   const colorCache = new WeakMap<AnnotatedItem, string>();
   const themeCache = new WeakMap<AnnotatedItem, any>();
 
-  const getNodeColorIndexes = (datum: AnnotatedItem, depth: number) =>
-    getHierarchyColorIndexes(
+  const getNodeColorIndexes = (datum: AnnotatedItem, depth: number) => {
+    if (colorMode === 'group') {
+      const groupKey = String((datum as { group?: unknown }).group ?? '');
+      let groupIndex = groupColorIndexMap.get(groupKey);
+      if (groupIndex == null) {
+        groupIndex = nextGroupColorIndex;
+        groupColorIndexMap.set(groupKey, groupIndex);
+        nextGroupColorIndex += 1;
+      }
+      return [groupIndex];
+    }
+    return getHierarchyColorIndexes(
       {
         depth,
         originalIndexes: datum._indexes,
@@ -188,6 +200,7 @@ export const HierarchyMindmap: ComponentType<HierarchyMindmapProps> = (
       },
       colorMode,
     );
+  };
 
   const getNodeThemeColors = (datum: AnnotatedItem, depth: number) => {
     const cachedTheme = themeCache.get(datum);

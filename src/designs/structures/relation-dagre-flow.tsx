@@ -100,12 +100,26 @@ export const RelationDagreFlow: ComponentType<RelationDagreFlowProps> = (
   const nodeColorMap = new Map<string, string>();
   const nodeIdsByIndex = new Map<number, string>();
   const nodeIdSet = new Set<string>();
+  const colorGroupIndexMap = new Map<string, number>();
+  let nextColorGroupIndex = 0;
 
   const nodes = items.map((item, index) => {
     const datum = item as FlowNodeDatum;
     const id = String(datum.id ?? index);
     const indexes = [index];
-    const primary = getPaletteColor(options, indexes);
+    let primary: string | undefined;
+    const groupKey = String((datum as { group?: unknown }).group ?? '');
+    if (groupKey) {
+      let groupIndex = colorGroupIndexMap.get(groupKey);
+      if (groupIndex == null) {
+        groupIndex = nextColorGroupIndex;
+        colorGroupIndexMap.set(groupKey, groupIndex);
+        nextColorGroupIndex += 1;
+      }
+      primary = getPaletteColor(options, [groupIndex]);
+    } else {
+      primary = getPaletteColor(options, indexes);
+    }
     const themeColors = primary
       ? getThemeColors({ colorPrimary: primary }, options)
       : undefined;
