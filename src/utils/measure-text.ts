@@ -111,7 +111,7 @@ export function measureText(
   if (attrs.width && attrs.height) {
     return { width: attrs.width, height: attrs.height };
   }
-  
+
   const {
     fontFamily = DEFAULT_FONT,
     fontSize = 14,

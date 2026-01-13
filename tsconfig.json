@@ -22,19 +22,5 @@
     }
   },
   "include": ["src"],
-  "exclude": ["node_modules", "dist", "lib", "esm"],
-  "tsc-alias": {
-    "verbose": false,
-    "resolveFullPaths": true,
-    "fileExtensions": {
-      "inputGlob": "{js,jsx,mjs}",
-      "outputCheck": ["js", "json", "jsx", "mjs"]
-    },
-    "replacers": {
-      "add-js-ext": {
-        "enabled": true,
-        "file": "./scripts/add-js-ext.replacer.js"
-      }
-    }
-  }
+  "exclude": ["node_modules", "dist", "lib", "esm"]
 }

@@ -16,12 +16,15 @@ registerResourceLoader(async (config) => {
     const key = `${scene}::${data}`;
     let svgText: string | null;
 
+    // 1. 命中缓存
     if (svgTextCache.has(key)) {
       svgText = svgTextCache.get(key)!;
     }
+    // 2. 已有请求在进行中
     else if (pendingRequests.has(key)) {
       svgText = await pendingRequests.get(key)!;
     }
+    // 3. 发起新请求
     else {
       const fetchPromise = (async () => {
         try {
