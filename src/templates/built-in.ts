@@ -3,6 +3,7 @@ import { hierarchyStructureTemplates } from './hierarchy-structure';
 import { hierarchyTreeTemplates } from './hierarchy-tree';
 import { listZigzagTemplates } from './list-zigzag';
 import { registerTemplate } from './registry';
+import { relationDagreFlowTemplates } from './relation-dagre-flow';
 import { sequenceStairsTemplates } from './sequence-stairs';
 import type { TemplateOptions } from './types';
 import { wordCloudTemplate } from './word-cloud';
@@ -313,8 +314,8 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
   'sequence-funnel-simple': {
     design: {
       title: 'default',
-      structure: { type: 'sequence-funnel'},
-      items: [{ type: 'simple', showIcon: false, usePaletteColor: true}],
+      structure: { type: 'sequence-funnel' },
+      items: [{ type: 'simple', showIcon: false, usePaletteColor: true }],
     },
     themeConfig: {
       palette: '#1677ff',
@@ -820,6 +821,7 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
   ...sequenceStairsTemplates,
   ...wordCloudTemplate,
   ...listZigzagTemplates,
+  ...relationDagreFlowTemplates,
   ...hierarchyStructureTemplates,
 };
 

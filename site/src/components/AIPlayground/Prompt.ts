@@ -103,6 +103,10 @@ theme
 - list-zigzag-down-simple
 - list-zigzag-up-compact-card
 - list-zigzag-up-simple
+- relation-dagre-flow-tb-simple-circle-node
+- relation-dagre-flow-tb-animated-simple-circle-node
+- relation-dagre-flow-tb-badge-card
+- relation-dagre-flow-tb-animated-badge-card
 
 ## 注意事项
 

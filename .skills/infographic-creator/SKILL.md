@@ -223,6 +223,10 @@ interface RelationDatum extends BaseDatum {
 - list-zigzag-down-simple
 - list-zigzag-up-compact-card
 - list-zigzag-up-simple
+- relation-dagre-flow-tb-simple-circle-node
+- relation-dagre-flow-tb-animated-simple-circle-node
+- relation-dagre-flow-tb-badge-card
+- relation-dagre-flow-tb-animated-badge-card
 
 **Template Selection Guidelines:**
 - For strict sequential order: processes/steps/development trends → `sequence-*` series
