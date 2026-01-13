@@ -46,6 +46,8 @@ const SPECIFIC_ATTRS_MAP: Record<string, string> = {
   lengthAdjust: 'lengthAdjust',
 
   // Animation
+  attributeName: 'attributeName',
+  attributeType: 'attributeType',
   repeatCount: 'repeatCount',
   repeatDur: 'repeatDur',
   calcMode: 'calcMode',
