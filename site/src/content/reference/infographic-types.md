@@ -180,24 +180,51 @@ type StructureOptions = Record<string, any>;
 
 信息图展示的数据结构。
 
-| 属性            | 类型                       | 必填   | 说明       |
-| --------------- | -------------------------- | ------ | ---------- |
-| title           | `string`                   | 否     | 数据标题   |
-| desc            | `string`                   | 否     | 数据描述   |
-| items           | [ItemDatum](#item-datum)[] | **是** | 数据项列表 |
-| `[key: string]` | `any`                      | 否     | 扩展字段   |
+| 属性            | 类型                               | 必填   | 说明       |
+| --------------- | ---------------------------------- | ------ | ---------- |
+| title           | `string`                           | 否     | 数据标题   |
+| desc            | `string`                           | 否     | 数据描述   |
+| items           | [ItemDatum](#item-datum)[]         | **是** | 数据项列表 |
+| relations       | [RelationDatum](#relation-datum)[] | 否     | 关系边列表 |
+| illus           | `Record<string, string \| [ResourceConfig](#resource-config)>` | 否 | 插图资源映射 |
+| attributes      | `Record<string, object>`           | 否     | 扩展属性   |
+| `[key: string]` | `any`                              | 否     | 扩展字段   |
 
-### ItemDatum {#item-datum}
+### BaseDatum {#base-datum}
 
 | 属性            | 类型                                           | 必填 | 说明       |
 | --------------- | ---------------------------------------------- | ---- | ---------- |
+| id              | `string`                                       | 否   | 自定义 id  |
 | icon            | `string` \| [ResourceConfig](#resource-config) | 否   | 图标资源   |
 | label           | `string`                                       | 否   | 标题       |
 | desc            | `string`                                       | 否   | 描述       |
 | value           | `number`                                       | 否   | 数值       |
-| illus           | `string` \| [ResourceConfig](#resource-config) | 否   | 插画       |
-| children        | [ItemDatum](#item-datum)[]                     | 否   | 嵌套项     |
+| attributes      | `Record<string, object>`                       | 否   | 扩展属性   |
 | `[key: string]` | `any`                                          | 否   | 自定义字段 |
+
+### ItemDatum {#item-datum}
+
+继承 [BaseDatum](#base-datum)。
+
+| 属性            | 类型                                           | 必填 | 说明                 |
+| --------------- | ---------------------------------------------- | ---- | -------------------- |
+| illus           | `string` \| [ResourceConfig](#resource-config) | 否   | 插画                 |
+| children        | [ItemDatum](#item-datum)[]                     | 否   | 嵌套项               |
+| group           | `string`                                       | 否   | 分组字段（用于着色） |
+| `[key: string]` | `any`                                          | 否   | 自定义字段           |
+
+### RelationDatum {#relation-datum}
+
+继承 [BaseDatum](#base-datum)。
+
+| 属性            | 类型                                         | 必填 | 说明       |
+| --------------- | -------------------------------------------- | ---- | ---------- |
+| from            | `string`                                     | **是** | 起点 |
+| to              | `string`                                     | **是** | 终点 |
+| direction       | `'forward' \| 'both' \| 'none'`              | 否   | 方向 |
+| showArrow       | `boolean`                                    | 否   | 是否显示箭头 |
+| arrowType       | `'arrow' \| 'triangle' \| 'diamond'`         | 否   | 箭头类型 |
+| `[key: string]` | `any`                                        | 否   | 自定义字段 |
 
 ## ThemeConfig {#theme-config}
 

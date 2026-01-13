@@ -34,7 +34,9 @@ theme
 - 键值对使用「键 值」形式，数组通过 \`-\` 分项
 - icon 值直接提供关键词或图标名（如 \`mdi/chart-line\`）
 - data 应包含 title/desc/items（根据语义可省略不必要字段）
-- data.items 可包含 label(string)/value(number)/desc(string)/icon(string)/children(array) 等字段，children 表示层级结构
+- data 可包含 relations/illus/attributes 等字段
+- data.items 可包含 id(string)/label(string)/value(number)/desc(string)/icon(string)/illus(string)/group(string)/children(array)/attributes(object) 等字段，children 表示层级结构
+- data.relations 可包含 id/from/to/label/direction/showArrow/arrowType 等字段
 - 对比类模板（名称以 \`compare-\` 开头）应构建两个根节点，所有对比项作为这两个根节点的 children，确保结构清晰
 - hierarchy-structure 模板最多支持 3 层（根层 → 分组 → 子项），且 data.items 顺序即从上到下的层级顺序（第 1 个在最上）
 - theme 可用 \`theme <theme-name>\`，或使用 block 自定义 palette 等；不写即默认主题，可选：dark、hand-drawn

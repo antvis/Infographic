@@ -30,11 +30,11 @@
 - 键值对使用「键 空格 值」
 - 数组使用 `-` 作为条目前缀（行内写法仅在用户明确要求时使用）
 - `data` 常见字段：
-  - `title`(string) / `desc`(string) / `items`(array) / `relations`(array)
+  - `title`(string) / `desc`(string) / `items`(array) / `relations`(array) / `illus`(object) / `attributes`(object)
 - `data.items` 常见字段：
-  - `label`(string) / `value`(number) / `desc`(string) / `icon`(string) / `children`(array)
+  - `id`(string) / `label`(string) / `value`(number) / `desc`(string) / `icon`(string) / `illus`(string) / `group`(string) / `children`(array) / `attributes`(object)
 - `data.relations` 常见字段：
-  - `from`(string) / `to`(string) / `label`(string) / `direction`('forward' | 'both' | 'none'， 不填默认 'forward')
+  - `id`(string) / `from`(string) / `to`(string) / `label`(string) / `direction`('forward' | 'both' | 'none'， 不填默认 'forward') / `showArrow`(boolean) / `arrowType`('arrow' | 'triangle' | 'diamond')
 - 对比类模板（名称以 `compare-` 开头）必须构建两个根节点，所有对比项作为这两个根节点的 children
 - `hierarchy-structure` 模板最多支持 3 层（根层 → 分组 → 子项），且 `data.items` 顺序即从上到下的层级顺序（第 1 个在最上）
 - `theme` 可用 `theme <theme-name>`，或使用 block 自定义 `palette` 等；不写即默认主题，可选主题名：`dark`、`hand-drawn`
