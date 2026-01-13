@@ -40,7 +40,7 @@ export interface RelationDagreFlowProps extends BaseStructureProps {
   edgeStyle?: 'solid' | 'dashed';
   edgeDashPattern?: string;
   edgeCornerRadius?: number;
-  edgeRouting?: 'dagre' | 'simple';
+  edgeRouting?: 'dagre' | 'orth';
   showArrow?: boolean;
   arrowType?: 'arrow' | 'triangle' | 'diamond';
   padding?: number;
@@ -71,7 +71,7 @@ export const RelationDagreFlow: ComponentType<RelationDagreFlowProps> = (
     edgeStyle = 'solid',
     edgeDashPattern = '5,5',
     edgeCornerRadius = 12,
-    edgeRouting = 'simple',
+    edgeRouting = 'orth',
     showArrow = true,
     arrowType = 'triangle',
     padding = DEFAULT_PADDING,
@@ -475,7 +475,7 @@ export const RelationDagreFlow: ComponentType<RelationDagreFlowProps> = (
       }
       return points[Math.floor(points.length / 2)];
     };
-    const getSimpleEdgeEndpoints = (sourceId: string, targetId: string) => {
+    const getOrthEdgeEndpoints = (sourceId: string, targetId: string) => {
       const source = nodeLayoutById.get(sourceId);
       const target = nodeLayoutById.get(targetId);
       if (!source || !target) return null;
@@ -502,7 +502,7 @@ export const RelationDagreFlow: ComponentType<RelationDagreFlowProps> = (
         end: [target.x + target.width, target.centerY] as [number, number],
       };
     };
-    const getSimpleEdgePoints = (
+    const getOrthEdgePoints = (
       sourceId: string,
       targetId: string,
     ): {
@@ -510,7 +510,7 @@ export const RelationDagreFlow: ComponentType<RelationDagreFlowProps> = (
       end: [number, number];
       points: [number, number][];
     } | null => {
-      const endpoints = getSimpleEdgeEndpoints(sourceId, targetId);
+      const endpoints = getOrthEdgeEndpoints(sourceId, targetId);
       if (!endpoints) return null;
       const { start, end } = endpoints;
       if (isVertical) {
@@ -559,24 +559,24 @@ export const RelationDagreFlow: ComponentType<RelationDagreFlowProps> = (
           ],
         ];
       };
-      const useSimpleRouting = edgeRouting === 'simple';
-      const simpleEdge = useSimpleRouting
-        ? getSimpleEdgePoints(String(edge.source), String(edge.target))
+      const useOrthRouting = edgeRouting === 'orth';
+      const orthEdge = useOrthRouting
+        ? getOrthEdgePoints(String(edge.source), String(edge.target))
         : null;
-      const normalized = useSimpleRouting ? [] : normalizePoints(edge.points);
-      const points = useSimpleRouting
-        ? (simpleEdge?.points ?? [])
+      const normalized = useOrthRouting ? [] : normalizePoints(edge.points);
+      const points = useOrthRouting
+        ? (orthEdge?.points ?? [])
         : normalized.length
           ? normalized
           : fallbackPoints();
       if (!points.length) return;
-      const pointsOffsetX = useSimpleRouting ? 0 : offsetX;
-      const pointsOffsetY = useSimpleRouting ? 0 : offsetY;
-      const startPoint = useSimpleRouting
-        ? (simpleEdge?.start ?? points[0])
+      const pointsOffsetX = useOrthRouting ? 0 : offsetX;
+      const pointsOffsetY = useOrthRouting ? 0 : offsetY;
+      const startPoint = useOrthRouting
+        ? (orthEdge?.start ?? points[0])
         : points[0];
-      const endPoint = useSimpleRouting
-        ? (simpleEdge?.end ?? points[points.length - 1])
+      const endPoint = useOrthRouting
+        ? (orthEdge?.end ?? points[points.length - 1])
         : points[points.length - 1];
       const relation = (edge as { _original?: { relation?: RelationDatum } })
         ._original?.relation;
