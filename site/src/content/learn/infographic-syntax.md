@@ -136,7 +136,7 @@ data
 YAML 风格写法：
 
 ```plain
-infographic relation-graph
+infographic relation-dagre-flow-tb-simple-circle-node
 data
   title Relation Graph Example
   items
@@ -152,7 +152,7 @@ data
 Mermaid 风格写法（类似 flowchart）：
 
 ```plain
-infographic relation-graph
+infographic relation-dagre-flow-tb-simple-circle-node
 data
   items
     - id A
@@ -170,7 +170,7 @@ data
 也可以省略 `items`，在 `relations` 中直接定义节点。未定义的节点 id 会自动创建，且 `label = id`。
 
 ```plain
-infographic relation-graph
+infographic relation-dagre-flow-tb-simple-circle-node
 data
   relations
     A - The Edge Between A and B -> B

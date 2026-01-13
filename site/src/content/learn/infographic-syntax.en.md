@@ -136,7 +136,7 @@ Use `relations` to describe graph connections between nodes. Nodes live in `item
 YAML-style relations:
 
 ```plain
-infographic relation-graph
+infographic relation-dagre-flow-tb-simple-circle-node
 data
   title Relation Graph Example
   items
@@ -152,7 +152,7 @@ data
 Mermaid-style relations (flowchart-like):
 
 ```plain
-infographic relation-graph
+infographic relation-dagre-flow-tb-simple-circle-node
 data
   items
     - id A
@@ -170,7 +170,7 @@ data
 You can also omit `items`, and define nodes directly in `relations`. Any undefined node id will be created automatically with `label = id`.
 
 ```plain
-infographic relation-graph
+infographic relation-dagre-flow-tb-simple-circle-node
 data
   relations
     A - The Edge Between A and B -> B
