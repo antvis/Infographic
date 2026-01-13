@@ -38,10 +38,12 @@ const shapeStyleSchema = object(nullableColorFields, { allowUnknown: true });
 
 const itemDatumSchema: ObjectSchema = object({}, { allowUnknown: true });
 itemDatumSchema.fields = {
+  id: string(),
   label: string(),
   value: union(number(), string()),
   desc: string(),
   icon: string(),
+  group: string(),
   children: array(itemDatumSchema),
 };
 
@@ -52,6 +54,8 @@ export const RelationSchema: ObjectSchema = object(
     to: string(),
     label: string(),
     direction: enumOf(['forward', 'both', 'none']),
+    showArrow: enumOf(['true', 'false']),
+    arrowType: enumOf(['arrow', 'triangle', 'diamond']),
   },
   { allowUnknown: true },
 );
