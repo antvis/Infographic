@@ -54,6 +54,13 @@ export const BadgeCard: ComponentType<BadgeCardProps> = (props) => {
   // 没有 value 时，label 在整个内容区域垂直居中；有 value 时从顶部开始
   const contentY = !hasValue && !hasDesc ? (height - 14) / 2 : gap;
 
+  const textAlign =
+    !hasIcon && positionH === 'center'
+      ? 'center'
+      : positionH === 'flipped'
+        ? 'right'
+        : 'left';
+
   return (
     <Group {...restProps} width={width} height={height}>
       <Defs>
@@ -116,7 +123,7 @@ export const BadgeCard: ComponentType<BadgeCardProps> = (props) => {
         <ItemLabel
           indexes={indexes}
           width={contentWidth}
-          alignHorizontal={positionH === 'flipped' ? 'right' : 'left'}
+          alignHorizontal={textAlign}
           alignVertical="middle"
           fontSize={14}
           fill={themeColors.colorText}
@@ -148,7 +155,7 @@ export const BadgeCard: ComponentType<BadgeCardProps> = (props) => {
           x={gap}
           y={descY}
           width={fullWidth}
-          alignHorizontal={positionH === 'flipped' ? 'right' : 'left'}
+          alignHorizontal={textAlign}
           fontSize={11}
           fill={themeColors.colorTextSecondary}
           lineNumber={2}
