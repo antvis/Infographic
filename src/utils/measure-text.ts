@@ -1,6 +1,6 @@
 import { measureText as measure, registerFont } from 'measury';
 import AlibabaPuHuiTi from 'measury/fonts/AlibabaPuHuiTi-Regular';
-import { TextProps } from '../jsx';
+import { JSXNode, TextProps } from '../jsx';
 import { DEFAULT_FONT } from '../renderer';
 import { encodeFontFamily } from './font';
 import { isBrowser } from './is-browser';
@@ -105,13 +105,15 @@ function measureTextInBrowser(
 }
 
 export function measureText(
-  text: string | number | undefined = '',
+  text: JSXNode = '',
   attrs: TextProps,
 ): { width: number; height: number } {
   if (attrs.width && attrs.height) {
     return { width: attrs.width, height: attrs.height };
   }
-
+  if (typeof text !== 'string' && typeof text !== 'number') {
+    return { width: 0, height: 0 };
+  }
   const {
     fontFamily = DEFAULT_FONT,
     fontSize = 14,
