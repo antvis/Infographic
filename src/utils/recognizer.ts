@@ -6,8 +6,12 @@ import { getTextEntity } from './text';
 const is = (element: SVGElement, role: string) => {
   return element?.dataset?.elementType === role;
 };
+const isTagName = (element: SVGElement, tagName: string) => {
+  return element.tagName.toLowerCase() === tagName.toLowerCase();
+};
+
 export const isSVG = (element: any): element is SVGSVGElement =>
-  element instanceof SVGElement && element.tagName === 'svg';
+  element instanceof SVGElement && isTagName(element, 'svg');
 export const isTitle = (element: SVGElement) => is(element, 'title');
 export const isDesc = (element: SVGElement) => is(element, 'desc');
 export const isShape = (element: SVGElement) => is(element, 'shape');
@@ -15,9 +19,9 @@ export const isShapesGroup = (element: SVGElement) =>
   is(element, 'shapes-group');
 export const isIllus = (element: SVGElement) => is(element, 'illus');
 export const isText = (element: SVGElement): element is SVGTextElement =>
-  element instanceof SVGElement && element.tagName === 'text';
+  element instanceof SVGElement && isTagName(element, 'text');
 export const isGroup = (element: SVGElement): element is SVGGElement =>
-  element instanceof SVGElement && element.tagName === 'g';
+  element instanceof SVGElement && isTagName(element, 'g');
 export const isItemIcon = (element: SVGElement) => is(element, 'item-icon');
 export const isItemIconGroup = (element: SVGElement) =>
   is(element, 'item-icon-group');
@@ -37,11 +41,11 @@ export const isRoughVolume = (element: SVGElement) =>
 export function isForeignObjectElement(
   element: any,
 ): element is SVGForeignObjectElement {
-  return element.tagName?.toLowerCase() === 'foreignobject';
+  return isTagName(element, 'foreignObject');
 }
 
 export function isTextEntity(element: any): element is HTMLSpanElement {
-  return element.tagName?.toLowerCase() === 'span';
+  return isTagName(element, 'SPAN');
 }
 
 export function isEditableText(node: SVGElement): node is TextElement {
