@@ -1,18 +1,14 @@
-let _isBrowser: boolean | undefined;
+let IS_BROWSER: true | undefined;
 
 export function isBrowser(): boolean {
-  if (_isBrowser !== undefined) {
-    return _isBrowser;
-  }
+  if (IS_BROWSER) return true;
 
   if (typeof window === 'undefined' || typeof document === 'undefined') {
-    _isBrowser = false;
     return false;
   }
 
   const body = document.body;
   if (!body) {
-    _isBrowser = false;
     return false;
   }
 
@@ -47,7 +43,6 @@ export function isBrowser(): boolean {
   }
 
   if (!hasRealLayout) {
-    _isBrowser = false;
     return false;
   }
 
@@ -59,7 +54,6 @@ export function isBrowser(): boolean {
 
     const ctx = canvas.getContext('2d');
     if (!ctx) {
-      _isBrowser = false;
       return false;
     }
 
@@ -74,6 +68,6 @@ export function isBrowser(): boolean {
     hasRealCanvas = false;
   }
 
-  _isBrowser = hasRealCanvas;
+  if (hasRealCanvas) IS_BROWSER = hasRealCanvas;
   return hasRealCanvas;
 }

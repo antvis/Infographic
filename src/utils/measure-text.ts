@@ -4,7 +4,6 @@ import { JSXNode, TextProps } from '../jsx';
 import { DEFAULT_FONT } from '../renderer';
 import { encodeFontFamily } from './font';
 import { isBrowser } from './is-browser';
-import { isNode } from './is-node';
 
 let FONT_EXTEND_FACTOR = 1.01;
 
@@ -12,9 +11,7 @@ export const setFontExtendFactor = (factor: number) => {
   FONT_EXTEND_FACTOR = factor;
 };
 
-if (isNode) {
-  registerFont(AlibabaPuHuiTi);
-}
+registerFont(AlibabaPuHuiTi);
 
 let canvasContext: CanvasRenderingContext2D | null = null;
 let measureSpan: HTMLSpanElement | null = null;
