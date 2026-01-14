@@ -52,13 +52,14 @@ export function updateTextElement(
     if (!width || !height) {
       const content = textContent ?? getTextContent(text);
       const { fontFamily, fontSize, fontWeight, lineHeight } = entity.style;
+      const fSize = fontSize ? parseFloat(String(fontSize)) : 12;
       const rect = measureText(content, {
         fontFamily,
-        fontSize: fontSize ? parseFloat(String(fontSize)) : 12,
+        fontSize: fSize,
         fontWeight,
         lineHeight: lineHeight.endsWith('px')
           ? parseFloat(lineHeight)
-          : parseFloat(lineHeight) * 1.4,
+          : (parseFloat(lineHeight) || 1.4) * fSize,
       });
 
       if (!width && !text.hasAttribute('width')) width = String(rect.width);

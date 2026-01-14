@@ -6,7 +6,7 @@ import { getTextEntity } from './text';
 const is = (element: SVGElement, role: string) => {
   return element?.dataset?.elementType === role;
 };
-const isTagName = (element: SVGElement, tagName: string) => {
+const isTagName = (element: HTMLElement | SVGElement, tagName: string) => {
   return element.tagName.toLowerCase() === tagName.toLowerCase();
 };
 
