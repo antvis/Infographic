@@ -167,7 +167,6 @@ onBeforeUnmount(() => {
   }
 });
 </script>
-
 ```
 
 ### Server-Side Rendering {#server-side-rendering}
