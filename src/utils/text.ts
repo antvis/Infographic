@@ -52,11 +52,10 @@ export function updateTextElement(
     if (!width || !height) {
       const content = textContent ?? getTextContent(text);
       const { fontFamily, fontSize, fontWeight, lineHeight } = entity.style;
-
       const rect = measureText(content, {
         fontFamily,
         fontSize: fontSize ? parseFloat(String(fontSize)) : 12,
-        fontWeight: fontWeight,
+        fontWeight,
         lineHeight: lineHeight.endsWith('px')
           ? parseFloat(lineHeight)
           : parseFloat(lineHeight) * 1.4,
@@ -183,7 +182,6 @@ export function setTextContent(text: TextElement, content: string): void {
     try {
       entity.innerText = content;
     } catch {
-      console.warn('Set innerText failed, fallback to textContent.');
       entity.textContent = content;
     }
   }
