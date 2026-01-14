@@ -6,17 +6,17 @@ data
     - label Q1
       value 68
       desc First quarter performance
-      icon lucide/calendar
+      icon earth
     - label Q2
       value 82
       desc Second quarter growth
-      icon lucide/trending-up
+      icon plane
     - label Q3
       value 91
       desc Third quarter acceleration
-      icon lucide/rocket
+      icon earth
     - label Q4
       value 105
       desc Fourth quarter achievement
-      icon lucide/trophy
+      icon plane
 theme antv

@@ -4,26 +4,26 @@ data
   desc Understanding user needs and pain points through research
   items
     - label User Research
-      icon mingcute/user-question-line
+      icon plane
       value 100
       children
         - label Why users choose this music platform
-          icon mingcute/music-2-ai-line
+          icon earth
           value 80
           children
             - label Which channels users learned about platform
-              icon mingcute/ad-circle-line
+              icon plane
               value 70
             - label What aspects attracted users
-              icon mingcute/mushroom-line
+              icon earth
               value 65
         - label When users use this platform
-          icon mingcute/time-line
+          icon plane
           value 75
           children
             - label In what scenarios users engage
-              icon mingcute/calendar-time-add-line
+              icon earth
               value 60
             - label Which features users utilize
-              icon mingcute/danmaku-line
+              icon plane
               value 55

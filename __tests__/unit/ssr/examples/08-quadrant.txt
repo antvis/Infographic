@@ -5,17 +5,16 @@ data
   items
     - label High Loss High Frequency
       desc Directly avoid risks
-      icon mingcute/currency-bitcoin-2-fill
+      icon plane
       illus notify
     - label Low Loss High Frequency
       desc Implement risk control measures
-      icon mingcute/currency-bitcoin-fill
+      icon earth
       illus coffee
     - label High Loss Low Frequency
       desc Transfer risk through insurance
-      icon mingcute/dogecoin-doge-fill
-      illus diary
+      icon plane
     - label Low Loss Low Frequency
       desc Accept the risk
-      icon mingcute/exchange-bitcoin-fill
+      icon earth
       illus invest

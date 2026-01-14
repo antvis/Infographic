@@ -1,4 +1,5 @@
 infographic list-row-horizontal-icon-arrow
+theme hand-drawn
 data
   title Customer Growth Engine
   desc Multi-channel reach and repeat purchases
