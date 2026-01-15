@@ -1,4 +1,4 @@
-import type { ItemDatum, RelationDatum } from '../types';
+import type { ItemDatum, RelationEdgeDatum } from '../types';
 import { mapWithSchema } from './mapper';
 import { RelationSchema } from './schema';
 import type { SyntaxError, SyntaxNode } from './types';
@@ -167,7 +167,7 @@ function readEdge(text: string, startIndex: number): ParsedEdge | null {
 }
 
 function parseRelationLine(text: string) {
-  const relations: RelationDatum[] = [];
+  const relations: RelationEdgeDatum[] = [];
   const nodes: ParsedNode[] = [];
   const nodeMap = new Map<string, ParsedNode>();
   let index = 0;
@@ -196,7 +196,7 @@ function parseRelationLine(text: string) {
       to = current.id;
     }
 
-    const relation: RelationDatum = {
+    const relation: RelationEdgeDatum = {
       from,
       to,
     };
@@ -246,7 +246,7 @@ function parseExplicitRelation(
   if (typeof value.from !== 'string' || typeof value.to !== 'string') {
     return null;
   }
-  return value as RelationDatum;
+  return value as RelationEdgeDatum;
 }
 
 export function parseRelationsNode(
@@ -254,7 +254,7 @@ export function parseRelationsNode(
   errors: SyntaxError[],
   path: string,
 ) {
-  const relations: RelationDatum[] = [];
+  const relations: RelationEdgeDatum[] = [];
   const items: ItemDatum[] = [];
   const itemMap = new Map<string, ItemDatum>();
 
