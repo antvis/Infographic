@@ -66,8 +66,8 @@ AntV Infographic Syntax 是一个用于描述信息图渲染配置的语法，�
 - sequence-cylinders-3d-simple
 - compare-binary-horizontal-simple-fold
 - compare-hierarchy-left-right-circle-node-pill-badge
-- quadrant-quarter-simple-card
-- quadrant-quarter-circular
+- compare-quadrant-quarter-simple-card
+- compare-quadrant-quarter-circular
 - list-grid-badge-card
 - list-grid-candy-card-lite
 - list-grid-ribbon-card

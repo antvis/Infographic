@@ -67,8 +67,8 @@ EN: AntV Infographic Syntax is a syntax for describing information graph renderi
 - sequence-cylinders-3d-simple
 - compare-binary-horizontal-simple-fold
 - compare-hierarchy-left-right-circle-node-pill-badge
-- quadrant-quarter-simple-card
-- quadrant-quarter-circular
+- compare-quadrant-quarter-simple-card
+- compare-quadrant-quarter-circular
 - list-grid-badge-card
 - list-grid-candy-card-lite
 - list-grid-ribbon-card

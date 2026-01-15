@@ -19,6 +19,9 @@ export const getDataByTemplate = (
     return DATASET.PROS_CONS;
   }
   if (template.startsWith('compare-')) {
+    if (template.includes('quadrant')) {
+      return DATASET.QUADRANT;
+    }
     return DATASET.COMPARE;
   }
   if (template.startsWith('chart-wordcloud')) {
@@ -30,9 +33,6 @@ export const getDataByTemplate = (
   if (template.startsWith('relation-')) {
     if (template.includes('orth')) return DATASET.SYSTEM_DIAGNOSE;
     return DATASET.PROCESS;
-  }
-  if (template.startsWith('quadrant-')) {
-    return DATASET.QUADRANT;
   }
   if (template.startsWith('list-column-vertical-icon-arrow')) {
     return DATASET.TIMELINE;

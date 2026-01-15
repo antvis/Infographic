@@ -47,7 +47,7 @@ const styleTemplates: Array<{
     options: {
       theme: 'dark',
       editable: true,
-      template: 'quadrant-quarter-circular',
+      template: 'compare-quadrant-quarter-circular',
       themeConfig: {
         palette: ['#1890ff', '#52c41a', '#fa8c16', '#722ed1'],
         colorBg: '#00000000',

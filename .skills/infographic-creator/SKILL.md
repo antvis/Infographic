@@ -3,7 +3,6 @@ name: infographic-creator
 description: Create beautiful infographics based on the given text content. Use this when users request creating infographics.
 ---
 
-
 An infographic (Infographic) transforms data, information, and knowledge into perceivable visual language. It combines visual design with data visualization, using intuitive symbols to compress complex information and help audiences quickly understand and remember key points.
 
 `Infographic = Information Structure + Visual Expression`
@@ -71,29 +70,31 @@ theme
 - Use `theme.base.text.font-family` to specify fonts, such as the handwriting style '851tegakizatsu'
 - Use `theme.stylize` to select built-in styles and pass parameters
   Common stylization types include:
-    - `rough`: Apply hand-drawn style to make graphics look like they were drawn by hand.
-    - `pattern`: Apply pattern fill to add repeated pattern effects to graphics.
-    - `linear-gradient` / `radial-gradient`: Apply gradient fill to add linear or radial gradient effects to graphics.
+  - `rough`: Apply hand-drawn style to make graphics look like they were drawn by hand.
+  - `pattern`: Apply pattern fill to add repeated pattern effects to graphics.
+  - `linear-gradient` / `radial-gradient`: Apply gradient fill to add linear or radial gradient effects to graphics.
 
-    e.g: Hand-drawn style (rough):
-    ```plain
-    infographic list-row-simple-horizontal-arrow
-    theme
-      stylize rough
-      base
-        text
-          font-family 851tegakizatsu
-    data
-      items
-        - label Step 1
-          desc Start
-        - label Step 2
-          desc In Progress
-        - label Step 3
-          desc Complete
-    ```
+  e.g: Hand-drawn style (rough):
+
+  ```plain
+  infographic list-row-simple-horizontal-arrow
+  theme
+    stylize rough
+    base
+      text
+        font-family 851tegakizatsu
+  data
+    items
+      - label Step 1
+        desc Start
+      - label Step 2
+        desc In Progress
+      - label Step 3
+        desc Complete
+  ```
 
 Typescript definition for data field:
+
 ```ts
 interface Data {
   title?: string;
@@ -135,33 +136,36 @@ interface RelationDatum extends BaseDatum {
 
 ### Icon and Illustration Resources
 
-  **Icons (from Iconify)**:
-  - Format: `<collection>/<icon-name>`, e.g., `mdi/rocket-launch`
-  - Popular collections:
-    - `mdi/*` - Material Design Icons (most commonly used)
-    - `fa/*` - Font Awesome
-    - `bi/*` - Bootstrap Icons
-    - `heroicons/*` - Heroicons
-  - Browse at: https://icon-sets.iconify.design/
-  - Common icon examples:
-    - Tech: `mdi/code-tags`, `mdi/database`, `mdi/api`, `mdi/cloud`
-    - Business: `mdi/chart-line`, `mdi/briefcase`, `mdi/currency-usd`
-    - Process: `mdi/check-circle`, `mdi/arrow-right`, `mdi/cog`
-    - People: `mdi/account`, `mdi/account-group`, `mdi/shield-account`
+**Icons (from Iconify)**:
 
-  **Illustrations (from unDraw)**:
-  - Format: illustration filename (without .svg), e.g., `coding`
-  - Browse at: https://undraw.co/illustrations
-  - Common themes:
-    - Tech: `coding`, `programmer`, `server`, `cloud-sync`
-    - Business: `business-plan`, `team-work`, `analytics`
-    - Abstract: `abstract`, `building-blocks`, `connection`
-  - Note: Use sparingly as illustrations are larger and more detailed than icons
+- Format: `<collection>/<icon-name>`, e.g., `mdi/rocket-launch`
+- Popular collections:
+  - `mdi/*` - Material Design Icons (most commonly used)
+  - `fa/*` - Font Awesome
+  - `bi/*` - Bootstrap Icons
+  - `heroicons/*` - Heroicons
+- Browse at: https://icon-sets.iconify.design/
+- Common icon examples:
+  - Tech: `mdi/code-tags`, `mdi/database`, `mdi/api`, `mdi/cloud`
+  - Business: `mdi/chart-line`, `mdi/briefcase`, `mdi/currency-usd`
+  - Process: `mdi/check-circle`, `mdi/arrow-right`, `mdi/cog`
+  - People: `mdi/account`, `mdi/account-group`, `mdi/shield-account`
 
-  **Usage Tips**:
-  - For `sequence-*` and `list-*` templates → use `icon`
-  - For larger illustration needs → use `illus`
-  - Not all templates support both icon and illus - refer to template examples
+**Illustrations (from unDraw)**:
+
+- Format: illustration filename (without .svg), e.g., `coding`
+- Browse at: https://undraw.co/illustrations
+- Common themes:
+  - Tech: `coding`, `programmer`, `server`, `cloud-sync`
+  - Business: `business-plan`, `team-work`, `analytics`
+  - Abstract: `abstract`, `building-blocks`, `connection`
+- Note: Use sparingly as illustrations are larger and more detailed than icons
+
+**Usage Tips**:
+
+- For `sequence-*` and `list-*` templates → use `icon`
+- For larger illustration needs → use `illus`
+- Not all templates support both icon and illus - refer to template examples
 
 ### Available Templates
 
@@ -191,9 +195,9 @@ interface RelationDatum extends BaseDatum {
 - compare-binary-horizontal-simple-fold
 - compare-hierarchy-left-right-circle-node-pill-badge
 - compare-swot
-- quadrant-quarter-simple-card
-- quadrant-quarter-circular
-- quadrant-simple-illus
+- compare-quadrant-quarter-simple-card
+- compare-quadrant-quarter-circular
+- compare-quadrant-simple-illus
 - relation-circle-icon-badge
 - relation-circle-circular-progress
 - compare-binary-horizontal-badge-card-arrow
@@ -229,6 +233,7 @@ interface RelationDatum extends BaseDatum {
 - relation-dagre-flow-tb-animated-badge-card
 
 **Template Selection Guidelines:**
+
 - For strict sequential order: processes/steps/development trends → `sequence-*` series
   - Timeline → `sequence-timeline-*`
   - Staircase diagram → `sequence-stairs-*`
@@ -304,6 +309,7 @@ data
       desc Going to market
       illus launch-day
 ```
+
 ## Creation Process
 
 ### Step 1: Understanding User Requirements
@@ -450,6 +456,7 @@ AntVInfographic.registerResourceLoader(async (config) => {
    - Display your output syntax with instruction: "If you need to adjust the template/colors/content, just let me know"
 
 **Note:** The HTML file must include:
+
 - Complete resource loader for handling icon and illustration assets from external sources
 - SVG export functionality via the export button
 - Responsive container that takes 100% width and height

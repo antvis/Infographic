@@ -71,9 +71,9 @@ theme
 - compare-binary-horizontal-simple-fold
 - compare-hierarchy-left-right-circle-node-pill-badge
 - compare-swot
-- quadrant-quarter-simple-card
-- quadrant-quarter-circular
-- quadrant-simple-illus
+- compare-quadrant-quarter-simple-card
+- compare-quadrant-quarter-circular
+- compare-quadrant-simple-illus
 - relation-circle-icon-badge
 - relation-circle-circular-progress
 - compare-binary-horizontal-badge-card-arrow

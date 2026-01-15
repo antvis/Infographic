@@ -1,3 +1,4 @@
+import { compareQuadrantTemplates } from './compare-quadrant';
 import { hierarchyMindmapTemplates } from './hierarchy-mindmap';
 import { hierarchyStructureTemplates } from './hierarchy-structure';
 import { hierarchyTreeTemplates } from './hierarchy-tree';
@@ -349,20 +350,6 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
       items: [{ type: 'plain-text' }],
     },
   },
-  'quadrant-quarter-simple-card': {
-    design: {
-      title: 'default',
-      structure: { type: 'quadrant' },
-      items: [{ type: 'quarter-simple-card' }],
-    },
-  },
-  'quadrant-quarter-circular': {
-    design: {
-      title: 'default',
-      structure: { type: 'quadrant' },
-      items: [{ type: 'quarter-circular' }],
-    },
-  },
   'sequence-roadmap-vertical-plain-text': {
     design: {
       title: 'default',
@@ -444,13 +431,6 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
     design: {
       title: 'default',
       structure: { type: 'list-row' },
-      items: [{ type: 'simple-illus' }],
-    },
-  },
-  'quadrant-simple-illus': {
-    design: {
-      title: 'default',
-      structure: { type: 'quadrant' },
       items: [{ type: 'simple-illus' }],
     },
   },
@@ -816,6 +796,7 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
       ],
     },
   },
+  ...compareQuadrantTemplates,
   ...hierarchyTreeTemplates,
   ...hierarchyMindmapTemplates,
   ...sequenceStairsTemplates,
