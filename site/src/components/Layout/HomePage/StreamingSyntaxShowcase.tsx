@@ -21,7 +21,7 @@ const TRANSLATIONS = {
 data
   title 产品研发全流程
   desc 从需求到上线的完整链路
-  items
+  lists
     - label 需求调研
       value 15
       desc 用户访谈与竞品分析
@@ -62,99 +62,102 @@ themeConfig
 data
   title 现代前端技术体系
   desc 从基础到工程化的完整知识图谱
-  items
-    - label 前端基础
-      icon mdi/language-html5
-      children
-        - label HTML/CSS
-          desc 页面结构与样式
-          icon mdi/language-css3
-          children
-            - label 语义化标签
-              icon mdi/xml
-            - label Flex布局
-              icon mdi/page-layout-body
-            - label Grid布局
-              icon mdi/grid
-            - label 响应式设计
-              icon mdi/responsive
-        - label JavaScript
-          desc 核心语言能力
-          icon mdi/language-javascript
-          children
-            - label ES6+语法
-              icon mdi/code-braces
-            - label 异步编程
-              icon mdi/timer-sand
-            - label 函数式编程
-              icon mdi/function
-            - label 面向对象
-              icon mdi/shape
-    - label 框架生态
-      icon mdi/react
-      children
-        - label React
-          desc 组件化开发
-          icon mdi/react
-          children
-            - label Hooks
-              icon mdi/hook
-            - label 状态管理
-              icon mdi/state-machine
-            - label 性能优化
-              icon mdi/speedometer
-        - label Vue
-          desc 渐进式框架
-          icon mdi/vuejs
-          children
-            - label 组合式API
-              icon mdi/puzzle
-            - label 响应式原理
-              icon mdi/flash
-            - label 路由管理
-              icon mdi/routes
-    - label 工程化
-      icon mdi/wrench
-      children
-        - label 构建工具
-          desc 打包与编译
-          icon mdi/package-variant
-          children
-            - label Webpack
-              icon mdi/webpack
-            - label Vite
-              icon mdi/lightning-bolt
-            - label Rollup
-              icon mdi/package
-        - label 代码质量
-          desc 规范与检查
-          icon mdi/shield-check
-          children
-            - label ESLint
-              icon mdi/check-circle
-            - label Prettier
-              icon mdi/format-paint
-            - label TypeScript
-              icon mdi/language-typescript
-    - label 测试
-      icon mdi/test-tube
-      children
-        - label 单元测试
-          desc 函数级别测试
-          icon mdi/beaker
-          children
-            - label Jest
-              icon mdi/test-tube
-            - label Vitest
-              icon mdi/flash
-        - label E2E测试
-          desc 端到端测试
-          icon mdi/monitor
-          children
-            - label Playwright
-              icon mdi/drama-masks
-            - label Cypress
-              icon mdi/check-all
+  root
+    label 前端技术体系
+    desc 从基础到工程化的完整知识图谱
+    children
+      - label 前端基础
+        icon mdi/language-html5
+        children
+          - label HTML/CSS
+            desc 页面结构与样式
+            icon mdi/language-css3
+            children
+              - label 语义化标签
+                icon mdi/xml
+              - label Flex布局
+                icon mdi/page-layout-body
+              - label Grid布局
+                icon mdi/grid
+              - label 响应式设计
+                icon mdi/responsive
+          - label JavaScript
+            desc 核心语言能力
+            icon mdi/language-javascript
+            children
+              - label ES6+语法
+                icon mdi/code-braces
+              - label 异步编程
+                icon mdi/timer-sand
+              - label 函数式编程
+                icon mdi/function
+              - label 面向对象
+                icon mdi/shape
+      - label 框架生态
+        icon mdi/react
+        children
+          - label React
+            desc 组件化开发
+            icon mdi/react
+            children
+              - label Hooks
+                icon mdi/hook
+              - label 状态管理
+                icon mdi/state-machine
+              - label 性能优化
+                icon mdi/speedometer
+          - label Vue
+            desc 渐进式框架
+            icon mdi/vuejs
+            children
+              - label 组合式API
+                icon mdi/puzzle
+              - label 响应式原理
+                icon mdi/flash
+              - label 路由管理
+                icon mdi/routes
+      - label 工程化
+        icon mdi/wrench
+        children
+          - label 构建工具
+            desc 打包与编译
+            icon mdi/package-variant
+            children
+              - label Webpack
+                icon mdi/webpack
+              - label Vite
+                icon mdi/lightning-bolt
+              - label Rollup
+                icon mdi/package
+          - label 代码质量
+            desc 规范与检查
+            icon mdi/shield-check
+            children
+              - label ESLint
+                icon mdi/check-circle
+              - label Prettier
+                icon mdi/format-paint
+              - label TypeScript
+                icon mdi/language-typescript
+      - label 测试
+        icon mdi/test-tube
+        children
+          - label 单元测试
+            desc 函数级别测试
+            icon mdi/beaker
+            children
+              - label Jest
+                icon mdi/test-tube
+              - label Vitest
+                icon mdi/flash
+          - label E2E测试
+            desc 端到端测试
+            icon mdi/monitor
+            children
+              - label Playwright
+                icon mdi/drama-masks
+              - label Cypress
+                icon mdi/check-all
 themeConfig
   palette ribbonCandy`,
     },
@@ -167,7 +170,7 @@ themeConfig
 data
   title Product Development Lifecycle
   desc Complete process from requirements to launch
-  items
+  lists
     - label Research
       value 15
       desc User interviews and competitive analysis
@@ -208,99 +211,102 @@ themeConfig
 data
   title Modern Frontend Technology
   desc Complete knowledge map from basics to engineering
-  items
-    - label Frontend Basics
-      icon mdi/language-html5
-      children
-        - label HTML/CSS
-          desc Page structure and styling
-          icon mdi/language-css3
-          children
-            - label Semantic Tags
-              icon mdi/xml
-            - label Flex Layout
-              icon mdi/page-layout-body
-            - label Grid Layout
-              icon mdi/grid
-            - label Responsive Design
-              icon mdi/responsive
-        - label JavaScript
-          desc Core language capabilities
-          icon mdi/language-javascript
-          children
-            - label ES6+ Syntax
-              icon mdi/code-braces
-            - label Async Programming
-              icon mdi/timer-sand
-            - label Functional Programming
-              icon mdi/function
-            - label OOP
-              icon mdi/shape
-    - label Framework Ecosystem
-      icon mdi/react
-      children
-        - label React
-          desc Component-based development
-          icon mdi/react
-          children
-            - label Hooks
-              icon mdi/hook
-            - label State Management
-              icon mdi/state-machine
-            - label Performance Optimization
-              icon mdi/speedometer
-        - label Vue
-          desc Progressive framework
-          icon mdi/vuejs
-          children
-            - label Composition API
-              icon mdi/puzzle
-            - label Reactivity System
-              icon mdi/flash
-            - label Router Management
-              icon mdi/routes
-    - label Engineering
-      icon mdi/wrench
-      children
-        - label Build Tools
-          desc Bundling and compilation
-          icon mdi/package-variant
-          children
-            - label Webpack
-              icon mdi/webpack
-            - label Vite
-              icon mdi/lightning-bolt
-            - label Rollup
-              icon mdi/package
-        - label Code Quality
-          desc Standards and linting
-          icon mdi/shield-check
-          children
-            - label ESLint
-              icon mdi/check-circle
-            - label Prettier
-              icon mdi/format-paint
-            - label TypeScript
-              icon mdi/language-typescript
-    - label Testing
-      icon mdi/test-tube
-      children
-        - label Unit Testing
-          desc Function-level testing
-          icon mdi/beaker
-          children
-            - label Jest
-              icon mdi/test-tube
-            - label Vitest
-              icon mdi/flash
-        - label E2E Testing
-          desc End-to-end testing
-          icon mdi/monitor
-          children
-            - label Playwright
-              icon mdi/drama-masks
-            - label Cypress
-              icon mdi/check-all
+  root
+    label Frontend Tech Stack
+    desc Complete knowledge map from basics to engineering
+    children
+      - label Frontend Basics
+        icon mdi/language-html5
+        children
+          - label HTML/CSS
+            desc Page structure and styling
+            icon mdi/language-css3
+            children
+              - label Semantic Tags
+                icon mdi/xml
+              - label Flex Layout
+                icon mdi/page-layout-body
+              - label Grid Layout
+                icon mdi/grid
+              - label Responsive Design
+                icon mdi/responsive
+          - label JavaScript
+            desc Core language capabilities
+            icon mdi/language-javascript
+            children
+              - label ES6+ Syntax
+                icon mdi/code-braces
+              - label Async Programming
+                icon mdi/timer-sand
+              - label Functional Programming
+                icon mdi/function
+              - label OOP
+                icon mdi/shape
+      - label Framework Ecosystem
+        icon mdi/react
+        children
+          - label React
+            desc Component-based development
+            icon mdi/react
+            children
+              - label Hooks
+                icon mdi/hook
+              - label State Management
+                icon mdi/state-machine
+              - label Performance Optimization
+                icon mdi/speedometer
+          - label Vue
+            desc Progressive framework
+            icon mdi/vuejs
+            children
+              - label Composition API
+                icon mdi/puzzle
+              - label Reactivity System
+                icon mdi/flash
+              - label Router Management
+                icon mdi/routes
+      - label Engineering
+        icon mdi/wrench
+        children
+          - label Build Tools
+            desc Bundling and compilation
+            icon mdi/package-variant
+            children
+              - label Webpack
+                icon mdi/webpack
+              - label Vite
+                icon mdi/lightning-bolt
+              - label Rollup
+                icon mdi/package
+          - label Code Quality
+            desc Standards and linting
+            icon mdi/shield-check
+            children
+              - label ESLint
+                icon mdi/check-circle
+              - label Prettier
+                icon mdi/format-paint
+              - label TypeScript
+                icon mdi/language-typescript
+      - label Testing
+        icon mdi/test-tube
+        children
+          - label Unit Testing
+            desc Function-level testing
+            icon mdi/beaker
+            children
+              - label Jest
+                icon mdi/test-tube
+              - label Vitest
+                icon mdi/flash
+          - label E2E Testing
+            desc End-to-end testing
+            icon mdi/monitor
+            children
+              - label Playwright
+                icon mdi/drama-masks
+              - label Cypress
+                icon mdi/check-all
 themeConfig
   palette ribbonCandy`,
     },

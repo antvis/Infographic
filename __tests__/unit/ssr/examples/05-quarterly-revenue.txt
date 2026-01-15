@@ -1,8 +1,8 @@
-infographic quadrant-quarter-simple-card
+infographic compare-quadrant-quarter-simple-card
 data
   title Quarterly Revenue Overview
   desc Business revenue data by quarter
-  items
+  compares
     - label Q1
       value 68
       desc First quarter performance

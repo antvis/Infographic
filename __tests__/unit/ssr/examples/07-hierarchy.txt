@@ -2,28 +2,28 @@ infographic hierarchy-tree-lr-tech-style-capsule-item
 data
   title User Research
   desc Understanding user needs and pain points through research
-  items
-    - label User Research
-      icon plane
-      value 100
-      children
-        - label Why users choose this music platform
-          icon earth
-          value 80
-          children
-            - label Which channels users learned about platform
-              icon plane
-              value 70
-            - label What aspects attracted users
-              icon earth
-              value 65
-        - label When users use this platform
-          icon plane
-          value 75
-          children
-            - label In what scenarios users engage
-              icon earth
-              value 60
-            - label Which features users utilize
-              icon plane
-              value 55
+  root
+    label User Research
+    icon plane
+    value 100
+    children
+      - label Why users choose this music platform
+        icon earth
+        value 80
+        children
+          - label Which channels users learned about platform
+            icon plane
+            value 70
+          - label What aspects attracted users
+            icon earth
+            value 65
+      - label When users use this platform
+        icon plane
+        value 75
+        children
+          - label In what scenarios users engage
+            icon earth
+            value 60
+          - label Which features users utilize
+            icon plane
+            value 55

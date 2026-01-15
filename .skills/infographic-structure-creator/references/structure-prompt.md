@@ -3,6 +3,7 @@
 本文件用于指导生成符合框架规范的 Structure 组件代码。
 
 ## 目录
+
 - 框架核心概念
 - 结构分类体系
 - 技术规范
@@ -659,6 +660,10 @@ registerStructure('[structure-name]', {
   composites: ['title', 'item'], // 根据实际使用的组件填写
 });
 ```
+
+**关系结构模版**：
+
+关系结构模版可通过 `data.relations` 获取关系数据。
 
 ### 5. 组件声明 (composites)
 

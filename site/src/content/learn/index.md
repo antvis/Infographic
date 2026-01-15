@@ -27,7 +27,7 @@ const infographic = new Infographic({
 
 const syntax = `infographic list-row-simple-horizontal-arrow
 data
-  items
+  lists
     - label 步骤 1
       desc 开始
     - label 步骤 2
@@ -71,7 +71,7 @@ infographic.render(syntax);
       const syntax = `
         infographic list-row-simple-horizontal-arrow
         data
-          items
+          lists
             - label 步骤 1
               desc 开始
             - label 步骤 2
@@ -151,7 +151,7 @@ onMounted(() => {
   infographic.render(`
     infographic list-row-simple-horizontal-arrow
     data
-      items
+      lists
         - label 步骤 1
           desc 开始
         - label 步骤 2
@@ -178,7 +178,7 @@ import { renderToString } from '@antv/infographic/ssr';
 
 const syntax = `infographic list-row-simple-horizontal-arrow
 data
-  items
+  lists
     - label 步骤 1
       desc 开始
     - label 步骤 2

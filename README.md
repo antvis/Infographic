@@ -79,7 +79,7 @@ const infographic = new Infographic({
 infographic.render(`
 infographic list-row-simple-horizontal-arrow
 data
-  items
+  lists
     - label Step 1
       desc Start
     - label Step 2

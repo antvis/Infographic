@@ -21,7 +21,7 @@ title: 主题
 ```syntax
 infographic list-row-simple-horizontal-arrow
 data
-  items
+  lists
     - label 步骤 1
       desc 开始
     - label 步骤 2
@@ -42,7 +42,7 @@ theme dark
   colorPrimary #61DDAA
   colorBg #1F1F1F
 data
-  items
+  lists
     - label 步骤 1
       desc 开始
     - label 步骤 2
@@ -68,7 +68,7 @@ infographic list-row-simple-horizontal-arrow
 theme
   palette antv
 data
-  items
+  lists
     - label 步骤 1
       desc 开始
     - label 步骤 2
@@ -91,7 +91,7 @@ theme
     - #F6BD16
     - #F08BB4
 data
-  items
+  lists
     - label 步骤 1
       desc 开始
     - label 步骤 2
@@ -135,7 +135,7 @@ infographic list-row-simple-horizontal-arrow
 theme
   palette smooth-gradient
 data
-  items
+  lists
     - label 步骤 1
       desc 开始
     - label 步骤 2
@@ -184,7 +184,7 @@ theme dark
     label
       fill #FF356A
 data
-  items
+  lists
     - label 步骤 1
       desc 开始
       icon mdi/rocket-launch
@@ -221,7 +221,7 @@ infographic list-row-simple-horizontal-arrow
 theme
   stylize rough
 data
-  items
+  lists
     - label 步骤 1
       desc 开始
     - label 步骤 2
@@ -242,7 +242,7 @@ theme
   stylize pattern
     pattern line
 data
-  items
+  lists
     - label 步骤 1
       desc 开始
     - label 步骤 2
@@ -262,7 +262,7 @@ infographic list-row-simple-horizontal-arrow
 theme
   stylize linear-gradient
 data
-  items
+  lists
     - label 步骤 1
       desc 开始
     - label 步骤 2

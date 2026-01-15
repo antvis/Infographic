@@ -31,26 +31,6 @@ type PlaygroundLayoutProps = PlaygroundBaseProps & {
   preview: ReactNode;
 };
 
-const DEFAULT_JS_CODE = `import { Infographic } from '@antv/infographic';
-
-const infographic = new Infographic({
-  container: '#container',
-  data: {
-    title: '季度营收概览',
-    desc: '按季度拆分的业务营收数据',
-    items: [
-      { label: 'Q1', value: 68 },
-      { label: 'Q2', value: 82 },
-      { label: 'Q3', value: 91 },
-      { label: 'Q4', value: 105 },
-    ],
-  },
-  themeConfig: { palette: 'antv' },
-});
-
-infographic.render();
-`;
-
 const parseConfig = (code: string) => {
   return new Function(`return ${code}`)();
 };
@@ -324,7 +304,7 @@ function JsCodeRunnerPreview({
 
 export function InfographicJsPlayground({
   className,
-  initialCode = DEFAULT_JS_CODE,
+  initialCode = '',
   showPreview = true,
 }: PlaygroundBaseProps & {
   initialCode?: string;

@@ -28,7 +28,7 @@ infographic list-row-horizontal-icon-arrow
 data
   title Title
   desc Description
-  items
+  lists
     - label Label
       value 12.5
       desc Explanation
@@ -43,11 +43,17 @@ theme
 - Use blocks to describe data / theme, with two-space indentation
 - Key-value pairs are expressed as "key value", and arrays are expressed as "-" items
 - The icon value is provided directly with keywords or icon names (such as `mdi/chart-line`)
-- `data` should contain title/desc/items (which can be omitted according to semantics)
-- `data` can include `relations`/`illus`/`attributes` for graph links, illustrations, and extended fields
-- `data.items` should contain id(string)/label(string)/value(number)/desc(string)/icon(string)/illus(string)/group(string)/children(object), where children represents the hierarchical structure
-- `data.relations` describes graph edges with `from`/`to` plus optional `id`/`label`/`direction`/`showArrow`/`arrowType`; mermaid-style `A -> B` is supported when generating relation graphs
-- For comparison templates (template names starting with `compare-`), construct exactly two root nodes and place every comparison item under them as children to keep the hierarchy clear
+- `data` should contain title/desc plus a template-specific data array or node field (not always `items`)
+- `data` can include `illus`/`attributes` plus `relations` when needed for relation graphs
+- Choose data fields based on template category (use one primary field; avoid mixing multiple arrays):
+  - `list-*` templates → `lists`
+  - `sequence-*` templates → `sequences` (optional `order asc|desc`)
+  - `compare-*` templates → `compares` (supports `children` for grouped comparisons)
+  - `hierarchy-*` templates → `root` (tree with `children`); use `items` only when a template explicitly expects it
+  - `relation-*` templates → use `nodes` + `relations`; for simple graphs you may omit `nodes` and write mermaid-style arrows in `relations`
+  - `chart-*` templates → `values` (numeric stats; optional `category` for grouped charts)
+  - If unsure, use `items` as a fallback and let templates adapt
+- For `compare-*` (binary) templates, construct exactly two root nodes and place every comparison item under them as children
 - For `hierarchy-structure`, `data.items` renders top-to-bottom (first item at the top) and supports up to 3 levels (root -> group -> item)
 - `theme` field is for customizing the theme of the infographic, including palette, font, etc.
   e.g. dark theme with custom palette:
@@ -59,7 +65,7 @@ theme
       - #F6BD16
       - #F08BB4
   data
-    items
+    lists
       - label Step 1
         desc Start
       - label Step 2
@@ -84,7 +90,7 @@ theme
       text
         font-family 851tegakizatsu
   data
-    items
+    lists
       - label Step 1
         desc Start
       - label Step 2
@@ -93,45 +99,94 @@ theme
         desc Complete
   ```
 
-Typescript definition for data field:
+Data syntax examples by template category (use the field shown for that template and avoid adding `items` at the same time):
 
-```ts
-interface Data {
-  title?: string;
-  desc?: string;
-  items: ItemDatum[];
-  relations?: RelationDatum[];
-  illus?: Record<string, string | ResourceConfig>;
-  attributes?: Record<string, object>;
-  [key: string]: any;
-}
+```plain
+# list-* templates -> lists
+infographic list-grid-badge-card
+data
+  title Feature List
+  lists
+    - label Fast
+      icon mdi/flash
+    - label Secure
+      icon mdi/shield-check
+```
 
-interface BaseDatum {
-  id?: string;
-  icon?: string | ResourceConfig;
-  label?: string;
-  desc?: string;
-  value?: number;
-  attributes?: Record<string, object>;
-  [key: string]: any;
-}
+```plain
+# sequence-* templates -> sequences
+infographic sequence-steps-simple
+data
+  sequences
+    - label Step 1
+    - label Step 2
+    - label Step 3
+  order asc
+```
 
-interface ItemDatum extends BaseDatum {
-  illus?: string | ResourceConfig;
-  children?: ItemDatum[];
-  group?: string;
-  [key: string]: any;
-}
+```plain
+# hierarchy-* templates -> root (children)
+infographic hierarchy-structure
+data
+  root
+    label Company
+    children
+      - label Dept A
+      - label Dept B
+```
 
-interface RelationDatum extends BaseDatum {
-  from: string;
-  to: string;
-  label?: string;
-  direction?: 'forward' | 'both' | 'none';
-  showArrow?: boolean;
-  arrowType?: 'arrow' | 'triangle' | 'diamond';
-  [key: string]: any;
-}
+```plain
+# compare-* / quadrant-* templates -> compares
+infographic compare-swot
+data
+  compares
+    - label Strengths
+      children
+        - label Strong brand
+        - label Loyal users
+    - label Weaknesses
+      children
+        - label High cost
+        - label Slow release
+```
+
+```plain
+# chart-* templates -> values
+infographic chart-column-simple
+data
+  values
+    - label Visits
+      value 1280
+    - label Conversion
+      value 12.4
+```
+
+```plain
+# relation-* templates -> nodes + relations (arrow syntax allowed)
+# edge labels: A -label-> B or A -->|label| B
+infographic relation-dagre-flow-tb-simple-circle-node
+data
+  nodes
+    - id A
+      label Node A
+    - id B
+      label Node B
+  relations
+    A - approves -> B
+    A -->|blocks| B
+```
+
+```plain
+# fallback when unsure -> items
+infographic list-row-horizontal-icon-arrow
+data
+  items
+    - label Item A
+      desc Description
+      icon sun
+    - label Item B
+      desc Description
+      icon moon
 ```
 
 ### Icon and Illustration Resources
@@ -261,7 +316,7 @@ infographic list-row-horizontal-icon-arrow
 data
   title Internet Technology Evolution
   desc From Web 1.0 to AI era, key milestones
-  items
+  lists
     - time 1991
       label Web 1.0
       desc Tim Berners-Lee published the first website, opening the Internet era
@@ -295,7 +350,7 @@ infographic sequence-horizontal-zigzag-simple-illus
 data
   title Product Development Phases
   desc Key stages in our development process
-  items
+  sequences
     - label Research
       desc Understanding user needs
       illus user-research

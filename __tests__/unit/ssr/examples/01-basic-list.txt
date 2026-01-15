@@ -2,7 +2,7 @@ infographic list-row-simple-horizontal-arrow
 data
   title Getting Started Example
   desc A simple list-based infographic
-  items
+  lists
     - label Step 1
       desc Initial setup and configuration
     - label Step 2

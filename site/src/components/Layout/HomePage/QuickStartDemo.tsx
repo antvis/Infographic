@@ -10,7 +10,7 @@ infographic list-row-horizontal-icon-arrow
 data
   title 互联网技术演进史
   desc 从Web 1.0到AI时代的关键里程碑
-  items
+  lists
     - time 1991
       label 万维网诞生
       desc Tim Berners-Lee发布首个网站，开启互联网时代
@@ -51,7 +51,7 @@ infographic list-row-horizontal-icon-arrow
 data
   title 互联网技术演进史
   desc 从Web 1.0到AI时代的关键里程碑
-  items
+  lists
     - time 1991
       label 万维网诞生
       desc Tim Berners-Lee发布首个网站，开启互联网时代
@@ -67,7 +67,7 @@ infographic list-row-horizontal-icon-arrow
 data
   title Internet Technology Evolution
   desc Key milestones from Web 1.0 to AI era
-  items
+  lists
     - time 1991
       label World Wide Web
       desc Tim Berners-Lee launches first website, opening the Internet era
@@ -108,7 +108,7 @@ infographic list-row-horizontal-icon-arrow
 data
   title Internet Technology Evolution
   desc Key milestones from Web 1.0 to AI era
-  items
+  lists
     - time 1991
       label World Wide Web
       desc Tim Berners-Lee launches first website, opening the Internet era

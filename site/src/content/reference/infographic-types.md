@@ -78,18 +78,18 @@ type ExportOptions = SVGExportOptions | PNGExportOptions;
 
 ### SVGExportOptions {#svg-export-options}
 
-| 属性            | 类型      | 必填   | 说明                         |
-| --------------- | --------- | ------ | ---------------------------- |
-| type            | `'svg'`   | **是** | 导出类型标识                 |
-| embedResources  | `boolean` | 否     | 是否内嵌远程资源，默认 `true` |
-| removeIds       | `boolean` | 否     | 是否移除 id 依赖，默认 `false` |
+| 属性           | 类型      | 必填   | 说明                           |
+| -------------- | --------- | ------ | ------------------------------ |
+| type           | `'svg'`   | **是** | 导出类型标识                   |
+| embedResources | `boolean` | 否     | 是否内嵌远程资源，默认 `true`  |
+| removeIds      | `boolean` | 否     | 是否移除 id 依赖，默认 `false` |
 
 ### PNGExportOptions {#png-export-options}
 
-| 属性   | 类型     | 必填   | 说明                                           |
-| ------ | -------- | ------ | ---------------------------------------------- |
-| type   | `'png'`  | **是** | 导出类型标识                                   |
-| dpr    | `number` | 否     | 导出时的设备像素比，默认使用浏览器 `devicePixelRatio` |
+| 属性 | 类型     | 必填   | 说明                                                  |
+| ---- | -------- | ------ | ----------------------------------------------------- |
+| type | `'png'`  | **是** | 导出类型标识                                          |
+| dpr  | `number` | 否     | 导出时的设备像素比，默认使用浏览器 `devicePixelRatio` |
 
 ## DesignOptions {#design-options}
 
@@ -176,55 +176,146 @@ interface Structure {
 type StructureOptions = Record<string, any>;
 ```
 
+## BaseData {#base-data}
+
+信息图数据的基础结构。
+
+| 属性            | 类型                                                           | 必填 | 说明         |
+| --------------- | -------------------------------------------------------------- | ---- | ------------ |
+| title           | `string`                                                       | 否   | 数据标题     |
+| desc            | `string`                                                       | 否   | 数据描述     |
+| items           | [ItemDatum](#item-datum)[]                                     | 否   | 数据项列表   |
+| illus           | `Record<string, string \| [ResourceConfig](#resource-config)>` | 否   | 插图资源映射 |
+| attributes      | `Record<string, object>`                                       | 否   | 扩展属性     |
+| `[key: string]` | `any`                                                          | 否   | 扩展字段     |
+
 ## Data {#data}
 
-信息图展示的数据结构。
-
-| 属性            | 类型                               | 必填   | 说明       |
-| --------------- | ---------------------------------- | ------ | ---------- |
-| title           | `string`                           | 否     | 数据标题   |
-| desc            | `string`                           | 否     | 数据描述   |
-| items           | [ItemDatum](#item-datum)[]         | **是** | 数据项列表 |
-| relations       | [RelationDatum](#relation-datum)[] | 否     | 关系边列表 |
-| illus           | `Record<string, string \| [ResourceConfig](#resource-config)>` | 否 | 插图资源映射 |
-| attributes      | `Record<string, object>`           | 否     | 扩展属性   |
-| `[key: string]` | `any`                              | 否     | 扩展字段   |
+数据联合类型，包含 `ListData`、`SequenceData`、`HierarchyData`、`CompareData`、`RelationData`、`StatisticsData`。
 
 ### BaseDatum {#base-datum}
 
 | 属性            | 类型                                           | 必填 | 说明       |
 | --------------- | ---------------------------------------------- | ---- | ---------- |
-| id              | `string`                                       | 否   | 自定义 id  |
 | icon            | `string` \| [ResourceConfig](#resource-config) | 否   | 图标资源   |
 | label           | `string`                                       | 否   | 标题       |
 | desc            | `string`                                       | 否   | 描述       |
 | value           | `number`                                       | 否   | 数值       |
+| illus           | `string` \| [ResourceConfig](#resource-config) | 否   | 插画       |
 | attributes      | `Record<string, object>`                       | 否   | 扩展属性   |
 | `[key: string]` | `any`                                          | 否   | 自定义字段 |
 
 ### ItemDatum {#item-datum}
 
-继承 [BaseDatum](#base-datum)。
+数据项联合类型，包含 `ListDatum`、`SequenceDatum`、`HierarchyDatum`、`CompareDatum`、`RelationNodeDatum`、`StatisticsDatum`。
 
-| 属性            | 类型                                           | 必填 | 说明                 |
-| --------------- | ---------------------------------------------- | ---- | -------------------- |
-| illus           | `string` \| [ResourceConfig](#resource-config) | 否   | 插画                 |
-| children        | [ItemDatum](#item-datum)[]                     | 否   | 嵌套项               |
-| group           | `string`                                       | 否   | 分组字段（用于着色） |
-| `[key: string]` | `any`                                          | 否   | 自定义字段           |
-
-### RelationDatum {#relation-datum}
+### ListDatum {#list-datum}
 
 继承 [BaseDatum](#base-datum)。
 
-| 属性            | 类型                                         | 必填 | 说明       |
-| --------------- | -------------------------------------------- | ---- | ---------- |
-| from            | `string`                                     | **是** | 起点 |
-| to              | `string`                                     | **是** | 终点 |
-| direction       | `'forward' \| 'both' \| 'none'`              | 否   | 方向 |
-| showArrow       | `boolean`                                    | 否   | 是否显示箭头 |
-| arrowType       | `'arrow' \| 'triangle' \| 'diamond'`         | 否   | 箭头类型 |
-| `[key: string]` | `any`                                        | 否   | 自定义字段 |
+### SequenceDatum {#sequence-datum}
+
+继承 [BaseDatum](#base-datum)。
+
+### HierarchyDatum {#hierarchy-datum}
+
+继承 [BaseDatum](#base-datum)。
+
+| 属性     | 类型                                 | 必填 | 说明   |
+| -------- | ------------------------------------ | ---- | ------ |
+| children | [HierarchyDatum](#hierarchy-datum)[] | 否   | 子节点 |
+
+### CompareDatum {#compare-datum}
+
+继承 [HierarchyDatum](#hierarchy-datum)。
+
+### RelationNodeDatum {#relation-node-datum}
+
+继承 [BaseDatum](#base-datum)。
+
+| 属性  | 类型     | 必填 | 说明      |
+| ----- | -------- | ---- | --------- |
+| id    | `string` | 否   | 自定义 id |
+| group | `string` | 否   | 分组字段  |
+
+### RelationEdgeDatum {#relation-edge-datum}
+
+继承 [BaseDatum](#base-datum)。
+
+| 属性            | 类型                                 | 必填   | 说明         |
+| --------------- | ------------------------------------ | ------ | ------------ |
+| id              | `string`                             | 否     | 自定义 id    |
+| from            | `string`                             | **是** | 起点         |
+| to              | `string`                             | **是** | 终点         |
+| direction       | `'forward' \| 'both' \| 'none'`      | 否     | 方向         |
+| showArrow       | `boolean`                            | 否     | 是否显示箭头 |
+| arrowType       | `'arrow' \| 'triangle' \| 'diamond'` | 否     | 箭头类型     |
+| `[key: string]` | `any`                                | 否     | 自定义字段   |
+
+### StatisticsDatum {#statistics-datum}
+
+继承 [BaseDatum](#base-datum)。
+
+| 属性     | 类型     | 必填   | 说明     |
+| -------- | -------- | ------ | -------- |
+| value    | `number` | **是** | 数值     |
+| category | `string` | 否     | 分类字段 |
+
+### ListData {#list-data}
+
+继承 [BaseData](#base-data)。
+
+| 属性  | 类型                       | 必填 | 说明       |
+| ----- | -------------------------- | ---- | ---------- |
+| items | [ListDatum](#list-datum)[] | 否   | 数据项列表 |
+| lists | [ListDatum](#list-datum)[] | 否   | 列表数据项 |
+
+### SequenceData {#sequence-data}
+
+继承 [BaseData](#base-data)。
+
+| 属性      | 类型                               | 必填 | 说明       |
+| --------- | ---------------------------------- | ---- | ---------- |
+| items     | [SequenceDatum](#sequence-datum)[] | 否   | 数据项列表 |
+| sequences | [SequenceDatum](#sequence-datum)[] | 否   | 序列数据项 |
+| order     | `'asc' \| 'desc'`                  | 否   | 排序方向   |
+
+### HierarchyData {#hierarchy-data}
+
+继承 [BaseData](#base-data)。
+
+| 属性  | 类型                               | 必填 | 说明       |
+| ----- | ---------------------------------- | ---- | ---------- |
+| items | `[HierarchyDatum]`                 | 否   | 数据项列表 |
+| root  | [HierarchyDatum](#hierarchy-datum) | 否   | 根节点     |
+
+### CompareData {#compare-data}
+
+继承 [BaseData](#base-data)。
+
+| 属性     | 类型                             | 必填 | 说明       |
+| -------- | -------------------------------- | ---- | ---------- |
+| items    | [CompareDatum](#compare-datum)[] | 否   | 数据项列表 |
+| compares | [CompareDatum](#compare-datum)[] | 否   | 对比数据项 |
+
+### RelationData {#relation-data}
+
+继承 [BaseData](#base-data)。
+
+| 属性      | 类型                                        | 必填 | 说明       |
+| --------- | ------------------------------------------- | ---- | ---------- |
+| items     | [RelationNodeDatum](#relation-node-datum)[] | 否   | 节点列表   |
+| nodes     | [RelationNodeDatum](#relation-node-datum)[] | 否   | 节点列表   |
+| relations | [RelationEdgeDatum](#relation-edge-datum)[] | 否   | 关系边列表 |
+
+### StatisticsData {#statistics-data}
+
+继承 [BaseData](#base-data)。
+
+| 属性   | 类型                                   | 必填 | 说明       |
+| ------ | -------------------------------------- | ---- | ---------- |
+| items  | [StatisticsDatum](#statistics-datum)[] | 否   | 数据项列表 |
+| values | [StatisticsDatum](#statistics-datum)[] | 否   | 数值列表   |
 
 ## ThemeConfig {#theme-config}
 

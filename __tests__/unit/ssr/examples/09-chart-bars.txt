@@ -2,7 +2,7 @@ infographic chart-bar-plain-text
 data
   title Annual Revenue Growth
   desc Recent three years and current year target revenue comparison (in hundred million yuan)
-  items
+  values
     - label 2021
       value 120
       desc Transformation period, steady exploration

@@ -25,7 +25,7 @@ infographic list-row-horizontal-icon-arrow
 data
   title 标题
   desc 描述
-  items
+  lists
     - label 标签
       value 12.5
       desc 说明
@@ -104,7 +104,7 @@ infographic list-row-horizontal-icon-arrow
 data
   title Internet Technology Evolution
   desc From Web 1.0 to AI era, key milestones
-  items
+  lists
     - time 1991
       label Web 1.0
       desc Tim Berners-Lee published the first website, opening the Internet era

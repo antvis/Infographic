@@ -5,7 +5,7 @@ theme dark
 data
   title Development Process
   desc Software development lifecycle stages
-  items
+  lists
     - label Planning
       desc Requirements gathering and analysis
     - label Design

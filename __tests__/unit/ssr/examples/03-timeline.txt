@@ -2,7 +2,7 @@ infographic sequence-timeline-rounded-rect-node
 data
   title Internet Technology Evolution
   desc Key milestones from Web 1.0 to AI era
-  items
+  sequences
     - time 1991
       label World Wide Web
       desc Tim Berners-Lee launched the first website

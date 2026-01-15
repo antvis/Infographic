@@ -2,7 +2,7 @@ infographic list-row-horizontal-icon-arrow
 data
   title Customer Growth Engine
   desc Multi-channel reach and repeat purchases
-  items
+  lists
     - label Lead Acquisition
       value 18.6
       desc Channel investment and content marketing

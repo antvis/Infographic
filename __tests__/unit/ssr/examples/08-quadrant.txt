@@ -1,8 +1,8 @@
-infographic quadrant-quarter-simple-card
+infographic compare-quadrant-quarter-simple-card
 data
   title Risk Control Analysis
   desc Risk frequency vs. loss severity analysis
-  items
+  compares
     - label High Loss High Frequency
       desc Directly avoid risks
       icon plane

@@ -2,7 +2,7 @@ infographic compare-swot
 data
   title SWOT Analysis
   desc Comprehensive analysis of internal and external factors to guide strategic planning
-  items
+  compares
     - label Strengths
       children
         - label Leading R&D capabilities

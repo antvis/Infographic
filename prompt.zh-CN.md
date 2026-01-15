@@ -24,7 +24,7 @@ infographic list-row-horizontal-icon-arrow
 data
   title 标题
   desc 描述
-  items
+  lists
     - label 条目
       value 12.5
       desc 说明
@@ -103,7 +103,7 @@ infographic list-row-horizontal-icon-arrow
 data
   title 互联网技术演进史
   desc 从Web 1.0到AI时代的关键里程碑
-  items
+  lists
     - time 1991
       label 万维网诞生
       desc Tim Berners-Lee发布首个网站，开启互联网时代

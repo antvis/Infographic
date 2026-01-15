@@ -2,7 +2,7 @@ infographic compare-binary-horizontal-simple-fold
 data
   title Product Analysis vs Competition
   desc Comparative analysis to identify gaps and improvement areas
-  items
+  compares
     - label Our Product
       children
         - label Architecture Upgrade

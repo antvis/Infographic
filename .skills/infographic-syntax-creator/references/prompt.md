@@ -29,18 +29,111 @@
 - 第一行必须是 `infographic <template-name>`，模板从下方列表中选择
 - 键值对使用「键 空格 值」
 - 数组使用 `-` 作为条目前缀（行内写法仅在用户明确要求时使用）
-- `data` 常见字段：
-  - `title`(string) / `desc`(string) / `items`(array) / `relations`(array) / `illus`(object) / `attributes`(object)
-- `data.items` 常见字段：
-  - `id`(string) / `label`(string) / `value`(number) / `desc`(string) / `icon`(string) / `illus`(string) / `group`(string) / `children`(array) / `attributes`(object)
-- `data.relations` 常见字段：
-  - `id`(string) / `from`(string) / `to`(string) / `label`(string) / `direction`('forward' | 'both' | 'none'， 不填默认 'forward') / `showArrow`(boolean) / `arrowType`('arrow' | 'triangle' | 'diamond')
-- 对比类模板（名称以 `compare-` 开头）必须构建两个根节点，所有对比项作为这两个根节点的 children
-- `hierarchy-structure` 模板最多支持 3 层（根层 → 分组 → 子项），且 `data.items` 顺序即从上到下的层级顺序（第 1 个在最上）
-- `theme` 可用 `theme <theme-name>`，或使用 block 自定义 `palette` 等；不写即默认主题，可选主题名：`dark`、`hand-drawn`
 - icon 直接使用图标名（如 `mdi/chart-line`）
-- 关系类模板（`relation-*`）支持 `relations`，也支持 Mermaid 风格的流式关系写法（如 `A -> B`、`A <- B`），同时解析出节点列表和边列表。
+- `data` 应包含 title/desc + 模板对应的主数据字段（不是默认 `items`）
+- `data` 可包含 `illus`/`attributes`，关系图使用 `relations`
+- 数据字段选择（只使用一个主字段，避免混用）：
+  - `list-*` → `lists`
+  - `sequence-*` → `sequences`（可选 `order asc|desc`）
+  - `compare-*` → `compares`（支持 `children`）
+  - `hierarchy-*` → `root`（树结构；仅在模板明确要求时用 `items`）
+  - `relation-*` → `nodes` + `relations`；简单图可省略 `nodes`，在 `relations` 中用箭头语法
+  - `chart-*` → `values`（可选 `category`）
+  - 不确定时才用 `items` 兜底
+- `compare-*` 二元模板：必须两个根节点，所有对比项挂在这两个根节点的 `children`
+- `hierarchy-structure`：`data.items` 从上到下渲染，最多 3 层（根层 → 分组 → 子项）
+- 关系边标签写法：`A -label-> B` 或 `A -->|label| B`
+- `theme` 可用 `theme <theme-name>`，或用 block 自定义 `palette`/`stylize`/`font-family`
 - 禁止输出 JSON、Markdown 或解释性文字
+
+## 数据语法示例
+
+```plain
+# list-* -> lists
+infographic list-grid-badge-card
+data
+  title Feature List
+  lists
+    - label Fast
+      icon mdi/flash
+    - label Secure
+      icon mdi/shield-check
+```
+
+```plain
+# sequence-* -> sequences
+infographic sequence-steps-simple
+data
+  sequences
+    - label Step 1
+    - label Step 2
+    - label Step 3
+  order asc
+```
+
+```plain
+# hierarchy-* -> root (children)
+infographic hierarchy-structure
+data
+  root
+    label Company
+    children
+      - label Dept A
+      - label Dept B
+```
+
+```plain
+# compare-* / quadrant-* -> compares
+infographic compare-swot
+data
+  compares
+    - label Strengths
+      children
+        - label Strong brand
+        - label Loyal users
+    - label Weaknesses
+      children
+        - label High cost
+        - label Slow release
+```
+
+```plain
+# chart-* -> values
+infographic chart-column-simple
+data
+  values
+    - label Visits
+      value 1280
+    - label Conversion
+      value 12.4
+```
+
+```plain
+# relation-* -> nodes + relations (arrow syntax allowed)
+infographic relation-dagre-flow-tb-simple-circle-node
+data
+  nodes
+    - id A
+      label Node A
+    - id B
+      label Node B
+  relations
+    A - approves -> B
+    A -->|blocks| B
+```
+
+```plain
+# fallback when unsure -> items
+infographic list-row-horizontal-icon-arrow
+data
+  items
+    - label Item A
+      desc Description
+      icon sun
+    - label Item B
+      desc Description
+      icon moon
+```
 
 ## 模板选择
 
@@ -52,6 +145,14 @@
 - 数据统计 → `chart-*`
 - 象限 → `quadrant-*`
 - 关系 → `relation-*`
+
+**模板对应数据字段**：
+- `list-*` → `lists`
+- `sequence-*` → `sequences`（可选 `order asc|desc`）
+- `compare-*` / `quadrant-*` → `compares`
+- `hierarchy-*` → `root`（树结构）
+- `relation-*` → `nodes` + `relations`（或仅 `relations`）
+- `chart-*` → `values`
 
 **可用模板**：
 
@@ -135,7 +236,7 @@ infographic list-row-horizontal-icon-arrow
 data
   title 标题
   desc 描述
-  items
+  lists
     - label 条目
       value 12.5
       desc 说明
