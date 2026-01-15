@@ -190,7 +190,7 @@ export function Page({
           <main className="min-w-0 isolate">
             <article
               className="font-normal break-words text-primary dark:text-primary-dark"
-              key={asPath}>
+              key={cleanedPath}>
               {content}
             </article>
             <div
@@ -216,7 +216,9 @@ export function Page({
           </main>
         </Suspense>
         <div className="hidden -mt-16 lg:max-w-custom-xs 2xl:block">
-          {showToc && toc.length > 0 && <Toc headings={toc} key={asPath} />}
+          {showToc && toc.length > 0 && (
+            <Toc headings={toc} key={cleanedPath} />
+          )}
         </div>
       </div>
     </>

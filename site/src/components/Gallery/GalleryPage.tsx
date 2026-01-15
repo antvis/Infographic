@@ -2,7 +2,7 @@ import {AnimatePresence, motion} from 'framer-motion';
 import {uniq} from 'lodash-es';
 import {ArrowRight, Filter, Layers, Sparkles, X} from 'lucide-react';
 import {useRouter} from 'next/router';
-import {useEffect, useMemo, useState} from 'react';
+import {memo, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useLocaleBundle} from '../../hooks/useTranslation';
 import {Infographic} from '../Infographic';
 import {GalleryTemplate, TEMPLATES} from './templates';
@@ -120,7 +120,7 @@ const FilterChip = ({
 // ==========================================
 // 4. Component: Gallery Card
 // ==========================================
-const GalleryCard = ({
+const GalleryCard = memo(function GalleryCard({
   item,
   onClick,
   useLabel,
@@ -130,18 +130,44 @@ const GalleryCard = ({
   onClick: (id: string) => void;
   useLabel: string;
   typeDisplayNames: DisplayNameMap;
-}) => {
+}) {
+  const cardRef = useRef<HTMLDivElement | null>(null);
+  const [shouldRender, setShouldRender] = useState(false);
   const type = getType(item.template);
   const typeLabel = typeDisplayNames[type] ?? type;
 
+  useEffect(() => {
+    if (shouldRender) return;
+    if (typeof IntersectionObserver === 'undefined') {
+      setShouldRender(true);
+      return;
+    }
+    const node = cardRef.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setShouldRender(true);
+            observer.disconnect();
+          }
+        });
+      },
+      {rootMargin: '200px'}
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [shouldRender]);
+
   return (
     <motion.div
-      layout
+      layout="position"
       initial={{opacity: 0, scale: 0.95}}
       whileInView={{opacity: 1, scale: 1}}
       viewport={{once: true, margin: '-50px'}}
       whileHover="hover"
       whileTap="tap"
+      ref={cardRef}
       className="group relative w-full flex flex-col"
       style={{aspectRatio: '23 / 16'}}
       onClick={() => onClick(item.template)}>
@@ -168,10 +194,12 @@ const GalleryCard = ({
             }}></div>
 
           <div className="w-full h-full pointer-events-none flex items-center justify-center">
-            <Infographic
-              init={{width: '100%', height: '100%', padding: 20}}
-              options={item.syntax}
-            />
+            {shouldRender && (
+              <Infographic
+                init={{width: '100%', height: '100%', padding: 20}}
+                options={item.syntax}
+              />
+            )}
           </div>
 
           {/* 3. Hover Overlay Interaction */}
@@ -191,7 +219,7 @@ const GalleryCard = ({
       </motion.div>
     </motion.div>
   );
-};
+});
 
 // ==========================================
 // 4. Page: Gallery Page
@@ -254,36 +282,40 @@ export default function GalleryPage() {
     }));
   }, [filteredTemplates, SERIES_DISPLAY_NAMES]);
 
-  const toggleSeries = (key: string) => {
+  const toggleSeries = useCallback((key: string) => {
     setExpandedSeries((prev) => ({...prev, [key]: !prev[key]}));
-  };
+  }, []);
 
   // Toggle logic
-  const toggleFilter = (type: string) => {
-    setActiveFilters((prev) => {
-      const next = prev.includes(type)
-        ? prev.filter((c) => c !== type)
-        : [...prev, type];
+  const toggleFilter = useCallback(
+    (type: string) => {
+      setActiveFilters((prev) => {
+        const next = prev[0] === type ? [] : [type];
 
-      const query = {...router.query};
-      if (next.length > 0) {
-        query.filter = next;
-      } else {
-        delete query.filter;
-      }
-      router.replace({pathname: router.pathname, query}, undefined, {
-        shallow: true,
-        scroll: false,
+        const query = {...router.query};
+        if (next.length > 0) {
+          query.filter = next[0];
+        } else {
+          delete query.filter;
+        }
+        router.replace({pathname: router.pathname, query}, undefined, {
+          shallow: true,
+          scroll: false,
+        });
+
+        return next;
       });
-
-      return next;
-    });
-  };
+    },
+    [router]
+  );
 
   // Jump to detail page
-  const handleCardClick = (template: string) => {
-    router.push(`/gallery/${template}`);
-  };
+  const handleCardClick = useCallback(
+    (template: string) => {
+      router.push(`/gallery/${template}`);
+    },
+    [router]
+  );
 
   return (
     <div className="relative isolate overflow-hidden min-h-screen bg-wash dark:bg-gradient-to-b dark:from-gray-95 dark:via-gray-95 dark:to-gray-90 text-primary dark:text-primary-dark selection:bg-link/20 selection:dark:bg-link-dark/20">
