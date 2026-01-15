@@ -39,12 +39,13 @@ theme
   - list-* → lists
   - sequence-* → sequences（可选 order asc|desc）
   - compare-* → compares（支持 children）
-  - hierarchy-* → root（树结构；仅在模板明确要求时用 items）
+  - hierarchy-structure → items（每一项对应一个独立层级，每一层级可以包含子项，最多可嵌套 3 层）
+  - hierarchy-* → root（单一根节点；不要重复 root，多层级用 children）
   - relation-* → nodes + relations；简单图可省略 nodes，在 relations 中用箭头语法
   - chart-* → values（可选 category）
   - 不确定时才用 items 兜底
-- compare-* 二元模板：必须两个根节点，所有对比项挂在这两个根节点的 children
-- hierarchy-structure 如用 items，从上到下渲染，最多 3 层（根层 → 分组 → 子项）
+- compare-binary-* 二元模板：必须两个根节点，所有对比项挂在这两个根节点的 children
+- compare-swot / compare-quadrant-* 可包含多个 compares
 - 关系边标签写法：\`A -label-> B\` 或 \`A -->|label| B\`
 - theme 可用 \`theme <theme-name>\`，或用 block 自定义 palette/stylize/font-family
 - 严禁输出 JSON、Markdown、解释或额外文本

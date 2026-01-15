@@ -3,6 +3,7 @@
 本文件用于指导生成符合 AntV Infographic 语法规范的纯文本输出。
 
 ## 目录
+
 - 目标与输入输出
 - 语法结构
 - 语法规范
@@ -32,16 +33,17 @@
 - icon 直接使用图标名（如 `mdi/chart-line`）
 - `data` 应包含 title/desc + 模板对应的主数据字段（不是默认 `items`）
 - `data` 可包含 `illus`/`attributes`，关系图使用 `relations`
-- 数据字段选择（只使用一个主字段，避免混用）：
-  - `list-*` → `lists`
-  - `sequence-*` → `sequences`（可选 `order asc|desc`）
-  - `compare-*` → `compares`（支持 `children`）
-  - `hierarchy-*` → `root`（树结构；仅在模板明确要求时用 `items`）
-  - `relation-*` → `nodes` + `relations`；简单图可省略 `nodes`，在 `relations` 中用箭头语法
-  - `chart-*` → `values`（可选 `category`）
-  - 不确定时才用 `items` 兜底
-- `compare-*` 二元模板：必须两个根节点，所有对比项挂在这两个根节点的 `children`
-- `hierarchy-structure`：`data.items` 从上到下渲染，最多 3 层（根层 → 分组 → 子项）
+- 主数据字段选择（只用一个，避免混用）：
+  - list-\* → lists
+  - sequence-\* → sequences（可选 order asc|desc）
+  - compare-\* → compares（支持 children）
+  - hierarchy-structure → items（每一项对应一个独立层级，每一层级可以包含子项，最多可嵌套 3 层）
+  - hierarchy-\* → root（单一根节点；不要重复 root，多层级用 children）
+  - relation-\* → nodes + relations；简单图可省略 nodes，在 relations 中用箭头语法
+  - chart-\* → values（可选 category）
+  - 不确定时才用 items 兜底
+- compare-binary-\* 二元模板：必须两个根节点，所有对比项挂在这两个根节点的 children
+- compare-swot / compare-quadrant-\* 可包含多个 compares
 - 关系边标签写法：`A -label-> B` 或 `A -->|label| B`
 - `theme` 可用 `theme <theme-name>`，或用 block 自定义 `palette`/`stylize`/`font-family`
 - 禁止输出 JSON、Markdown 或解释性文字
@@ -138,6 +140,7 @@ data
 ## 模板选择
 
 **选择原则**：
+
 - 列表类信息 → `list-*`
 - 顺序/流程/阶段 → `sequence-*`
 - 二元或多元对比 → `compare-*`
@@ -147,6 +150,7 @@ data
 - 关系 → `relation-*`
 
 **模板对应数据字段**：
+
 - `list-*` → `lists`
 - `sequence-*` → `sequences`（可选 `order asc|desc`）
 - `compare-*` / `quadrant-*` → `compares`

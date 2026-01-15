@@ -49,12 +49,13 @@ theme
   - `list-*` templates → `lists`
   - `sequence-*` templates → `sequences` (optional `order asc|desc`)
   - `compare-*` templates → `compares` (supports `children` for grouped comparisons)
-  - `hierarchy-*` templates → `root` (tree with `children`); use `items` only when a template explicitly expects it
+  - `hierarchy-*` templates → single `root` (tree with `children`); `hierarchy-structure` uses `items` (top-to-bottom)
   - `relation-*` templates → use `nodes` + `relations`; for simple graphs you may omit `nodes` and write mermaid-style arrows in `relations`
   - `chart-*` templates → `values` (numeric stats; optional `category` for grouped charts)
   - If unsure, use `items` as a fallback and let templates adapt
 - For `compare-*` (binary) templates, construct exactly two root nodes and place every comparison item under them as children
-- For `hierarchy-structure`, `data.items` renders top-to-bottom (first item at the top) and supports up to 3 levels (root -> group -> item)
+- For `hierarchy-*`, use a single `root` and nest via `children` (do not repeat `root`)
+- For `hierarchy-structure`, use `data.items`; it renders top-to-bottom (first item at the top) and supports up to 3 levels (root -> group -> item)
 - `theme` field is for customizing the theme of the infographic, including palette, font, etc.
   e.g. dark theme with custom palette:
   ```plain
