@@ -13,11 +13,16 @@ const getPublishedVersion = (name) => {
   }
 };
 
-const bumpPatch = (version) => {
+const parseVersion = (version) => {
   const parts = version.split('.').map((part) => Number(part));
   if (parts.length !== 3 || parts.some(Number.isNaN)) {
-    throw new Error(`Invalid version: ${version}`);
+    throw new Error(`Invalid version format: ${version}`);
   }
+  return parts;
+};
+
+const bumpPatch = (version) => {
+  const parts = parseVersion(version);
   parts[2] += 1;
   return parts.join('.');
 };
@@ -26,16 +31,8 @@ const publishedVersion = getPublishedVersion(pkg.name);
 let nextVersion = pkg.version;
 
 const isGreaterThan = (left, right) => {
-  const leftParts = left.split('.').map((part) => Number(part));
-  const rightParts = right.split('.').map((part) => Number(part));
-  if (
-    leftParts.length !== 3 ||
-    rightParts.length !== 3 ||
-    leftParts.some(Number.isNaN) ||
-    rightParts.some(Number.isNaN)
-  ) {
-    throw new Error(`Invalid version compare: ${left} vs ${right}`);
-  }
+  const leftParts = parseVersion(left);
+  const rightParts = parseVersion(right);
   for (let i = 0; i < 3; i += 1) {
     if (leftParts[i] > rightParts[i]) return true;
     if (leftParts[i] < rightParts[i]) return false;
@@ -43,18 +40,18 @@ const isGreaterThan = (left, right) => {
   return false;
 };
 
-if (publishedVersion && publishedVersion === pkg.version) {
-  nextVersion = bumpPatch(pkg.version);
-  writeFileSync(
-    pkgPath,
-    `${readFileSync(pkgPath, 'utf-8').replace(
-      /"version":\s*"[^"]+"/,
-      `"version": "${nextVersion}"`,
-    )}\n`,
-    'utf-8',
-  );
-} else if (publishedVersion && isGreaterThan(pkg.version, publishedVersion)) {
-  // Keep package.json as-is; only refresh version.ts
+if (publishedVersion) {
+  if (isGreaterThan(pkg.version, publishedVersion)) {
+    // Local version is newer; keep package.json as-is.
+  } else if (pkg.version === publishedVersion) {
+    nextVersion = bumpPatch(pkg.version);
+    pkg.version = nextVersion;
+    writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`, 'utf-8');
+  } else {
+    throw new Error(
+      `Package version in package.json (${pkg.version}) is lower than the published version (${publishedVersion}). Please update it.`,
+    );
+  }
 }
 
 writeFileSync(versionPath, `export const VERSION = '${nextVersion}';\n`, 'utf-8');
