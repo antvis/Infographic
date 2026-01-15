@@ -3,18 +3,18 @@ import {
   buildItemPath,
   getChildrenDataByIndexes,
 } from '../../../../src/editor/utils/data';
-import type { Data } from '../../../../src/types';
+import type { ParsedData } from '../../../../src/types';
 
 describe('editor/utils/data', () => {
   it('returns root items when indexes empty', () => {
     const items = [{ label: 'a' }];
-    const data: Data = { data: items, items } as any;
+    const data: ParsedData = { data: items, items } as any;
     expect(getChildrenDataByIndexes(data, [])).toBe(data.data);
   });
 
   it('navigates nested children and initializes children array', () => {
     const items = [{ label: 'a' }, { label: 'b', children: [{ label: 'c' }] }];
-    const data: Data = { data: items, items } as any;
+    const data: ParsedData = { data: items, items } as any;
 
     const children = getChildrenDataByIndexes(data, [1]);
     expect(children).toEqual([{ label: 'c' }]);

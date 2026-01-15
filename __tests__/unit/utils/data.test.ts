@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import type { Data } from '../../../src';
+import type { ParsedData } from '../../../src/types';
 import { getDatumByIndexes } from '../../../src/utils/data';
 
 describe('data', () => {
   describe('getDatumByIndexes', () => {
-    const mockData: Data = {
+    const mockData: ParsedData = {
       items: [
         {
           id: '1',
@@ -123,13 +123,13 @@ describe('data', () => {
     });
 
     it('should handle empty data gracefully', () => {
-      const emptyData: Data = { items: [] };
+      const emptyData: ParsedData = { items: [] };
       const result = getDatumByIndexes(emptyData, [0]);
       expect(result).toBeUndefined();
     });
 
     it('should handle data with no children property', () => {
-      const dataNoChildren: Data = {
+      const dataNoChildren: ParsedData = {
         items: [
           { id: '1', label: 'item1' },
           { id: '2', label: 'item2' },
@@ -144,7 +144,7 @@ describe('data', () => {
     });
 
     it('should handle mixed data structures', () => {
-      const mixedData: Data = {
+      const mixedData: ParsedData = {
         items: [
           {
             id: '1',
@@ -172,7 +172,7 @@ describe('data', () => {
     });
 
     it('should handle very deep nesting', () => {
-      const deepData: Data = {
+      const deepData: ParsedData = {
         items: [
           {
             id: '1',
@@ -210,7 +210,7 @@ describe('data', () => {
     });
 
     it('should preserve all properties of returned items', () => {
-      const dataWithExtraProps: Data = {
+      const dataWithExtraProps: ParsedData = {
         items: [
           {
             id: '1',

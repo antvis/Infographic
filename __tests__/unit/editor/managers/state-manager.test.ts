@@ -50,7 +50,7 @@ describe('StateManager', () => {
     const { state, emitter, data } = createState();
 
     state.addItemDatum([1], { label: 'Inserted' });
-    expect(data.items[1].label).toBe('Inserted');
+    expect(data.items![1].label).toBe('Inserted');
     expect(emitter.emit).toHaveBeenCalledWith('options:data:item:add', {
       indexes: [1],
       datum: { label: 'Inserted' },
@@ -70,7 +70,7 @@ describe('StateManager', () => {
     emitter.emit.mockClear();
 
     state.updateItemDatum([0], { label: 'Updated' });
-    expect(data.items[0].label).toBe('Updated');
+    expect(data.items![0].label).toBe('Updated');
     expect(emitter.emit).toHaveBeenCalledWith('options:data:item:update', {
       indexes: [0],
       datum: { label: 'Updated' },
@@ -90,7 +90,7 @@ describe('StateManager', () => {
     emitter.emit.mockClear();
 
     state.removeItemDatum([1]);
-    expect(data.items[1].label).toBe('Item 2');
+    expect(data.items![1].label).toBe('Item 2');
     expect(emitter.emit).toHaveBeenCalledWith('options:data:item:remove', {
       indexes: [1],
       datum: [{ label: 'Inserted' }],
@@ -135,7 +135,7 @@ describe('StateManager', () => {
     const titleElement = createSVGElement('title');
 
     state.updateElement(itemElement, { attributes: { fill: 'red' } });
-    expect(data.items[0].attributes?.label).toEqual({ fill: 'red' });
+    expect(data.items![0].attributes?.label).toEqual({ fill: 'red' });
     expect(emitter.emit).toHaveBeenCalledWith('options:element:update', {
       element: itemElement,
       props: { attributes: { fill: 'red' } },
