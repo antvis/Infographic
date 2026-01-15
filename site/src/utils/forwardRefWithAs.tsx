@@ -30,7 +30,7 @@ export type As<BaseProps = any> = React.ElementType<BaseProps>;
 
 export type PropsWithAs<
   ComponentType extends As,
-  ComponentProps
+  ComponentProps,
 > = ComponentProps &
   Omit<
     React.ComponentPropsWithRef<ComponentType>,
@@ -41,13 +41,13 @@ export type PropsWithAs<
 
 export type PropsFromAs<
   ComponentType extends As,
-  ComponentProps
+  ComponentProps,
 > = (PropsWithAs<ComponentType, ComponentProps> & {as: ComponentType}) &
   PropsWithAs<ComponentType, ComponentProps>;
 
 export type ComponentWithForwardedRef<
   ElementType extends React.ElementType,
-  ComponentProps
+  ComponentProps,
 > = React.ForwardRefExoticComponent<
   ComponentProps &
     React.HTMLProps<React.ElementType<ElementType>> &

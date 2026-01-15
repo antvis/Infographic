@@ -324,8 +324,8 @@ async function fetchAnthropicModels(baseURL: string, apiKey: string) {
     const list = Array.isArray(data?.data)
       ? data.data
       : Array.isArray(data?.models)
-      ? data.models
-      : [];
+        ? data.models
+        : [];
     return list
       .map((item: any) => item?.id)
       .filter((id: any): id is string => typeof id === 'string');

@@ -285,8 +285,8 @@ export default function TopNav({
       ? 'fixed inset-0 flex flex-col z-40'
       : 'fixed top-0 inset-x-0 z-40'
     : isMenuOpen
-    ? 'h-screen sticky top-0 lg:bottom-0 lg:h-screen flex flex-col shadow-nav dark:shadow-nav-dark z-20'
-    : 'z-40 sticky top-0';
+      ? 'h-screen sticky top-0 lg:bottom-0 lg:h-screen flex flex-col shadow-nav dark:shadow-nav-dark z-20'
+      : 'z-40 sticky top-0';
 
   return (
     <>

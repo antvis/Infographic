@@ -230,8 +230,8 @@ export function ChatPanel({
                     disabled || isError
                       ? 'border-border dark:border-border-dark bg-card dark:bg-card-dark opacity-60 cursor-not-allowed'
                       : isExpanded
-                      ? 'border-link/70 dark:border-link-dark/60 bg-wash dark:bg-wash-dark shadow-[0_18px_45px_-30px_rgba(22,35,70,0.32),0_12px_32px_-22px_rgba(77,116,202,0.55),0_0_0_1px_rgba(255,255,255,0.35)] dark:shadow-[0_18px_48px_-30px_rgba(0,0,0,0.55),0_12px_32px_-22px_rgba(120,150,220,0.5),0_0_0_1px_rgba(255,255,255,0.06)] -translate-y-0.5 cursor-pointer'
-                      : 'border-border dark:border-border-dark bg-wash dark:bg-wash-dark hover:border-link/40 dark:hover:border-link-dark/50 cursor-pointer'
+                        ? 'border-link/70 dark:border-link-dark/60 bg-wash dark:bg-wash-dark shadow-[0_18px_45px_-30px_rgba(22,35,70,0.32),0_12px_32px_-22px_rgba(77,116,202,0.55),0_0_0_1px_rgba(255,255,255,0.35)] dark:shadow-[0_18px_48px_-30px_rgba(0,0,0,0.55),0_12px_32px_-22px_rgba(120,150,220,0.5),0_0_0_1px_rgba(255,255,255,0.06)] -translate-y-0.5 cursor-pointer'
+                        : 'border-border dark:border-border-dark bg-wash dark:bg-wash-dark hover:border-link/40 dark:hover:border-link-dark/50 cursor-pointer'
                   }`}>
                   <div className="flex items-center gap-3">
                     <div className="flex-1 min-w-0">

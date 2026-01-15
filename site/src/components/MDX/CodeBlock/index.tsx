@@ -7,7 +7,7 @@ import {
   useCopyableCode,
   useLanguageLabel,
 } from './shared';
-const CodeBlock = lazy<typeof import('./CodeBlock')['default']>(
+const CodeBlock = lazy<(typeof import('./CodeBlock'))['default']>(
   () => import('./CodeBlock')
 );
 
