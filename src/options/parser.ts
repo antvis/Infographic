@@ -11,6 +11,7 @@ import {
 import { getPaletteColor } from '../renderer';
 import type { TemplateOptions } from '../templates';
 import { generateThemeColors, getTheme, type ThemeConfig } from '../themes';
+import type { Data, ItemDatum, ParsedData } from '../types';
 import {
   isDarkColor,
   isNonNullableParsedDesignsOptions,
@@ -28,6 +29,7 @@ export function parseOptions(
     design,
     theme,
     themeConfig,
+    data,
     ...restOptions
   } = options;
 
@@ -61,13 +63,20 @@ export function parseOptions(
 
   Object.assign(parsed, restOptions);
 
+  const parsedData = parseData(data, options.template);
+  if (parsedData) parsed.data = parsedData;
+
   if (template) parsed.template = template;
   if (templateOptions?.design || design) {
+    const designOptions = {
+      ...(resolvedThemeConfig
+        ? { ...options, themeConfig: resolvedThemeConfig }
+        : options),
+      data: parsedData || data,
+    };
     const parsedDesign = parseDesign(
       { ...templateOptions?.design, ...design },
-      resolvedThemeConfig
-        ? { ...options, themeConfig: resolvedThemeConfig }
-        : options,
+      designOptions,
     );
 
     if (isNonNullableParsedDesignsOptions(parsedDesign)) {
@@ -79,6 +88,49 @@ export function parseOptions(
     parsed.themeConfig = resolvedThemeConfig;
   }
   return parsed;
+}
+
+export function parseData(
+  data?: Data,
+  template?: string,
+): ParsedData | undefined {
+  if (!data) return undefined;
+  if (Array.isArray(data.items) && data.items.length) return data as ParsedData;
+
+  const { lists, sequences, compares, nodes, values, root } =
+    data as ParsedData;
+  const getPreferredData = (): ItemDatum[] | null => {
+    if (!template) return null;
+    const DATA_MAP: Record<string, ItemDatum[]> = {
+      list: lists,
+      sequence: sequences,
+      compare: compares,
+      relation: nodes,
+      chart: values,
+      hierarchy: root ? [root] : [],
+    };
+    const prefix = template.split('-')[0];
+    const arr = DATA_MAP[prefix];
+    return arr?.length ? arr : null;
+  };
+  const getPolyfillData = (): ItemDatum[] => {
+    if (lists?.length) return lists;
+    if (sequences?.length) return sequences;
+    if (compares?.length) return compares;
+    if (nodes?.length) return nodes;
+    if (values?.length) return values;
+    if (root) return [root];
+    if (data.items?.length) return data.items;
+    return [];
+  };
+
+  let items = getPreferredData() || getPolyfillData();
+
+  if (items === sequences && data.order === 'desc') {
+    items = [...items].reverse();
+  }
+
+  return { ...data, items } as ParsedData;
 }
 
 function normalizeWithType<T extends { type: string }>(obj: string | T): T {
