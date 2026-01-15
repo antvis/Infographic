@@ -1,5 +1,6 @@
 import type { ComponentType, JSXElement } from '../../../jsx';
 import { getElementBounds, Group } from '../../../jsx';
+import type { HierarchyDatum } from '../../../types';
 import { BtnAdd, BtnRemove, BtnsGroup, ItemsGroup } from '../../components';
 import { FlexLayout } from '../../layouts';
 import { getPaletteColor, getThemeColors } from '../../utils';
@@ -52,8 +53,8 @@ export const CompareBinaryHorizontal: ComponentType<
     );
   }
 
-  const leftRoot = items[0] || { children: [] };
-  const rightRoot = items[1] || { children: [] };
+  const leftRoot: HierarchyDatum = items[0] || { children: [] };
+  const rightRoot: HierarchyDatum = items[1] || { children: [] };
   const leftChildren = leftRoot.children || [];
   const rightChildren = rightRoot.children || [];
 

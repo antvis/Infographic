@@ -1,11 +1,11 @@
 import { get } from 'lodash-es';
-import type { Data, ItemDatum } from '../types';
+import type { ItemDatum, ParsedData } from '../types';
 
 /**
  * 根据 indexesKey 获取数据项
  */
 export function getDatumByIndexes(
-  data: Data | Data['items'],
+  data: ParsedData | ParsedData['items'],
   indexes: number[],
 ): ItemDatum {
   if (indexes.length === 0) return {} as ItemDatum;

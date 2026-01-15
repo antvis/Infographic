@@ -1,7 +1,7 @@
 import { DagreLayout } from '@antv/layout';
 import type { ComponentType, JSXElement } from '../../jsx';
 import { Defs, getElementBounds, Group, Path, Polygon, Text } from '../../jsx';
-import type { ItemDatum, RelationDatum } from '../../types';
+import type { ItemDatum, RelationData, RelationEdgeDatum } from '../../types';
 import { BtnAdd, BtnsGroup, ItemsGroup } from '../components';
 import { FlexLayout } from '../layouts';
 import { getColorPrimary, getPaletteColor, getThemeColors } from '../utils';
@@ -112,7 +112,7 @@ export const RelationDagreFlow: ComponentType<RelationDagreFlowProps> = (
     edgeAnimationSpeed = 1,
     options,
   } = props;
-  const { title, desc, items = [] } = data;
+  const { title, desc, items = [], relations = [] } = data as RelationData;
 
   const titleContent = Title ? <Title title={title} desc={desc} /> : null;
 
@@ -180,8 +180,6 @@ export const RelationDagreFlow: ComponentType<RelationDagreFlowProps> = (
     return { id, parentId: datum.parentId };
   });
 
-  const relations = data.relations ?? [];
-
   const resolveNodeId = (value: string | number | undefined | null) => {
     if (value == null) return null;
     const direct = String(value);
@@ -210,7 +208,7 @@ export const RelationDagreFlow: ComponentType<RelationDagreFlowProps> = (
     id: string;
     source: string;
     target: string;
-    relation: RelationDatum;
+    relation: RelationEdgeDatum;
   }[];
 
   const hasCycle = checkUndirectedCycle(Array.from(nodeIdSet), edges);
@@ -614,8 +612,9 @@ export const RelationDagreFlow: ComponentType<RelationDagreFlowProps> = (
       const endPoint = useOrthRouting
         ? (orthEdge?.end ?? points[points.length - 1])
         : points[points.length - 1];
-      const relation = (edge as { _original?: { relation?: RelationDatum } })
-        ._original?.relation;
+      const relation = (
+        edge as { _original?: { relation?: RelationEdgeDatum } }
+      )._original?.relation;
       const sourceColor =
         nodeColorMap.get(String(edge.source)) ?? defaultStroke;
       const targetColor =

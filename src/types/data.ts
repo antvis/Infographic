@@ -130,7 +130,7 @@ export interface RelationData extends BaseData {
  */
 export interface StatisticsData extends BaseData {
   items?: StatisticsDatum[];
-  statistics?: StatisticsDatum[];
+  values?: StatisticsDatum[];
 }
 
 export type Data =

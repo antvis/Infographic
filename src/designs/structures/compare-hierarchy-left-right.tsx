@@ -1,5 +1,6 @@
 import type { ComponentType, JSXElement } from '../../jsx';
 import { Defs, Ellipse, getElementBounds, Group, Rect } from '../../jsx';
+import type { CompareData } from '../../types';
 import { ItemsGroup, ShapesGroup } from '../components';
 import { LinearGradient } from '../defs';
 import { FlexLayout } from '../layouts';
@@ -45,7 +46,7 @@ export const CompareHierarchyLeftRight: ComponentType<
     options,
   } = props;
   const [RootItem, Item] = Items;
-  const { title, desc, items = [] } = data;
+  const { title, desc, items = [] } = data as CompareData;
 
   const titleContent = Title ? <Title title={title} desc={desc} /> : null;
 

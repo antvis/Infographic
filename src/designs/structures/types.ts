@@ -1,6 +1,6 @@
 import type { ComponentType } from '../../jsx';
 import type { ParsedInfographicOptions } from '../../options';
-import type { Data } from '../../types';
+import type { ParsedData } from '../../types';
 import { TitleProps } from '../components';
 import type { BaseItemProps } from '../items';
 
@@ -11,7 +11,7 @@ export interface BaseStructureProps {
       Partial<Pick<BaseItemProps, 'themeColors'>>
   >;
   Items: ComponentType<Omit<BaseItemProps, 'themeColors'>>[];
-  data: Data;
+  data: ParsedData;
   options: ParsedInfographicOptions;
 }
 

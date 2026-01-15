@@ -1,5 +1,6 @@
 import type { ComponentType, JSXElement } from '../../jsx';
 import { getElementBounds, Group, Rect } from '../../jsx';
+import { CompareData } from '../../types';
 import { BtnAdd, BtnRemove, BtnsGroup, ItemsGroup } from '../components';
 import { FlexLayout } from '../layouts';
 import { getPaletteColors } from '../utils';
@@ -36,7 +37,7 @@ export const CompareHierarchyRow: ComponentType<CompareHierarchyRowProps> = (
     options,
   } = props;
   const [RootItem, Item] = Items;
-  const { title, desc, items = [] } = data;
+  const { title, desc, items = [] } = data as CompareData;
 
   const titleContent = Title ? <Title title={title} desc={desc} /> : null;
   const palette = getPaletteColors(options);

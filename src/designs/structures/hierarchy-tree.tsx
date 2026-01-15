@@ -8,7 +8,7 @@ import {
   Path,
   Polygon,
 } from '../../jsx';
-import { Data } from '../../types';
+import { HierarchyDatum } from '../../types';
 import {
   BtnAdd,
   BtnRemove,
@@ -119,7 +119,7 @@ export const HierarchyTree: ComponentType<HierarchyTreeProps> = (props) => {
   let nextGroupColorIndex = 0;
 
   // 内置工具方法：数据预处理
-  const normalizeItems = (items: Data['items']) => {
+  const normalizeItems = (items: HierarchyDatum[]) => {
     const list = [...items];
     if (!list[0]?.children) {
       list[0] = { ...list[0], children: list.slice(1) };

@@ -1,6 +1,6 @@
 import type { ComponentType } from '../../jsx';
 import type { ThemeColors } from '../../themes';
-import type { Data } from '../../types';
+import type { ParsedData } from '../../types';
 
 export interface BaseItemProps {
   x?: number;
@@ -8,8 +8,8 @@ export interface BaseItemProps {
   id?: string;
 
   indexes: number[];
-  data: Data;
-  datum: Data['items'][number];
+  data: ParsedData;
+  datum: ParsedData['items'][number];
   themeColors: ThemeColors;
   positionH?: 'normal' | 'center' | 'flipped';
   positionV?: 'normal' | 'middle' | 'flipped';

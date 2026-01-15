@@ -1,6 +1,7 @@
 import { ElementTypeEnum } from '../../constants';
 import type { ComponentType, JSXElement } from '../../jsx';
 import { getElementBounds, Group, Rect, Text } from '../../jsx';
+import type { HierarchyData } from '../../types';
 import { ItemsGroup } from '../components';
 import { FlexLayout } from '../layouts';
 import { getPaletteColor, getThemeColors } from '../utils';
@@ -134,7 +135,7 @@ export const HierarchyStructure: ComponentType<HierarchyStructureProps> = (
     pillRadius = 12,
   } = props;
 
-  const { title, desc, items = [] } = data;
+  const { title, desc, items = [] } = data as HierarchyData;
   const titleContent = Title ? <Title title={title} desc={desc} /> : null;
 
   if (items.length === 0) {
