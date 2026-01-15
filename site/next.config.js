@@ -65,6 +65,12 @@ const nextConfig = {
       })
     );
 
+    config.module.rules.push({
+      test: /\.md$/,
+      resourceQuery: /raw/,
+      type: 'asset/source',
+    });
+
     return config;
   },
 };
