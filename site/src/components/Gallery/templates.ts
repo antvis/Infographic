@@ -11,14 +11,28 @@ const COMMON_THEME = {
   palette: 'antv',
 } as const;
 
-const DATA_KEY_ORDER = ['title', 'desc', 'items'] as const;
+const DATA_KEY_ORDER = [
+  'title',
+  'desc',
+  'lists',
+  'sequences',
+  'compares',
+  'root',
+  'nodes',
+  'relations',
+  'values',
+  'items',
+] as const;
 const ITEM_KEY_ORDER = [
+  'id',
   'label',
   'value',
   'desc',
   'time',
   'icon',
   'illus',
+  'group',
+  'category',
   'children',
 ] as const;
 const INLINE_ITEM_KEYS = ['label', 'value', 'time', 'desc'] as const;
@@ -116,7 +130,7 @@ function stringifyObject(
         if (from && to) {
           lines.push(
             `${indent}${INDENT}${
-              label ? `${from} -${label}-> ${to}` : `${from} -> ${to}`
+              label ? `${from} - ${label} -> ${to}` : `${from} -> ${to}`
             }`
           );
         }
@@ -145,11 +159,71 @@ function stringifyObject(
   return lines;
 }
 
+const normalizeData = (template: string, data: Record<string, any>) => {
+  const normalized: Record<string, any> = {...data};
+  const items = normalized.items;
+
+  if (template.startsWith('relation-')) {
+    if (normalized.nodes === undefined && items !== undefined) {
+      normalized.nodes = items;
+      delete normalized.items;
+    }
+    return normalized;
+  }
+
+  if (template.startsWith('chart-')) {
+    if (normalized.values === undefined && items !== undefined) {
+      normalized.values = items;
+      delete normalized.items;
+    }
+    return normalized;
+  }
+
+  if (template.startsWith('sequence-')) {
+    if (normalized.sequences === undefined && items !== undefined) {
+      normalized.sequences = items;
+      delete normalized.items;
+    }
+    return normalized;
+  }
+
+  if (template.startsWith('compare-') || template.includes('quadrant')) {
+    if (normalized.compares === undefined && items !== undefined) {
+      normalized.compares = items;
+      delete normalized.items;
+    }
+    return normalized;
+  }
+
+  if (template.startsWith('hierarchy-structure')) {
+    return normalized;
+  }
+
+  if (template.startsWith('hierarchy-')) {
+    if (normalized.root === undefined && Array.isArray(items) && items.length) {
+      normalized.root = items[0];
+      delete normalized.items;
+    }
+    return normalized;
+  }
+
+  if (template.startsWith('list-')) {
+    if (normalized.lists === undefined && items !== undefined) {
+      normalized.lists = items;
+      delete normalized.items;
+    }
+    return normalized;
+  }
+
+  return normalized;
+};
+
 const buildSyntax = (template: string, data: Record<string, any>) => {
   const lines: string[] = [`infographic ${template}`];
-  if (data && Object.keys(data).length > 0) {
+  const normalized = data ? normalizeData(template, data) : data;
+  if (normalized && Object.keys(normalized).length > 0) {
     lines.push('data');
-    lines.push(...stringifyObject(data, 1, DATA_KEY_ORDER));
+    lines.push(...stringifyObject(normalized, 1, DATA_KEY_ORDER));
   }
   lines.push(`theme ${COMMON_THEME.type}`);
   lines.push(`${INDENT}palette ${COMMON_THEME.palette}`);
