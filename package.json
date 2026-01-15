@@ -1,10 +1,6 @@
 {
   "name": "@antv/infographic",
   "version": "0.2.8",
-  "workspaces": [
-    "dev",
-    "site"
-  ],
   "description": "An Infographic Generation and Rendering Framework, bring words to life!",
   "keywords": [
     "antv",
@@ -47,6 +43,10 @@
     "dist",
     "src"
   ],
+  "workspaces": [
+    "dev",
+    "site"
+  ],
   "scripts": {
     "build": "run-s clean build:esm build:cjs build:umd size",
     "build:cjs": "tsc --module commonjs --outDir lib",
@@ -64,7 +64,8 @@
     "lint:site": "npm --prefix site run lint",
     "prepublishOnly": "npm run ci",
     "size": "size-limit",
-    "test": "vitest --run --coverage"
+    "test": "vitest --run --coverage",
+    "version": "node scripts/version.mjs"
   },
   "commitlint": {
     "extends": [

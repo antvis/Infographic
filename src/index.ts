@@ -1,6 +1,3 @@
-import pkg from '../package.json' with { type: 'json' };
-
-export const VERSION = pkg.version;
 export * from './designs';
 export { getItemProps, getThemeColors } from './designs/utils';
 export {
@@ -52,6 +49,7 @@ export { parseSyntax } from './syntax';
 export { getTemplate, getTemplates, registerTemplate } from './templates';
 export { getTheme, getThemes, registerTheme } from './themes';
 export { parseSVG, setFontExtendFactor } from './utils';
+export { VERSION } from './version';
 
 export type { EditBarOptions } from './editor';
 export type {
