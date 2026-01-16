@@ -1,27 +1,27 @@
 ---
 name: infographic-creator
-description: Create beautiful infographics based on the given text content. Use this when users request creating infographics.
+description: 基于给定文字内容创建精美信息图。当用户请求创建信息图时使用。
 ---
 
-An infographic (Infographic) transforms data, information, and knowledge into perceivable visual language. It combines visual design with data visualization, using intuitive symbols to compress complex information and help audiences quickly understand and remember key points.
+信息图（Infographic）将数据、信息与知识转化为可感知的视觉语言。它结合视觉设计与数据可视化，用直观符号压缩复杂信息，帮助受众快速理解并记住要点。
 
 `Infographic = Information Structure + Visual Expression`
 
-This is a task that utilizes [AntV Infographic](https://infographic.antv.vision/) to create visual infographics.
+本任务使用 [AntV Infographic](https://infographic.antv.vision/) 创建可视化信息图。
 
-Before you start the task, you need to understand the AntV Infographic Syntax specification, including template lists, data structures, themes, and more.
+在开始任务前，需要理解 AntV Infographic 语法规范，包括模板列表、数据结构、主题等。
 
-## SPECs
+## 规范
 
-### AntV Infographic Syntax
+### AntV Infographic 语法
 
-AntV Infographic Syntax is a mermaid-like DSL for describing infographic rendering configuration. It uses indentation to describe information, has strong robustness, and makes it easy to render infographics through AI streaming output. It mainly contains the following information:
+AntV Infographic 语法是一种自定义的 DSL，用于描述信息图渲染配置。它使用缩进描述信息，具有较强鲁棒性，便于 AI 流式输出并渲染信息图。主要包含以下信息：
 
-1. template: Use template to express text information structure.
-2. data: the infographic data, which contains title, desc, items, etc. The items is an array containing label, value, desc, icon, children, etc.
-3. theme: Theme contains palette, font, and other styling options.
+1. template：用模板表达文字信息结构。
+2. data：信息图数据，包含 title、desc、数据项等。数据项通常包含 label、desc、icon 等字段。
+3. theme：主题包含 palette、font 等样式配置。
 
-e.g.:
+例如：
 
 ```plain
 infographic list-row-horizontal-icon-arrow
@@ -32,32 +32,31 @@ data
     - label Label
       value 12.5
       desc Explanation
-      icon mdi/rocket-launch
+      icon document text
 theme
   palette #3b82f6 #8b5cf6 #f97316
 ```
 
-### The Syntax
+### 语法规范
 
-- The first line starts with `infographic <template-name>`, and the template is selected from the list below (the _Available Templates_ section).
-- Use blocks to describe data / theme, with two-space indentation
-- Key-value pairs are expressed as "key value", and arrays are expressed as "-" items
-- The icon value is provided directly with keywords or icon names (such as `mdi/chart-line`)
-- `data` should contain title/desc plus a template-specific data array or node field (not always `items`)
-- `data` can include `illus`/`attributes` plus `relations` when needed for relation graphs
-- Choose data fields based on template category (use one primary field; avoid mixing multiple arrays):
-  - `list-*` templates → `lists`
-  - `sequence-*` templates → `sequences` (optional `order asc|desc`)
-  - `compare-*` templates → `compares` (supports `children` for grouped comparisons)
-  - `hierarchy-*` templates → single `root` (tree with `children`); `hierarchy-structure` uses `items` (top-to-bottom)
-  - `relation-*` templates → use `nodes` + `relations`; for simple graphs you may omit `nodes` and write mermaid-style arrows in `relations`
-  - `chart-*` templates → `values` (numeric stats; optional `category` for grouped charts)
-  - If unsure, use `items` as a fallback and let templates adapt
-- For `compare-*` (binary) templates, construct exactly two root nodes and place every comparison item under them as children
-- For `hierarchy-*`, use a single `root` and nest via `children` (do not repeat `root`)
-- For `hierarchy-structure`, use `data.items`; it renders top-to-bottom (first item at the top) and supports up to 3 levels (root -> group -> item)
-- `theme` field is for customizing the theme of the infographic, including palette, font, etc.
-  e.g. dark theme with custom palette:
+- 第一行必须是 `infographic <template-name>`，模板从下方列表中选择（见“可用模板”部分）。
+- 使用 `data` / `theme` 块，块内用两个空格缩进。
+- 键值对使用「键 空格 值」；数组使用 `-` 作为条目前缀。
+- icon 使用图标关键词（如 `star fill`）。
+- `data` 应包含 title/desc + 模板对应的主数据字段（不一定是 `items`）。
+- 主数据字段选择（只用一个，避免混用）：
+  - `list-*` → `lists`
+  - `sequence-*` → `sequences`（可选 `order asc|desc`）
+  - `compare-*` → `compares`（支持 `children` 分组对比），可包含多个对比项
+  - `hierarchy-structure` → `items`（每一项对应一个独立层级，每一层级可以包含子项，最多可嵌套 3 层）
+  - `hierarchy-*` → 单一 `root`（树结构，通过 `children` 嵌套）；
+  - `relation-*` → `nodes` + `relations`；简单关系图可省略 `nodes`，在 relations 中用箭头语法
+  - `chart-*` → `values`（数值统计，可选 `category`）
+  - 不确定时再用 `items` 兜底
+- `compare-binary-*` / `compare-hierarchy-left-right-*` 二元模板：必须两个根节点，所有对比项挂在这两个根节点的 children
+- `hierarchy-*`：使用单一 `root`，通过 `children` 嵌套（不要重复 `root`）
+- `theme` 用于自定义主题（palette、font 等）
+  例如：暗色主题 + 自定义配色
   ```plain
   infographic list-row-simple-horizontal-arrow
   theme dark
@@ -65,23 +64,15 @@ theme
       - #61DDAA
       - #F6BD16
       - #F08BB4
-  data
-    lists
-      - label Step 1
-        desc Start
-      - label Step 2
-        desc In Progress
-      - label Step 3
-        desc Complete
   ```
-- Use `theme.base.text.font-family` to specify fonts, such as the handwriting style '851tegakizatsu'
-- Use `theme.stylize` to select built-in styles and pass parameters
-  Common stylization types include:
-  - `rough`: Apply hand-drawn style to make graphics look like they were drawn by hand.
-  - `pattern`: Apply pattern fill to add repeated pattern effects to graphics.
-  - `linear-gradient` / `radial-gradient`: Apply gradient fill to add linear or radial gradient effects to graphics.
+- 使用 `theme.base.text.font-family` 指定字体，如手写风格 `851tegakizatsu`
+- 使用 `theme.stylize` 选择内置风格并传参
+  常见风格：
+  - `rough`：手绘效果
+  - `pattern`：图案填充
+  - `linear-gradient` / `radial-gradient`：线性/径向渐变
 
-  e.g: Hand-drawn style (rough):
+  例如：手绘风格（rough）
 
   ```plain
   infographic list-row-simple-horizontal-arrow
@@ -90,32 +81,30 @@ theme
     base
       text
         font-family 851tegakizatsu
-  data
-    lists
-      - label Step 1
-        desc Start
-      - label Step 2
-        desc In Progress
-      - label Step 3
-        desc Complete
   ```
 
-Data syntax examples by template category (use the field shown for that template and avoid adding `items` at the same time):
+- 禁止输出 JSON、Markdown 或解释性文字
+
+### 数据语法示例
+
+按模板类别的数据语法示例（使用对应字段，避免同时添加 `items`）：
+
+- `list-*` 模版
 
 ```plain
-# list-* templates -> lists
 infographic list-grid-badge-card
 data
   title Feature List
   lists
     - label Fast
-      icon mdi/flash
+      icon flash fast
     - label Secure
-      icon mdi/shield-check
+      icon secure shield check
 ```
 
+- `sequence-*` 模版
+
 ```plain
-# sequence-* templates -> sequences
 infographic sequence-steps-simple
 data
   sequences
@@ -125,8 +114,9 @@ data
   order asc
 ```
 
+- `hierarchy-*` 模版
+
 ```plain
-# hierarchy-* templates -> root (children)
 infographic hierarchy-structure
 data
   root
@@ -136,8 +126,9 @@ data
       - label Dept B
 ```
 
+- `compare-*` 模版
+
 ```plain
-# compare-* / quadrant-* templates -> compares
 infographic compare-swot
 data
   compares
@@ -151,8 +142,21 @@ data
         - label Slow release
 ```
 
+四象限图
+
 ```plain
-# chart-* templates -> values
+infographic compare-quadrant-quarter-simple-card
+data
+  compares
+    - label High Impact & Low Effort
+    - label High Impact & High Effort
+    - label Low Impact & Low Effort
+    - label Low Impact & High Effort
+```
+
+- `chart-*` 模版
+
+```plain
 infographic chart-column-simple
 data
   values
@@ -162,9 +166,11 @@ data
       value 12.4
 ```
 
+- `relation-*` 模版
+
+> 边标签写法：A -label-> B 或 A -->|label| B
+
 ```plain
-# relation-* templates -> nodes + relations (arrow syntax allowed)
-# edge labels: A -label-> B or A -->|label| B
 infographic relation-dagre-flow-tb-simple-circle-node
 data
   nodes
@@ -177,8 +183,9 @@ data
     A -->|blocks| B
 ```
 
+- 兜底 `items` 示例
+
 ```plain
-# fallback when unsure -> items
 infographic list-row-horizontal-icon-arrow
 data
   items
@@ -190,127 +197,91 @@ data
       icon moon
 ```
 
-### Icon and Illustration Resources
+### 可用模板
 
-**Icons (from Iconify)**:
-
-- Format: `<collection>/<icon-name>`, e.g., `mdi/rocket-launch`
-- Popular collections:
-  - `mdi/*` - Material Design Icons (most commonly used)
-  - `fa/*` - Font Awesome
-  - `bi/*` - Bootstrap Icons
-  - `heroicons/*` - Heroicons
-- Browse at: https://icon-sets.iconify.design/
-- Common icon examples:
-  - Tech: `mdi/code-tags`, `mdi/database`, `mdi/api`, `mdi/cloud`
-  - Business: `mdi/chart-line`, `mdi/briefcase`, `mdi/currency-usd`
-  - Process: `mdi/check-circle`, `mdi/arrow-right`, `mdi/cog`
-  - People: `mdi/account`, `mdi/account-group`, `mdi/shield-account`
-
-**Illustrations (from unDraw)**:
-
-- Format: illustration filename (without .svg), e.g., `coding`
-- Browse at: https://undraw.co/illustrations
-- Common themes:
-  - Tech: `coding`, `programmer`, `server`, `cloud-sync`
-  - Business: `business-plan`, `team-work`, `analytics`
-  - Abstract: `abstract`, `building-blocks`, `connection`
-- Note: Use sparingly as illustrations are larger and more detailed than icons
-
-**Usage Tips**:
-
-- For `sequence-*` and `list-*` templates → use `icon`
-- For larger illustration needs → use `illus`
-- Not all templates support both icon and illus - refer to template examples
-
-### Available Templates
-
-- sequence-zigzag-steps-underline-text
-- sequence-horizontal-zigzag-underline-text
-- sequence-horizontal-zigzag-simple-illus
-- sequence-circular-simple
-- sequence-filter-mesh-simple
-- sequence-mountain-underline-text
-- sequence-cylinders-3d-simple
-- sequence-color-snake-steps-horizontal-icon-line
-- sequence-pyramid-simple
-- sequence-funnel-simple
-- sequence-roadmap-vertical-simple
-- sequence-roadmap-vertical-plain-text
-- sequence-zigzag-pucks-3d-simple
-- sequence-ascending-steps
-- sequence-ascending-stairs-3d-underline-text
-- sequence-snake-steps-compact-card
-- sequence-snake-steps-underline-text
-- sequence-snake-steps-simple
-- sequence-stairs-front-compact-card
-- sequence-stairs-front-pill-badge
-- sequence-timeline-simple
-- sequence-timeline-rounded-rect-node
-- sequence-timeline-simple-illus
-- compare-binary-horizontal-simple-fold
-- compare-hierarchy-left-right-circle-node-pill-badge
-- compare-swot
-- compare-quadrant-quarter-simple-card
-- compare-quadrant-quarter-circular
-- compare-quadrant-simple-illus
-- relation-circle-icon-badge
-- relation-circle-circular-progress
+- chart-bar-plain-text
+- chart-column-simple
+- chart-line-plain-text
+- chart-pie-compact-card
+- chart-pie-donut-pill-badge
+- chart-pie-donut-plain-text
+- chart-pie-plain-text
+- chart-wordcloud
 - compare-binary-horizontal-badge-card-arrow
+- compare-binary-horizontal-simple-fold
 - compare-binary-horizontal-underline-text-vs
-- hierarchy-tree-tech-style-capsule-item
+- compare-hierarchy-left-right-circle-node-pill-badge
+- compare-quadrant-quarter-circular
+- compare-quadrant-quarter-simple-card
+- compare-swot
+- hierarchy-mindmap-branch-gradient-capsule-item
+- hierarchy-mindmap-level-gradient-compact-card
+- hierarchy-structure
 - hierarchy-tree-curved-line-rounded-rect-node
 - hierarchy-tree-tech-style-badge-card
-- hierarchy-structure
-- chart-column-simple
-- chart-bar-plain-text
-- chart-line-plain-text
-- chart-pie-plain-text
-- chart-pie-compact-card
-- chart-pie-donut-plain-text
-- chart-pie-donut-pill-badge
-- chart-wordcloud
+- hierarchy-tree-tech-style-capsule-item
+- list-column-done-list
+- list-column-simple-vertical-arrow
+- list-column-vertical-icon-arrow
 - list-grid-badge-card
 - list-grid-candy-card-lite
 - list-grid-ribbon-card
 - list-row-horizontal-icon-arrow
-- list-row-simple-illus
 - list-sector-plain-text
-- list-column-done-list
-- list-column-vertical-icon-arrow
-- list-column-simple-vertical-arrow
 - list-zigzag-down-compact-card
 - list-zigzag-down-simple
 - list-zigzag-up-compact-card
 - list-zigzag-up-simple
-- relation-dagre-flow-tb-simple-circle-node
+- relation-dagre-flow-tb-animated-badge-card
 - relation-dagre-flow-tb-animated-simple-circle-node
 - relation-dagre-flow-tb-badge-card
-- relation-dagre-flow-tb-animated-badge-card
+- relation-dagre-flow-tb-simple-circle-node
+- sequence-ascending-stairs-3d-underline-text
+- sequence-ascending-steps
+- sequence-circular-simple
+- sequence-color-snake-steps-horizontal-icon-line
+- sequence-cylinders-3d-simple
+- sequence-filter-mesh-simple
+- sequence-funnel-simple
+- sequence-horizontal-zigzag-underline-text
+- sequence-mountain-underline-text
+- sequence-pyramid-simple
+- sequence-roadmap-vertical-plain-text
+- sequence-roadmap-vertical-simple
+- sequence-snake-steps-compact-card
+- sequence-snake-steps-simple
+- sequence-snake-steps-underline-text
+- sequence-stairs-front-compact-card
+- sequence-stairs-front-pill-badge
+- sequence-timeline-rounded-rect-node
+- sequence-timeline-simple
+- sequence-zigzag-pucks-3d-simple
+- sequence-zigzag-steps-underline-text
 
-**Template Selection Guidelines:**
+**模板选择建议：**
 
-- For strict sequential order: processes/steps/development trends → `sequence-*` series
-  - Timeline → `sequence-timeline-*`
-  - Staircase diagram → `sequence-stairs-*`
-  - Roadmap → `sequence-roadmap-vertical-*`
-  - Zigzag steps → `sequence-zigzag-*`
-  - Circular progress → `sequence-circular-simple`
-  - Color snake steps → `sequence-color-snake-steps-*`
-  - Pyramid diagram → `sequence-pyramid-simple`
-- For listing viewpoints → `list-row-*` series or `list-column-*` series
-- For comparative analysis (comparing pros and cons of two parties) → `compare-binary-*` series
-- For SWOT analysis → `compare-swot`
-- For hierarchical structure (tree diagram) → `hierarchy-tree-*`
-- For data charts → `chart-*` series
-- For quadrant analysis → `quadrant-*` series
-- For grid lists (bullet points) → `list-grid-*` series
-- For relationship display → `relation-circle-*`
-- For word cloud → `chart-wordcloud`
+- 严格顺序（流程/步骤/发展趋势）→ `sequence-*`
+  - 时间线 → `sequence-timeline-*`
+  - 阶梯图 → `sequence-stairs-*`
+  - 路线图 → `sequence-roadmap-vertical-*`
+  - 折线路径 → `sequence-zigzag-*`
+  - 环形进度 → `sequence-circular-simple`
+  - 彩色蛇形步骤 → `sequence-color-snake-steps-*`
+  - 金字塔 → `sequence-pyramid-simple`
+- 观点列举 → `list-row-*` 或 `list-column-*`
+- 二元对比（利弊）→ `compare-binary-*`
+- SWOT → `compare-swot`
+- 层级结构（树图）→ `hierarchy-tree-*`
+- 数据图表 → `chart-*`
+- 象限分析 → `quadrant-*`
+- 网格列表（要点）→ `list-grid-*`
+- 关系展示 → `relation-*`
+- 词云 → `chart-wordcloud`
+- 思维导图 → `hierarchy-mindmap-*`
 
-### Example
+### 示例
 
-Draw an information graph of the Internet technology evolution
+绘制互联网技术演进信息图
 
 ```plain
 infographic list-row-horizontal-icon-arrow
@@ -321,177 +292,65 @@ data
     - time 1991
       label Web 1.0
       desc Tim Berners-Lee published the first website, opening the Internet era
-      icon mdi/web
+      icon web
     - time 2004
       label Web 2.0
       desc Social media and user-generated content become mainstream
-      icon mdi/account-multiple
+      icon account multiple
     - time 2007
       label Mobile
       desc iPhone released, smartphone changes the world
-      icon mdi/cellphone
+      icon cellphone
     - time 2015
       label Cloud Native
       desc Containerization and microservices architecture are widely used
-      icon mdi/cloud
+      icon cloud
     - time 2020
       label Low Code
       desc Visual development lowers the technology threshold
-      icon mdi/application-brackets
+      icon application brackets
     - time 2023
       label AI Large Model
       desc ChatGPT ignites the generative AI revolution
-      icon mdi/brain
+      icon brain
 ```
 
-### Example 2: Using Illustrations
+## 生成流程
 
-```plain
-infographic sequence-horizontal-zigzag-simple-illus
-data
-  title Product Development Phases
-  desc Key stages in our development process
-  sequences
-    - label Research
-      desc Understanding user needs
-      illus user-research
-    - label Design
-      desc Creating user experience
-      illus design-thinking
-    - label Development
-      desc Building the product
-      illus coding
-    - label Launch
-      desc Going to market
-      illus launch-day
-```
+### 第一步：理解用户需求
 
-## Creation Process
+在创建信息图之前，先理解用户需求与想表达的信息，以便确定模板和数据结构。
 
-### Step 1: Understanding User Requirements
+若用户提供清晰的内容描述，应将其拆解为清晰、简洁的结构。
 
-Before creating the infographic, it is important to understand the user's requirements and the information they want to present. This will help in defining the template and the data structure.
+否则需要向用户澄清（如：“请提供清晰简洁的内容描述。”、“你希望使用哪个模板？”）
 
-If the user provides a clear and concise description of the information they want to present, break down the information into a clear and concise structure.
+- 提取关键信息结构（title、desc、items 等）。
+- 明确所需数据字段（title、desc、items、label、value、icon 等）。
+- 选择合适模板。
+- 使用 AntV Infographic 语法描述信息图内容 `{syntax}`。
 
-Otherwise, ask the user for clarification (e.g., "Please provide a clear and concise description of the information you want to present.", "Which template would you prefer to use?")
+**关键注意**：必须尊重用户输入的语言。例如用户输入中文，则语法中的文本也必须是中文。
 
-- Extract key information structure (title, description, items, etc).
-- Identify the required data fields (e.g., title, description, items, labels, values, icons, etc.).
-- Select an appropriate template.
-- Use the AntV Infographic Syntax to describe the content of the infographic `{syntax}`.
+### 第二步：渲染信息图
 
-**CRITICAL NOTE**: Must respect the language of the user's input content. e.g. if the user's input content is in Chinese, the text content in infographic syntax must be in Chinese.
+当得到最终的 AntV Infographic 语法后，可按以下步骤生成完整 HTML 文件：
 
-### Step 2: Rendering the Infographic
+1. 创建包含以下结构的完整 HTML 文件：
+   - DOCTYPE 与 HTML meta（charset: utf-8）
+   - Title：`{title} - Infographic`
+   - 引入 AntV Infographic 脚本：`https://unpkg.com/@antv/infographic@latest/dist/infographic.min.js`
+   - 创建 id 为 `container` 的容器 div
+   - 初始化 Infographic（`width: '100%'`、`height: '100%'`）
+   - 用实际标题替换 `{title}`
+   - 用实际 AntV Infographic 语法替换 `{syntax}`
+   - 加入导出 SVG 的功能：`const svgDataUrl = await infographic.toDataURL({ type: 'svg' });`
 
-Once you have the final AntV Infographic Syntax, you can generate the complete infographic HTML file by following these steps:
-
-1. Create a complete HTML file with the following structure:
-   - DOCTYPE and HTML meta tags (charset: utf-8)
-   - Title: `{title} - Infographic`
-   - Include AntV Infographic library script: `https://unpkg.com/@antv/infographic@latest/dist/infographic.min.js`
-   - Add a resource loader script that handles icon loading from Iconify and illustration loading from unDraw
-   - Create a container div with id `container` where the infographic will render
-   - Initialize the Infographic instance with `width: '100%'` and `height: '100%'`
-   - Replace the placeholder `{title}` with the actual title
-   - Replace the placeholder `{syntax}` with the actual AntV Infographic Syntax
-   - Include export functionality that allows users to download the infographic as SVG `const svgDataUrl = await infographic.toDataURL({ type: 'svg' });`
-
-The Html template you can follow:
+可参考的 HTML 模板：
 
 ```html
 <div id="container"></div>
 <script src="https://unpkg.com/@antv/infographic@latest/dist/infographic.min.js"></script>
-<script>
-// Resource Loader Script
-// Use the following resource loader script to handle icon and illustration loading:
-const svgTextCache = new Map();
-const pendingRequests = new Map();
-
-AntVInfographic.registerResourceLoader(async (config) => {
-    const { data, scene } = config;
-
-    try {
-        const key = `${scene}::${data}`;
-        let svgText;
-
-        // 1. Check cache
-        if (svgTextCache.has(key)) {
-            svgText = svgTextCache.get(key);
-        }
-        // 2. Check if request is already in progress
-        else if (pendingRequests.has(key)) {
-            svgText = await pendingRequests.get(key);
-        }
-        // 3. Make new request
-        else {
-            const fetchPromise = (async () => {
-                try {
-                    let url;
-
-                    if (scene === 'icon') {
-                        url = `https://api.iconify.design/${data}.svg`;
-                    } else if (scene === 'illus') {
-                        url = `https://raw.githubusercontent.com/balazser/undraw-svg-collection/refs/heads/main/svgs/${data}.svg`;
-                    } else return null;
-
-                    if (!url) return null;
-
-                    const response = await fetch(url, { referrerPolicy: 'no-referrer' });
-
-                    if (!response.ok) {
-                        console.error(`HTTP ${response.status}: Failed to load ${url}`);
-                        return null;
-                    }
-
-                    const text = await response.text();
-
-                    if (!text || !text.trim().startsWith('<svg')) {
-                        console.error(`Invalid SVG content from ${url}`);
-                        return null;
-                    }
-
-                    svgTextCache.set(key, text);
-                    return text;
-                } catch (fetchError) {
-                    console.error(`Failed to fetch resource ${key}:`, fetchError);
-                    return null;
-                }
-            })();
-
-            pendingRequests.set(key, fetchPromise);
-
-            try {
-                svgText = await fetchPromise;
-            } catch (error) {
-                pendingRequests.delete(key);
-                console.error(`Error loading resource ${key}:`, error);
-                return null;
-            } finally {
-                pendingRequests.delete(key);
-            }
-        }
-
-        if (!svgText) {
-            return null;
-        }
-
-        const resource = AntVInfographic.loadSVGResource(svgText);
-
-        if (!resource) {
-            console.error(`loadSVGResource returned null for ${key}`);
-            svgTextCache.delete(key);
-            return null;
-        }
-
-        return resource;
-    } catch (error) {
-        console.error('Unexpected error in resource loader:', error);
-        return null;
-    }
-});
-</script>
 <script>
  const infographic = new AntVInfographic.Infographic({
     container: '#container',
@@ -505,15 +364,13 @@ AntVInfographic.registerResourceLoader(async (config) => {
 </script>
 ```
 
-2. Write the HTML file named `<title>-infographic.html` using the Write tool
+2. 使用 Write 工具生成 HTML 文件，命名为 `<title>-infographic.html`
 
-3. Display to the user:
-   - The generated file path with instruction: "Open this file directly in a browser to view and save the SVG"
-   - Display your output syntax with instruction: "If you need to adjust the template/colors/content, just let me know"
+3. 展示给用户：
+   - 生成文件路径，并提示：“直接用浏览器打开即可查看并保存 SVG”
+   - 输出语法，并提示：“需要调整模板/配色/内容请告诉我”
 
-**Note:** The HTML file must include:
+**注意：**HTML 文件必须包含：
 
-- Complete resource loader for handling icon and illustration assets from external sources
-- SVG export functionality via the export button
-- Responsive container that takes 100% width and height
-- Proper error handling for failed resource loads
+- 通过导出按钮实现 SVG 导出
+- 容器自适应，宽高均为 100%
