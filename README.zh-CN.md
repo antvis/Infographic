@@ -34,8 +34,8 @@
   <a href="https://infographic.antv.vision/gallery">
     <img src="https://img.shields.io/badge/%E7%A4%BA%E4%BE%8B-13C2C2?style=for-the-badge" alt="示例" />
   </a>
-  <a href="./prompt.zh-CN.md">
-    <img src="https://img.shields.io/badge/Prompt-FA8C16?style=for-the-badge" alt="Prompt" />
+  <a href="https://github.com/antvis/Infographic/tree/main/.skills">
+    <img src="https://img.shields.io/badge/Skills-FA8C16?style=for-the-badge" alt="Skills" />
   </a>
   <a href="https://infographic.antv.vision/ai">
     <img src="https://img.shields.io/badge/AI%20Agent-EB2F96?style=for-the-badge" alt="AI Agent" />
