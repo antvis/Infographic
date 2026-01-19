@@ -50,7 +50,7 @@
   "scripts": {
     "build": "run-s clean build:esm build:cjs build:umd size",
     "build:cjs": "tsc --module commonjs --outDir lib",
-    "build:esm": "tsc --module ESNext --outDir esm",
+    "build:esm": "tsc --module ESNext --outDir esm && node scripts/patch-esm-extensions.mjs",
     "build:site": "npm --prefix site run build:static",
     "build:umd": "vite build",
     "build:watch": "tsc -p tsconfig.json --watch",
@@ -99,7 +99,6 @@
   "dependencies": {
     "@antv/hierarchy": "^0.7.0",
     "@antv/layout": "^2.0.0-beta.0",
-    "css": "^3.0.0",
     "culori": "^4.0.2",
     "d3": "^7.9.0",
     "eventemitter3": "^5.0.1",
@@ -107,6 +106,7 @@
     "linkedom": "^0.18.12",
     "lodash-es": "^4.17.21",
     "measury": "^0.1.5",
+    "postcss": "^8.5.6",
     "roughjs": "^4.6.6",
     "round-polygon": "^0.6.7",
     "tinycolor2": "^1.6.0"
