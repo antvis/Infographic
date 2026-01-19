@@ -22,5 +22,13 @@
     }
   },
   "include": ["src"],
-  "exclude": ["node_modules", "dist", "lib", "esm"]
+  "exclude": ["node_modules", "dist", "lib", "esm"],
+  "tsc-alias": {
+    "verbose": false,
+    "resolveFullPaths": true,
+    "fileExtensions": {
+      "inputGlob": "{js,jsx,mjs}",
+      "outputCheck": ["js", "json", "jsx", "mjs"]
+    }
+  }
 }
