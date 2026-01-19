@@ -50,7 +50,7 @@
   "scripts": {
     "build": "run-s clean build:esm build:cjs build:umd size",
     "build:cjs": "tsc --module commonjs --outDir lib",
-    "build:esm": "tsc --module ESNext --outDir esm && tsc-alias -p tsconfig.json --outDir esm && echo '{\"type\":\"module\"}' > esm/package.json",
+    "build:esm": "tsc --module ESNext --outDir esm && tsc-alias -p tsconfig.json --outDir esm && node -e \"require('fs').writeFileSync('esm/package.json', JSON.stringify({ type: 'module' }))\"",
     "build:site": "npm --prefix site run build:static",
     "build:umd": "vite build",
     "build:watch": "tsc -p tsconfig.json --watch",
