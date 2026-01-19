@@ -5,25 +5,23 @@ const esmDir = path.resolve('esm');
 
 async function collectFiles(dir) {
   const entries = await fs.readdir(dir, { withFileTypes: true });
-  const files = [];
-
-  await Promise.all(
+  const allFiles = await Promise.all(
     entries.map(async (entry) => {
       const fullPath = path.join(dir, entry.name);
       if (entry.isDirectory()) {
-        files.push(...(await collectFiles(fullPath)));
-        return;
+        return collectFiles(fullPath);
       }
       if (
         entry.isFile() &&
         (entry.name.endsWith('.js') || entry.name.endsWith('.d.ts'))
       ) {
-        files.push(fullPath);
+        return fullPath;
       }
+      return null;
     }),
   );
 
-  return files;
+  return allFiles.flat().filter(Boolean);
 }
 
 async function exists(filePath) {
