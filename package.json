@@ -119,7 +119,6 @@
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.3.0",
     "@size-limit/file": "^11.2.0",
-    "@types/css": "^0.0.38",
     "@types/culori": "^4.0.1",
     "@types/d3": "^7.4.3",
     "@types/jsdom": "^21.1.7",

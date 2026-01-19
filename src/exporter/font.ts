@@ -1,6 +1,4 @@
-import type { FontFace as CSSFontFace, Declaration, Stylesheet } from 'css';
-// @ts-expect-error ignore
-import parse from 'css/lib/parse';
+import postcss from 'postcss';
 import { getFontURLs, getWoff2BaseURL } from '../renderer';
 import {
   createElement,
@@ -116,27 +114,36 @@ function collectUsedFonts(svg: SVGSVGElement) {
 /**
  * 解析给定 font-family 对应的 CSS @font-face
  */
-export async function parseFontFamily(fontFamily: string) {
+async function parseFontFamily(fontFamily: string) {
   const urls = getFontURLs(fontFamily);
-
   const fontFaces: Partial<FontFaceAttributes>[] = [];
 
   await Promise.allSettled(
     urls.map(async (url) => {
-      const css = await fetchWithCache(url)
+      const cssText = await fetchWithCache(url)
         .then((res) => res.text())
-        .then((text) => parse(text) as Stylesheet)
         .catch(() => {
-          console.error(`Failed to fetch or parse font CSS: ${url}`);
+          console.error(`Failed to fetch font CSS: ${url}`);
           return null;
         });
 
-      css?.stylesheet?.rules.forEach((rule) => {
-        if (rule.type === 'font-face') {
-          const fontFace = parseFontFace(rule as CSSFontFace);
-          fontFaces.push(fontFace);
-        }
-      });
+      if (!cssText) return;
+
+      try {
+        const root = postcss.parse(cssText);
+
+        root.walkAtRules('font-face', (rule) => {
+          const fontFace: Record<string, string> = {};
+
+          rule.walkDecls((decl) => {
+            fontFace[decl.prop] = decl.value;
+          });
+
+          fontFaces.push(fontFace as Partial<FontFaceAttributes>);
+        });
+      } catch (error) {
+        console.error(`Failed to parse CSS: ${url}`, error);
+      }
     }),
   );
 
@@ -162,24 +169,6 @@ export function getActualLoadedFontFace(fontFamily: string) {
   });
 
   return fonts;
-}
-
-/**
- * 从 css 的 FontFace 规则中提取声明
- */
-function parseFontFace(rule: CSSFontFace) {
-  const declarations = (rule.declarations || []) as Declaration[];
-  const attrs: Record<string, string> = {};
-
-  declarations.forEach((declaration) => {
-    const { property, value } = declaration;
-    if (property && value) {
-      attrs[property] = value;
-    }
-  });
-
-  // 这里返回 Partial，后面统一 normalize
-  return attrs as Partial<FontFaceAttributes>;
 }
 
 /**
