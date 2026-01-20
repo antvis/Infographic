@@ -4,7 +4,8 @@
     "baseUrl": ".",
     "rootDir": null,
     "noEmit": true,
-    "composite": false
+    "composite": false,
+    "target": "ES2020"
   },
   "include": ["./**/*"],
   "exclude": ["node_modules"],
