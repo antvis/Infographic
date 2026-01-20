@@ -84,7 +84,6 @@ describe('is-number utils', () => {
 
     it('should return false for BigInt', () => {
       expect(isNumber(BigInt(42))).toBe(false);
-      expect(isNumber(BigInt(42))).toBe(false);
     });
 
     it('should handle edge cases with Number constructor', () => {
