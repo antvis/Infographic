@@ -482,7 +482,7 @@ export function HomeContent(): JSX.Element {
                   </div>
                 </div>
 
-                <div className="relative flex h/full items-center justify-center lg:justify-end">
+                <div className="relative flex h-full items-center justify-center lg:justify-end">
                   <div className="absolute -right-6 -top-10 h-32 w-32 rounded-full bg-gradient-to-br from-purple-40/15 via-transparent to-link/5 blur-3xl" />
                   <div className="relative w-full lg:max-w-[520px] rounded-2xl border border-border/70 dark:border-border-dark/60 bg-white/90 dark:bg-card-dark/80 shadow-lg shadow-link/10 dark:shadow-link-dark/10 p-4 lg:p-6">
                     <div className="flex items-center justify-between gap-2">
