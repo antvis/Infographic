@@ -1,5 +1,5 @@
 import {AnimatePresence, motion} from 'framer-motion';
-import {uniq} from 'lodash-es';
+import {debounce, uniq} from 'lodash-es';
 import {ArrowRight, Filter, Layers, Search, Sparkles, X} from 'lucide-react';
 import {useRouter} from 'next/router';
 import {memo, useCallback, useEffect, useMemo, useRef, useState} from 'react';
@@ -233,6 +233,7 @@ const GalleryCard = memo(function GalleryCard({
 export default function GalleryPage() {
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
   const [expandedSeries, setExpandedSeries] = useState<Record<string, boolean>>(
     {}
   );
@@ -253,7 +254,8 @@ export default function GalleryPage() {
         prev.every((val) => nextFilters.includes(val));
       return isSame ? prev : nextFilters;
     });
-    setSearchQuery(Array.isArray(q) ? (q[0] ?? '') : (q ?? ''));
+    setSearchQuery((Array.isArray(q) ? q[0] : q) ?? '');
+    setDebouncedQuery((Array.isArray(q) ? q[0] : q) ?? '');
   }, [router.isReady, router.query]);
 
   const galleryTexts = useLocaleBundle(TRANSLATIONS);
@@ -267,13 +269,28 @@ export default function GalleryPage() {
   }, []);
 
   const normalizedQuery = useMemo(
-    () => searchQuery.trim().toLowerCase(),
-    [searchQuery]
+    () => debouncedQuery.trim().toLowerCase(),
+    [debouncedQuery]
   );
+
+  const templatesWithSearch = useMemo(() => {
+    return TEMPLATES.map((template) => {
+      const type = getType(template.template);
+      const series = getSeries(template.template);
+      const searchHaystack = [
+        template.template,
+        TYPE_DISPLAY_NAMES[type] ?? type,
+        SERIES_DISPLAY_NAMES[series] ?? series,
+      ]
+        .join(' ')
+        .toLowerCase();
+      return {...template, searchHaystack};
+    });
+  }, [SERIES_DISPLAY_NAMES, TYPE_DISPLAY_NAMES]);
 
   // Filter data
   const filteredTemplates = useMemo(() => {
-    let nextTemplates = TEMPLATES;
+    let nextTemplates = templatesWithSearch;
     if (activeFilters.length > 0) {
       nextTemplates = nextTemplates.filter((t) =>
         activeFilters.includes(getType(t.template))
@@ -281,24 +298,10 @@ export default function GalleryPage() {
     }
 
     if (!normalizedQuery) return nextTemplates;
-    return nextTemplates.filter((t) => {
-      const type = getType(t.template);
-      const series = getSeries(t.template);
-      const searchHaystack = [
-        t.template,
-        TYPE_DISPLAY_NAMES[type] ?? type,
-        SERIES_DISPLAY_NAMES[series] ?? series,
-      ]
-        .join(' ')
-        .toLowerCase();
-      return searchHaystack.includes(normalizedQuery);
-    });
-  }, [
-    activeFilters,
-    normalizedQuery,
-    SERIES_DISPLAY_NAMES,
-    TYPE_DISPLAY_NAMES,
-  ]);
+    return nextTemplates.filter((t) =>
+      t.searchHaystack.includes(normalizedQuery)
+    );
+  }, [activeFilters, normalizedQuery, templatesWithSearch]);
 
   // Group data while keeping order
   const groupedTemplates = useMemo(() => {
@@ -345,22 +348,37 @@ export default function GalleryPage() {
     [router]
   );
 
+  const debouncedUpdateQuery = useMemo(
+    () =>
+      debounce((value: string) => {
+        setDebouncedQuery(value);
+        const query = {...router.query};
+        const trimmed = value.trim();
+        if (trimmed) {
+          query.q = trimmed;
+        } else {
+          delete query.q;
+        }
+        router.replace({pathname: router.pathname, query}, undefined, {
+          shallow: true,
+          scroll: false,
+        });
+      }, 300),
+    [router]
+  );
+
+  useEffect(() => {
+    return () => {
+      debouncedUpdateQuery.cancel();
+    };
+  }, [debouncedUpdateQuery]);
+
   const updateSearchQuery = useCallback(
     (value: string) => {
       setSearchQuery(value);
-      const query = {...router.query};
-      const trimmed = value.trim();
-      if (trimmed) {
-        query.q = trimmed;
-      } else {
-        delete query.q;
-      }
-      router.replace({pathname: router.pathname, query}, undefined, {
-        shallow: true,
-        scroll: false,
-      });
+      debouncedUpdateQuery(value);
     },
-    [router]
+    [debouncedUpdateQuery]
   );
 
   // Jump to detail page
