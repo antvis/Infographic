@@ -29,6 +29,7 @@ const TRANSLATIONS = {
     filterLabel: '筛选',
     searchLabel: '搜索',
     searchPlaceholder: '搜索模板',
+    clearSearch: '清除搜索',
     clearFilters: '清除筛选',
     useTemplate: '使用',
     seriesCount: (count: number) => `${count} 张`,
@@ -57,6 +58,7 @@ const TRANSLATIONS = {
     filterLabel: 'Filter',
     searchLabel: 'Search',
     searchPlaceholder: 'Search templates',
+    clearSearch: 'Clear search',
     clearFilters: 'Clear all',
     useTemplate: 'Use',
     seriesCount: (count: number) => `${count} templates`,
@@ -254,8 +256,9 @@ export default function GalleryPage() {
         prev.every((val) => nextFilters.includes(val));
       return isSame ? prev : nextFilters;
     });
-    setSearchQuery((Array.isArray(q) ? q[0] : q) ?? '');
-    setDebouncedQuery((Array.isArray(q) ? q[0] : q) ?? '');
+    const queryValue = (Array.isArray(q) ? q[0] : q) ?? '';
+    setSearchQuery(queryValue);
+    setDebouncedQuery(queryValue);
   }, [router.isReady, router.query]);
 
   const galleryTexts = useLocaleBundle(TRANSLATIONS);
@@ -290,17 +293,18 @@ export default function GalleryPage() {
 
   // Filter data
   const filteredTemplates = useMemo(() => {
-    let nextTemplates = templatesWithSearch;
-    if (activeFilters.length > 0) {
-      nextTemplates = nextTemplates.filter((t) =>
-        activeFilters.includes(getType(t.template))
-      );
+    const hasActiveFilters = activeFilters.length > 0;
+    if (!hasActiveFilters && !normalizedQuery) {
+      return templatesWithSearch;
     }
 
-    if (!normalizedQuery) return nextTemplates;
-    return nextTemplates.filter((t) =>
-      t.searchHaystack.includes(normalizedQuery)
-    );
+    return templatesWithSearch.filter((t) => {
+      const filterMatch =
+        !hasActiveFilters || activeFilters.includes(getType(t.template));
+      const searchMatch =
+        !normalizedQuery || t.searchHaystack.includes(normalizedQuery);
+      return filterMatch && searchMatch;
+    });
   }, [activeFilters, normalizedQuery, templatesWithSearch]);
 
   // Group data while keeping order
@@ -480,9 +484,10 @@ export default function GalleryPage() {
                   />
                   {searchQuery && (
                     <button
+                      type="button"
                       onClick={() => updateSearchQuery('')}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-tertiary dark:text-tertiary-dark hover:text-link hover:dark:text-link-dark transition-colors"
-                      title={galleryTexts.clearFilters}>
+                      title={galleryTexts.clearSearch}>
                       <X className="w-4 h-4" />
                     </button>
                   )}
