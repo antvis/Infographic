@@ -1,6 +1,6 @@
 import {AnimatePresence, motion} from 'framer-motion';
 import {uniq} from 'lodash-es';
-import {ArrowRight, Filter, Layers, Sparkles, X} from 'lucide-react';
+import {ArrowRight, Filter, Layers, Search, Sparkles, X} from 'lucide-react';
 import {useRouter} from 'next/router';
 import {memo, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useLocaleBundle} from '../../hooks/useTranslation';
@@ -27,11 +27,14 @@ const TRANSLATIONS = {
     heroDescription:
       '探索我们精选的信息图模板库，高保真设计、灵活可定制，可即插即用地投入你的应用。',
     filterLabel: '筛选',
+    searchLabel: '搜索',
+    searchPlaceholder: '搜索模板',
     clearFilters: '清除筛选',
     useTemplate: '使用',
     seriesCount: (count: number) => `${count} 张`,
     expandAll: '展开全部',
     collapse: '收起',
+    noResults: '没有匹配的模板',
   },
   'en-US': {
     types: {
@@ -52,11 +55,14 @@ const TRANSLATIONS = {
     heroDescription:
       'Explore our curated infographic template library with high-fidelity designs ready to drop into your apps.',
     filterLabel: 'Filter',
+    searchLabel: 'Search',
+    searchPlaceholder: 'Search templates',
     clearFilters: 'Clear all',
     useTemplate: 'Use',
     seriesCount: (count: number) => `${count} templates`,
     expandAll: 'Expand All',
     collapse: 'Collapse',
+    noResults: 'No matching templates',
   },
 };
 
@@ -226,6 +232,7 @@ const GalleryCard = memo(function GalleryCard({
 // ==========================================
 export default function GalleryPage() {
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [expandedSeries, setExpandedSeries] = useState<Record<string, boolean>>(
     {}
   );
@@ -233,7 +240,7 @@ export default function GalleryPage() {
 
   useEffect(() => {
     if (!router.isReady) return;
-    const {filter} = router.query;
+    const {filter, q} = router.query;
     const nextFilters = filter
       ? Array.isArray(filter)
         ? filter
@@ -246,6 +253,7 @@ export default function GalleryPage() {
         prev.every((val) => nextFilters.includes(val));
       return isSame ? prev : nextFilters;
     });
+    setSearchQuery(Array.isArray(q) ? (q[0] ?? '') : (q ?? ''));
   }, [router.isReady, router.query]);
 
   const galleryTexts = useLocaleBundle(TRANSLATIONS);
@@ -258,11 +266,39 @@ export default function GalleryPage() {
     return uniq(cats).sort();
   }, []);
 
+  const normalizedQuery = useMemo(
+    () => searchQuery.trim().toLowerCase(),
+    [searchQuery]
+  );
+
   // Filter data
   const filteredTemplates = useMemo(() => {
-    if (activeFilters.length === 0) return TEMPLATES;
-    return TEMPLATES.filter((t) => activeFilters.includes(getType(t.template)));
-  }, [activeFilters]);
+    let nextTemplates = TEMPLATES;
+    if (activeFilters.length > 0) {
+      nextTemplates = nextTemplates.filter((t) =>
+        activeFilters.includes(getType(t.template))
+      );
+    }
+
+    if (!normalizedQuery) return nextTemplates;
+    return nextTemplates.filter((t) => {
+      const type = getType(t.template);
+      const series = getSeries(t.template);
+      const searchHaystack = [
+        t.template,
+        TYPE_DISPLAY_NAMES[type] ?? type,
+        SERIES_DISPLAY_NAMES[series] ?? series,
+      ]
+        .join(' ')
+        .toLowerCase();
+      return searchHaystack.includes(normalizedQuery);
+    });
+  }, [
+    activeFilters,
+    normalizedQuery,
+    SERIES_DISPLAY_NAMES,
+    TYPE_DISPLAY_NAMES,
+  ]);
 
   // Group data while keeping order
   const groupedTemplates = useMemo(() => {
@@ -304,6 +340,24 @@ export default function GalleryPage() {
         });
 
         return next;
+      });
+    },
+    [router]
+  );
+
+  const updateSearchQuery = useCallback(
+    (value: string) => {
+      setSearchQuery(value);
+      const query = {...router.query};
+      const trimmed = value.trim();
+      if (trimmed) {
+        query.q = trimmed;
+      } else {
+        delete query.q;
+      }
+      router.replace({pathname: router.pathname, query}, undefined, {
+        shallow: true,
+        scroll: false,
       });
     },
     [router]
@@ -393,14 +447,37 @@ export default function GalleryPage() {
               </AnimatePresence>
             </div>
 
-            {/* Counter Right */}
-            <div className="flex items-center gap-3 text-tertiary dark:text-tertiary-dark bg-card/80 dark:bg-card-dark/80 px-4 py-1.5 rounded-full shadow-secondary-button-stroke dark:shadow-secondary-button-stroke-dark border border-primary/10 dark:border-primary-dark/10 hidden sm:flex">
-              <Layers className="w-3.5 h-3.5" />
-              <div className="flex items-baseline gap-1 text-xs font-semibold tracking-wide">
-                <span className="text-primary dark:text-primary-dark text-sm">
-                  {filteredTemplates.length}
-                </span>
-                <span className="opacity-50">/ {TEMPLATES.length}</span>
+            {/* Search + Counter Right */}
+            <div className="w-full sm:w-auto">
+              <div className="flex items-center w-full sm:w-[360px] rounded-full bg-card/80 dark:bg-card-dark/80 border border-primary/10 dark:border-primary-dark/10 shadow-secondary-button-stroke dark:shadow-secondary-button-stroke-dark overflow-hidden focus-within:ring-2 focus-within:ring-link/30 dark:focus-within:ring-link-dark/30 focus-within:border-link/40 dark:focus-within:border-link-dark/40">
+                <div className="relative flex-1 min-w-0">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-tertiary dark:text-tertiary-dark" />
+                  <input
+                    value={searchQuery}
+                    onChange={(event) => updateSearchQuery(event.target.value)}
+                    placeholder={galleryTexts.searchPlaceholder}
+                    className="w-full bg-transparent border-0 pl-9 pr-9 py-2.5 text-sm text-primary dark:text-primary-dark placeholder:text-tertiary dark:placeholder:text-tertiary-dark focus:outline-none"
+                    type="search"
+                    aria-label={galleryTexts.searchLabel}
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => updateSearchQuery('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-tertiary dark:text-tertiary-dark hover:text-link hover:dark:text-link-dark transition-colors"
+                      title={galleryTexts.clearFilters}>
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+                <div className="flex items-center justify-center gap-3 px-4 py-2.5 border-l border-primary/10 dark:border-primary-dark/10 text-tertiary dark:text-tertiary-dark">
+                  <Layers className="w-3.5 h-3.5" />
+                  <div className="flex items-baseline gap-1 text-xs font-semibold tracking-wide">
+                    <span className="text-primary dark:text-primary-dark text-sm">
+                      {filteredTemplates.length}
+                    </span>
+                    <span className="opacity-50">/ {TEMPLATES.length}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -409,6 +486,11 @@ export default function GalleryPage() {
 
       {/* Grid Area */}
       <main className="px-5 sm:px-12 pb-24 max-w-7xl mx-auto relative z-10 space-y-8">
+        {groupedTemplates.length === 0 && (
+          <div className="rounded-xl border border-primary/8 dark:border-primary-dark/10 bg-card/60 dark:bg-card-dark/60 backdrop-blur-md shadow-sm px-6 py-12 text-center text-secondary dark:text-secondary-dark">
+            {galleryTexts.noResults}
+          </div>
+        )}
         {groupedTemplates.map(({key, label, items}) => {
           const isExpanded = !!expandedSeries[key];
           const visibleItems = isExpanded
