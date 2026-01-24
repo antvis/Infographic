@@ -40,7 +40,7 @@ export const ItemPreview = () => {
 
   const initialItem = storedValues?.selectedItem || items[0];
   const initialTheme = storedValues?.theme || 'light';
-  const initialColorPrimary = storedValues?.colorPrimary || '#FF356A';
+  const initialColorPrimary = storedValues?.colorPrimary || DEFAULT_COLOR_PRIMARY;
 
   const [selectedItem, setSelectedItem] = useState(initialItem);
   const [theme, setTheme] = useState<'light' | 'dark'>(initialTheme);
