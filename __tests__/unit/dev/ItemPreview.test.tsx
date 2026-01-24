@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { getItem, getItems, getThemeColors, renderSVG } from '../../../src';
+import { getThemeColors } from '../../../src';
 import * as storageUtils from '../../../dev/src/utils/storage';
 
 // Mock the storage utilities
@@ -20,11 +20,15 @@ vi.mock('../../../src', async () => {
         props: { 'data-testid': name },
       })),
     })),
-    getThemeColors: vi.fn((config: { colorPrimary: string; colorBg: string }) => ({
-      primary: config.colorPrimary,
-      bg: config.colorBg,
-    })),
-    renderSVG: vi.fn((element: any) => '<svg>test</svg>'),
+    getThemeColors: vi.fn(
+      (config: { colorPrimary: string; colorBg: string }, _options?: any) => ({
+        primary: config.colorPrimary,
+        bg: config.colorBg,
+        colorPrimary: config.colorPrimary,
+        colorBg: config.colorBg,
+      }),
+    ),
+    renderSVG: vi.fn((_element: any) => '<svg>test</svg>'),
   };
 });
 
@@ -219,8 +223,7 @@ describe('ItemPreview - Color Functionality', () => {
         colorBg: '#fff',
       };
 
-      const mockComponent = vi.fn(() => ({ type: 'g', props: {} }));
-      const getItemSpy = vi.fn(() => ({ component: mockComponent }));
+      const mockComponent = vi.fn((_props: any) => ({ type: 'g', props: {} }));
 
       // Simulate component rendering with theme colors
       const themeColors = getThemeColors(themeConfig);
