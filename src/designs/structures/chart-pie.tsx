@@ -414,9 +414,10 @@ registerStructure('chart-pie', {
   composites: ['title', 'item'],
 });
 
-interface LabelItem {
+export interface LabelItem {
   arcDatum: PieArcDatum<ItemDatum>;
   originalIndex: number;
+  /** 标签中心点 Y 坐标 */
   y: number;
   x: number;
   height: number;
@@ -434,7 +435,7 @@ interface LabelItem {
  * @param minY 标签中心点的上边界
  * @param maxY 标签中心点的下边界
  */
-function distributeLabels(
+export function distributeLabels(
   items: LabelItem[],
   spacing: number,
   minY: number,
@@ -476,7 +477,7 @@ function distributeLabels(
   let actualSpacing = spacing;
   if (requiredSpaceWithIdealSpacing > availableSpace) {
     const excessSpace = availableSpace - totalLabelsHeight;
-    actualSpacing = Math.max(0, excessSpace / sorted.length - 1);
+    actualSpacing = Math.max(0, excessSpace / (sorted.length - 1));
   }
 
   // === 第二步：向下挤压 (Downwards push) ===
