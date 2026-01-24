@@ -11,7 +11,7 @@ import { getStoredValues, setStoredValues } from './utils/storage';
 
 const items = getItems();
 const STORAGE_KEY = 'item-preview-form-values';
-
+ const DEFAULT_COLOR_PRIMARY = '#FF356A';
 const FULL_DATA = {
   icon: 'achievment-050_v1_lineal',
   label: '企业营销优势',
