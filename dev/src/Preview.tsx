@@ -64,20 +64,28 @@ export const Preview = () => {
   const [colorPrimary, setColorPrimary] = useState(initialColorPrimary);
   const [enablePrimary, setEnablePrimary] = useState(initialEnablePrimary);
   const [enablePalette, setEnablePalette] = useState(initialEnablePalette);
-  // State for custom data
-  const [savedDataStr, setSavedDataStr] = useState<string | null>(() => {
-    const saved = getStoredValues<{ data: string }>(CUSTOM_DATA_STORAGE_KEY);
-    return saved?.data || null;
-  });
+  // State for custom data - SSR safe: initialize with default, hydrate in useEffect
+  const [savedDataStr, setSavedDataStr] = useState<string | null>(null);
+  const [customData, setCustomData] = useState<string>(() =>
+    JSON.stringify(initialDataValue, null, 2),
+  );
+  const [isHydrated, setIsHydrated] = useState(false);
 
-  const [customData, setCustomData] = useState<string>(() => {
-    return savedDataStr || JSON.stringify(initialDataValue, null, 2);
-  });
+  // Hydrate from localStorage on client mount (SSR safe)
+  useEffect(() => {
+    const saved = getStoredValues<{ data: string }>(CUSTOM_DATA_STORAGE_KEY);
+    if (saved?.data) {
+      setSavedDataStr(saved.data);
+      setCustomData(saved.data);
+    }
+    setIsHydrated(true);
+  }, []);
 
   const isDataDirty = useMemo(() => {
+    if (!isHydrated) return false; // Not hydrated yet, show as saved
     if (savedDataStr === null) return true; // Not saved yet
     return customData !== savedDataStr;
-  }, [customData, savedDataStr]);
+  }, [customData, savedDataStr, isHydrated]);
 
   const themeConfig = useMemo<ThemeConfig | undefined>(() => {
     const config: ThemeConfig = {};
@@ -117,7 +125,7 @@ export const Preview = () => {
   const templateConfig = useMemo(() => {
     const config = getTemplate(template);
     return config ? JSON.stringify(config, null, 2) : '{}';
-  }, [template, data]);
+  }, [template]); // Note: removed unused 'data' dependency
 
   const applyTemplate = useCallback(
     (nextTemplate: string) => {

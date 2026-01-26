@@ -1,6 +1,6 @@
 import Editor from '@monaco-editor/react';
 import { Button, Card, Radio, Space } from 'antd';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Infographic } from './Infographic';
 import {
   getStoredValues,
@@ -132,25 +132,45 @@ data
 
 const getDefaultCode = () => CODE_PRESETS[0].code;
 const STREAM_CODE_STORAGE_KEY = 'stream-preview-code';
+const DEFAULT_PRESET_KEY = CODE_PRESETS[0].key;
+
+// Validate if preset key exists
+const isValidPresetKey = (key: string | undefined): key is string =>
+  !!key && CODE_PRESETS.some((p) => p.key === key);
 
 export const StreamPreview = () => {
-  // Load initial state
-  const savedState = getStoredValues<{ code: string; preset: string }>(
-    STREAM_CODE_STORAGE_KEY,
-  );
-
+  // SSR safe: initialize with defaults, hydrate in useEffect
   const [savedCodeInfo, setSavedCodeInfo] = useState<{
     code: string;
     preset: string;
-  } | null>(savedState);
+  } | null>(null);
 
-  const [code, setCode] = useState(() => savedState?.code || getDefaultCode());
-
-  // Explicit debounced code state
+  const [code, setCode] = useState(getDefaultCode);
   const [debouncedCode, setDebouncedCode] = useState(code);
-
   const [options, setOptions] = useState(code);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [speedPreset, setSpeedPreset] = useState('normal');
+  const [codePreset, setCodePreset] = useState(DEFAULT_PRESET_KEY);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  // Hydrate from localStorage on client mount (SSR safe)
+  useEffect(() => {
+    const savedState = getStoredValues<{ code: string; preset: string }>(
+      STREAM_CODE_STORAGE_KEY,
+    );
+    if (savedState) {
+      // Validate preset before using
+      const validPreset = isValidPresetKey(savedState.preset)
+        ? savedState.preset
+        : DEFAULT_PRESET_KEY;
+      setSavedCodeInfo({ code: savedState.code, preset: validPreset });
+      setCode(savedState.code);
+      setDebouncedCode(savedState.code);
+      setOptions(savedState.code);
+      setCodePreset(validPreset);
+    }
+    setIsHydrated(true);
+  }, []);
 
   // Debounce effect: sync code to debouncedCode
   useEffect(() => {
@@ -161,22 +181,18 @@ export const StreamPreview = () => {
   }, [code]);
 
   // Sync debounced code to options when NOT streaming
-  // If streaming, options are controlled by the stream timer
   useEffect(() => {
     if (!isStreaming) {
       setOptions(debouncedCode);
     }
   }, [debouncedCode, isStreaming]);
-  const [speedPreset, setSpeedPreset] = useState('normal');
-  const [codePreset, setCodePreset] = useState(
-    savedState?.preset || CODE_PRESETS[0].key,
-  );
 
   // Dirty check: Compare current code+preset with saved state
-  const isCodeDirty =
-    !savedCodeInfo ||
-    savedCodeInfo.code !== code ||
-    savedCodeInfo.preset !== codePreset;
+  const isCodeDirty = useMemo(() => {
+    if (!isHydrated) return false; // Not hydrated yet, show as saved
+    if (!savedCodeInfo) return true; // Not saved yet
+    return savedCodeInfo.code !== code || savedCodeInfo.preset !== codePreset;
+  }, [savedCodeInfo, code, codePreset, isHydrated]);
 
   const streamTimerRef = useRef<number | null>(null);
   const currentPreset = STREAM_PRESETS.find((item) => item.key === speedPreset);
@@ -273,12 +289,13 @@ export const StreamPreview = () => {
                 size="small"
                 danger
                 onClick={() => {
-                  const preset = CODE_PRESETS.find((p) => p.key === codePreset);
-                  if (preset) {
-                    setCode(preset.code);
-                    setDebouncedCode(preset.code); // Immediate update
-                    setOptions(preset.code);
-                  }
+                  // Find preset with fallback to first preset
+                  const preset =
+                    CODE_PRESETS.find((p) => p.key === codePreset) ??
+                    CODE_PRESETS[0];
+                  setCode(preset.code);
+                  setDebouncedCode(preset.code); // Immediate update
+                  setOptions(preset.code);
                   removeStoredValue(STREAM_CODE_STORAGE_KEY);
                   setSavedCodeInfo(null);
                 }}
