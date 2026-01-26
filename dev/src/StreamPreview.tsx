@@ -245,6 +245,23 @@ export const StreamPreview = () => {
 
   useEffect(() => () => stopStreaming(), [stopStreaming]);
 
+  const handleSaveCode = useCallback(() => {
+    const newState = { code, preset: codePreset };
+    setStoredValues(STREAM_CODE_STORAGE_KEY, newState);
+    setSavedCodeInfo(newState);
+  }, [code, codePreset]);
+
+  const handleResetCode = useCallback(() => {
+    // Find preset with fallback to first preset
+    const preset =
+      CODE_PRESETS.find((p) => p.key === codePreset) ?? CODE_PRESETS[0];
+    setCode(preset.code);
+    setDebouncedCode(preset.code); // Immediate update
+    setOptions(preset.code);
+    removeStoredValue(STREAM_CODE_STORAGE_KEY);
+    setSavedCodeInfo(null);
+  }, [codePreset]);
+
   return (
     <div style={{ display: 'flex', gap: 16, padding: 16, flex: 1 }}>
       <div
@@ -277,29 +294,11 @@ export const StreamPreview = () => {
               <Button
                 size="small"
                 type={!isCodeDirty ? 'default' : 'primary'}
-                onClick={() => {
-                  const newState = { code, preset: codePreset };
-                  setStoredValues(STREAM_CODE_STORAGE_KEY, newState);
-                  setSavedCodeInfo(newState);
-                }}
+                onClick={handleSaveCode}
               >
                 {isCodeDirty ? '保存' : '已保存'}
               </Button>
-              <Button
-                size="small"
-                danger
-                onClick={() => {
-                  // Find preset with fallback to first preset
-                  const preset =
-                    CODE_PRESETS.find((p) => p.key === codePreset) ??
-                    CODE_PRESETS[0];
-                  setCode(preset.code);
-                  setDebouncedCode(preset.code); // Immediate update
-                  setOptions(preset.code);
-                  removeStoredValue(STREAM_CODE_STORAGE_KEY);
-                  setSavedCodeInfo(null);
-                }}
-              >
+              <Button size="small" danger onClick={handleResetCode}>
                 重置
               </Button>
             </Space>
