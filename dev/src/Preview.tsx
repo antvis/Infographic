@@ -1,135 +1,33 @@
-import { getTemplate, getTemplates, ThemeConfig } from '@antv/infographic';
 import Editor from '@monaco-editor/react';
 import { Button, Card, Checkbox, ColorPicker, Form, Select } from 'antd';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { getDataByTemplate } from '../../shared/get-template-data';
+import { useCallback } from 'react';
 import { Infographic } from './Infographic';
-import { DATA_KEYS, DATASET, DEFAULT_DATA_KEY, type DataKey } from './data';
-import { getStoredValues, setStoredValues } from './utils/storage';
-
-const templates = getTemplates();
-const STORAGE_KEY = 'preview-form-values';
-
-const getDefaultDataString = (key: DataKey) =>
-  JSON.stringify(DATASET[key], null, 2);
-
-const resolvePreviewDataKey = (data: unknown) =>
-  DATA_KEYS.find((key) => DATASET[key] === data) ?? DEFAULT_DATA_KEY;
+import { useKeyboardNavigation } from './hooks/useKeyboardNavigation';
+import { usePreviewData } from './hooks/usePreviewData';
+import { usePreviewInteractions } from './hooks/usePreviewInteractions';
+import { usePreviewSettings } from './hooks/usePreviewSettings';
 
 export const Preview = () => {
-  // Get stored values with validation
-  const storedValues = getStoredValues<{
-    template: string;
-    data: DataKey;
-    theme: 'light' | 'dark' | 'hand-drawn';
-    colorPrimary: string;
-    enablePrimary: boolean;
-    enablePalette: boolean;
-  }>(STORAGE_KEY, (stored) => {
-    const fallbacks: any = {};
+  const settings = usePreviewSettings();
+  const dataState = usePreviewData(settings.isSettingsHydrated);
+  const interactions = usePreviewInteractions(settings, dataState);
 
-    // Validate template
-    if (stored.template && !templates.includes(stored.template)) {
-      fallbacks.template = templates[0];
-    }
-
-    // Validate data
-    const dataKeys = DATA_KEYS;
-    if (stored.data && !dataKeys.includes(stored.data)) {
-      fallbacks.data = dataKeys[0];
-    }
-
-    return fallbacks;
+  // 键盘导航：上下或左右方向键切换模板
+  useKeyboardNavigation({
+    templates: settings.templates,
+    currentTemplate: settings.template,
+    onTemplateChange: interactions.applyTemplate,
   });
 
-  const initialTemplate = storedValues?.template || templates[0];
-  const templateData = getDataByTemplate(initialTemplate);
-  const initialData = storedValues?.data || resolvePreviewDataKey(templateData);
-  const initialTheme = storedValues?.theme || 'light';
-  const initialColorPrimary = storedValues?.colorPrimary || '#FF356A';
-  const initialEnablePrimary = storedValues?.enablePrimary ?? true;
-  const initialEnablePalette = storedValues?.enablePalette || false;
-  const initialDataValue = storedValues?.data
-    ? DATASET[initialData]
-    : templateData;
-
-  const [template, setTemplate] = useState(initialTemplate);
-  const [data, setData] = useState<DataKey>(initialData);
-  const [theme, setTheme] = useState<string>(initialTheme);
-  const [colorPrimary, setColorPrimary] = useState(initialColorPrimary);
-  const [enablePrimary, setEnablePrimary] = useState(initialEnablePrimary);
-  const [enablePalette, setEnablePalette] = useState(initialEnablePalette);
-  const [customData, setCustomData] = useState<string>(() =>
-    JSON.stringify(initialDataValue, null, 2),
-  );
-  const [dataError, setDataError] = useState<string>('');
-
-  const themeConfig = useMemo<ThemeConfig | undefined>(() => {
-    const config: ThemeConfig = {};
-    if (enablePrimary) {
-      config.colorPrimary = colorPrimary;
-    }
-    if (theme === 'dark') {
-      config.colorBg = '#333';
-    }
-    if (enablePalette) {
-      config.palette = [
-        '#f94144',
-        '#f3722c',
-        '#f8961e',
-        '#f9c74f',
-        '#90be6d',
-        '#43aa8b',
-        '#577590',
-      ];
-    }
-    return config;
-  }, [enablePrimary, colorPrimary, theme, enablePalette]);
-
-  // Save to localStorage when values change
-  useEffect(() => {
-    setStoredValues(STORAGE_KEY, {
-      template,
-      data,
-      theme,
-      colorPrimary,
-      enablePrimary,
-      enablePalette,
-    });
-  }, [template, data, theme, colorPrimary, enablePrimary, enablePalette]);
-
-  // Get current template configuration
-  const templateConfig = useMemo(() => {
-    const config = getTemplate(template);
-    return config ? JSON.stringify(config, null, 2) : '{}';
-  }, [template, data]);
-
-  const applyTemplate = useCallback(
-    (nextTemplate: string) => {
-      const nextData = getDataByTemplate(nextTemplate);
-      const nextSelection = {
-        key: resolvePreviewDataKey(nextData),
-        data: nextData,
-      };
-      setTemplate(nextTemplate);
-      if (nextSelection.key !== data) {
-        setData(nextSelection.key);
-        setCustomData(JSON.stringify(nextSelection.data, null, 2));
-        setDataError('');
-      }
-    },
-    [data],
-  );
-
-  const handleCopyTemplate = async () => {
+  const handleCopyTemplate = useCallback(async () => {
     try {
       if (navigator?.clipboard?.writeText) {
-        await navigator.clipboard.writeText(template);
+        await navigator.clipboard.writeText(settings.template);
         return;
       }
 
       const textarea = document.createElement('textarea');
-      textarea.value = template;
+      textarea.value = settings.template;
       textarea.style.position = 'fixed';
       textarea.style.opacity = '0';
       document.body.appendChild(textarea);
@@ -139,51 +37,18 @@ export const Preview = () => {
     } catch (error) {
       console.warn('Failed to copy template name.', error);
     }
-  };
+  }, [settings.template]);
 
-  // Parse custom data
-  const parsedData = useMemo(() => {
-    try {
-      const parsed = JSON.parse(customData);
-      setDataError('');
-      return parsed;
-    } catch (error) {
-      setDataError(error instanceof Error ? error.message : 'Invalid JSON');
-      return DATASET[data];
-    }
-  }, [customData, data]);
+  const handleEditorChange = useCallback(
+    (value: string | undefined) => {
+      dataState.setCustomData(value || '');
+    },
+    [dataState.setCustomData],
+  );
 
-  // 键盘导航：上下或左右方向键切换模板
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (
-        e.key === 'ArrowUp' ||
-        e.key === 'ArrowLeft' ||
-        e.key === 'ArrowDown' ||
-        e.key === 'ArrowRight'
-      ) {
-        const currentIndex = templates.indexOf(template);
-        let nextIndex: number;
-
-        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
-          // 上一个模板
-          nextIndex =
-            currentIndex > 0 ? currentIndex - 1 : templates.length - 1;
-        } else {
-          // 下一个模板
-          nextIndex =
-            currentIndex < templates.length - 1 ? currentIndex + 1 : 0;
-        }
-
-        const nextTemplate = templates[nextIndex];
-        applyTemplate(nextTemplate);
-        e.preventDefault();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [template, applyTemplate]);
+  if (!interactions.isHydrated) {
+    return null;
+  }
 
   return (
     <div style={{ display: 'flex', gap: 16, padding: 16, flex: 1 }}>
@@ -219,12 +84,9 @@ export const Preview = () => {
                 <div style={{ display: 'flex', gap: 8, width: '100%' }}>
                   <Select
                     showSearch
-                    value={template}
-                    options={templates.map((value) => ({
-                      label: value,
-                      value,
-                    }))}
-                    onChange={(value) => applyTemplate(value)}
+                    value={settings.template}
+                    options={settings.templateOptions}
+                    onChange={(value) => interactions.applyTemplate(value)}
                     style={{ flex: 1, minWidth: 0 }}
                   />
                   <Button
@@ -238,54 +100,47 @@ export const Preview = () => {
               </Form.Item>
               <Form.Item label="数据">
                 <Select
-                  value={data}
-                  options={DATA_KEYS.map((key) => ({
-                    label: key,
-                    value: key,
-                  }))}
-                  onChange={(value) => {
-                    setData(value);
-                    setCustomData(getDefaultDataString(value));
-                    setDataError('');
-                  }}
+                  value={settings.data}
+                  options={settings.dataKeyOptions}
+                  onChange={interactions.handleDataChange}
                 />
               </Form.Item>
               <Form.Item label="主题">
                 <Select
-                  value={theme}
+                  value={settings.theme}
                   options={[
                     { label: '亮色', value: 'light' },
                     { label: '暗色', value: 'dark' },
                     { label: '手绘风格', value: 'hand-drawn' },
                   ]}
                   onChange={(newTheme: string) => {
-                    setTheme(newTheme);
+                    settings.setTheme(newTheme);
                   }}
                 />
               </Form.Item>
               <Form.Item label="主色">
                 <ColorPicker
-                  value={colorPrimary}
-                  disabled={!enablePrimary}
+                  value={settings.colorPrimary}
+                  disabled={!settings.enablePrimary}
                   onChange={(color) => {
                     const hexColor = color.toHexString();
-                    setColorPrimary(hexColor);
+                    settings.setColorPrimary(hexColor);
                   }}
                 />
               </Form.Item>
               <Form.Item>
                 <Checkbox
-                  checked={enablePrimary}
-                  onChange={(e) => setEnablePrimary(e.target.checked)}
+                  checked={settings.enablePrimary}
+                  onChange={(e) => settings.setEnablePrimary(e.target.checked)}
                 >
                   启用主色
                 </Checkbox>
               </Form.Item>
               <Form.Item>
                 <Checkbox
-                  checked={enablePalette}
+                  checked={settings.enablePalette}
                   onChange={(e) => {
-                    setEnablePalette(e.target.checked);
+                    settings.setEnablePalette(e.target.checked);
                   }}
                 >
                   启用色板
@@ -298,18 +153,34 @@ export const Preview = () => {
             title="数据编辑器"
             size="small"
             extra={
-              dataError && (
-                <span style={{ color: '#ff4d4f', fontSize: 12 }}>
-                  {dataError}
-                </span>
-              )
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                {dataState.parseError && (
+                  <span style={{ color: '#ff4d4f', fontSize: 12 }}>
+                    {dataState.parseError}
+                  </span>
+                )}
+                <Button
+                  size="small"
+                  type={!dataState.isDataDirty ? 'default' : 'primary'}
+                  onClick={dataState.handleSaveCustomData}
+                >
+                  {dataState.isDataDirty ? '保存' : '已保存'}
+                </Button>
+                <Button
+                  size="small"
+                  danger
+                  onClick={interactions.handleResetCustomData}
+                >
+                  重置
+                </Button>
+              </div>
             }
           >
             <div style={{ height: 300 }}>
               <Editor
                 height="100%"
                 defaultLanguage="json"
-                value={customData}
+                value={dataState.customData}
                 theme="vs-dark"
                 options={{
                   minimap: { enabled: false },
@@ -321,7 +192,7 @@ export const Preview = () => {
                   formatOnPaste: true,
                   formatOnType: true,
                 }}
-                onChange={(value) => setCustomData(value || '')}
+                onChange={handleEditorChange}
               />
             </div>
           </Card>
@@ -331,7 +202,7 @@ export const Preview = () => {
               <Editor
                 height="100%"
                 defaultLanguage="json"
-                value={templateConfig}
+                value={interactions.templateConfig}
                 theme="vs-dark"
                 options={{
                   readOnly: true,
@@ -353,10 +224,11 @@ export const Preview = () => {
         <Card title="预览" size="small" style={{ height: '100%' }}>
           <Infographic
             options={{
-              template,
-              data: parsedData,
-              theme,
-              themeConfig,
+              template: settings.template,
+              // 如果解析出错 (null)，传空对象防止崩溃，错误提示已在编辑器上方显示
+              data: dataState.parsedData || {},
+              theme: settings.theme,
+              themeConfig: interactions.themeConfig,
               editable: true,
             }}
           />

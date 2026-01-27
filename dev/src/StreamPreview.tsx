@@ -1,7 +1,12 @@
 import Editor from '@monaco-editor/react';
 import { Button, Card, Radio, Space } from 'antd';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Infographic } from './Infographic';
+import {
+  getStoredValues,
+  removeStoredValue,
+  setStoredValues,
+} from './utils/storage';
 
 const STREAM_PRESETS = [
   { key: 'slowest', label: '最慢', stepPercent: 1, intervalMs: 160 },
@@ -126,13 +131,69 @@ data
 ];
 
 const getDefaultCode = () => CODE_PRESETS[0].code;
+const STREAM_CODE_STORAGE_KEY = 'stream-preview-code';
+const DEFAULT_PRESET_KEY = CODE_PRESETS[0].key;
+
+// Validate if preset key exists
+const isValidPresetKey = (key: string | undefined): key is string =>
+  !!key && CODE_PRESETS.some((p) => p.key === key);
 
 export const StreamPreview = () => {
+  // SSR safe: initialize with defaults, hydrate in useEffect
+  const [savedCodeInfo, setSavedCodeInfo] = useState<{
+    code: string;
+    preset: string;
+  } | null>(null);
+
   const [code, setCode] = useState(getDefaultCode);
+  const [debouncedCode, setDebouncedCode] = useState(code);
   const [options, setOptions] = useState(code);
   const [isStreaming, setIsStreaming] = useState(false);
   const [speedPreset, setSpeedPreset] = useState('normal');
-  const [codePreset, setCodePreset] = useState(CODE_PRESETS[0].key);
+  const [codePreset, setCodePreset] = useState(DEFAULT_PRESET_KEY);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  // Hydrate from localStorage on client mount (SSR safe)
+  useEffect(() => {
+    const savedState = getStoredValues<{ code: string; preset: string }>(
+      STREAM_CODE_STORAGE_KEY,
+    );
+    if (savedState) {
+      // Validate preset before using
+      const validPreset = isValidPresetKey(savedState.preset)
+        ? savedState.preset
+        : DEFAULT_PRESET_KEY;
+      setSavedCodeInfo({ code: savedState.code, preset: validPreset });
+      setCode(savedState.code);
+      setDebouncedCode(savedState.code);
+      setOptions(savedState.code);
+      setCodePreset(validPreset);
+    }
+    setIsHydrated(true);
+  }, []);
+
+  // Debounce effect: sync code to debouncedCode
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedCode(code);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [code]);
+
+  // Sync debounced code to options when NOT streaming
+  useEffect(() => {
+    if (!isStreaming) {
+      setOptions(debouncedCode);
+    }
+  }, [debouncedCode, isStreaming]);
+
+  // Dirty check: Compare current code+preset with saved state
+  const isCodeDirty = useMemo(() => {
+    if (!isHydrated) return false; // Not hydrated yet, show as saved
+    if (!savedCodeInfo) return true; // Not saved yet
+    return savedCodeInfo.code !== code || savedCodeInfo.preset !== codePreset;
+  }, [savedCodeInfo, code, codePreset, isHydrated]);
+
   const streamTimerRef = useRef<number | null>(null);
   const currentPreset = STREAM_PRESETS.find((item) => item.key === speedPreset);
 
@@ -174,13 +235,32 @@ export const StreamPreview = () => {
       if (!next) return;
       stopStreaming();
       setCodePreset(nextPreset);
-      setCode(next.code);
-      setOptions(next.code);
+      const nextCode = next.code;
+      setCode(nextCode);
+      setDebouncedCode(nextCode); // Immediate update
+      setOptions(nextCode);
     },
     [stopStreaming],
   );
 
   useEffect(() => () => stopStreaming(), [stopStreaming]);
+
+  const handleSaveCode = useCallback(() => {
+    const newState = { code, preset: codePreset };
+    setStoredValues(STREAM_CODE_STORAGE_KEY, newState);
+    setSavedCodeInfo(newState);
+  }, [code, codePreset]);
+
+  const handleResetCode = useCallback(() => {
+    // Find preset with fallback to first preset
+    const preset =
+      CODE_PRESETS.find((p) => p.key === codePreset) ?? CODE_PRESETS[0];
+    setCode(preset.code);
+    setDebouncedCode(preset.code); // Immediate update
+    setOptions(preset.code);
+    removeStoredValue(STREAM_CODE_STORAGE_KEY);
+    setSavedCodeInfo(null);
+  }, [codePreset]);
 
   return (
     <div style={{ display: 'flex', gap: 16, padding: 16, flex: 1 }}>
@@ -206,7 +286,24 @@ export const StreamPreview = () => {
             disabled={isStreaming}
           />
         </Card>
-        <Card title="Code Input" size="small">
+        <Card
+          title="Code Input"
+          size="small"
+          extra={
+            <Space size={8}>
+              <Button
+                size="small"
+                type={!isCodeDirty ? 'default' : 'primary'}
+                onClick={handleSaveCode}
+              >
+                {isCodeDirty ? '保存' : '已保存'}
+              </Button>
+              <Button size="small" danger onClick={handleResetCode}>
+                重置
+              </Button>
+            </Space>
+          }
+        >
           <div style={{ height: 300 }}>
             <Editor
               height="100%"
@@ -220,7 +317,9 @@ export const StreamPreview = () => {
                 scrollBeyondLastLine: false,
                 wordWrap: 'on',
               }}
-              onChange={(value) => setCode(value || '')}
+              onChange={(value) => {
+                setCode(value || '');
+              }}
             />
           </div>
         </Card>

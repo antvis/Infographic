@@ -12,6 +12,7 @@ export function getStoredValues<T extends Record<string, any>>(
   key: string,
   fallbackGetter?: (stored: T) => Partial<T>,
 ): T | null {
+  if (typeof window === 'undefined') return null;
   try {
     const stored = localStorage.getItem(key);
     if (!stored) return null;
@@ -36,8 +37,22 @@ export function getStoredValues<T extends Record<string, any>>(
  * @param values - Values to store
  */
 export function setStoredValues(key: string, values: any): void {
+  if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(key, JSON.stringify(values));
+  } catch {
+    // Ignore storage errors
+  }
+}
+
+/**
+ * Remove value from localStorage
+ * @param key - The storage key
+ */
+export function removeStoredValue(key: string): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.removeItem(key);
   } catch {
     // Ignore storage errors
   }
