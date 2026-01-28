@@ -1,6 +1,7 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { UpdateOptionsCommand } from '../../../../src/editor/commands/UpdateOptions';
 import { ZoomWheel } from '../../../../src/editor/interactions/zoom-wheel';
+import * as EditorUtils from '../../../../src/editor/utils';
 
 // Polyfill DOMMatrix for JSDOM
 if (typeof globalThis.DOMMatrix === 'undefined') {
@@ -144,12 +145,21 @@ describe('ZoomWheel interaction', () => {
   });
 
   describe('mouse zoom (Ctrl/Meta + Wheel)', () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
     it('zooms with Ctrl key (mouse point zoom)', () => {
       const svg = createSVG('0 0 100 100');
       const commander = { execute: vi.fn() } as any;
       const interaction = { isActive: vi.fn(() => true) } as any;
       const state = { getOptions: vi.fn(() => ({})) } as any;
 
+      // Mock clientToViewport to return a specific point (e.g., 25, 25)
+      // This represents the mouse cursor position in SVG coordinates
+      const clientToViewportSpy = vi.spyOn(EditorUtils, 'clientToViewport');
+      clientToViewportSpy.mockReturnValue({ x: 25, y: 25 } as DOMPoint);
+
       const instance = new ZoomWheel();
       instance.init({
         emitter: {} as any,
@@ -159,22 +169,42 @@ describe('ZoomWheel interaction', () => {
         state,
       });
 
-      const event = new WheelEvent('wheel', { deltaY: 120, ctrlKey: true });
+      // Zoom Out (deltaY > 0) -> factor = 1.1
+      // Current: 0, 0, 100, 100
+      // Pivot: 25, 25
+      // New Width: 110
+      // New X = 25 - (25 - 0) * 1.1 = 25 - 27.5 = -2.5
+      // New Y = 25 - (25 - 0) * 1.1 = 25 - 27.5 = -2.5
+
+      const event = new WheelEvent('wheel', {
+        deltaY: 120,
+        ctrlKey: true,
+        clientX: 100, // Arbitrary, mocked by clientToViewport
+        clientY: 100,
+      });
       document.dispatchEvent(event);
 
       expect(commander.execute).toHaveBeenCalledTimes(1);
       const viewBox = parseViewBox(commander.execute.mock.calls[0][0]);
+
       expect(viewBox?.width).toBeCloseTo(110, 1);
+      expect(viewBox?.height).toBeCloseTo(110, 1);
+      expect(viewBox?.x).toBeCloseTo(-2.5, 1);
+      expect(viewBox?.y).toBeCloseTo(-2.5, 1);
 
       instance.destroy();
     });
 
-    it('zooms with Meta key (Cmd on Mac)', () => {
+    it('zooms with Meta key (Cmd on Mac) at a different point', () => {
       const svg = createSVG('0 0 100 100');
       const commander = { execute: vi.fn() } as any;
       const interaction = { isActive: vi.fn(() => true) } as any;
       const state = { getOptions: vi.fn(() => ({})) } as any;
 
+      // Mock mouse at (80, 80)
+      const clientToViewportSpy = vi.spyOn(EditorUtils, 'clientToViewport');
+      clientToViewportSpy.mockReturnValue({ x: 80, y: 80 } as DOMPoint);
+
       const instance = new ZoomWheel();
       instance.init({
         emitter: {} as any,
@@ -184,12 +214,26 @@ describe('ZoomWheel interaction', () => {
         state,
       });
 
-      const event = new WheelEvent('wheel', { deltaY: 120, metaKey: true });
+      // Zoom In (deltaY < 0) -> factor = 1/1.1 ≈ 0.90909
+      // Current: 0, 0, 100, 100
+      // Pivot: 80, 80
+      // New Width: 90.909
+      // New X = 80 - (80 - 0) * 0.90909 = 80 - 72.7272 = 7.2727
+      // New Y = 80 - (80 - 0) * 0.90909 = 7.2727
+
+      const event = new WheelEvent('wheel', {
+        deltaY: -120,
+        metaKey: true,
+      });
       document.dispatchEvent(event);
 
       expect(commander.execute).toHaveBeenCalledTimes(1);
       const viewBox = parseViewBox(commander.execute.mock.calls[0][0]);
-      expect(viewBox?.width).toBeCloseTo(110, 1);
+
+      expect(viewBox?.width).toBeCloseTo(90.909, 3);
+      expect(viewBox?.height).toBeCloseTo(90.909, 3);
+      expect(viewBox?.x).toBeCloseTo(7.273, 3);
+      expect(viewBox?.y).toBeCloseTo(7.273, 3);
 
       instance.destroy();
     });

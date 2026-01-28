@@ -202,4 +202,16 @@ describe('StateManager', () => {
       ],
     });
   });
+
+  it('updates options and handles viewBox attribute', () => {
+    const { state, svg } = createState();
+
+    // 1. Set viewBox
+    state.updateOptions({ viewBox: '0 0 100 100' } as any);
+    expect(svg.getAttribute('viewBox')).toBe('0 0 100 100');
+
+    // 2. Unset viewBox (should remove attribute)
+    state.updateOptions({ viewBox: undefined } as any);
+    expect(svg.hasAttribute('viewBox')).toBe(false);
+  });
 });

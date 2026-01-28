@@ -71,8 +71,6 @@ export class ZoomWheel extends Interaction implements IInteraction {
 
   private shouldZoom = (event: WheelEvent) => {
     if (!this.interaction.isActive()) return false;
-    // TODO: Enable after implementing the reset UI plugin
-    // if (!event.ctrlKey && !event.metaKey && !event.shiftKey) return false;
     if (event.deltaY === 0) return false;
 
     const isMouseZoom = event.ctrlKey || event.metaKey;
