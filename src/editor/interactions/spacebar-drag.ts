@@ -49,6 +49,14 @@ export class SpacebarDrag extends Interaction implements IInteraction {
   private handleKeyDown = (event: KeyboardEvent) => {
     if (!this.interaction.isActive()) return;
     if (isTextSelectionTarget(event.target)) return;
+
+    // 增加焦点的判断，防止对空格的preventDefault侵入性过强
+    const target = event.target as Element;
+    const isBody =
+      target === document.body || target === document.documentElement;
+    const isEditor = target === this.document || this.document.contains(target);
+    if (!isBody && !isEditor) return;
+
     if (event.code !== 'Space') return;
     if (!this.isHovering && !this.isSpacePressed) return;
     event.preventDefault();
