@@ -4,7 +4,7 @@ import type { ICommand, IStateManager } from '../types';
 export class UpdateOptionsCommand implements ICommand {
   constructor(
     private options: Partial<ParsedInfographicOptions>,
-    private original?: ParsedInfographicOptions,
+    private original?: Partial<ParsedInfographicOptions>,
   ) {}
 
   async apply(state: IStateManager) {

@@ -111,7 +111,7 @@ export class StateManager implements IStateManager {
     this.updateBuiltInElement(element, props);
   }
 
-  updateOptions(options: ParsedInfographicOptions) {
+  updateOptions(options: Partial<ParsedInfographicOptions>) {
     this.options = { ...this.options, ...options };
     if (this.options.viewBox) {
       this.editor.getDocument().setAttribute('viewBox', this.options.viewBox);

@@ -90,3 +90,10 @@ const getIconEventTarget = (element: SVGElement): IconElement | null => {
 
   return null;
 };
+
+export function isTextSelectionTarget(target: EventTarget | null) {
+  if (!(target instanceof HTMLElement)) return false;
+  if (target.isContentEditable) return true;
+  const tag = target.tagName.toLowerCase();
+  return tag === 'input' || tag === 'textarea';
+}

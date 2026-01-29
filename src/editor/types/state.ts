@@ -24,7 +24,7 @@ export interface IStateManager {
   removeItemDatum(indexes: number[], count?: number): void;
   updateData(key: string, value: any): void;
   updateElement(element: Element, props: Partial<ElementProps>): void;
-  updateOptions(options: ParsedInfographicOptions): void;
+  updateOptions(options: Partial<ParsedInfographicOptions>): void;
   getOptions(): ParsedInfographicOptions;
   destroy(): void;
 }

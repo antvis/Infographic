@@ -5,4 +5,5 @@ export { DblClickEditText } from './dblclick-edit-text';
 export { DragElement } from './drag-element';
 export { HotkeyHistory } from './hotkey-history';
 export { SelectHighlight } from './select-highlight';
+export { SpacebarDrag } from './spacebar-drag';
 export { ZoomWheel } from './zoom-wheel';

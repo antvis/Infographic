@@ -7,12 +7,14 @@ import {
   HotkeyHistory,
   ResizeElement,
   SelectHighlight,
+  SpacebarDrag,
   ZoomWheel,
 } from '../editor';
 import { InfographicOptions } from '../options';
 
 const createDefaultPlugins = () => [new EditBar(), new ResizeElement()];
 const createDefaultInteractions = () => [
+  new SpacebarDrag(),
   new DblClickEditText(),
   new BrushSelect(),
   new ClickSelect(),

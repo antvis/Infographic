@@ -5,6 +5,7 @@ import {
   getElementViewportBounds,
   getEventTarget,
   getSelectableTarget,
+  isTextSelectionTarget,
 } from '../utils';
 import { Interaction } from './base';
 
@@ -38,7 +39,7 @@ export class BrushSelect extends Interaction implements IInteraction {
   private handleStart = (event: PointerEvent) => {
     if (!this.interaction.isActive()) return;
     if (event.button !== 0) return;
-    if (this.isTextSelectionTarget(event.target)) return;
+    if (isTextSelectionTarget(event.target)) return;
     if (this.hasElementAtStart(event.target)) return;
 
     this.interaction.executeExclusiveInteraction(
@@ -193,12 +194,5 @@ export class BrushSelect extends Interaction implements IInteraction {
     if (!(target instanceof Element)) return false;
     if (getEventTarget(target as unknown as SVGElement)) return true;
     return Boolean(target.closest?.('[data-element-type]'));
-  }
-
-  private isTextSelectionTarget(target: EventTarget | null) {
-    if (!(target instanceof HTMLElement)) return false;
-    if (target.isContentEditable) return true;
-    const tag = target.tagName.toLowerCase();
-    return tag === 'input' || tag === 'textarea';
   }
 }
