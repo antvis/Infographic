@@ -81,7 +81,6 @@ export class SpacebarDrag extends Interaction implements IInteraction {
 
   private handlePointerDown = (event: PointerEvent) => {
     if (event.button !== 0) return;
-    if (!this.isSpacePressed) return;
     event.preventDefault();
     event.stopPropagation();
 

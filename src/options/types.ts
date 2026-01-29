@@ -54,6 +54,10 @@ export interface ParsedInfographicOptions {
   shapes?: ElementProps[];
 }
 
+export type UpdatableInfographicOptions = Partial<
+  Omit<ParsedInfographicOptions, 'container'>
+>;
+
 interface SVGOptions {
   style?: Record<string, string | number>;
   attributes?: Record<string, string | number | boolean>;

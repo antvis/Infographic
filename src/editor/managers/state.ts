@@ -1,5 +1,9 @@
+import { merge } from 'lodash-es';
 import { ElementTypeEnum } from '../../constants';
-import type { ParsedInfographicOptions } from '../../options';
+import type {
+  ParsedInfographicOptions,
+  UpdatableInfographicOptions,
+} from '../../options';
 import type { Element, IEventEmitter, ItemDatum } from '../../types';
 import {
   getDatumByIndexes,
@@ -111,8 +115,15 @@ export class StateManager implements IStateManager {
     this.updateBuiltInElement(element, props);
   }
 
-  updateOptions(options: Partial<ParsedInfographicOptions>) {
-    this.options = { ...this.options, ...options };
+  updateOptions(options: UpdatableInfographicOptions) {
+    merge(this.options, options);
+    (Object.keys(options) as Array<keyof UpdatableInfographicOptions>).forEach(
+      (key) => {
+        if (options[key] === undefined) {
+          delete this.options[key];
+        }
+      },
+    );
     if (this.options.viewBox) {
       this.editor.getDocument().setAttribute('viewBox', this.options.viewBox);
     } else {
