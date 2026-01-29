@@ -58,6 +58,7 @@ export class DragCanvas extends Interaction implements IInteraction {
     this.document.removeEventListener('pointerdown', this.handlePointerDown);
     window.removeEventListener('pointermove', this.handlePointerMove);
     window.removeEventListener('pointerup', this.handlePointerUp);
+    window.removeEventListener('pointercancel', this.handlePointerUp);
 
     window.removeEventListener('blur', this.handleBlur);
     this.document.removeEventListener('mouseenter', this.onMouseEnter);

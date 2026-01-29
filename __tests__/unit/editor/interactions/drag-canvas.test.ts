@@ -220,8 +220,8 @@ describe('DragCanvas Interaction', () => {
     });
 
     it('initializes with custom trigger from constructor', () => {
-      const instance = new DragCanvas({ trigger: ['Shift'] });
-      expect(instance.trigger).toEqual(['Shift']);
+      const instance = new DragCanvas({ trigger: ['ShiftLeft'] });
+      expect(instance.trigger).toEqual(['ShiftLeft']);
     });
   });
 
@@ -370,6 +370,10 @@ describe('DragCanvas Interaction', () => {
         expect.any(Function),
       );
       expect(removeSpy).toHaveBeenCalledWith('pointerup', expect.any(Function));
+      expect(removeSpy).toHaveBeenCalledWith(
+        'pointercancel',
+        expect.any(Function),
+      );
     });
 
     it('retains interaction if space is held but mouse leaves', async () => {
