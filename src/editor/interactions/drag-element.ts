@@ -157,10 +157,6 @@ export class DragElement extends Interaction implements IInteraction {
     if (this.exclusiveStarted) return true;
     if (!this.startTarget) return false;
 
-    if (this.willReplaceSelection) {
-      this.interaction.select([this.startTarget], 'replace');
-    }
-
     this.dragItems = this.selectionForDrag
       .filter((element) => isEditableText(element))
       .map((element) => this.createDragItem(element))
@@ -173,6 +169,11 @@ export class DragElement extends Interaction implements IInteraction {
       this,
       async () =>
         new Promise<void>((resolve) => {
+          // 只有拿到锁之后，才真正执行选中逻辑
+          if (this.willReplaceSelection && this.startTarget) {
+            this.interaction.select([this.startTarget], 'replace');
+          }
+
           this.completeInteraction = resolve;
           started = true;
         }),

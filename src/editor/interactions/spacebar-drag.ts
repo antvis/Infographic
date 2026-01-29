@@ -65,13 +65,7 @@ export class SpacebarDrag extends Interaction implements IInteraction {
           this.startViewBoxString = viewBoxToString(viewBox);
           this.setCursor('grab');
 
-          // Must use capture phase to preemptively intercept events
-          // before other interactions (like click-select) can process them.
-          this.document.addEventListener(
-            'pointerdown',
-            this.handlePointerDown,
-            { capture: true },
-          );
+          this.document.addEventListener('pointerdown', this.handlePointerDown);
           window.addEventListener('keyup', this.handleKeyUp);
         }),
     );
@@ -79,6 +73,7 @@ export class SpacebarDrag extends Interaction implements IInteraction {
 
   private handlePointerDown = (event: PointerEvent) => {
     if (event.button !== 0) return;
+    if (!this.isSpacePressed) return;
     event.preventDefault();
     event.stopPropagation();
 
@@ -154,9 +149,7 @@ export class SpacebarDrag extends Interaction implements IInteraction {
 
     window.removeEventListener('keyup', this.handleKeyUp);
 
-    this.document.removeEventListener('pointerdown', this.handlePointerDown, {
-      capture: true,
-    });
+    this.document.removeEventListener('pointerdown', this.handlePointerDown);
     window.removeEventListener('pointermove', this.handlePointerMove);
     window.removeEventListener('pointerup', this.handlePointerUp);
 
