@@ -1,61 +1,86 @@
-import { clamp } from 'lodash-es';
-import type { Padding } from '../../types';
-import { parsePadding } from '../../utils';
+import { inRange } from 'lodash-es';
+import {
+  calculateZoomedViewBox,
+  getViewBox,
+  viewBoxToString,
+} from '../../utils/viewbox';
 import { UpdateOptionsCommand } from '../commands';
 import type { IInteraction, InteractionInitOptions } from '../types';
+import { clientToViewport } from '../utils';
 import { Interaction } from './base';
 
-const MIN_VIEWBOX_SIZE = 1;
-const MIN_PADDING = -5000;
-const MAX_PADDING = 5000;
-const ZOOM_IN_FACTOR = 1.1;
-const ZOOM_OUT_FACTOR = 0.9;
-// Initial padding value when current padding is 0
-// This allows zooming to start from a reasonable base value
-const INITIAL_PADDING_WHEN_ZERO = 10;
+const MIN_VIEWBOX_SIZE = 20;
+const MAX_VIEWBOX_SIZE = 2000;
+const ZOOM_FACTOR = 1.1;
 
 export class ZoomWheel extends Interaction implements IInteraction {
   name = 'zoom-wheel';
 
   private wheelListener = (event: WheelEvent) => {
-    if (!this.interaction.isActive()) return;
-    if (!event.ctrlKey && !event.metaKey) return;
-    // Ignore events with zero deltaY (no actual scrolling)
-    if (event.deltaY === 0) return;
+    if (!this.shouldZoom(event)) return;
     event.preventDefault();
 
-    const isZoomIn = event.deltaY > 0;
-    const factor = isZoomIn ? ZOOM_IN_FACTOR : ZOOM_OUT_FACTOR;
-    const current = this.state.getOptions();
-    const currentPadding = current.padding ?? 0;
-    const parsed = parsePadding(currentPadding);
+    // Standard Zoom: Scroll Up (deltaY < 0) = Zoom In
+    const isZoomIn = event.deltaY < 0;
+    const factor = isZoomIn ? 1 / ZOOM_FACTOR : ZOOM_FACTOR;
+
     const svg = this.editor.getDocument();
-    const bbox = svg.getBBox();
+    const viewBox = getViewBox(svg);
+    const { width, height } = viewBox;
 
-    const scaled = parsed.map((value) => {
-      // When padding is 0, use an initial value based on zoom direction
-      // This provides a more intuitive zooming experience:
-      // - Zoom in: start from a positive initial value (adds padding)
-      // - Zoom out: start from a negative initial value (reduces viewbox)
-      const baseValue =
-        value === 0
-          ? isZoomIn
-            ? INITIAL_PADDING_WHEN_ZERO
-            : -INITIAL_PADDING_WHEN_ZERO
-          : value;
-      return clamp(baseValue * factor, MIN_PADDING, MAX_PADDING);
-    });
+    const newWidth = width * factor;
+    const newHeight = height * factor;
 
-    const [top, right, bottom, left] = scaled;
-    const newWidth = bbox.width + left + right;
-    const newHeight = bbox.height + top + bottom;
+    if (
+      !inRange(newWidth, MIN_VIEWBOX_SIZE, MAX_VIEWBOX_SIZE) ||
+      !inRange(newHeight, MIN_VIEWBOX_SIZE, MAX_VIEWBOX_SIZE)
+    )
+      return;
 
-    if (newWidth <= MIN_VIEWBOX_SIZE || newHeight <= MIN_VIEWBOX_SIZE) return;
+    // TODO: Remove after implementing the reset UI plugin
+    if ((event.ctrlKey || event.metaKey) && event.shiftKey) {
+      const command = new UpdateOptionsCommand({
+        viewBox: undefined,
+      });
+      void this.commander.execute(command);
+      return;
+    }
+    const pivot =
+      (event.ctrlKey || event.metaKey) && !event.shiftKey
+        ? this.getMousePoint(svg, event)
+        : this.getCenterPoint(viewBox);
+
+    const newViewBox = calculateZoomedViewBox(viewBox, factor, pivot);
 
     const command = new UpdateOptionsCommand({
-      padding: scaled as Padding,
+      viewBox: viewBoxToString(newViewBox),
     });
     void this.commander.execute(command);
+  };
+
+  private getMousePoint = (svg: SVGSVGElement, event: WheelEvent) => {
+    return clientToViewport(svg, event.clientX, event.clientY);
+  };
+
+  private getCenterPoint = (viewBox: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }) => {
+    const centerX = viewBox.x + viewBox.width / 2;
+    const centerY = viewBox.y + viewBox.height / 2;
+    return { x: centerX, y: centerY };
+  };
+
+  private shouldZoom = (event: WheelEvent) => {
+    if (!this.interaction.isActive()) return false;
+    if (event.deltaY === 0) return false;
+
+    const isMouseZoom = event.ctrlKey || event.metaKey;
+    const isCenterZoom = event.shiftKey;
+
+    return isMouseZoom || isCenterZoom;
   };
 
   init(options: InteractionInitOptions) {
