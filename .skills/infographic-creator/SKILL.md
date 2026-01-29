@@ -23,7 +23,7 @@ AntV Infographic 语法是一种自定义的 DSL，用于描述信息图渲染�
 
 例如：
 
-```plain
+```infographic
 infographic list-row-horizontal-icon-arrow
 data
   title Title
@@ -57,7 +57,7 @@ theme
 - `hierarchy-*`：使用单一 `root`，通过 `children` 嵌套（不要重复 `root`）
 - `theme` 用于自定义主题（palette、font 等）
   例如：暗色主题 + 自定义配色
-  ```plain
+  ```infographic
   infographic list-row-simple-horizontal-arrow
   theme dark
     palette
@@ -74,7 +74,7 @@ theme
 
   例如：手绘风格（rough）
 
-  ```plain
+  ```infographic
   infographic list-row-simple-horizontal-arrow
   theme
     stylize rough
@@ -91,7 +91,7 @@ theme
 
 - `list-*` 模版
 
-```plain
+```infographic
 infographic list-grid-badge-card
 data
   title Feature List
@@ -104,7 +104,7 @@ data
 
 - `sequence-*` 模版
 
-```plain
+```infographic
 infographic sequence-steps-simple
 data
   sequences
@@ -116,7 +116,7 @@ data
 
 - `hierarchy-*` 模版
 
-```plain
+```infographic
 infographic hierarchy-structure
 data
   root
@@ -128,7 +128,7 @@ data
 
 - `compare-*` 模版
 
-```plain
+```infographic
 infographic compare-swot
 data
   compares
@@ -144,7 +144,7 @@ data
 
 四象限图
 
-```plain
+```infographic
 infographic compare-quadrant-quarter-simple-card
 data
   compares
@@ -156,7 +156,7 @@ data
 
 - `chart-*` 模版
 
-```plain
+```infographic
 infographic chart-column-simple
 data
   values
@@ -170,7 +170,7 @@ data
 
 > 边标签写法：A -label-> B 或 A -->|label| B
 
-```plain
+```infographic
 infographic relation-dagre-flow-tb-simple-circle-node
 data
   nodes
@@ -185,7 +185,7 @@ data
 
 - 兜底 `items` 示例
 
-```plain
+```infographic
 infographic list-row-horizontal-icon-arrow
 data
   items
@@ -283,7 +283,7 @@ data
 
 绘制互联网技术演进信息图
 
-```plain
+```infographic
 infographic list-row-horizontal-icon-arrow
 data
   title Internet Technology Evolution

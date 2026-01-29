@@ -6,7 +6,7 @@ title: 信息图语法
 
 <InfographicStreamRunner>
 
-```plain
+```infographic
 infographic list-row-horizontal-icon-arrow
 data
   title 客户增长引擎
@@ -63,7 +63,7 @@ data
 
 入口使用 `infographic [template-name]`，之后通过块（block）描述 template、design、data、theme。
 
-```plain
+```infographic
 infographic list-row-horizontal-icon-arrow
 data
   title 客户增长引擎
@@ -91,7 +91,7 @@ data
 
 模板在入口处直接指定。
 
-```plain
+```infographic
 infographic <template-name>
 ```
 
@@ -99,7 +99,7 @@ infographic <template-name>
 
 设计块用于选择结构、卡片与标题等模块。
 
-```plain
+```infographic
 design
   structure <structure-name>
     gap 12
@@ -128,7 +128,7 @@ design
 
 列表数据用于表示一组同类项，项与项之间没有顺序、先后关系，常见于清单、功能列表等场景。使用 `lists` 字段描述列表数据项。
 
-```plain
+```infographic
 infographic list-grid-compact-card
 data
   title 购买水果清单
@@ -145,7 +145,7 @@ data
 
 序列数据与列表数据基本一致，用于表示有序项，常见于时间线、步骤等场景。使用 `sequences` 字段描述序列数据项。
 
-```plain
+```infographic
 infographic sequence-steps-simple
 data
   sequences
@@ -156,7 +156,7 @@ data
 
 使用 `order` 字段显式指定排序方式（`asc` 或 `desc`），下面的例子中通过 `order asc` 表明 sequences 中的项是按升序排列。
 
-```plain
+```infographic
 infographic sequence-stairs-front-pill-badge
 data
   title 职级序列
@@ -171,7 +171,7 @@ data
 
 层级数据用于表示树状结构，常见于组织结构、分类体系等场景。使用 `root` 字段描述根节点，子节点通过 `children` 字段递归定义。
 
-```plain
+```infographic
 infographic hierarchy-structure
 data
   root
@@ -185,7 +185,7 @@ data
 
 对比数据用于并列或分组对比（例如四象限图），使用 `compares` 字段描述对比项：
 
-```plain
+```infographic
 infographic quadrant-quarter-simple-card
 data
   compares
@@ -201,7 +201,7 @@ data
 
 对比项也支持 `children` 形成对比层级，其中每个根节点表示一个对比对象，子节点表示该对象的具体指标，例如：
 
-```plain
+```infographic
 infographic compare-swot
 data
   compares
@@ -221,7 +221,7 @@ data
 
 统计数据用于展示指标类数据，使用 `values` 字段描述数据项：
 
-```plain
+```infographic
 infographic chart-column-simple
 data
   values
@@ -235,7 +235,7 @@ data
 
 对于分组数据，可用 `category` 标识分类（需选择适配的模版），例如：
 
-```plain
+```infographic
 infographic chart-column-grouped-simple
 data
   title 降雨量数据
@@ -272,7 +272,7 @@ data
 
 **YAML 风格写法：**
 
-```plain
+```infographic
 infographic relation-dagre-flow-tb-simple-circle-node
 data
   title Relation Graph
@@ -290,7 +290,7 @@ data
 
 可以使用 `->` 符号来描述节点关系，例如：
 
-```plain
+```infographic
 infographic relation-dagre-flow-tb-simple-circle-node
 data
   nodes
@@ -308,7 +308,7 @@ data
 
 如果是简单的关系图，也可以省略 `nodes`，在 `relations` 中直接定义节点和关系：
 
-```plain
+```infographic
 infographic relation-dagre-flow-tb-simple-circle-node
 data
   relations
@@ -341,13 +341,13 @@ data
 
 使用预设主题：
 
-```plain
+```infographic
 theme <theme-name>
 ```
 
 搭配自定义主题：
 
-```plain
+```infographic
 theme
   colorBg #0b1220
   colorPrimary #ff5a5f

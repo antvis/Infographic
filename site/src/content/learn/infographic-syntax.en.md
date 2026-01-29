@@ -6,7 +6,7 @@ Infographic syntax is a Mermaid-like grammar for describing templates, designs, 
 
 <InfographicStreamRunner>
 
-```plain
+```infographic
 infographic list-row-horizontal-icon-arrow
 data
   title Customer Growth Engine
@@ -63,7 +63,7 @@ Information structure captures the data abstraction that determines content and 
 
 The entry point starts with `infographic [template-name]`, followed by blocks that describe the template, design, data, and theme.
 
-```plain
+```infographic
 infographic list-row-horizontal-icon-arrow
 data
   title Customer Growth Engine
@@ -91,7 +91,7 @@ data
 
 The template is declared directly in the entry point.
 
-```plain
+```infographic
 infographic <template-name>
 ```
 
@@ -99,7 +99,7 @@ infographic <template-name>
 
 The `design` block selects structures, cards, titles, and other modules.
 
-```plain
+```infographic
 design
   structure <structure-name>
     gap 12
@@ -130,7 +130,7 @@ In general, the selected template expects a certain data item field. For example
 
 List data represents a group of peer items without ordering, common for checklists or feature lists. Use `lists`.
 
-```plain
+```infographic
 infographic list-grid-compact-card
 data
   title Fruit Shopping List
@@ -147,7 +147,7 @@ data
 
 Sequence data is similar to lists but ordered, often used for timelines or steps. Use `sequences`.
 
-```plain
+```infographic
 infographic sequence-steps-simple
 data
   sequences
@@ -158,7 +158,7 @@ data
 
 Use the `order` field to specify sorting (`asc` or `desc`). In the example below, `order desc` means items are arranged in descending order.
 
-```plain
+```infographic
 infographic sequence-stairs-front-pill-badge
 data
   title Job Level Sequence
@@ -173,7 +173,7 @@ data
 
 Hierarchy data describes a tree structure, common for org charts or taxonomies. Use `root` for the root node and `children` recursively for descendants.
 
-```plain
+```infographic
 infographic hierarchy-structure
 data
   root
@@ -187,7 +187,7 @@ data
 
 Compare data is for side-by-side or grouped comparisons (e.g. SWOT or quadrant charts). Use `compares`.
 
-```plain
+```infographic
 infographic quadrant-quarter-simple-card
 data
   compares
@@ -203,7 +203,7 @@ data
 
 Compare items can also include `children` to create comparison hierarchies, where each root item is a comparison target and children are its metrics:
 
-```plain
+```infographic
 infographic compare-swot
 data
   compares
@@ -223,7 +223,7 @@ data
 
 Statistical data showcases metrics, using `values`.
 
-```plain
+```infographic
 infographic chart-column-simple
 data
   values
@@ -237,7 +237,7 @@ data
 
 For grouped data, use `category` (with a compatible template), for example:
 
-```plain
+```infographic
 infographic chart-column-grouped-simple
 data
   title Rainfall Data
@@ -274,7 +274,7 @@ Relation data describes node-to-node connections, such as flowcharts and network
 
 **YAML-style:**
 
-```plain
+```infographic
 infographic relation-dagre-flow-tb-simple-circle-node
 data
   title Relation Graph
@@ -290,7 +290,7 @@ data
 
 **Mermaid-style (flowchart-like):**
 
-```plain
+```infographic
 infographic relation-dagre-flow-tb-simple-circle-node
 data
   nodes
@@ -308,7 +308,7 @@ data
 
 For simple relation graphs, you can omit `nodes` and define nodes directly in `relations`:
 
-```plain
+```infographic
 infographic relation-dagre-flow-tb-simple-circle-node
 data
   relations
@@ -341,13 +341,13 @@ The `theme` block switches themes and tweaks palettes, fonts, and stylization.
 
 Use a preset theme:
 
-```plain
+```infographic
 theme <theme-name>
 ```
 
 Use a custom theme:
 
-```plain
+```infographic
 theme
   colorBg #0b1220
   colorPrimary #ff5a5f
