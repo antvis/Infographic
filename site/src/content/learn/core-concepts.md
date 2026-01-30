@@ -10,6 +10,7 @@ AntV Infographic 由一组清晰的概念拼装而成：设计、模板、数据
 - [模板（Template）](/learn/template)
 - [数据（Data）](/learn/data)
 - [主题（Theme）](/learn/theme)
+- [编辑器（Editor）](/learn/editor)
 - [资源（Resources）](/learn/resources)
 
 <Note>

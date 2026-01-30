@@ -37,6 +37,10 @@
           "path": "/learn/theme"
         },
         {
+          "title": "Editor",
+          "path": "/learn/editor"
+        },
+        {
           "title": "Resources",
           "path": "/learn/resources"
         }

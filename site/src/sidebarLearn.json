@@ -37,6 +37,10 @@
           "path": "/learn/theme"
         },
         {
+          "title": "编辑器",
+          "path": "/learn/editor"
+        },
+        {
           "title": "资源",
           "path": "/learn/resources"
         }

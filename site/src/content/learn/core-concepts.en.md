@@ -10,6 +10,7 @@ The following sections explain each in detail:
 - [Templates](/learn/template)
 - [Data](/learn/data)
 - [Themes](/learn/theme)
+- [Editor](/learn/editor)
 - [Resources](/learn/resources)
 
 <Note>
