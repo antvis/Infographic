@@ -16,6 +16,29 @@ const ZOOM_FACTOR = 1.1;
 export class ZoomWheel extends Interaction implements IInteraction {
   name = 'zoom-wheel';
 
+  private initialViewBox: string | null = null;
+
+  private handleKeyUp = (event: KeyboardEvent) => {
+    const isZoomModifierHeld = event.ctrlKey || event.metaKey || event.shiftKey;
+
+    if (!isZoomModifierHeld && this.initialViewBox) {
+      const currentViewBox = viewBoxToString(
+        getViewBox(this.editor.getDocument()),
+      );
+
+      if (currentViewBox !== this.initialViewBox) {
+        const command = new UpdateOptionsCommand(
+          { viewBox: currentViewBox },
+          { viewBox: this.initialViewBox },
+        );
+        void this.commander.execute(command);
+      }
+
+      this.initialViewBox = null;
+      document.removeEventListener('keyup', this.handleKeyUp);
+    }
+  };
+
   private wheelListener = (event: WheelEvent) => {
     if (!this.shouldZoom(event)) return;
     event.preventDefault();
@@ -37,14 +60,11 @@ export class ZoomWheel extends Interaction implements IInteraction {
     )
       return;
 
-    // TODO: Remove after implementing the reset UI plugin
-    if ((event.ctrlKey || event.metaKey) && event.shiftKey) {
-      const command = new UpdateOptionsCommand({
-        viewBox: undefined,
-      });
-      void this.commander.execute(command);
-      return;
+    if (this.initialViewBox === null) {
+      this.initialViewBox = viewBoxToString(viewBox);
+      document.addEventListener('keyup', this.handleKeyUp);
     }
+
     const pivot =
       (event.ctrlKey || event.metaKey) && !event.shiftKey
         ? this.getMousePoint(svg, event)
@@ -52,10 +72,9 @@ export class ZoomWheel extends Interaction implements IInteraction {
 
     const newViewBox = calculateZoomedViewBox(viewBox, factor, pivot);
 
-    const command = new UpdateOptionsCommand({
+    this.state.updateOptions({
       viewBox: viewBoxToString(newViewBox),
     });
-    void this.commander.execute(command);
   };
 
   private getMousePoint = (svg: SVGSVGElement, event: WheelEvent) => {
@@ -79,6 +98,7 @@ export class ZoomWheel extends Interaction implements IInteraction {
 
     const isMouseZoom = event.ctrlKey || event.metaKey;
     const isCenterZoom = event.shiftKey;
+    if (isMouseZoom && isCenterZoom) return false;
 
     return isMouseZoom || isCenterZoom;
   };
@@ -90,5 +110,6 @@ export class ZoomWheel extends Interaction implements IInteraction {
 
   destroy() {
     document.removeEventListener('wheel', this.wheelListener);
+    document.removeEventListener('keyup', this.handleKeyUp);
   }
 }
