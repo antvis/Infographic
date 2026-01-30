@@ -8,7 +8,6 @@ import {
   getDatumByIndexes,
   getElementRole,
   isIconElement,
-  mergeOptions,
   parsePadding,
   setSVGPadding,
 } from '../../utils';
@@ -21,6 +20,7 @@ import type {
   StateManagerInitOptions,
 } from '../types';
 import {
+  applyOptionUpdates,
   buildItemPath,
   getChildrenDataByIndexes,
   getIndexesFromElement,
@@ -116,7 +116,7 @@ export class StateManager implements IStateManager {
   }
 
   updateOptions(options: UpdatableInfographicOptions) {
-    mergeOptions(this.options, options);
+    applyOptionUpdates(this.options, options);
     if (this.options.viewBox) {
       this.editor.getDocument().setAttribute('viewBox', this.options.viewBox);
     } else {

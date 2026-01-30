@@ -4,7 +4,7 @@ import { isPlainObject, merge } from 'lodash-es';
  * Recursively merges source into target, deleting properties that are undefined in source.
  * This mimics lodash.merge but treats undefined values as delete instructions.
  */
-export function mergeOptions(target: any, source: any) {
+export function applyOptionUpdates(target: any, source: any) {
   Object.keys(source).forEach((key) => {
     const srcValue = source[key];
     if (srcValue === undefined) {
@@ -13,7 +13,7 @@ export function mergeOptions(target: any, source: any) {
       if (!isPlainObject(target[key])) {
         target[key] = {};
       }
-      mergeOptions(target[key], srcValue);
+      applyOptionUpdates(target[key], srcValue);
     } else {
       merge(target, { [key]: srcValue });
     }

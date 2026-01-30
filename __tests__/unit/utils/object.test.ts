@@ -1,18 +1,18 @@
 import { describe, expect, it } from 'vitest';
-import { mergeOptions } from '../../../src/utils/object';
+import { applyOptionUpdates } from '../../../src/editor/utils/object';
 
 describe('mergeOptions', () => {
   it('merges simple properties', () => {
     const target = { a: 1, b: 2 };
     const source = { b: 3, c: 4 };
-    mergeOptions(target, source);
+    applyOptionUpdates(target, source);
     expect(target).toEqual({ a: 1, b: 3, c: 4 });
   });
 
   it('deletes properties set to undefined', () => {
     const target = { a: 1, b: 2 };
     const source = { b: undefined };
-    mergeOptions(target, source);
+    applyOptionUpdates(target, source);
     expect(target).toEqual({ a: 1 });
     expect('b' in target).toBe(false);
   });
@@ -20,14 +20,14 @@ describe('mergeOptions', () => {
   it('merges nested objects', () => {
     const target = { a: { x: 1, y: 2 } };
     const source = { a: { y: 3, z: 4 } };
-    mergeOptions(target, source);
+    applyOptionUpdates(target, source);
     expect(target).toEqual({ a: { x: 1, y: 3, z: 4 } });
   });
 
   it('deletes nested properties set to undefined', () => {
     const target = { a: { x: 1, y: 2 } };
     const source = { a: { x: undefined } };
-    mergeOptions(target, source);
+    applyOptionUpdates(target, source);
     expect(target).toEqual({ a: { y: 2 } });
     expect('x' in target.a).toBe(false);
   });
@@ -35,21 +35,21 @@ describe('mergeOptions', () => {
   it('creates nested objects if they do not exist', () => {
     const target: any = { a: 1 };
     const source = { b: { x: 1 } };
-    mergeOptions(target, source);
+    applyOptionUpdates(target, source);
     expect(target).toEqual({ a: 1, b: { x: 1 } });
   });
 
   it('overwrites primitives with objects', () => {
     const target: any = { a: 1 };
     const source = { a: { x: 1 } };
-    mergeOptions(target, source);
+    applyOptionUpdates(target, source);
     expect(target).toEqual({ a: { x: 1 } });
   });
 
   it('overwrites objects with primitives', () => {
     const target: any = { a: { x: 1 } };
     const source = { a: 2 };
-    mergeOptions(target, source);
+    applyOptionUpdates(target, source);
     expect(target).toEqual({ a: 2 });
   });
 
@@ -73,7 +73,7 @@ describe('mergeOptions', () => {
         },
       },
     };
-    mergeOptions(target, source);
+    applyOptionUpdates(target, source);
     expect(target.level1.level2.level3).toEqual({ prop1: 'keep' });
     expect('prop2' in target.level1.level2.level3).toBe(false);
   });
@@ -81,7 +81,7 @@ describe('mergeOptions', () => {
   it('ignores undefined in source if not present in target', () => {
     const target = { a: 1 };
     const source = { b: undefined };
-    mergeOptions(target, source);
+    applyOptionUpdates(target, source);
     expect(target).toEqual({ a: 1 });
     expect('b' in target).toBe(false);
   });
