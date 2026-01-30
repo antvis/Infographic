@@ -1,5 +1,5 @@
-import { COMPONENT_ROLE } from '../../../../constants';
-import { injectStyleOnce, setElementRole } from '../../../../utils';
+import { COMPONENT_ROLE } from '../../../constants';
+import { injectStyleOnce, setElementRole } from '../../../utils';
 
 export type PopoverPlacement = 'top' | 'bottom' | 'left' | 'right';
 export type PopoverPlacementPreference = PopoverPlacement | PopoverPlacement[];

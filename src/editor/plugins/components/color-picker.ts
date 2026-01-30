@@ -1,6 +1,6 @@
 import { parse } from 'culori';
 
-import { injectStyleOnce } from '../../../../utils';
+import { injectStyleOnce } from '../../../utils';
 
 export type ColorPickerProps = {
   value?: string;

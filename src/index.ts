@@ -11,7 +11,7 @@ export {
   SelectHighlight,
   ZoomWheel,
 } from './editor/interactions';
-export { EditBar, Plugin, ResizeElement } from './editor/plugins';
+export { EditBar, Plugin, ResetViewBox, ResizeElement } from './editor/plugins';
 export { exportToSVG } from './exporter';
 export {
   Defs,

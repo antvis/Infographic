@@ -1,9 +1,9 @@
 import type { TextAttributes } from '../../../../types';
 import { injectStyleOnce } from '../../../../utils';
 import { UpdateElementCommand } from '../../../commands';
-import { IconButton, Popover, TEXT_ICONS } from '../components';
-import type { Button } from '../components/button';
-import type { Icon } from '../components/icons';
+import { IconButton, Popover, TEXT_ICONS } from '../../components';
+import type { Button } from '../../components/button';
+import type { Icon } from '../../components/icons';
 import type { EditItem } from './types';
 
 const FONT_SIZE_CLASS = 'infographic-font-size-grid';

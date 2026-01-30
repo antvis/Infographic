@@ -1,4 +1,4 @@
-export { ColorPicker, Popover, Select } from './components';
+export { ColorPicker, Popover, Select } from '../components';
 export { EditBar } from './edit-bar';
 
 export type {
@@ -14,5 +14,5 @@ export type {
   SelectOption,
   SelectProps,
   SelectValue,
-} from './components';
+} from '../components';
 export type { EditBarOptions } from './edit-bar';

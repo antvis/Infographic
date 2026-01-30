@@ -5,7 +5,7 @@ import type {
 } from '../../../../types';
 import { injectStyleOnce } from '../../../../utils';
 import { UpdateElementCommand } from '../../../commands';
-import { Button, IconButton, Popover, TEXT_ICONS } from '../components';
+import { Button, IconButton, Popover, TEXT_ICONS } from '../../components';
 import type { EditItem } from './types';
 
 // 常量定义

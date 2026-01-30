@@ -1,4 +1,4 @@
-import { injectStyleOnce } from '../../../../utils';
+import { injectStyleOnce } from '../../../utils';
 
 export type SelectValue = string;
 

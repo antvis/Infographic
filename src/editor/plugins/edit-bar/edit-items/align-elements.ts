@@ -8,8 +8,8 @@ import {
 import { UpdateElementCommand } from '../../../commands';
 import type { ICommandManager, Selection } from '../../../types';
 import { getElementViewportBounds } from '../../../utils';
-import { ELEMENT_ICONS, IconButton, Popover } from '../components';
-import type { Icon } from '../components/icons';
+import { ELEMENT_ICONS, IconButton, Popover } from '../../components';
+import type { Icon } from '../../components/icons';
 import type { EditItem } from './types';
 
 const GRID_CLASS = 'infographic-align-grid';

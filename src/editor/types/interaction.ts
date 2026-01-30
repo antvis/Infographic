@@ -47,6 +47,11 @@ export interface SelectionChangePayload {
   mode: SelectMode;
 }
 
+export interface viewBoxChangePayload {
+  type: 'viewBox:change';
+  viewBox: string;
+}
+
 export interface IInteractionManager {
   isActive(): boolean;
   select(items: Selection, mode: SelectMode): void;

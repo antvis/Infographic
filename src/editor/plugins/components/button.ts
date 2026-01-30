@@ -1,4 +1,4 @@
-import { injectStyleOnce } from '../../../../utils';
+import { injectStyleOnce } from '../../../utils';
 import type { Icon } from './icons';
 
 export type Button = HTMLButtonElement & IconButtonHandle;

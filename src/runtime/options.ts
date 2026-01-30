@@ -6,13 +6,18 @@ import {
   DragElement,
   EditBar,
   HotkeyHistory,
+  ResetViewBox,
   ResizeElement,
   SelectHighlight,
   ZoomWheel,
 } from '../editor';
 import { InfographicOptions } from '../options';
 
-const createDefaultPlugins = () => [new EditBar(), new ResizeElement()];
+const createDefaultPlugins = () => [
+  new EditBar(),
+  new ResizeElement(),
+  new ResetViewBox(),
+];
 const createDefaultInteractions = () => [
   new DragCanvas(),
   new DblClickEditText(),

@@ -1,7 +1,7 @@
 import type { TextAttributes } from '../../../../types';
 import { hasColor, injectStyleOnce } from '../../../../utils';
 import { UpdateElementCommand } from '../../../commands';
-import { ColorPicker, Popover } from '../components';
+import { ColorPicker, Popover } from '../../components';
 import type { EditItem } from './types';
 
 const FONT_COLOR_BUTTON_CLASS = 'infographic-font-color-btn';
