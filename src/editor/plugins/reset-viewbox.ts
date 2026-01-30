@@ -1,5 +1,11 @@
 import { COMPONENT_ROLE } from '../../constants';
-import { getViewBox, setElementRole, viewBoxToString } from '../../utils';
+import {
+  getBoundViewBox,
+  getViewBox,
+  parsePadding,
+  setElementRole,
+  viewBoxToString,
+} from '../../utils';
 import { UpdateOptionsCommand } from '../commands';
 import type {
   IPlugin,
@@ -10,6 +16,9 @@ import { Plugin } from './base';
 import { IconButton } from './components';
 import { RESET_ICON } from './components/icons';
 
+const MARGIN_X = 25;
+const MARGIN_Y = 25;
+const BUTTON_SIZE = 40;
 export interface ResetViewBoxOptions {
   style?: Partial<CSSStyleDeclaration>;
   className?: string;
@@ -31,17 +40,37 @@ export class ResetViewBox extends Plugin implements IPlugin {
     super.init(options);
     const { emitter } = options;
     const svg = this.editor.getDocument();
-    const viewBox = getViewBox(svg);
-    this.originViewBox = viewBoxToString(viewBox);
+
+    // Initialize originViewBox
+    this.updateOriginViewBox();
+
     emitter.on('viewBox:change', this.handleViewBoxChange);
+    window.addEventListener('resize', this.handleResize);
   }
 
   destroy(): void {
     const { emitter } = this;
     emitter.off('viewBox:change', this.handleViewBoxChange);
+    window.removeEventListener('resize', this.handleResize);
     this.removeButton();
-    this.resetButton?.remove();
-    this.resetButton = undefined;
+  }
+
+  private handleResize = () => {
+    this.updateOriginViewBox();
+    this.updatePosition();
+  };
+
+  private updateOriginViewBox() {
+    const svg = this.editor.getDocument();
+    // In Node env or before render, fallback to current viewBox attribute
+    if (!svg.getBBox) {
+      this.originViewBox = viewBoxToString(getViewBox(svg));
+      return;
+    }
+
+    // In Browser, calculate fit
+    const { padding } = this.state.getOptions();
+    this.originViewBox = getBoundViewBox(svg, parsePadding(padding));
   }
 
   private handleViewBoxChange = ({ viewBox }: viewBoxChangePayload) => {
@@ -74,8 +103,8 @@ export class ResetViewBox extends Plugin implements IPlugin {
       position: 'absolute',
       justifyContent: 'center',
       alignItems: 'center',
-      width: '40px',
-      height: '40px',
+      width: `${BUTTON_SIZE}px`,
+      height: `${BUTTON_SIZE}px`,
       borderRadius: '8px',
       padding: '4px',
       backgroundColor: '#fff',
@@ -124,18 +153,20 @@ export class ResetViewBox extends Plugin implements IPlugin {
       };
     }
 
-    const marginX = 25;
-    const marginY = 25;
-    const buttonSize = 40;
-
     // 计算相对于 offsetParent 的坐标
     // left = svg.right - parent.left - margin - buttonWidth
-    const left = rect.right - parentRect.left - marginX - buttonSize;
+    const left = rect.right - parentRect.left - MARGIN_X - BUTTON_SIZE;
     // top = svg.bottom - parent.top - margin - buttonHeight
-    const top = rect.bottom - parentRect.top - marginY - buttonSize;
+    const top = rect.bottom - parentRect.top - MARGIN_Y - BUTTON_SIZE;
 
     button.style.left = `${left}px`;
     button.style.top = `${top}px`;
+  };
+
+  private updatePosition = () => {
+    if (this.resetButton && this.viewBoxChanged) {
+      this.placeButton(this.resetButton, this.editor.getDocument());
+    }
   };
 
   private resetViewBox = () => {
@@ -156,5 +187,7 @@ export class ResetViewBox extends Plugin implements IPlugin {
 
   private removeButton = () => {
     this.viewBoxChanged = false;
+    this.resetButton?.remove();
+    this.resetButton = undefined;
   };
 }

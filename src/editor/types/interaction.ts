@@ -49,7 +49,7 @@ export interface SelectionChangePayload {
 
 export interface viewBoxChangePayload {
   type: 'viewBox:change';
-  viewBox: string;
+  viewBox: string | undefined;
 }
 
 export interface IInteractionManager {

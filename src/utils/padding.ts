@@ -67,7 +67,10 @@ function setSVGPaddingInNode(svg: SVGSVGElement, padding: ParsedPadding) {
   });
 }
 
-function setSVGPaddingInBrowser(svg: SVGSVGElement, padding: ParsedPadding) {
+export function getBoundViewBox(
+  svg: SVGSVGElement,
+  padding: ParsedPadding,
+): string {
   const bbox = svg.getBBox();
   const clientRect = svg.getBoundingClientRect();
   const scaleX = clientRect.width > 0 ? bbox.width / clientRect.width : 1;
@@ -84,8 +87,13 @@ function setSVGPaddingInBrowser(svg: SVGSVGElement, padding: ParsedPadding) {
   const newWidth = bbox.width + leftSvg + rightSvg;
   const newHeight = bbox.height + topSvg + bottomSvg;
 
+  return `${newX} ${newY} ${newWidth} ${newHeight}`;
+}
+
+function setSVGPaddingInBrowser(svg: SVGSVGElement, padding: ParsedPadding) {
+  const viewBox = getBoundViewBox(svg, padding);
   setAttributes(svg, {
-    viewBox: `${newX} ${newY} ${newWidth} ${newHeight}`,
+    viewBox,
   });
 }
 

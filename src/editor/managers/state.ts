@@ -116,7 +116,10 @@ export class StateManager implements IStateManager {
     }
 
     if ('viewBox' in options) {
-      this.emitter.emit('viewBox:change', { viewBox: this.options.viewBox });
+      this.emitter.emit('viewBox:change', {
+        type: 'viewBox:change',
+        viewBox: this.options.viewBox,
+      });
     }
 
     this.emitter.emit('options:change', {
