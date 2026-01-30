@@ -3,7 +3,7 @@ import { UpdateOptionsCommand } from '../../../../src/editor/commands/UpdateOpti
 import type { IStateManager } from '../../../../src/editor/types';
 
 describe('UpdateOptionsCommand', () => {
-  it('merges options and captures original for undo', async () => {
+  it('applies partial options and captures partial original for undo', async () => {
     const state: IStateManager = {
       getOptions: vi
         .fn()
@@ -17,19 +17,17 @@ describe('UpdateOptionsCommand', () => {
     expect(state.getOptions).toHaveBeenCalled();
     expect(state.updateOptions).toHaveBeenCalledWith({
       theme: 'dark',
-      padding: 0,
     });
 
     await command.undo(state);
     expect(state.updateOptions).toHaveBeenLastCalledWith({
       theme: 'light',
-      padding: 0,
     });
 
     expect(command.serialize()).toEqual({
       type: 'update-options',
       options: { theme: 'dark' },
-      original: { theme: 'light', padding: 0 },
+      original: { theme: 'light' },
     });
   });
 
@@ -56,5 +54,29 @@ describe('UpdateOptionsCommand', () => {
     await command.undo(state);
     expect(state.updateOptions).toHaveBeenLastCalledWith(providedOriginal);
     expect(command.serialize().original).toBe(providedOriginal);
+  });
+
+  it('merges nested options deeply', async () => {
+    const initialOptions = {
+      design: {
+        background: 'white',
+        padding: 10,
+      },
+    } as any;
+
+    const state: IStateManager = {
+      getOptions: vi.fn().mockReturnValue(initialOptions),
+      updateOptions: vi.fn(),
+    } as any;
+
+    const command = new UpdateOptionsCommand({
+      design: { background: 'black' } as any, // Partial update
+    });
+
+    await command.apply(state);
+
+    expect(state.updateOptions).toHaveBeenCalledWith({
+      design: { background: 'black' },
+    });
   });
 });

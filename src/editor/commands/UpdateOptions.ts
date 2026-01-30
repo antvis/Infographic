@@ -1,18 +1,23 @@
-import type { ParsedInfographicOptions } from '../../options';
+import type { UpdatableInfographicOptions } from '../../options';
 import type { ICommand, IStateManager } from '../types';
 
 export class UpdateOptionsCommand implements ICommand {
   constructor(
-    private options: Partial<ParsedInfographicOptions>,
-    private original?: ParsedInfographicOptions,
+    private options: UpdatableInfographicOptions,
+    private original?: UpdatableInfographicOptions,
   ) {}
 
   async apply(state: IStateManager) {
-    const prev = state.getOptions();
     if (!this.original) {
-      this.original = prev;
+      const prev = state.getOptions();
+      this.original = {};
+      (
+        Object.keys(this.options) as Array<keyof UpdatableInfographicOptions>
+      ).forEach((key) => {
+        (this.original as any)[key] = prev[key];
+      });
     }
-    state.updateOptions({ ...prev, ...this.options });
+    state.updateOptions(this.options);
   }
 
   async undo(state: IStateManager) {

@@ -214,4 +214,35 @@ describe('StateManager', () => {
     state.updateOptions({ viewBox: undefined } as any);
     expect(svg.hasAttribute('viewBox')).toBe(false);
   });
+
+  it('recursively removes properties set to undefined in updateOptions', () => {
+    const { state } = createState(undefined, {
+      padding: 0,
+      design: {
+        background: 'red',
+        font: 'Arial',
+        shadow: {
+          x: 1,
+          y: 2,
+        },
+      },
+    });
+
+    state.updateOptions({
+      design: {
+        background: undefined,
+        shadow: {
+          x: undefined,
+        },
+      },
+    } as any);
+
+    const opts = state.getOptions() as any;
+    expect(opts.design.background).toBeUndefined();
+    expect('background' in opts.design).toBe(false);
+    expect(opts.design.font).toBe('Arial');
+    expect(opts.design.shadow.x).toBeUndefined();
+    expect('x' in opts.design.shadow).toBe(false);
+    expect(opts.design.shadow.y).toBe(2);
+  });
 });

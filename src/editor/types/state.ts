@@ -1,4 +1,7 @@
-import type { ParsedInfographicOptions } from '../../options';
+import type {
+  ParsedInfographicOptions,
+  UpdatableInfographicOptions,
+} from '../../options';
 import type { Element, IEventEmitter, ItemDatum } from '../../types';
 import type { ICommandManager } from './command';
 import type { IEditor } from './editor';
@@ -24,7 +27,7 @@ export interface IStateManager {
   removeItemDatum(indexes: number[], count?: number): void;
   updateData(key: string, value: any): void;
   updateElement(element: Element, props: Partial<ElementProps>): void;
-  updateOptions(options: ParsedInfographicOptions): void;
+  updateOptions(options: UpdatableInfographicOptions): void;
   getOptions(): ParsedInfographicOptions;
   destroy(): void;
 }
