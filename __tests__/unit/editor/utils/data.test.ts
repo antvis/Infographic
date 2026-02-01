@@ -9,7 +9,7 @@ describe('editor/utils/data', () => {
   it('returns root items when indexes empty', () => {
     const items = [{ label: 'a' }];
     const data: ParsedData = { data: items, items } as any;
-    expect(getChildrenDataByIndexes(data, [])).toBe(data.data);
+    expect(getChildrenDataByIndexes(data, [])).toBe(data.items);
   });
 
   it('navigates nested children and initializes children array', () => {

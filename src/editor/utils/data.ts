@@ -8,8 +8,9 @@ export function getChildrenDataByIndexes(
   data: ParsedData,
   indexes: number[],
 ): ItemDatum[] {
-  if (indexes.length === 0) return data.data;
+  if (indexes.length === 0) return data.items;
   const datum = getDatumByIndexes(data, indexes);
+  if (datum == null) return [];
   datum.children ||= [];
   return datum.children;
 }

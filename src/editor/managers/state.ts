@@ -60,6 +60,7 @@ export class StateManager implements IStateManager {
 
   updateItemDatum(indexes: number[], datum: Partial<ItemDatum>): void {
     const item = getDatumByIndexes(this.options.data, indexes);
+    if (item == null) return;
     Object.assign(item, datum);
     this.emitter.emit('options:data:item:update', { indexes, datum });
     this.emitter.emit('options:change', {
@@ -158,6 +159,7 @@ export class StateManager implements IStateManager {
     const indexes = isItemElement ? getIndexesFromElement(element) : undefined;
     if (isItemElement) {
       const datum = getDatumByIndexes(data, indexes!);
+      if (datum == null) return;
       const key = role.replace('item-', '');
       datum.attributes ||= {};
       datum.attributes[key] ||= {};
