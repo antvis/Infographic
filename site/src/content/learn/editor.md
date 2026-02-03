@@ -21,7 +21,7 @@ infographic.render(syntax);
 
 默认会启用以下插件与交互：
 
-- 插件：`EditBar`、`ResizeElement`
+- 插件：`EditBar`、`ResizeElement`、`ResetViewBox`
 - 交互：`DragCanvas`、`DblClickEditText`、`BrushSelect`、`ClickSelect`、`DragElement`、`HotkeyHistory`、`ZoomWheel`、`SelectHighlight`
 
 <Note>
@@ -48,6 +48,10 @@ type EditBarOptions = {
 
 为**可编辑文本**提供缩放手柄与选区提示。
 
+### ResetViewBox {#resetviewbox}
+
+提供视图重置按钮，可一键重置被 `DragCanvas` 与 `ZoomWheel` 修改的视图。
+
 ## 内置交互 {#built-in-interactions}
 
 - **DragCanvas**：按住空格拖拽画布；支持自定义触发键。
@@ -56,7 +60,7 @@ type EditBarOptions = {
 - **ClickSelect**：单击选择，Shift 多选，Esc 清空选择。
 - **DragElement**：拖拽元素移动，按住 Alt 可临时关闭吸附。
 - **HotkeyHistory**：`Ctrl/Cmd + Z` 撤销，`Ctrl/Cmd + Shift + Z` 或 `Ctrl/Cmd + Y` 重做。
-- **ZoomWheel**：`Ctrl/Cmd + 滚轮` 指针处缩放，`Shift + 滚轮` 中心缩放，`Ctrl/Cmd + Shift + 滚轮` 重置视图。
+- **ZoomWheel**：`Ctrl/Cmd + 滚轮` 指针处缩放，`Shift + 滚轮` 中心缩放。
 - **SelectHighlight**：为选中元素绘制高亮边框。
 
 `DragCanvas` 可选参数：

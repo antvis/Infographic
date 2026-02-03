@@ -21,7 +21,7 @@ infographic.render(syntax);
 
 By default, the following plugins and interactions are enabled:
 
-- Plugins: `EditBar`, `ResizeElement`
+- Plugins: `EditBar`, `ResizeElement`, `ResetViewBox`
 - Interactions: `DragCanvas`, `DblClickEditText`, `BrushSelect`, `ClickSelect`, `DragElement`, `HotkeyHistory`, `ZoomWheel`, `SelectHighlight`
 
 <Note>
@@ -46,6 +46,9 @@ type EditBarOptions = {
 ### ResizeElement {#resizeelement}
 Provides resize handles and selection overlays for **editable text**.
 
+### ResetViewBox {#resetviewbox}
+Provides a reset button to restore the view affected by `DragCanvas` and `ZoomWheel`.
+
 ## Built-in interactions {#built-in-interactions}
 
 - **DragCanvas**: hold Space to drag the canvas; supports custom trigger keys.
@@ -54,7 +57,7 @@ Provides resize handles and selection overlays for **editable text**.
 - **ClickSelect**: click to select, Shift to multi-select, Esc to clear.
 - **DragElement**: drag elements to move; hold Alt to disable snapping.
 - **HotkeyHistory**: `Ctrl/Cmd + Z` undo, `Ctrl/Cmd + Shift + Z` or `Ctrl/Cmd + Y` redo.
-- **ZoomWheel**: `Ctrl/Cmd + wheel` zoom at pointer, `Shift + wheel` zoom at center, `Ctrl/Cmd + Shift + wheel` reset view.
+- **ZoomWheel**: `Ctrl/Cmd + wheel` zoom at pointer, `Shift + wheel` zoom at center.
 - **SelectHighlight**: draw highlight outlines for selections.
 
 `DragCanvas` options:
