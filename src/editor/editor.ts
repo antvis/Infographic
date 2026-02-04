@@ -1,3 +1,4 @@
+import { get } from 'lodash-es';
 import type { ParsedInfographicOptions } from '../options';
 import type { IEventEmitter } from '../types';
 import { parsePadding, setSVGPadding } from '../utils';
@@ -7,11 +8,14 @@ import {
   PluginManager,
   StateManager,
 } from './managers';
+import { SyncRegistry } from './managers/sync-registry';
 import type {
   ICommandManager,
   IEditor,
   IPluginManager,
   IStateManager,
+  ISyncRegistry,
+  SyncHandler,
 } from './types';
 
 export class Editor implements IEditor {
@@ -19,6 +23,7 @@ export class Editor implements IEditor {
   commander: ICommandManager;
   plugin: IPluginManager;
   interaction: InteractionManager;
+  syncRegistry: ISyncRegistry;
 
   constructor(
     private emitter: IEventEmitter,
@@ -34,6 +39,10 @@ export class Editor implements IEditor {
     const state = new StateManager();
     const plugin = new PluginManager();
     const interaction = new InteractionManager();
+
+    const syncRegistry = new SyncRegistry((path) =>
+      get(state.getOptions(), path),
+    );
 
     commander.init({ state, emitter });
     state.init({
@@ -59,24 +68,37 @@ export class Editor implements IEditor {
       interactions: options.interactions,
     });
 
-    emitter.on('viewBox:change', (payload: { viewBox?: string }) => {
-      if (payload.viewBox) {
-        document.setAttribute('viewBox', payload.viewBox);
-      } else {
-        document.removeAttribute('viewBox');
-      }
-    });
-
-    emitter.on('padding:change', (payload: { padding?: number | number[] }) => {
-      if (payload.padding !== undefined) {
-        setSVGPadding(document, parsePadding(payload.padding));
-      }
-    });
-
     this.commander = commander;
     this.state = state;
     this.plugin = plugin;
     this.interaction = interaction;
+    this.syncRegistry = syncRegistry;
+
+    this.registerSync(
+      'viewBox',
+      (val) => {
+        val
+          ? document.setAttribute('viewBox', val)
+          : document.removeAttribute('viewBox');
+      },
+      { immediate: true },
+    );
+
+    this.registerSync(
+      'padding',
+      (val) => {
+        if (val !== undefined) setSVGPadding(document, parsePadding(val));
+      },
+      { immediate: true },
+    );
+  }
+
+  registerSync(
+    path: string,
+    handler: SyncHandler,
+    options?: { immediate?: boolean },
+  ) {
+    return this.syncRegistry.register(path, handler, options);
   }
 
   getDocument() {
@@ -89,5 +111,6 @@ export class Editor implements IEditor {
     this.plugin.destroy();
     this.commander.destroy();
     this.state.destroy();
+    this.syncRegistry.destroy();
   }
 }

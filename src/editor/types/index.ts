@@ -5,3 +5,4 @@ export type * from './plugin';
 export type * from './selection';
 export type * from './shape';
 export type * from './state';
+export type * from './sync';

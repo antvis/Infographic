@@ -28,15 +28,16 @@ const createState = (
 
   const emitter = { emit: vi.fn() } as any;
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  const syncRegistry = { trigger: vi.fn() };
   const state = new StateManager();
   const options = { data, ...optionsOverrides } as any;
   state.init({
     emitter,
-    editor: { getDocument: () => svg } as any,
+    editor: { getDocument: () => svg, syncRegistry } as any,
     commander: {} as any,
     options,
   });
-  return { state, emitter, data, options, svg };
+  return { state, emitter, data, options, svg, syncRegistry };
 };
 
 describe('StateManager', () => {
@@ -169,8 +170,8 @@ describe('StateManager', () => {
     });
   });
 
-  it('updates options and emits padding:change event', () => {
-    const { state, emitter, data } = createState(undefined, {
+  it('updates options and triggers sync events', () => {
+    const { state, emitter, data, syncRegistry } = createState(undefined, {
       padding: 0,
     });
 
@@ -182,10 +183,7 @@ describe('StateManager', () => {
       padding: 10,
       theme: 'dark',
     });
-    expect(emitter.emit).toHaveBeenCalledWith('padding:change', {
-      type: 'padding:change',
-      padding: 10,
-    });
+    expect(syncRegistry.trigger).toHaveBeenCalledWith('padding', 10, 0);
     expect(emitter.emit).toHaveBeenCalledWith('options:change', {
       type: 'options:change',
       changes: [
@@ -198,25 +196,27 @@ describe('StateManager', () => {
     });
   });
 
-  it('emits viewBox:change event when updating viewBox option', () => {
-    const { state, emitter } = createState();
+  it('triggers syncRegistry when updating viewBox option', () => {
+    const { state, syncRegistry } = createState();
 
     // 1. Set viewBox
     state.updateOptions({ viewBox: '0 0 100 100' } as any);
-    expect(emitter.emit).toHaveBeenCalledWith('viewBox:change', {
-      type: 'viewBox:change',
-      viewBox: '0 0 100 100',
-    });
+    expect(syncRegistry.trigger).toHaveBeenCalledWith(
+      'viewBox',
+      '0 0 100 100',
+      undefined,
+    );
     expect(state.getOptions().viewBox).toBe('0 0 100 100');
 
-    emitter.emit.mockClear();
+    syncRegistry.trigger.mockClear();
 
-    // 2. Unset viewBox (should emit with undefined viewBox)
+    // 2. Unset viewBox
     state.updateOptions({ viewBox: undefined } as any);
-    expect(emitter.emit).toHaveBeenCalledWith('viewBox:change', {
-      type: 'viewBox:change',
-      viewBox: undefined,
-    });
+    expect(syncRegistry.trigger).toHaveBeenCalledWith(
+      'viewBox',
+      undefined,
+      '0 0 100 100',
+    );
     expect(state.getOptions().viewBox).toBeUndefined();
   });
 

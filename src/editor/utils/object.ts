@@ -1,21 +1,26 @@
-import { isPlainObject, merge } from 'lodash-es';
+import { isPlainObject } from 'lodash-es';
 
-/**
- * Recursively merges source into target, deleting properties that are undefined in source.
- * This mimics lodash.merge but treats undefined values as delete instructions.
- */
-export function applyOptionUpdates(target: any, source: any) {
+export function applyOptionUpdates(
+  target: any,
+  source: any,
+  basePath: string = '',
+  collecotor?: (path: string, newVal: any, oldVal: any) => void,
+) {
   Object.keys(source).forEach((key) => {
-    const srcValue = source[key];
-    if (srcValue === undefined) {
+    const fullPath = basePath ? `${basePath}.${key}` : key;
+    const updateValue = source[key];
+    const oldValue = target[key];
+
+    if (updateValue === undefined) {
       delete target[key];
-    } else if (isPlainObject(srcValue)) {
-      if (!isPlainObject(target[key])) {
-        target[key] = {};
-      }
-      applyOptionUpdates(target[key], srcValue);
+      collecotor?.(fullPath, undefined, oldValue);
+    } else if (isPlainObject(updateValue) && isPlainObject(oldValue)) {
+      applyOptionUpdates(target[key], updateValue, fullPath, collecotor);
     } else {
-      merge(target, { [key]: srcValue });
+      target[key] = updateValue;
+      if (updateValue !== oldValue) {
+        collecotor?.(fullPath, updateValue, oldValue);
+      }
     }
   });
 }

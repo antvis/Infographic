@@ -111,21 +111,9 @@ export class StateManager implements IStateManager {
   }
 
   updateOptions(options: UpdatableInfographicOptions) {
-    applyOptionUpdates(this.options, options);
-
-    if ('viewBox' in options) {
-      this.emitter.emit('viewBox:change', {
-        type: 'viewBox:change',
-        viewBox: this.options.viewBox,
-      });
-    }
-
-    if ('padding' in options) {
-      this.emitter.emit('padding:change', {
-        type: 'padding:change',
-        padding: this.options.padding,
-      });
-    }
+    applyOptionUpdates(this.options, options, '', (path, newVal, oldVal) => {
+      this.editor.syncRegistry.trigger(path, newVal, oldVal);
+    });
 
     this.emitter.emit('options:change', {
       type: 'options:change',
