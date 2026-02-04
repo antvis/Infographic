@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { applyOptionUpdates } from '../../../src/editor/utils/object';
 
 describe('mergeOptions', () => {
@@ -84,5 +84,58 @@ describe('mergeOptions', () => {
     applyOptionUpdates(target, source);
     expect(target).toEqual({ a: 1 });
     expect('b' in target).toBe(false);
+  });
+
+  // ========== Collector Tests ==========
+
+  it('calls collector with correct path and values on simple update', () => {
+    const target = { a: 1, b: 2 };
+    const source = { b: 3 };
+    const collector = vi.fn();
+    applyOptionUpdates(target, source, '', collector);
+    expect(collector).toHaveBeenCalledWith('b', 3, 2);
+    expect(collector).toHaveBeenCalledTimes(1);
+  });
+
+  it('calls collector with undefined on delete', () => {
+    const target = { a: 1, b: 2 };
+    const source = { b: undefined };
+    const collector = vi.fn();
+    applyOptionUpdates(target, source, '', collector);
+    expect(collector).toHaveBeenCalledWith('b', undefined, 2);
+  });
+
+  it('does not call collector when value is unchanged', () => {
+    const target = { a: 1 };
+    const source = { a: 1 };
+    const collector = vi.fn();
+    applyOptionUpdates(target, source, '', collector);
+    expect(collector).not.toHaveBeenCalled();
+  });
+
+  it('calls collector with nested path', () => {
+    const target = { a: { x: 1 } };
+    const source = { a: { x: 2 } };
+    const collector = vi.fn();
+    applyOptionUpdates(target, source, '', collector);
+    expect(collector).toHaveBeenCalledWith('a.x', 2, 1);
+  });
+
+  it('calls collector with basePath prefix', () => {
+    const target = { x: 1 };
+    const source = { x: 2 };
+    const collector = vi.fn();
+    applyOptionUpdates(target, source, 'prefix', collector);
+    expect(collector).toHaveBeenCalledWith('prefix.x', 2, 1);
+  });
+
+  it('calls collector for each changed property in nested objects', () => {
+    const target = { a: { x: 1, y: 2 } };
+    const source = { a: { x: 10, y: undefined } };
+    const collector = vi.fn();
+    applyOptionUpdates(target, source, '', collector);
+    expect(collector).toHaveBeenCalledWith('a.x', 10, 1);
+    expect(collector).toHaveBeenCalledWith('a.y', undefined, 2);
+    expect(collector).toHaveBeenCalledTimes(2);
   });
 });
