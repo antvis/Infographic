@@ -194,9 +194,9 @@ export class ResetViewBox extends Plugin implements IPlugin {
         border-radius: 50%;
         padding: 4px;
         background-color: #fff;
-        border: 1px solid rgba(239, 240, 240, 0.9);
+        border: 1px solid #e5e7eb;
         z-index: 1000;
-        box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 2px -2px, rgba(0, 0, 0, 0.04) 0px 2px 6px, rgba(0, 0, 0, 0.02) 0px 4px 8px 1px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         cursor: pointer;
       }
       `,

@@ -14,7 +14,10 @@ export function applyOptionUpdates(
     if (updateValue === undefined) {
       delete target[key];
       collecotor?.(fullPath, undefined, oldValue);
-    } else if (isPlainObject(updateValue) && isPlainObject(oldValue)) {
+    } else if (isPlainObject(updateValue)) {
+      if (!isPlainObject(target[key])) {
+        target[key] = {};
+      }
       applyOptionUpdates(target[key], updateValue, fullPath, collecotor);
     } else {
       target[key] = updateValue;
