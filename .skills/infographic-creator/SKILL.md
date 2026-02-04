@@ -228,6 +228,8 @@ data
 - list-grid-ribbon-card
 - list-row-horizontal-icon-arrow
 - list-sector-plain-text
+- list-waterfall-badge-card
+- list-waterfall-compact-card
 - list-zigzag-down-compact-card
 - list-zigzag-down-simple
 - list-zigzag-up-compact-card

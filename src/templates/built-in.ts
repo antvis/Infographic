@@ -351,6 +351,20 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
       items: [{ type: 'plain-text' }],
     },
   },
+  'list-waterfall-badge-card': {
+    design: {
+      title: 'default',
+      structure: { type: 'list-waterfall' },
+      items: [{ type: 'badge-card' }],
+    },
+  },
+  'list-waterfall-compact-card': {
+    design: {
+      title: 'default',
+      structure: { type: 'list-waterfall' },
+      items: [{ type: 'compact-card' }],
+    },
+  },
   'sequence-roadmap-vertical-plain-text': {
     design: {
       title: 'default',
