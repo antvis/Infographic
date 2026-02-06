@@ -252,8 +252,6 @@ data
 - relation-dagre-flow-tb-animated-simple-circle-node
 - relation-dagre-flow-tb-badge-card
 - relation-dagre-flow-tb-simple-circle-node
-- relation-network-icon-badge
-- relation-network-simple-circle-node
 - sequence-ascending-stairs-3d-underline-text
 - sequence-ascending-steps
 - sequence-circular-simple
