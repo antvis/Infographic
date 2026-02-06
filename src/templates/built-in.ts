@@ -171,6 +171,20 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
       items: [{ type: 'icon-badge' }],
     },
   },
+  'relation-network-icon-badge': {
+    design: {
+      title: 'default',
+      structure: { type: 'relation-network' },
+      items: [{ type: 'icon-badge' }],
+    },
+  },
+  'relation-network-simple-circle-node': {
+    design: {
+      title: 'default',
+      structure: { type: 'relation-network' },
+      items: [{ type: 'simple-circle-node' }],
+    },
+  },
   'sequence-steps-badge-card': {
     design: {
       title: 'default',
