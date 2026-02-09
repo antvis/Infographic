@@ -33,6 +33,7 @@ export interface InteractionChildDatum {
 export interface InteractionLaneDatum {
   label: string;
   desc?: string;
+  icon?: string;
   children?: InteractionChildDatum[];
 }
 
@@ -192,7 +193,6 @@ export const SequenceInteractionFlow: ComponentType<
     const sampleBounds = getElementBounds(
       <Item
         indexes={[0]}
-        data={data}
         datum={sampleNode.datum}
         positionH="center"
         positionV="middle"
@@ -305,7 +305,11 @@ export const SequenceInteractionFlow: ComponentType<
         decorElements.push(
           <Item
             indexes={[laneIndex]}
-            datum={{ label: lane.label }}
+            datum={{
+              label: lane.label,
+              icon: lane.icon,
+              desc: lane.desc,
+            }}
             x={centerX - itemWidth / 2}
             y={padding}
             width={itemWidth}
@@ -358,11 +362,19 @@ export const SequenceInteractionFlow: ComponentType<
         />,
       );
 
+      // 构造类似 hierarchy-tree 的 _originalIndex
+      const originalIndex = [laneIndex, rowIndex];
+      // 附加到数据上，确保 Item 组件能正确识别
+      const childWithIndex = {
+        ...child,
+        _originalIndex: originalIndex,
+      };
+
       if (Item) {
         itemElements.push(
           <Item
-            indexes={[flatIndex]}
-            datum={child}
+            indexes={originalIndex}
+            datum={childWithIndex}
             data={data}
             x={x}
             y={y}
