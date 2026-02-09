@@ -32,8 +32,14 @@ export const getDataByTemplate = (
   }
   if (template.startsWith('relation-')) {
     if (template.includes('orth')) return DATASET.SYSTEM_DIAGNOSE;
+    if (template.includes('interaction')) return DATASET.TCP_HANDSHAKE;
     return DATASET.PROCESS;
   }
+
+  if (template.startsWith('sequence-interaction')) {
+    return DATASET.TCP_HANDSHAKE;
+  }
+
   if (template.startsWith('list-column-vertical-icon-arrow')) {
     return DATASET.TIMELINE;
   }

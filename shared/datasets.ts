@@ -637,4 +637,44 @@ export const DATASET = {
           return { label, value: Number.isFinite(value) ? value : 0 };
         }),
   },
+  /** 用于 sequence-interaction 结构 */
+  TCP_HANDSHAKE: {
+    title: 'TCP三次握手',
+    desc: '客户端与服务器建立可靠连接的过程',
+    items: [
+      {
+        label: '客户端',
+        children: [
+          { id: 'client-closed', label: 'CLOSED' },
+          { id: 'client-syn-sent', label: 'SYN-SENT' },
+          { id: 'client-established', label: 'ESTABLISHED' },
+        ],
+      },
+      {
+        label: '服务器',
+        children: [
+          { id: 'server-listen', label: 'LISTEN' },
+          { id: 'server-syn-rcvd', label: 'SYN-RCVD' },
+          { id: 'server-established', label: 'ESTABLISHED' },
+        ],
+      },
+    ],
+    relations: [
+      {
+        from: 'client-syn-sent',
+        to: 'server-syn-rcvd',
+        label: 'SYN=1, seq=x',
+      },
+      {
+        from: 'server-syn-rcvd',
+        to: 'client-established',
+        label: 'SYN=1, ACK=1, seq=y, ack=x+1',
+      },
+      {
+        from: 'client-established',
+        to: 'server-established',
+        label: 'ACK=1, seq=x+1, ack=y+1',
+      },
+    ],
+  },
 };
