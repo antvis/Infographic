@@ -29,7 +29,6 @@ export class ResetViewBox extends Plugin implements IPlugin {
   private resetButton?: HTMLButtonElement;
   private viewBoxChanged = false;
   private unregisterSync?: () => void;
-  private stableContainer?: HTMLElement | null;
 
   constructor(private options?: ResetViewBoxOptions) {
     super();
@@ -53,7 +52,6 @@ export class ResetViewBox extends Plugin implements IPlugin {
     this.unregisterSync?.();
     window.removeEventListener('resize', this.handleResize);
     this.removeButton();
-    this.stableContainer = undefined;
   }
 
   private handleResize = () => {
@@ -137,16 +135,8 @@ export class ResetViewBox extends Plugin implements IPlugin {
 
   /** Find the nearest stable overflow container */
   private findStableContainer = (svg: SVGSVGElement): HTMLElement | null => {
-    if (this.stableContainer !== undefined) {
-      return this.stableContainer;
-    }
-    this.stableContainer = this._findStableContainer(svg);
-    return this.stableContainer;
-  };
-
-  private _findStableContainer = (svg: SVGSVGElement): HTMLElement | null => {
     let current: Element | null = svg.parentElement;
-    while (current && current !== document.body) {
+    while (current) {
       if (current instanceof HTMLElement) {
         const style = window.getComputedStyle(current);
         // Look for overflow container or positioned element as stable reference
