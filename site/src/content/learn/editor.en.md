@@ -68,6 +68,17 @@ type DragCanvasOptions = {
 };
 ```
 
+`ZoomWheel` options:
+
+```ts
+type ZoomWheelOptions {
+  /** Minimum zoom size (SVG user units, default 20) */
+  minViewBoxSize?: number;
+  /** Maximum zoom size (SVG user units, default 20000) */
+  maxViewBoxSize?: number;
+}
+```
+
 ## Configure plugins and interactions {#configure}
 
 Pass **instance arrays** to `plugins` and `interactions`:

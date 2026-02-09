@@ -71,6 +71,17 @@ type DragCanvasOptions = {
 };
 ```
 
+`ZoomWheel`可选参数:
+
+```ts
+type ZoomWheelOptions {
+  /** 最小缩放尺寸（SVG 用户单位，默认 20） */
+  minViewBoxSize?: number;
+  /** 最大缩放尺寸（SVG 用户单位，默认 20000） */
+  maxViewBoxSize?: number;
+}
+```
+
 ## 配置启用的插件与交互 {#configure}
 
 通过 `plugins` 与 `interactions` 传入**实例数组**即可：
