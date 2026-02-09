@@ -9,12 +9,27 @@ import type { IInteraction, InteractionInitOptions } from '../types';
 import { clientToViewport } from '../utils';
 import { Interaction } from './base';
 
-const MIN_VIEWBOX_SIZE = 20;
-const MAX_VIEWBOX_SIZE = 20000;
+export interface ZoomWheelOptions {
+  minViewBoxSize?: number;
+  maxViewBoxSize?: number;
+}
+
 const ZOOM_FACTOR = 1.1;
 
 export class ZoomWheel extends Interaction implements IInteraction {
   name = 'zoom-wheel';
+  private minViewBoxSize = 20;
+  private maxViewBoxSize = 20000;
+
+  constructor(options?: ZoomWheelOptions) {
+    super();
+    if (options?.minViewBoxSize !== undefined) {
+      this.minViewBoxSize = options.minViewBoxSize;
+    }
+    if (options?.maxViewBoxSize !== undefined) {
+      this.maxViewBoxSize = options.maxViewBoxSize;
+    }
+  }
 
   private initialViewBox: string | null = null;
 
@@ -55,8 +70,8 @@ export class ZoomWheel extends Interaction implements IInteraction {
     const newHeight = height * factor;
 
     if (
-      !inRange(newWidth, MIN_VIEWBOX_SIZE, MAX_VIEWBOX_SIZE) ||
-      !inRange(newHeight, MIN_VIEWBOX_SIZE, MAX_VIEWBOX_SIZE)
+      !inRange(newWidth, this.minViewBoxSize, this.maxViewBoxSize) ||
+      !inRange(newHeight, this.minViewBoxSize, this.maxViewBoxSize)
     )
       return;
 

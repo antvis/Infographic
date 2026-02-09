@@ -277,7 +277,7 @@ describe('ZoomWheel interaction', () => {
       const interaction = { isActive: vi.fn(() => true) } as any;
       const state = { getOptions: vi.fn(() => ({})) } as any;
 
-      const instance = new ZoomWheel();
+      const instance = new ZoomWheel({ maxViewBoxSize: 2000 });
       instance.init({
         emitter: {} as any,
         editor: { getDocument: () => svg } as any,
@@ -301,7 +301,7 @@ describe('ZoomWheel interaction', () => {
       const interaction = { isActive: vi.fn(() => true) } as any;
       const state = { getOptions: vi.fn(() => ({})) } as any;
 
-      const instance = new ZoomWheel();
+      const instance = new ZoomWheel({ minViewBoxSize: 20 });
       instance.init({
         emitter: {} as any,
         editor: { getDocument: () => svg } as any,
