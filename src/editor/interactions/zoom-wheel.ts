@@ -10,7 +10,7 @@ import { clientToViewport } from '../utils';
 import { Interaction } from './base';
 
 const MIN_VIEWBOX_SIZE = 20;
-const MAX_VIEWBOX_SIZE = 2000;
+const MAX_VIEWBOX_SIZE = 20000;
 const ZOOM_FACTOR = 1.1;
 
 export class ZoomWheel extends Interaction implements IInteraction {
