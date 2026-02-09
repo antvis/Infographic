@@ -237,4 +237,73 @@ describe('ResetViewBox Plugin', () => {
 
     plugin.destroy();
   });
+  describe('Stable Container Logic', () => {
+    it('finds nearest overflow container', () => {
+      const { plugin, svg } = setupPlugin();
+      const overflowDiv = document.createElement('div');
+      Object.assign(overflowDiv.style, { overflow: 'hidden' });
+      const innerDiv = document.createElement('div');
+
+      document.body.appendChild(overflowDiv);
+      overflowDiv.appendChild(innerDiv);
+      innerDiv.appendChild(svg);
+
+      const container = (plugin as any).findStableContainer(svg);
+      expect(container).toBe(overflowDiv);
+
+      plugin.destroy();
+      overflowDiv.remove();
+    });
+
+    it('updates stable container when DOM changes (no cache)', () => {
+      const { plugin, svg } = setupPlugin();
+      const div1 = document.createElement('div');
+      Object.assign(div1.style, { overflow: 'hidden' });
+      document.body.appendChild(div1);
+      div1.appendChild(svg);
+
+      let container = (plugin as any).findStableContainer(svg);
+      expect(container).toBe(div1);
+
+      // Move SVG to another container
+      const div2 = document.createElement('div');
+      Object.assign(div2.style, { overflow: 'scroll' });
+      document.body.appendChild(div2);
+      div2.appendChild(svg);
+
+      // Should find new container immediately (no cache)
+      container = (plugin as any).findStableContainer(svg);
+      expect(container).toBe(div2);
+
+      plugin.destroy();
+      div1.remove();
+      div2.remove();
+    });
+
+    it('detects body as stable container if it has overflow', () => {
+      const { plugin, svg } = setupPlugin();
+      document.body.appendChild(svg);
+      Object.assign(document.body.style, { overflow: 'hidden' });
+
+      const container = (plugin as any).findStableContainer(svg);
+      expect(container).toBe(document.body);
+
+      document.body.style.overflow = '';
+      plugin.destroy();
+      svg.remove();
+    });
+
+    it('returns null if no overflow container found', () => {
+      const { plugin, svg } = setupPlugin();
+      const div = document.createElement('div');
+      document.body.appendChild(div);
+      div.appendChild(svg);
+
+      const container = (plugin as any).findStableContainer(svg);
+      expect(container).toBeNull();
+
+      plugin.destroy();
+      div.remove();
+    });
+  });
 });

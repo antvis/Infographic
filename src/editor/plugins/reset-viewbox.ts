@@ -141,9 +141,9 @@ export class ResetViewBox extends Plugin implements IPlugin {
         const style = window.getComputedStyle(current);
         // Look for overflow container or positioned element as stable reference
         if (
-          style.overflow !== 'visible' ||
-          style.overflowX !== 'visible' ||
-          style.overflowY !== 'visible'
+          (style.overflow && style.overflow !== 'visible') ||
+          (style.overflowX && style.overflowX !== 'visible') ||
+          (style.overflowY && style.overflowY !== 'visible')
         ) {
           return current;
         }
