@@ -9,7 +9,7 @@ import {
   Text,
 } from '../../jsx';
 import type { RelationEdgeDatum } from '../../types';
-import { BtnsGroup, ItemsGroup } from '../components';
+import { BtnAdd, BtnRemove, BtnsGroup, ItemsGroup } from '../components';
 import { FlexLayout } from '../layouts';
 import { getColorPrimary, getPaletteColor, getThemeColors } from '../utils';
 import { registerStructure } from './registry';
@@ -82,6 +82,17 @@ const DEFAULT_LIFELINE_WIDTH = 2;
 const DEFAULT_ARROW_WIDTH = 2;
 const DEFAULT_PADDING = 40;
 const DEFAULT_LANE_HEADER_HEIGHT = 60;
+const DEFAULT_ITEM_WIDTH = 120;
+const DEFAULT_ITEM_HEIGHT = 50;
+const ARROW_SIZE = 14;
+const CORNER_RADIUS_NODE = 6;
+const CORNER_RADIUS_LABEL = 4;
+
+// 按钮布局常量
+const BTN_SIZE = 24; // 按钮尺寸（通常为24）
+const BTN_HALF_SIZE = BTN_SIZE / 2;
+const BTN_MARGIN = 10; // 按钮与元素的通用间距
+const BTN_LANE_ADD_Gap = 20; // 添加泳道按钮与最后一个泳道的间距
 
 export const SequenceInteractionFlow: ComponentType<
   SequenceInteractionProps
@@ -111,7 +122,8 @@ export const SequenceInteractionFlow: ComponentType<
   const titleContent = Title ? <Title title={title} desc={desc} /> : null;
 
   // 空状态处理
-  if (items.length === 0) {
+  if (!items || items.length === 0) {
+    const btnBounds = getElementBounds(<BtnAdd indexes={[0]} />);
     return (
       <FlexLayout
         id="infographic-container"
@@ -121,16 +133,24 @@ export const SequenceInteractionFlow: ComponentType<
       >
         {titleContent}
         <Group>
+          <BtnsGroup>
+            <BtnAdd
+              indexes={[0]}
+              x={-btnBounds.width / 2}
+              y={-btnBounds.height / 2}
+            />
+          </BtnsGroup>
           <Text
             x={0}
-            y={0}
+            y={btnBounds.height / 2 + BTN_MARGIN}
             width={200}
             height={40}
             fontSize={14}
             alignHorizontal="center"
             alignVertical="middle"
+            fill="#999"
           >
-            暂无数据
+            暂无数据，点击按钮添加
           </Text>
         </Group>
       </FlexLayout>
@@ -166,11 +186,12 @@ export const SequenceInteractionFlow: ComponentType<
   const nodeLayoutById = new Map<string, NodeLayout>();
 
   // 测量Item尺寸
-  const itemConfig = Array.isArray(options.design?.item)
-    ? options.design?.item[0]
-    : options.design?.item;
-  let itemWidth = (itemConfig as any)?.width ?? 120;
-  let itemHeight = (itemConfig as any)?.height ?? 50;
+  const designItem = options.design?.item;
+  const itemConfig = Array.isArray(designItem) ? designItem[0] : designItem;
+
+  // 使用类型安全的访问或默认值
+  let itemWidth = itemConfig?.width ?? DEFAULT_ITEM_WIDTH;
+  let itemHeight = itemConfig?.height ?? DEFAULT_ITEM_HEIGHT;
 
   // 构建一个扁平化的节点列表用于Item渲染
   const flatNodes: {
@@ -184,8 +205,9 @@ export const SequenceInteractionFlow: ComponentType<
     });
   });
 
+  // 尝试通过采样修正尺寸 (仅当配置未指定时)
   if (
-    !((itemConfig as any)?.width && (itemConfig as any)?.height) &&
+    (!itemConfig?.width || !itemConfig?.height) &&
     Item &&
     flatNodes.length > 0
   ) {
@@ -255,6 +277,7 @@ export const SequenceInteractionFlow: ComponentType<
   const itemElements: JSXElement[] = [];
   const decorElements: JSXElement[] = [];
   const defsElements: JSXElement[] = [];
+  const btnElements: JSXElement[] = [];
 
   // 绘制生命线
   if (showLifeline) {
@@ -318,6 +341,15 @@ export const SequenceInteractionFlow: ComponentType<
             positionH="center"
           />,
         );
+
+        // 泳道标题删除按钮 (右上角)
+        btnElements.push(
+          <BtnRemove
+            indexes={[laneIndex]}
+            x={centerX + itemWidth / 2 - BTN_MARGIN}
+            y={padding - BTN_MARGIN}
+          />,
+        );
       }
     });
   }
@@ -358,7 +390,7 @@ export const SequenceInteractionFlow: ComponentType<
           width={itemWidth}
           height={itemHeight}
           fill={colorBg}
-          rx={6}
+          rx={CORNER_RADIUS_NODE}
         />,
       );
 
@@ -383,6 +415,15 @@ export const SequenceInteractionFlow: ComponentType<
             themeColors={nodeThemeColors}
           />,
         );
+
+        // 节点删除按钮 (底部剧中)
+        btnElements.push(
+          <BtnRemove
+            indexes={originalIndex}
+            x={x + itemWidth / 2 - BTN_MARGIN}
+            y={y + itemHeight + BTN_MARGIN / 2}
+          />,
+        );
       } else {
         // 默认节点渲染
         decorElements.push(
@@ -394,7 +435,7 @@ export const SequenceInteractionFlow: ComponentType<
             fill={nodeThemeColors?.colorPrimaryBg ?? colorBg}
             stroke={nodeColor}
             strokeWidth={2}
-            rx={6}
+            rx={CORNER_RADIUS_NODE}
             data-element-type="shape"
           />,
         );
@@ -420,7 +461,35 @@ export const SequenceInteractionFlow: ComponentType<
 
       flatIndex++;
     });
+
+    // 每个泳道底部的添加节点按钮
+    const childCount = lane.children?.length ?? 0;
+    const lastRowIndex = Math.max(0, childCount - 1);
+    const lastRowY =
+      childCount > 0 ? getRowY(lastRowIndex) : padding + headerOffset;
+    const addNodeY =
+      childCount > 0
+        ? lastRowY + itemHeight / 2 + BTN_LANE_ADD_Gap
+        : lastRowY + firstGap + BTN_MARGIN;
+    const centerX = getLaneCenterX(laneIndex);
+
+    btnElements.push(
+      <BtnAdd
+        indexes={[laneIndex, childCount]}
+        x={centerX - BTN_HALF_SIZE}
+        y={addNodeY}
+      />,
+    );
   });
+
+  // 添加新泳道按钮 (最右侧)
+  const lastLaneRightX = getLaneCenterX(lanes.length - 1) + laneWidth / 2;
+  const newLaneX =
+    lanes.length > 0 ? lastLaneRightX + BTN_LANE_ADD_Gap : padding;
+  const newLaneY = padding + headerOffset / 2 - BTN_HALF_SIZE; // 垂直居中于标题栏
+  btnElements.push(
+    <BtnAdd indexes={[lanes.length]} x={newLaneX} y={newLaneY} />,
+  );
 
   // 绘制消息箭头
   relations.forEach((relation, relIndex) => {
@@ -510,7 +579,7 @@ export const SequenceInteractionFlow: ComponentType<
     );
 
     // 绘制箭头头部
-    const arrowSize = 14;
+    const arrowSize = ARROW_SIZE;
 
     if (direction === 'forward' || direction === 'both') {
       const tipX = endX;
@@ -638,7 +707,7 @@ export const SequenceInteractionFlow: ComponentType<
           width={labelBounds.width + 12}
           height={labelBounds.height + 4}
           fill={colorBg}
-          rx={4}
+          rx={CORNER_RADIUS_LABEL}
         />,
       );
 
@@ -673,7 +742,7 @@ export const SequenceInteractionFlow: ComponentType<
         <Defs>{defsElements}</Defs>
         <Group>{decorElements}</Group>
         <ItemsGroup>{itemElements}</ItemsGroup>
-        <BtnsGroup />
+        <BtnsGroup>{btnElements}</BtnsGroup>
       </Group>
     </FlexLayout>
   );

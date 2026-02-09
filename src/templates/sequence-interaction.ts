@@ -49,7 +49,7 @@ const structures = {
   default: {
     ...baseStructureAttrs,
     showLifeline: true,
-    nodeGap: 80,
+    nodeGap: 60,
   },
   // 紧凑：更小间距
   compact: {
@@ -61,7 +61,7 @@ const structures = {
   wide: {
     ...baseStructureAttrs,
     showLifeline: true,
-    nodeGap: 120,
+    nodeGap: 80,
   },
 } as const;
 
@@ -69,8 +69,7 @@ export const sequenceInteractionTemplates: Record<string, TemplateOptions> = {};
 
 // 排除某些不合适的组合
 const omit: string[] = [
-  // 'clean-capsule-item', // 胶囊在无生命线下效果不佳
-  // 'arrow-style-capsule-item',
+  // 后续如果有不合适的可以排除掉
 ];
 
 Object.entries(structures).forEach(([strKey, strAttrs]) => {
