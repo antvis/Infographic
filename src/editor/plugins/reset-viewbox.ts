@@ -121,12 +121,56 @@ export class ResetViewBox extends Plugin implements IPlugin {
     return button;
   };
 
+  /** Get CSS transform scale of an element */
+  private getTransformScale = (
+    element: HTMLElement,
+  ): { scaleX: number; scaleY: number } => {
+    const rect = element.getBoundingClientRect();
+    const scaleX =
+      element.offsetWidth > 0 ? rect.width / element.offsetWidth : 1;
+    const scaleY =
+      element.offsetHeight > 0 ? rect.height / element.offsetHeight : 1;
+    return { scaleX, scaleY };
+  };
+
+  /** Find the nearest stable overflow container */
+  private findStableContainer = (svg: SVGSVGElement): HTMLElement | null => {
+    let current: Element | null = svg.parentElement;
+    while (current) {
+      if (current instanceof HTMLElement) {
+        const style = window.getComputedStyle(current);
+        // Look for overflow container or positioned element as stable reference
+        if (
+          (style.overflow && style.overflow !== 'visible') ||
+          (style.overflowX && style.overflowX !== 'visible') ||
+          (style.overflowY && style.overflowY !== 'visible')
+        ) {
+          return current;
+        }
+      }
+      current = current.parentElement;
+    }
+    return null;
+  };
+
   private placeButton = (button: HTMLButtonElement, svg: SVGSVGElement) => {
     if (!svg.isConnected) return;
-    const rect = svg.getBoundingClientRect();
+    const svgRect = svg.getBoundingClientRect();
     const offsetParent =
       (button.offsetParent as HTMLElement | null) ??
       (document.documentElement as HTMLElement);
+
+    // Use stable container bounds to clamp button position when SVG overflows
+    const stableContainer = this.findStableContainer(svg);
+    const containerRect = stableContainer?.getBoundingClientRect();
+
+    // Prefer SVG bounds, but clamp to container if SVG overflows
+    const effectiveRect = containerRect
+      ? {
+          right: Math.min(svgRect.right, containerRect.right),
+          bottom: Math.min(svgRect.bottom, containerRect.bottom),
+        }
+      : svgRect;
 
     if (
       offsetParent === document.body ||
@@ -135,8 +179,8 @@ export class ResetViewBox extends Plugin implements IPlugin {
       const scrollX = window.scrollX || document.documentElement.scrollLeft;
       const scrollY = window.scrollY || document.documentElement.scrollTop;
 
-      const left = scrollX + rect.right - MARGIN_X - BUTTON_SIZE;
-      const top = scrollY + rect.bottom - MARGIN_Y - BUTTON_SIZE;
+      const left = scrollX + effectiveRect.right - MARGIN_X - BUTTON_SIZE;
+      const top = scrollY + effectiveRect.bottom - MARGIN_Y - BUTTON_SIZE;
 
       button.style.left = `${left}px`;
       button.style.top = `${top}px`;
@@ -144,13 +188,19 @@ export class ResetViewBox extends Plugin implements IPlugin {
     }
 
     const parentRect = offsetParent.getBoundingClientRect();
-    const left = rect.right - parentRect.left - MARGIN_X - BUTTON_SIZE;
-    const top = rect.bottom - parentRect.top - MARGIN_Y - BUTTON_SIZE;
+
+    // Compensate for parent transform scale
+    const { scaleX, scaleY } = this.getTransformScale(offsetParent);
+
+    // Convert to offsetParent local coordinates
+    const left =
+      (effectiveRect.right - parentRect.left) / scaleX - MARGIN_X - BUTTON_SIZE;
+    const top =
+      (effectiveRect.bottom - parentRect.top) / scaleY - MARGIN_Y - BUTTON_SIZE;
 
     button.style.left = `${left}px`;
     button.style.top = `${top}px`;
   };
-
   private updatePosition = () => {
     if (this.resetButton && this.viewBoxChanged) {
       this.placeButton(this.resetButton, this.editor.getDocument());
