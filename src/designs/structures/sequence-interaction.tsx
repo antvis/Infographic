@@ -93,6 +93,56 @@ const BTN_SIZE = 24; // 按钮尺寸（通常为24）
 const BTN_HALF_SIZE = BTN_SIZE / 2;
 const BTN_MARGIN = 10; // 按钮与元素的通用间距
 const BTN_LANE_ADD_Gap = 20; // 添加泳道按钮与最后一个泳道的间距
+const BOTTOM_AREA_HEIGHT = 60; // 为底部按钮和边距预留空间
+
+const drawArrowHead = (
+  tip: { x: number; y: number },
+  angle: number,
+  color: string,
+  arrowType: 'triangle' | 'arrow',
+  arrowSize: number,
+  arrowWidth: number,
+): JSXElement => {
+  const ux = Math.cos(angle);
+  const uy = Math.sin(angle);
+  const px = -uy;
+  const py = ux;
+
+  if (arrowType === 'triangle') {
+    const points = [
+      { x: tip.x, y: tip.y },
+      {
+        x: tip.x - ux * arrowSize + px * arrowSize * 0.5,
+        y: tip.y - uy * arrowSize + py * arrowSize * 0.5,
+      },
+      {
+        x: tip.x - ux * arrowSize - px * arrowSize * 0.5,
+        y: tip.y - uy * arrowSize - py * arrowSize * 0.5,
+      },
+    ];
+
+    return (
+      <Polygon points={points} fill={color} stroke={color} strokeWidth={1} />
+    );
+  } else {
+    // arrow type
+    const leftX = tip.x - ux * arrowSize + px * arrowSize * 0.5;
+    const leftY = tip.y - uy * arrowSize + py * arrowSize * 0.5;
+    const rightX = tip.x - ux * arrowSize - px * arrowSize * 0.5;
+    const rightY = tip.y - uy * arrowSize - py * arrowSize * 0.5;
+
+    return (
+      <Path
+        d={`M ${leftX} ${leftY} L ${tip.x} ${tip.y} L ${rightX} ${rightY}`}
+        stroke={color}
+        strokeWidth={arrowWidth}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+    );
+  }
+};
 
 export const SequenceInteractionFlow: ComponentType<
   SequenceInteractionProps
@@ -115,6 +165,12 @@ export const SequenceInteractionFlow: ComponentType<
     edgeColorMode = 'gradient',
     options,
   } = props;
+
+  // 获取主题颜色
+  const themeColors = getThemeColors(options.themeConfig, options);
+  const colorText = themeColors?.colorText ?? '#333333';
+  const colorBg = themeColors?.colorBg ?? '#ffffff';
+  const colorBorder = themeColors?.colorTextSecondary ?? '#e0e0e0';
 
   const flowData = data as InteractionFlowData;
   const { title, desc, items = [], relations = [] } = flowData;
@@ -148,7 +204,7 @@ export const SequenceInteractionFlow: ComponentType<
             fontSize={14}
             alignHorizontal="center"
             alignVertical="middle"
-            fill="#999"
+            fill={themeColors?.colorTextSecondary ?? '#999'}
           >
             暂无数据，点击按钮添加
           </Text>
@@ -156,12 +212,6 @@ export const SequenceInteractionFlow: ComponentType<
       </FlexLayout>
     );
   }
-
-  // 获取主题颜色
-  const themeColors = getThemeColors(options.themeConfig, options);
-  const colorText = themeColors?.colorText ?? '#333333';
-  const colorBg = themeColors?.colorBg ?? '#ffffff';
-  const colorBorder = themeColors?.colorTextSecondary ?? '#e0e0e0';
 
   // 泳道列表（每个顶层item是一个泳道）
   const lanes = items as InteractionLaneDatum[];
@@ -249,7 +299,8 @@ export const SequenceInteractionFlow: ComponentType<
   const firstGap = 20; // 首个节点与标题的固定间距
   const contentHeight =
     firstGap + maxRows * itemHeight + Math.max(0, maxRows - 1) * nodeGap;
-  const totalHeight = headerOffset + contentHeight + padding * 2 + 60;
+  const totalHeight =
+    headerOffset + contentHeight + padding * 2 + BOTTOM_AREA_HEIGHT;
   const totalWidth = laneWidth * lanes.length + padding * 2;
 
   // 计算每个泳道的中心X坐标
@@ -267,12 +318,6 @@ export const SequenceInteractionFlow: ComponentType<
       itemHeight / 2
     );
   };
-
-  // 创建泳道ID到索引的映射
-  const laneIdToIndex = new Map<string, number>();
-  lanes.forEach((lane, index) => {
-    laneIdToIndex.set(lane.label, index);
-  });
 
   const itemElements: JSXElement[] = [];
   const decorElements: JSXElement[] = [];
@@ -355,7 +400,6 @@ export const SequenceInteractionFlow: ComponentType<
   }
 
   // 绘制节点（按行对齐）
-  let flatIndex = 0;
   lanes.forEach((lane, laneIndex) => {
     lane.children?.forEach((child, rowIndex) => {
       const centerX = getLaneCenterX(laneIndex);
@@ -458,8 +502,6 @@ export const SequenceInteractionFlow: ComponentType<
           );
         }
       }
-
-      flatIndex++;
     });
 
     // 每个泳道底部的添加节点按钮
@@ -582,110 +624,31 @@ export const SequenceInteractionFlow: ComponentType<
     const arrowSize = ARROW_SIZE;
 
     if (direction === 'forward' || direction === 'both') {
-      const tipX = endX;
-      const tipY = endY;
-
-      // 计算边的实际角度
-      const dx = endX - startX;
-      const dy = endY - startY;
-      const angle = Math.atan2(dy, dx);
-      const ux = Math.cos(angle);
-      const uy = Math.sin(angle);
-      const px = -uy;
-      const py = ux;
-
-      if (arrowType === 'triangle') {
-        const points = [
-          { x: tipX, y: tipY },
-          {
-            x: tipX - ux * arrowSize + px * arrowSize * 0.5,
-            y: tipY - uy * arrowSize + py * arrowSize * 0.5,
-          },
-          {
-            x: tipX - ux * arrowSize - px * arrowSize * 0.5,
-            y: tipY - uy * arrowSize - py * arrowSize * 0.5,
-          },
-        ];
-
-        decorElements.push(
-          <Polygon
-            points={points}
-            fill={targetArrowColor}
-            stroke={targetArrowColor}
-            strokeWidth={1}
-          />,
-        );
-      } else {
-        // arrow type
-        const leftX = tipX - ux * arrowSize + px * arrowSize * 0.5;
-        const leftY = tipY - uy * arrowSize + py * arrowSize * 0.5;
-        const rightX = tipX - ux * arrowSize - px * arrowSize * 0.5;
-        const rightY = tipY - uy * arrowSize - py * arrowSize * 0.5;
-
-        decorElements.push(
-          <Path
-            d={`M ${leftX} ${leftY} L ${tipX} ${tipY} L ${rightX} ${rightY}`}
-            stroke={targetArrowColor}
-            strokeWidth={arrowWidth}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
-          />,
-        );
-      }
+      const angle = Math.atan2(endY - startY, endX - startX);
+      decorElements.push(
+        drawArrowHead(
+          { x: endX, y: endY },
+          angle,
+          targetArrowColor,
+          arrowType,
+          arrowSize,
+          arrowWidth,
+        ),
+      );
     }
 
     if (direction === 'both') {
-      const tipX = startX;
-      const tipY = startY;
-
-      // 计算边的反向角度
-      const dx = endX - startX;
-      const dy = endY - startY;
-      const angle = Math.atan2(dy, dx) + Math.PI; // 反向
-      const ux = Math.cos(angle);
-      const uy = Math.sin(angle);
-      const px = -uy;
-      const py = ux;
-
-      if (arrowType === 'triangle') {
-        const points = [
-          { x: tipX, y: tipY },
-          {
-            x: tipX - ux * arrowSize + px * arrowSize * 0.5,
-            y: tipY - uy * arrowSize + py * arrowSize * 0.5,
-          },
-          {
-            x: tipX - ux * arrowSize - px * arrowSize * 0.5,
-            y: tipY - uy * arrowSize - py * arrowSize * 0.5,
-          },
-        ];
-
-        decorElements.push(
-          <Polygon
-            points={points}
-            fill={sourceArrowColor}
-            stroke={sourceArrowColor}
-            strokeWidth={1}
-          />,
-        );
-      } else {
-        const leftX = tipX - ux * arrowSize + px * arrowSize * 0.5;
-        const leftY = tipY - uy * arrowSize + py * arrowSize * 0.5;
-        const rightX = tipX - ux * arrowSize - px * arrowSize * 0.5;
-        const rightY = tipY - uy * arrowSize - py * arrowSize * 0.5;
-
-        decorElements.push(
-          <Path
-            d={`M ${leftX} ${leftY} L ${tipX} ${tipY} L ${rightX} ${rightY}`}
-            stroke={sourceArrowColor}
-            strokeWidth={arrowWidth}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
-          />,
-        );
-      }
+      const angle = Math.atan2(endY - startY, endX - startX) + Math.PI;
+      decorElements.push(
+        drawArrowHead(
+          { x: startX, y: startY },
+          angle,
+          sourceArrowColor,
+          arrowType,
+          arrowSize,
+          arrowWidth,
+        ),
+      );
     }
 
     // 绘制消息标签

@@ -55,7 +55,7 @@ const structures = {
   compact: {
     ...baseStructureAttrs,
     showLifeline: true,
-    nodeGap: 40,
+    nodeGap: 30,
   },
   // 宽松：更大间距
   wide: {
