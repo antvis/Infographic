@@ -1,0 +1,39 @@
+<!DOCTYPE html><html lang="en-US" dir="ltr"><head><meta charSet="utf-8" data-next-head=""/><meta name="viewport" content="width=device-width" data-next-head=""/><link rel="preload" href="/_next/static/css/82c249712a0d79c2.css" as="style"/><link rel="icon" type="image/svg+xml" href="/favicon.svg"/><meta name="theme-color" content="#23272f"/><link rel="stylesheet" href="/_next/static/css/82c249712a0d79c2.css" data-n-g=""/><noscript data-n-css=""></noscript><script defer="" noModule="" src="/_next/static/chunks/polyfills-42372ed130431b0a.js"></script><script src="/_next/static/chunks/webpack-0f43d88e1e93e352.js" defer=""></script><script src="/_next/static/chunks/framework-d94dfdc351021dd1.js" defer=""></script><script src="/_next/static/chunks/main-fe5d6696afea3a98.js" defer=""></script><script src="/_next/static/chunks/pages/_app-4630bac1b884ddaf.js" defer=""></script><script src="/_next/static/chunks/pages/examples-f539f1a610303003.js" defer=""></script><script src="/_next/static/hjVK-2YxvdQ2BG47nsx6G/_buildManifest.js" defer=""></script><script src="/_next/static/hjVK-2YxvdQ2BG47nsx6G/_ssgManifest.js" defer=""></script></head><body class="font-text font-medium antialiased text-lg bg-wash dark:bg-wash-dark text-secondary dark:text-secondary-dark leading-base"><script>
+                (function () {
+                  function setTheme(newTheme) {
+                    window.__theme = newTheme;
+                    if (newTheme === 'dark') {
+                      document.documentElement.classList.add('dark');
+                    } else if (newTheme === 'light') {
+                      document.documentElement.classList.remove('dark');
+                    }
+                  }
+
+                  var preferredTheme;
+                  try {
+                    preferredTheme = localStorage.getItem('theme');
+                  } catch (err) { }
+
+                  window.__setPreferredTheme = function(newTheme) {
+                    preferredTheme = newTheme;
+                    setTheme(newTheme);
+                    try {
+                      localStorage.setItem('theme', newTheme);
+                    } catch (err) { }
+                  };
+
+                  var initialTheme = preferredTheme;
+                  var darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+                  if (!initialTheme) {
+                    initialTheme = darkQuery.matches ? 'dark' : 'light';
+                  }
+                  setTheme(initialTheme);
+
+                  darkQuery.addEventListener('change', function (e) {
+                    if (!preferredTheme) {
+                      setTheme(e.matches ? 'dark' : 'light');
+                    }
+                  });
+                })();
+              </script><div id="__next"></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{}},"page":"/examples","query":{},"buildId":"hjVK-2YxvdQ2BG47nsx6G","nextExport":true,"autoExport":true,"isFallback":false,"scriptLoader":[]}</script></body></html>
