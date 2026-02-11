@@ -12,12 +12,12 @@ export const setFontExtendFactor = (factor: number) => {
 
 registerFont(AlibabaPuHuiTi);
 
-let canvasContext: CanvasRenderingContext2D | null = null;
+let canvasContext: CanvasRenderingContext2D | null | undefined = undefined;
 let measureSpan: HTMLSpanElement | null = null;
 
 function getCanvasContext() {
   if (typeof document === 'undefined') return null;
-  if (canvasContext) return canvasContext;
+  if (canvasContext !== undefined) return canvasContext;
   const canvas = document.createElement('canvas');
   canvasContext = canvas.getContext('2d');
   return canvasContext;
