@@ -49,6 +49,18 @@ export interface InteractionFlowData {
   relations?: RelationEdgeDatum[];
 }
 
+// 创建节点ID到位置的映射
+interface NodeLayout {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  centerX: number;
+  centerY: number;
+  laneIndex: number;
+  rowIndex: number;
+}
+
 export interface SequenceInteractionProps extends BaseStructureProps {
   /** 泳道之间的水平间距 */
   laneGap?: number;
@@ -95,53 +107,253 @@ const BTN_MARGIN = 10; // 按钮与元素的通用间距
 const BTN_LANE_ADD_Gap = 20; // 添加泳道按钮与最后一个泳道的间距
 const BOTTOM_AREA_HEIGHT = 60; // 为底部按钮和边距预留空间
 
-const drawArrowHead = (
-  tip: { x: number; y: number },
+const getMidPoint = (points: [number, number][]) => {
+  if (points.length === 0) return null;
+  if (points.length === 1) return points[0];
+  let total = 0;
+  const segments: {
+    length: number;
+    start: [number, number];
+    end: [number, number];
+  }[] = [];
+  for (let i = 0; i < points.length - 1; i += 1) {
+    const start = points[i];
+    const end = points[i + 1];
+    const length = Math.hypot(end[0] - start[0], end[1] - start[1]);
+    segments.push({ length, start, end });
+    total += length;
+  }
+  if (total === 0) return points[0];
+  let target = total / 2;
+  for (let i = 0; i < segments.length; i += 1) {
+    const segment = segments[i];
+    if (target <= segment.length || i === segments.length - 1) {
+      const ratio =
+        segment.length === 0
+          ? 0
+          : Math.max(0, Math.min(1, target / segment.length));
+      return [
+        segment.start[0] + (segment.end[0] - segment.start[0]) * ratio,
+        segment.start[1] + (segment.end[1] - segment.start[1]) * ratio,
+      ] as [number, number];
+    }
+    target -= segment.length;
+  }
+  return points[Math.floor(points.length / 2)];
+};
+
+const createArrowElements = (
+  x: number,
+  y: number,
   angle: number,
-  color: string,
-  arrowType: 'triangle' | 'arrow',
+  type: 'arrow' | 'triangle' | 'diamond',
+  fillColor: string,
+  edgeWidth: number,
   arrowSize: number,
-  arrowWidth: number,
-): JSXElement => {
+): JSXElement[] => {
   const ux = Math.cos(angle);
   const uy = Math.sin(angle);
   const px = -uy;
   const py = ux;
+  const length = arrowSize;
+  const halfWidth = arrowSize * 0.55;
 
-  if (arrowType === 'triangle') {
-    const points = [
-      { x: tip.x, y: tip.y },
-      {
-        x: tip.x - ux * arrowSize + px * arrowSize * 0.5,
-        y: tip.y - uy * arrowSize + py * arrowSize * 0.5,
-      },
-      {
-        x: tip.x - ux * arrowSize - px * arrowSize * 0.5,
-        y: tip.y - uy * arrowSize - py * arrowSize * 0.5,
-      },
-    ];
-
-    return (
-      <Polygon points={points} fill={color} stroke={color} strokeWidth={1} />
-    );
-  } else {
-    // arrow type
-    const leftX = tip.x - ux * arrowSize + px * arrowSize * 0.5;
-    const leftY = tip.y - uy * arrowSize + py * arrowSize * 0.5;
-    const rightX = tip.x - ux * arrowSize - px * arrowSize * 0.5;
-    const rightY = tip.y - uy * arrowSize - py * arrowSize * 0.5;
-
-    return (
+  if (type === 'arrow') {
+    const leftX = x - ux * length + px * halfWidth;
+    const leftY = y - uy * length + py * halfWidth;
+    const rightX = x - ux * length - px * halfWidth;
+    const rightY = y - uy * length - py * halfWidth;
+    return [
       <Path
-        d={`M ${leftX} ${leftY} L ${tip.x} ${tip.y} L ${rightX} ${rightY}`}
-        stroke={color}
-        strokeWidth={arrowWidth}
+        d={`M ${leftX} ${leftY} L ${x} ${y} L ${rightX} ${rightY}`}
+        stroke={fillColor}
+        strokeWidth={Math.max(1.5, edgeWidth)}
         strokeLinecap="round"
         strokeLinejoin="round"
         fill="none"
-      />
-    );
+      />,
+    ];
   }
+
+  // Handle triangle and others as filled shapes
+  const trianglePoints = [
+    { x, y },
+    {
+      x: x - ux * length + px * halfWidth,
+      y: y - uy * length + py * halfWidth,
+    },
+    {
+      x: x - ux * length - px * halfWidth,
+      y: y - uy * length - py * halfWidth,
+    },
+  ];
+  return [
+    <Polygon
+      points={trianglePoints}
+      fill={fillColor}
+      stroke={fillColor}
+      strokeWidth={Math.max(1, edgeWidth * 0.8)}
+    />,
+  ];
+};
+
+// Helper: Get 6 anchor points for a node
+// LT: Left Top (1/4), LC: Left Center (1/2), LB: Left Bottom (3/4)
+// RT: Right Top (1/4), RC: Right Center (1/2), RB: Right Bottom (3/4)
+const getNodesAnchors = (node: NodeLayout) => {
+  const { x, y, width, height } = node;
+  const q1H = height * 0.25; // Top at 1/4
+  const halfH = height * 0.5; // Center
+  const q3H = height * 0.75; // Bottom at 3/4
+
+  return {
+    LT: { x, y: y + q1H },
+    LC: { x, y: y + halfH },
+    LB: { x, y: y + q3H },
+    RT: { x: x + width, y: y + q1H },
+    RC: { x: x + width, y: y + halfH },
+    RB: { x: x + width, y: y + q3H },
+  };
+};
+
+const calculateEdgePath = (
+  fromId: string,
+  toId: string,
+  fromLayout: NodeLayout,
+  toLayout: NodeLayout,
+  edgeMap: Map<string, RelationEdgeDatum[]>,
+  fromOutDegree: number,
+  toInDegree: number,
+) => {
+  const fromAnchors = getNodesAnchors(fromLayout);
+  const toAnchors = getNodesAnchors(toLayout);
+
+  let points: [number, number][] = [];
+  let isSelfLoop = false;
+  let isCurved = false;
+
+  // 1. 自连接 (A->A)
+  // 规则：左上到左下 或 右上到右下 (打破出点 LC/RC 限制)
+  if (fromId === toId) {
+    isSelfLoop = true;
+    // 默认使用右侧自连: RT -> Right Arc -> RB
+    const start = fromAnchors.RT;
+    const end = fromAnchors.RB;
+    const offset = 40;
+
+    // We use 4 points for Cubic Bezier logic later
+    points = [
+      [start.x, start.y],
+      [start.x + offset, start.y], // Control 1
+      [end.x + offset, end.y], // Control 2
+      [end.x, end.y],
+    ];
+  } else {
+    // 2. 互连 & 单向连接
+    // 规则：Output: LC/RC; Input: LT/LB/RT/RB
+
+    const isToRight = toLayout.centerX > fromLayout.centerX;
+    const isToLeft = toLayout.centerX < fromLayout.centerX;
+    // Check for exact same Y (same lane or perfectly aligned)
+    // Using small epsilon for float comparison safety
+    const isSameY = Math.abs(fromLayout.centerY - toLayout.centerY) < 1;
+
+    let startPoint: { x: number; y: number };
+    let endPoint: { x: number; y: number };
+
+    if (isSameY) {
+      // Rule 1: Same Y axis -> Center to Center
+      if (isToRight) {
+        startPoint = fromAnchors.RC;
+        endPoint = toAnchors.LC;
+      } else {
+        startPoint = fromAnchors.LC; // Output Left
+        endPoint = toAnchors.RC; // Input Right
+      }
+      // Same Y usually implies straight line by default
+      isCurved = false;
+    } else {
+      // Different Y: Use Advanced Logic (Top/Bottom Anchors)
+
+      // Select Input Port
+      const isTargetBelow = toLayout.centerY > fromLayout.centerY;
+      const isTargetStrictRight = toLayout.x >= fromLayout.x + fromLayout.width;
+
+      if (toInDegree === 1) {
+        // Use Center for Input
+        if (isToRight) endPoint = toAnchors.LC;
+        else endPoint = toAnchors.RC;
+      } else if (isTargetBelow) {
+        // Target Below -> Input Top
+        if (isTargetStrictRight) {
+          endPoint = toAnchors.LT;
+        } else {
+          endPoint = toAnchors.RT;
+        }
+      } else {
+        // Target Above -> Input Bottom
+        if (isTargetStrictRight) {
+          endPoint = toAnchors.LB;
+        } else {
+          endPoint = toAnchors.RB;
+        }
+      }
+
+      // Select Output Port
+      if (fromOutDegree === 1) {
+        // Use Center for Output
+        if (isToRight) startPoint = fromAnchors.RC;
+        else startPoint = fromAnchors.LC;
+      } else if (isToRight) {
+        startPoint = fromAnchors.RB; // Change to Bottom-Right
+      } else if (isToLeft) {
+        startPoint = fromAnchors.LB; // Change to Bottom-Left
+      } else {
+        startPoint = fromAnchors.RB;
+      }
+    }
+
+    const reverseKey = `${toId}-${fromId}`;
+    const hasReverse = edgeMap.has(reverseKey);
+
+    if (hasReverse && !isSameY) {
+      // Mutual connection on different Y -> Curve to separate
+      isCurved = true;
+      const startArr: [number, number] = [startPoint.x, startPoint.y];
+      const endArr: [number, number] = [endPoint.x, endPoint.y];
+
+      // Control Point: Horizontal Midpoint, Vertical Start Y
+      const cx = (startArr[0] + endArr[0]) / 2;
+      const cy = startArr[1];
+
+      points = [startArr, [cx, cy], endArr];
+    } else if (hasReverse && isSameY) {
+      // Mutual connection on Same Y -> Curve (Arc up/down)
+      isCurved = true;
+      // Curve separation logic:
+      // Left->Right: Upper Arc (Y-)
+      // Right->Left: Lower Arc (Y+)
+      const startArr: [number, number] = [startPoint.x, startPoint.y];
+      const endArr: [number, number] = [endPoint.x, endPoint.y];
+
+      const midX = (startArr[0] + endArr[0]) / 2;
+      const midY = (startArr[1] + endArr[1]) / 2;
+
+      const offsetY = 30;
+      const isL2R = startArr[0] < endArr[0];
+      const cpY = isL2R ? midY - offsetY : midY + offsetY;
+
+      points = [startArr, [midX, cpY], endArr];
+    } else {
+      // Single direction -> Straight Line
+      points = [
+        [startPoint.x, startPoint.y],
+        [endPoint.x, endPoint.y],
+      ];
+    }
+  }
+
+  return { points, isSelfLoop, isCurved };
 };
 
 export const SequenceInteractionFlow: ComponentType<
@@ -206,7 +418,7 @@ export const SequenceInteractionFlow: ComponentType<
             alignVertical="middle"
             fill={themeColors?.colorTextSecondary ?? '#999'}
           >
-            暂无数据，点击按钮添加
+            暂无数据
           </Text>
         </Group>
       </FlexLayout>
@@ -222,17 +434,6 @@ export const SequenceInteractionFlow: ComponentType<
     ...lanes.map((lane) => lane.children?.length ?? 0),
   );
 
-  // 创建节点ID到位置的映射
-  interface NodeLayout {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    centerX: number;
-    centerY: number;
-    laneIndex: number;
-    rowIndex: number;
-  }
   const nodeLayoutById = new Map<string, NodeLayout>();
 
   // 测量Item尺寸
@@ -533,6 +734,24 @@ export const SequenceInteractionFlow: ComponentType<
     <BtnAdd indexes={[lanes.length]} x={newLaneX} y={newLaneY} />,
   );
 
+  // 预处理边，方便快速查找反向边
+  const edgeMap = new Map<string, RelationEdgeDatum[]>();
+  // 统计入度和出度
+  const inDegreeMap = new Map<string, number>();
+  const outDegreeMap = new Map<string, number>();
+
+  relations.forEach((r) => {
+    const key = `${r.from}-${r.to}`;
+    if (!edgeMap.has(key)) edgeMap.set(key, []);
+    edgeMap.get(key)?.push(r);
+
+    const fromId = String(r.from);
+    const toId = String(r.to);
+    if (fromId === toId) return;
+    outDegreeMap.set(fromId, (outDegreeMap.get(fromId) || 0) + 1);
+    inDegreeMap.set(toId, (inDegreeMap.get(toId) || 0) + 1);
+  });
+
   // 绘制消息箭头
   relations.forEach((relation, relIndex) => {
     const fromId = String(relation.from);
@@ -544,28 +763,7 @@ export const SequenceInteractionFlow: ComponentType<
 
     if (!fromLayout || !toLayout) return;
 
-    // 边的起点Y = from节点的centerY，终点Y = to节点的centerY
-    const startY = fromLayout.centerY;
-    const endY = toLayout.centerY;
-
-    // 计算起点和终点的X（从节点边界出发）
-    const direction = relation.direction ?? 'forward';
-    const isLeftToRight = fromLayout.centerX < toLayout.centerX;
-
-    let startX: number;
-    let endX: number;
-
-    if (isLeftToRight) {
-      // 从左边节点的右边界 到 右边节点的左边界
-      startX = fromLayout.x + fromLayout.width;
-      endX = toLayout.x;
-    } else {
-      // 从右边节点的左边界 到 左边节点的右边界
-      startX = fromLayout.x;
-      endX = toLayout.x + toLayout.width;
-    }
-
-    // 获取颜色
+    // 颜色处理
     const fromColor =
       getPaletteColor(options, [fromLayout.laneIndex]) || '#000000';
     const toColor = getPaletteColor(options, [toLayout.laneIndex]) || '#000000';
@@ -582,15 +780,47 @@ export const SequenceInteractionFlow: ComponentType<
       edgeStroke = `url(#${gradientId})`;
       targetArrowColor = toColor;
       sourceArrowColor = fromColor;
+    }
 
+    const { points, isSelfLoop, isCurved } = calculateEdgePath(
+      fromId,
+      toId,
+      fromLayout,
+      toLayout,
+      edgeMap,
+      outDegreeMap.get(fromId) || 0,
+      inDegreeMap.get(toId) || 0,
+    );
+
+    // 生成路径字符串
+    let pathD = '';
+
+    if (isSelfLoop) {
+      // Cubic Bezier C-shape: M p0 C p1 p2 p3
+      const [p0, p1, p2, p3] = points;
+      pathD = `M ${p0[0]} ${p0[1]} C ${p1[0]} ${p1[1]} ${p2[0]} ${p2[1]} ${p3[0]} ${p3[1]}`;
+    } else if (isCurved) {
+      // Quad Bezier
+      const [p0, p1, p2] = points;
+      pathD = `M ${p0[0]} ${p0[1]} Q ${p1[0]} ${p1[1]} ${p2[0]} ${p2[1]}`;
+    } else {
+      // Straight L
+      const [p0, p1] = points;
+      pathD = `M ${p0[0]} ${p0[1]} L ${p1[0]} ${p1[1]}`;
+    }
+
+    // Gradient Definition
+    if (edgeColorMode === 'gradient') {
+      const startPoint = points[0];
+      const endPoint = points[points.length - 1];
       defsElements.push(
         <linearGradient
           id={gradientId}
           gradientUnits="userSpaceOnUse"
-          x1={startX}
-          y1={startY}
-          x2={endX}
-          y2={endY}
+          x1={startPoint[0]}
+          y1={startPoint[1]}
+          x2={endPoint[0]}
+          y2={endPoint[1]}
         >
           <stop offset="0%" stopColor={fromColor} />
           <stop offset="100%" stopColor={toColor} />
@@ -598,15 +828,19 @@ export const SequenceInteractionFlow: ComponentType<
       );
     }
 
-    // 绘制箭头线（斜线从from节点到to节点）
+    // 绘制 Path
     decorElements.push(
       <Path
-        d={`M ${startX} ${startY} L ${endX} ${endY}`}
+        d={pathD}
         stroke={edgeStroke}
         strokeWidth={arrowWidth}
         fill="none"
         data-element-type="shape"
-        strokeDasharray={edgeStyle === 'dashed' || animated ? '5,5' : undefined}
+        strokeDasharray={
+          (relation.lineStyle ?? edgeStyle) === 'dashed' || animated
+            ? '5,5'
+            : undefined
+        }
       >
         {animated && (
           <animate
@@ -621,74 +855,136 @@ export const SequenceInteractionFlow: ComponentType<
     );
 
     // 绘制箭头头部
-    const arrowSize = ARROW_SIZE;
+    const effectiveArrowSize = ARROW_SIZE;
+    const direction = relation.direction ?? 'forward';
+
+    // Helper to calculate tangent angle
+    const getTangentAngle = (pts: [number, number][], t: number) => {
+      // t is 0 (start) or 1 (end)
+      if (isSelfLoop) {
+        // Cubic Bezier: M p0 C p1 p2 p3
+        // B'(t) = 3(1-t)^2(p1-p0) + 6(1-t)t(p2-p1) + 3t^2(p3-p2)
+        const p0 = pts[0],
+          p1 = pts[1],
+          p2 = pts[2],
+          p3 = pts[3];
+        if (t === 0) {
+          return Math.atan2(p1[1] - p0[1], p1[0] - p0[0]) + Math.PI; // Reverse for start arrow
+        } else {
+          return Math.atan2(p3[1] - p2[1], p3[0] - p2[0]);
+        }
+      } else if (isCurved) {
+        // Quad Bezier: M p0 Q p1 p2
+        // B'(t) = 2(1-t)(p1-p0) + 2t(p2-p1)
+        const p0 = pts[0],
+          p1 = pts[1],
+          p2 = pts[2];
+        if (t === 0) {
+          return Math.atan2(p1[1] - p0[1], p1[0] - p0[0]) + Math.PI;
+        } else {
+          return Math.atan2(p2[1] - p1[1], p2[0] - p1[0]);
+        }
+      } else {
+        // Line
+        const angle = Math.atan2(pts[1][1] - pts[0][1], pts[1][0] - pts[0][0]);
+        return t === 0 ? angle + Math.PI : angle;
+      }
+    };
 
     if (direction === 'forward' || direction === 'both') {
-      const angle = Math.atan2(endY - startY, endX - startX);
+      const angle = getTangentAngle(points, 1);
+      const endPt = points[points.length - 1];
       decorElements.push(
-        drawArrowHead(
-          { x: endX, y: endY },
+        ...createArrowElements(
+          endPt[0],
+          endPt[1],
           angle,
+          relation.arrowType ?? arrowType,
           targetArrowColor,
-          arrowType,
-          arrowSize,
           arrowWidth,
+          effectiveArrowSize,
         ),
       );
     }
 
     if (direction === 'both') {
-      const angle = Math.atan2(endY - startY, endX - startX) + Math.PI;
+      const angle = getTangentAngle(points, 0);
+      const startPt = points[0];
       decorElements.push(
-        drawArrowHead(
-          { x: startX, y: startY },
+        ...createArrowElements(
+          startPt[0],
+          startPt[1],
           angle,
+          relation.arrowType ?? arrowType,
           sourceArrowColor,
-          arrowType,
-          arrowSize,
           arrowWidth,
+          effectiveArrowSize,
         ),
       );
     }
 
     // 绘制消息标签
     if (relation.label) {
-      const labelX = (startX + endX) / 2;
-      const labelY = (startY + endY) / 2 - 15;
+      let labelPoint: [number, number] | null = null;
 
-      const labelBounds = getElementBounds(
-        <Text fontSize={12} fontWeight="normal">
-          {relation.label}
-        </Text>,
-      );
+      if (isSelfLoop) {
+        // Cubic Midpoint approx t=0.5
+        // B(0.5) = 0.125*p0 + 0.375*p1 + 0.375*p2 + 0.125*p3
+        const [p0, p1, p2, p3] = points;
+        labelPoint = [
+          0.125 * p0[0] + 0.375 * p1[0] + 0.375 * p2[0] + 0.125 * p3[0],
+          0.125 * p0[1] + 0.375 * p1[1] + 0.375 * p2[1] + 0.125 * p3[1],
+        ];
+        labelPoint[0] += 10;
+      } else if (isCurved) {
+        // Quad Midpoint t=0.5
+        const [p0, p1, p2] = points;
+        labelPoint = [
+          0.25 * p0[0] + 0.5 * p1[0] + 0.25 * p2[0],
+          0.25 * p0[1] + 0.5 * p1[1] + 0.25 * p2[1],
+        ];
+      } else {
+        labelPoint = getMidPoint(points);
+      }
 
-      // 标签背景
-      decorElements.push(
-        <Rect
-          x={labelX - labelBounds.width / 2 - 6}
-          y={labelY - labelBounds.height / 2 - 2}
-          width={labelBounds.width + 12}
-          height={labelBounds.height + 4}
-          fill={colorBg}
-          rx={CORNER_RADIUS_LABEL}
-        />,
-      );
+      if (labelPoint) {
+        const labelX = labelPoint[0];
+        const labelY = labelPoint[1] - 15;
 
-      decorElements.push(
-        <Text
-          x={labelX - labelBounds.width / 2}
-          y={labelY - labelBounds.height / 2}
-          width={labelBounds.width}
-          height={labelBounds.height}
-          fontSize={12}
-          fontWeight="normal"
-          alignHorizontal="center"
-          alignVertical="middle"
-          fill={colorText}
-        >
-          {relation.label}
-        </Text>,
-      );
+        const labelBounds = getElementBounds(
+          <Text fontSize={12} fontWeight="normal">
+            {relation.label}
+          </Text>,
+        );
+
+        // 标签背景
+        decorElements.push(
+          <Rect
+            x={labelX - labelBounds.width / 2 - 6}
+            y={labelY - labelBounds.height / 2 - 2}
+            width={labelBounds.width + 12}
+            height={labelBounds.height + 4}
+            fill={colorBg}
+            rx={CORNER_RADIUS_LABEL}
+          />,
+        );
+
+        decorElements.push(
+          <Text
+            x={labelX - labelBounds.width / 2}
+            y={labelY - labelBounds.height / 2}
+            width={labelBounds.width}
+            height={labelBounds.height}
+            fontSize={12}
+            fontWeight="normal"
+            alignHorizontal="center"
+            alignVertical="middle"
+            fill={colorText}
+          >
+            {relation.label}
+          </Text>,
+        );
+      }
     }
   });
 
