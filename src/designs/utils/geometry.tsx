@@ -216,7 +216,7 @@ export const getTangentAngle = (points: [number, number][], t: 0 | 1) => {
       p2 = points[2],
       p3 = points[3];
     if (t === 0) {
-      return Math.atan2(p1[1] - p0[1], p1[0] - p0[0]) + Math.PI;
+      return Math.atan2(p1[1] - p0[1], p1[0] - p0[0]);
     } else {
       return Math.atan2(p3[1] - p2[1], p3[0] - p2[0]);
     }
@@ -227,7 +227,7 @@ export const getTangentAngle = (points: [number, number][], t: 0 | 1) => {
       p1 = points[1],
       p2 = points[2];
     if (t === 0) {
-      return Math.atan2(p1[1] - p0[1], p1[0] - p0[0]) + Math.PI;
+      return Math.atan2(p1[1] - p0[1], p1[0] - p0[0]);
     } else {
       return Math.atan2(p2[1] - p1[1], p2[0] - p1[0]);
     }
@@ -237,7 +237,7 @@ export const getTangentAngle = (points: [number, number][], t: 0 | 1) => {
     const p0 = points[0],
       p1 = points[1];
     const angle = Math.atan2(p1[1] - p0[1], p1[0] - p0[0]);
-    return t === 0 ? angle + Math.PI : angle;
+    return angle;
   }
   return 0;
 };

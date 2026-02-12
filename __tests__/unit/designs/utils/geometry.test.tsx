@@ -136,7 +136,7 @@ describe('geometry utils', () => {
         [10, 0],
       ];
       expect(getTangentAngle(points, 1)).toBe(0);
-      expect(getTangentAngle(points, 0)).toBe(Math.PI);
+      expect(getTangentAngle(points, 0)).toBe(0);
     });
 
     it('should return angle for quadratic curve (3 points)', () => {
@@ -145,9 +145,7 @@ describe('geometry utils', () => {
         [5, 5],
         [10, 0],
       ];
-      expect(getTangentAngle(points, 0)).toBeCloseTo(
-        Math.atan2(5, 5) + Math.PI,
-      );
+      expect(getTangentAngle(points, 0)).toBeCloseTo(Math.atan2(5, 5));
       expect(getTangentAngle(points, 1)).toBeCloseTo(Math.atan2(-5, 5));
     });
   });

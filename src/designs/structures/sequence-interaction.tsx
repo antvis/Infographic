@@ -829,7 +829,7 @@ export const SequenceInteractionFlow: ComponentType<
       },
       {
         show: direction === 'both',
-        angle: getTangentAngle(points, 0),
+        angle: getTangentAngle(points, 0) + Math.PI,
         point: points[0],
         color: sourceArrowColor,
       },
