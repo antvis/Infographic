@@ -9,8 +9,7 @@ import {
   getNodesAnchors,
   getPointAtT,
   getTangentAngle,
-} from '../geometry';
-
+} from '../../../../src/designs/utils';
 describe('geometry utils', () => {
   describe('getMidPoint', () => {
     it('should return null for empty points', () => {

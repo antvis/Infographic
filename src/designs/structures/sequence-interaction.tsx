@@ -7,7 +7,6 @@ import {
   BtnsGroup,
   ItemLabel,
   ItemsGroup,
-  ShapesGroup,
 } from '../components';
 import { FlexLayout } from '../layouts';
 import {
@@ -101,8 +100,6 @@ const DEFAULT_ITEM_HEIGHT = 50;
 const FONT_SIZE = 14;
 const ARROW_SIZE = 14;
 const CORNER_RADIUS_NODE = 6;
-const CORNER_RADIUS_LABEL = 4;
-
 const LANE_PADDING = 60;
 
 const BTN_HALF_SIZE = 12;
@@ -111,8 +108,6 @@ const BTN_LANE_ADD_Gap = 20;
 const BOTTOM_AREA_HEIGHT = 60;
 
 const LANE_HEADER_MARGIN = 10;
-const LABEL_BG_PADDING_H = 6;
-const LABEL_BG_PADDING_V = 2;
 const LABEL_OFFSET_Y = 10;
 const FIRST_GAP = 20;
 
@@ -701,9 +696,79 @@ export const SequenceInteractionFlow: ComponentType<
       outDegreeMap.get(toId) || 0,
     );
 
+    let maskId: string | undefined;
+    let labelRenderNode: JSXElement | null = null;
+
+    if (relation.label) {
+      const labelPoint = getLabelPosition(points);
+
+      if (labelPoint) {
+        const labelX = labelPoint[0];
+        const labelY = labelPoint[1] - LABEL_OFFSET_Y;
+
+        // 预先计算 Label 的尺寸
+        const labelBounds = getElementBounds(
+          <ItemLabel
+            indexes={[relIndex]}
+            fontSize={FONT_SIZE}
+            fontWeight="normal"
+          >
+            {relation.label}
+          </ItemLabel>,
+        );
+
+        const bgX = labelX - labelBounds.width / 2;
+        const bgY = labelY - labelBounds.height / 2;
+        const bgW = labelBounds.width;
+        const bgH = labelBounds.height;
+
+        maskId = `edge-mask-${relIndex}`;
+
+        // 将 Mask 推入 defsElements
+        // 逻辑：白色区域显示(全图)，黑色区域隐藏(标签位置)
+        defsElements.push(
+          <mask
+            id={maskId}
+            maskUnits="userSpaceOnUse"
+            x={0}
+            y={0}
+            width={totalWidth}
+            height={totalHeight}
+          >
+            {/* 1. 全屏白色底，保证线条其他部分显示 */}
+            <Rect
+              x={0}
+              y={0}
+              width={totalWidth}
+              height={totalHeight}
+              fill="white"
+            />
+            {/* 2. 标签位置黑色块，将线条“挖空” */}
+            <Rect x={bgX} y={bgY} width={bgW} height={bgH} fill="black" />
+          </mask>,
+        );
+
+        labelRenderNode = (
+          <ItemLabel
+            indexes={[relIndex]}
+            x={labelX - labelBounds.width / 2}
+            y={labelY - labelBounds.height / 2}
+            width={labelBounds.width}
+            height={labelBounds.height}
+            fontSize={FONT_SIZE}
+            fontWeight="normal"
+            alignHorizontal="center"
+            alignVertical="middle"
+            fill={colorText}
+          >
+            {relation.label}
+          </ItemLabel>
+        );
+      }
+    }
+
     // 生成路径字符串
     const pathD = getEdgePathD(points);
-
     if (edgeColorMode === 'gradient') {
       const startPoint = points[0];
       const endPoint = points[points.length - 1];
@@ -722,7 +787,6 @@ export const SequenceInteractionFlow: ComponentType<
       );
     }
 
-    // 绘制 Path
     decorElements.push(
       <Path
         d={pathD}
@@ -730,6 +794,8 @@ export const SequenceInteractionFlow: ComponentType<
         strokeWidth={arrowWidth}
         fill="none"
         data-element-type="shape"
+        // 如果存在 maskId，则应用遮罩
+        mask={maskId ? `url(#${maskId})` : undefined}
         strokeDasharray={
           relation.lineStyle === 'solid'
             ? undefined
@@ -750,7 +816,7 @@ export const SequenceInteractionFlow: ComponentType<
       </Path>,
     );
 
-    // 绘制箭头头部
+    // 绘制箭头头部 (箭头不需要遮罩，保持原样)
     const effectiveArrowSize = ARROW_SIZE;
     const direction = relation.direction ?? 'forward';
 
@@ -785,52 +851,8 @@ export const SequenceInteractionFlow: ComponentType<
       }
     });
 
-    // 绘制消息标签
-    if (relation.label) {
-      const labelPoint = getLabelPosition(points);
-
-      if (labelPoint) {
-        const labelX = labelPoint[0];
-        const labelY = labelPoint[1] - LABEL_OFFSET_Y;
-
-        const labelBounds = getElementBounds(
-          <ItemLabel
-            indexes={[relIndex]}
-            fontSize={FONT_SIZE}
-            fontWeight="normal"
-          >
-            {relation.label}
-          </ItemLabel>,
-        );
-
-        // 标签背景
-        decorElements.push(
-          <ShapesGroup data-indexes={[relIndex]}>
-            <Rect
-              x={labelX - labelBounds.width / 2 - LABEL_BG_PADDING_H}
-              y={labelY - labelBounds.height / 2 - LABEL_BG_PADDING_V}
-              width={labelBounds.width + LABEL_BG_PADDING_H * 2}
-              height={labelBounds.height + LABEL_BG_PADDING_V * 2}
-              fill={colorBg}
-              rx={CORNER_RADIUS_LABEL}
-            />
-            <ItemLabel
-              indexes={[relIndex]}
-              x={labelX - labelBounds.width / 2}
-              y={labelY - labelBounds.height / 2}
-              width={labelBounds.width}
-              height={labelBounds.height}
-              fontSize={FONT_SIZE}
-              fontWeight="normal"
-              alignHorizontal="center"
-              alignVertical="middle"
-              fill={colorText}
-            >
-              {relation.label}
-            </ItemLabel>
-          </ShapesGroup>,
-        );
-      }
+    if (labelRenderNode) {
+      decorElements.push(labelRenderNode);
     }
   });
 
