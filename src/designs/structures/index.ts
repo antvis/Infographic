@@ -31,6 +31,7 @@ export * from './sequence-cylinders-3d';
 export * from './sequence-filter-mesh';
 export * from './sequence-funnel';
 export * from './sequence-horizontal-zigzag';
+export * from './sequence-interaction';
 export * from './sequence-mountain';
 export * from './sequence-pyramid';
 export * from './sequence-roadmap-vertical';

@@ -60,6 +60,7 @@ export const RelationSchema: ObjectSchema = object(
     direction: enumOf(['forward', 'both', 'none']),
     showArrow: enumOf(['true', 'false']),
     arrowType: enumOf(['arrow', 'triangle', 'diamond']),
+    lineStyle: enumOf(['solid', 'dashed']),
   },
   { allowUnknown: true },
 );

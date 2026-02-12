@@ -4,7 +4,7 @@ import { JSXNode, TextProps } from '../jsx';
 import { DEFAULT_FONT } from '../renderer';
 import { encodeFontFamily } from './font';
 
-let FONT_EXTEND_FACTOR = 1.01;
+let FONT_EXTEND_FACTOR = 1.015;
 
 export const setFontExtendFactor = (factor: number) => {
   FONT_EXTEND_FACTOR = factor;

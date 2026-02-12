@@ -3,8 +3,8 @@ import { mapWithSchema } from './mapper';
 import { RelationSchema } from './schema';
 import type { SyntaxError, SyntaxNode } from './types';
 
-const RELATION_TOKEN = /[<>=o.x-]{2,}/;
-const ARROW_TOKEN = /[<>=o.x-]{2,}/g;
+const RELATION_TOKEN = /(?:[<>o.x-]{2,}|[<>=]{2,})/;
+const ARROW_TOKEN = /(?:[<>o.x-]{2,}|[<>=]{2,})/g;
 
 interface ParsedNode {
   id: string;

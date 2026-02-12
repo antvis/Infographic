@@ -10,7 +10,7 @@ import {
   TemplateSchema,
   ThemeSchema,
 } from './schema';
-import type { SyntaxNode, SyntaxParseResult } from './types';
+import type { ObjectSchema, SyntaxNode, SyntaxParseResult } from './types';
 
 function normalizeItems(items: ItemDatum[]) {
   const seen = new Set<string>();
@@ -112,24 +112,44 @@ export function parseSyntax(input: string): SyntaxParseResult {
       );
       if (parsed.relations.length > 0 || parsed.items.length > 0) {
         const current = (options.data ?? {}) as Record<string, any>;
-        const existingItems = Array.isArray(current.items)
-          ? (current.items as ItemDatum[])
-          : [];
-        const normalizedItems = normalizeItems(existingItems);
-        const itemMap = new Map<string, ItemDatum>();
-        normalizedItems.forEach((item) => {
-          if (item.id) itemMap.set(item.id, item);
-        });
-        parsed.items.forEach((item) => {
-          const existing = itemMap.get(item.id as string);
-          if (existing) {
-            if (!existing.label && item.label) existing.label = item.label;
-          } else {
-            normalizedItems.push(item);
-            itemMap.set(item.id as string, item);
+
+        // 优先使用已存在的数据列表 (sequences, lists, etc.)
+        const dataKeys = Object.keys(
+          (DataSchema as ObjectSchema).fields,
+        ).filter((key) => key !== 'items' && key !== 'relations');
+        let hasStructuredData = false;
+
+        // 尝试找到一个非空的数据源
+        for (const key of dataKeys) {
+          if (Array.isArray(current[key]) && current[key].length > 0) {
+            hasStructuredData = true;
+            break;
           }
-        });
-        current.items = normalizedItems;
+        }
+
+        // 如果没有找到其他数据源，才尝试合并 items
+        if (!hasStructuredData) {
+          const existingItems = Array.isArray(current.items)
+            ? (current.items as ItemDatum[])
+            : [];
+
+          const normalizedItems = normalizeItems(existingItems);
+          const itemMap = new Map<string, ItemDatum>();
+          normalizedItems.forEach((item) => {
+            if (item.id) itemMap.set(item.id, item);
+          });
+          parsed.items.forEach((item) => {
+            const existing = itemMap.get(item.id as string);
+            if (existing) {
+              if (!existing.label && item.label) existing.label = item.label;
+            } else {
+              normalizedItems.push(item);
+              itemMap.set(item.id as string, item);
+            }
+          });
+          current.items = normalizedItems;
+        }
+
         current.relations = parsed.relations;
         options.data = current as any;
       }

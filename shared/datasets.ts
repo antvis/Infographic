@@ -637,4 +637,88 @@ export const DATASET = {
           return { label, value: Number.isFinite(value) ? value : 0 };
         }),
   },
+  TCP_HANDSHAKE: {
+    title: 'TCP三次握手',
+    desc: '客户端与服务器建立可靠连接的过程',
+    items: [
+      {
+        label: '客户端',
+        icon: 'mingcute/computer-line',
+        children: [
+          {
+            id: 'client-closed',
+            label: 'CLOSED',
+            icon: 'mingcute/close-circle-line',
+            step: 0,
+          },
+          {
+            id: 'client-syn-sent',
+            label: 'SYN-SENT',
+            icon: 'mingcute/send-line',
+            step: 2,
+          },
+          {
+            id: 'client-established',
+            label: 'ESTABLISHED',
+            icon: 'mingcute/check-circle-line',
+            step: 4,
+          },
+        ],
+      },
+      {
+        label: '服务器',
+        icon: 'mingcute/server-line',
+        children: [
+          {
+            id: 'server-closed',
+            label: 'CLOSED',
+            icon: 'mingcute/close-circle-line',
+            step: 0,
+          },
+          {
+            id: 'server-listen',
+            label: 'LISTEN',
+            icon: 'mingcute/ear-line',
+            step: 1,
+          },
+          {
+            id: 'server-syn-rcvd',
+            label: 'SYN-RCVD',
+            icon: 'mingcute/receive-line',
+            step: 3,
+          },
+          {
+            id: 'server-established',
+            label: 'ESTABLISHED',
+            icon: 'mingcute/check-circle-line',
+            step: 4,
+          },
+        ],
+      },
+    ],
+    relations: [
+      {
+        from: 'client-closed',
+        to: 'server-listen',
+        label: 'SYN=1, seq=x',
+      },
+      {
+        from: 'server-listen',
+        to: 'client-syn-sent',
+        label: 'SYN=1, ACK=1, seq=y, ack=x+1',
+      },
+      {
+        from: 'client-syn-sent',
+        to: 'server-syn-rcvd',
+        label: 'ACK=1, seq=x+1, ack=y+1',
+      },
+      {
+        from: 'client-established',
+        to: 'server-established',
+        label: '数据传输',
+        direction: 'both',
+        lineStyle: 'solid',
+      },
+    ],
+  },
 };

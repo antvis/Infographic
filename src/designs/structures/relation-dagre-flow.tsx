@@ -1,10 +1,18 @@
 import { DagreLayout } from '@antv/layout';
 import type { ComponentType, JSXElement } from '../../jsx';
-import { Defs, getElementBounds, Group, Path, Polygon, Text } from '../../jsx';
+import { Defs, getElementBounds, Group, Path, Text } from '../../jsx';
 import type { ItemDatum, RelationData, RelationEdgeDatum } from '../../types';
 import { BtnAdd, BtnsGroup, ItemsGroup } from '../components';
 import { FlexLayout } from '../layouts';
-import { getColorPrimary, getPaletteColor, getThemeColors } from '../utils';
+import {
+  createArrowElements,
+  createRoundedPath,
+  createStraightPath,
+  getColorPrimary,
+  getMidPoint,
+  getPaletteColor,
+  getThemeColors,
+} from '../utils';
 import { registerStructure } from './registry';
 import type { BaseStructureProps } from './types';
 
@@ -332,183 +340,7 @@ export const RelationDagreFlow: ComponentType<RelationDagreFlowProps> = (
         : '1s';
 
     const straightCornerRadius = edgeCornerRadius;
-    const createStraightPath = (
-      points: [number, number][],
-      dx: number,
-      dy: number,
-    ) =>
-      points
-        .map(([x, y], index) => {
-          const prefix = index === 0 ? 'M' : 'L';
-          return `${prefix} ${x + dx} ${y + dy}`;
-        })
-        .join(' ');
 
-    const createRoundedPath = (
-      points: [number, number][],
-      radius: number,
-      dx: number,
-      dy: number,
-    ) => {
-      if (points.length < 2) return '';
-      const clamp = (value: number, min: number, max: number) =>
-        Math.min(max, Math.max(min, value));
-      const toPoint = ([x, y]: [number, number]) => ({
-        x: x + dx,
-        y: y + dy,
-      });
-      const output: string[] = [];
-      const first = toPoint(points[0]);
-      output.push(`M ${first.x} ${first.y}`);
-
-      if (points.length === 2) {
-        const last = toPoint(points[1]);
-        output.push(`L ${last.x} ${last.y}`);
-        return output.join(' ');
-      }
-
-      for (let i = 1; i < points.length - 1; i += 1) {
-        const prev = points[i - 1];
-        const curr = points[i];
-        const next = points[i + 1];
-        const v0x = curr[0] - prev[0];
-        const v0y = curr[1] - prev[1];
-        const v1x = next[0] - curr[0];
-        const v1y = next[1] - curr[1];
-        const d0 = Math.hypot(v0x, v0y);
-        const d1 = Math.hypot(v1x, v1y);
-        if (d0 === 0 || d1 === 0) {
-          const currPoint = toPoint(curr);
-          output.push(`L ${currPoint.x} ${currPoint.y}`);
-          continue;
-        }
-        const r = clamp(radius, 0, Math.min(d0, d1) / 2);
-        if (r === 0) {
-          const currPoint = toPoint(curr);
-          output.push(`L ${currPoint.x} ${currPoint.y}`);
-          continue;
-        }
-        const u0x = v0x / d0;
-        const u0y = v0y / d0;
-        const u1x = v1x / d1;
-        const u1y = v1y / d1;
-        const start = toPoint([curr[0] - u0x * r, curr[1] - u0y * r]);
-        const end = toPoint([curr[0] + u1x * r, curr[1] + u1y * r]);
-        output.push(`L ${start.x} ${start.y}`);
-        const currPoint = toPoint(curr);
-        output.push(`Q ${currPoint.x} ${currPoint.y} ${end.x} ${end.y}`);
-      }
-
-      const last = toPoint(points[points.length - 1]);
-      output.push(`L ${last.x} ${last.y}`);
-      return output.join(' ');
-    };
-    const createArrowElements = (
-      x: number,
-      y: number,
-      angle: number,
-      type: 'arrow' | 'triangle' | 'diamond',
-      fillColor: string,
-    ): JSXElement[] => {
-      const ux = Math.cos(angle);
-      const uy = Math.sin(angle);
-      const px = -uy;
-      const py = ux;
-      const length = arrowSize;
-      const halfWidth = arrowSize * 0.55;
-
-      if (type === 'arrow') {
-        const leftX = x - ux * length + px * halfWidth;
-        const leftY = y - uy * length + py * halfWidth;
-        const rightX = x - ux * length - px * halfWidth;
-        const rightY = y - uy * length - py * halfWidth;
-        return [
-          <Path
-            d={`M ${leftX} ${leftY} L ${x} ${y} L ${rightX} ${rightY}`}
-            stroke={fillColor}
-            strokeWidth={Math.max(1.5, edgeWidth)}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
-          />,
-        ];
-      }
-
-      if (type === 'diamond') {
-        const diamondLength = length * 1.25;
-        const diamondWidth = halfWidth * 0.75;
-        const midX = x - ux * diamondLength * 0.5;
-        const midY = y - uy * diamondLength * 0.5;
-        const diamondPoints = [
-          { x, y },
-          { x: midX + px * diamondWidth, y: midY + py * diamondWidth },
-          { x: x - ux * diamondLength, y: y - uy * diamondLength },
-          { x: midX - px * diamondWidth, y: midY - py * diamondWidth },
-        ];
-        return [
-          <Polygon
-            points={diamondPoints}
-            fill={fillColor}
-            stroke={fillColor}
-            strokeWidth={Math.max(1, edgeWidth * 0.8)}
-          />,
-        ];
-      }
-
-      const trianglePoints = [
-        { x, y },
-        {
-          x: x - ux * length + px * halfWidth,
-          y: y - uy * length + py * halfWidth,
-        },
-        {
-          x: x - ux * length - px * halfWidth,
-          y: y - uy * length - py * halfWidth,
-        },
-      ];
-      return [
-        <Polygon
-          points={trianglePoints}
-          fill={fillColor}
-          stroke={fillColor}
-          strokeWidth={Math.max(1, edgeWidth * 0.8)}
-        />,
-      ];
-    };
-    const getMidPoint = (points: [number, number][]) => {
-      if (points.length === 0) return null;
-      if (points.length === 1) return points[0];
-      let total = 0;
-      const segments: {
-        length: number;
-        start: [number, number];
-        end: [number, number];
-      }[] = [];
-      for (let i = 0; i < points.length - 1; i += 1) {
-        const start = points[i];
-        const end = points[i + 1];
-        const length = Math.hypot(end[0] - start[0], end[1] - start[1]);
-        segments.push({ length, start, end });
-        total += length;
-      }
-      if (total === 0) return points[0];
-      let target = total / 2;
-      for (let i = 0; i < segments.length; i += 1) {
-        const segment = segments[i];
-        if (target <= segment.length || i === segments.length - 1) {
-          const ratio =
-            segment.length === 0
-              ? 0
-              : Math.max(0, Math.min(1, target / segment.length));
-          return [
-            segment.start[0] + (segment.end[0] - segment.start[0]) * ratio,
-            segment.start[1] + (segment.end[1] - segment.start[1]) * ratio,
-          ] as [number, number];
-        }
-        target -= segment.length;
-      }
-      return points[Math.floor(points.length / 2)];
-    };
     const getOrthEdgeEndpoints = (sourceId: string, targetId: string) => {
       const source = nodeLayoutById.get(sourceId);
       const target = nodeLayoutById.get(targetId);
@@ -733,6 +565,8 @@ export const RelationDagreFlow: ComponentType<RelationDagreFlowProps> = (
             angle,
             edgeArrowType,
             arrowFill,
+            edgeWidth,
+            arrowSize,
           );
           decorElements.push(...arrowElements);
         }
@@ -748,6 +582,8 @@ export const RelationDagreFlow: ComponentType<RelationDagreFlowProps> = (
             angle,
             edgeArrowType,
             arrowFill,
+            edgeWidth,
+            arrowSize,
           );
           decorElements.push(...arrowElements);
         }

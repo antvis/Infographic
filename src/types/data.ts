@@ -56,6 +56,7 @@ export interface RelationEdgeDatum extends BaseDatum {
   direction?: 'forward' | 'both' | 'none';
   showArrow?: boolean;
   arrowType?: 'arrow' | 'triangle' | 'diamond';
+  lineStyle?: 'solid' | 'dashed';
 }
 
 /**
