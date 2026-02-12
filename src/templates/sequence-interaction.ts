@@ -49,19 +49,19 @@ const structures = {
   default: {
     ...baseStructureAttrs,
     showLifeline: true,
-    nodeGap: 60,
+    nodeGap: 40,
   },
   // 紧凑：更小间距
   compact: {
     ...baseStructureAttrs,
     showLifeline: true,
-    nodeGap: 30,
+    nodeGap: 20,
   },
   // 宽松：更大间距
   wide: {
     ...baseStructureAttrs,
     showLifeline: true,
-    nodeGap: 80,
+    nodeGap: 60,
   },
 } as const;
 

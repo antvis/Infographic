@@ -1,7 +1,14 @@
 import type { ComponentType, JSXElement } from '../../jsx';
 import { Defs, getElementBounds, Group, Path, Rect, Text } from '../../jsx';
 import type { RelationEdgeDatum } from '../../types';
-import { BtnAdd, BtnRemove, BtnsGroup, ItemsGroup } from '../components';
+import {
+  BtnAdd,
+  BtnRemove,
+  BtnsGroup,
+  ItemLabel,
+  ItemsGroup,
+  ShapesGroup,
+} from '../components';
 import { FlexLayout } from '../layouts';
 import {
   createArrowElements,
@@ -91,6 +98,7 @@ const DEFAULT_LANE_HEADER_HEIGHT = 60;
 const DEFAULT_ITEM_WIDTH = 120;
 const DEFAULT_ITEM_HEIGHT = 50;
 
+const FONT_SIZE = 14;
 const ARROW_SIZE = 14;
 const CORNER_RADIUS_NODE = 6;
 const CORNER_RADIUS_LABEL = 4;
@@ -371,7 +379,7 @@ export const SequenceInteractionFlow: ComponentType<
   relations.forEach((relation) => {
     if (relation.label) {
       const labelBounds = getElementBounds(
-        <Text fontSize={12} fontWeight="normal">
+        <Text fontSize={FONT_SIZE} fontWeight="normal">
           {relation.label}
         </Text>,
       );
@@ -723,9 +731,11 @@ export const SequenceInteractionFlow: ComponentType<
         fill="none"
         data-element-type="shape"
         strokeDasharray={
-          (relation.lineStyle ?? edgeStyle) === 'dashed' || animated
-            ? '5,5'
-            : undefined
+          relation.lineStyle === 'solid'
+            ? undefined
+            : (relation.lineStyle ?? edgeStyle) === 'dashed' || animated
+              ? '5,5'
+              : undefined
         }
       >
         {animated && (
@@ -784,37 +794,41 @@ export const SequenceInteractionFlow: ComponentType<
         const labelY = labelPoint[1] - LABEL_OFFSET_Y;
 
         const labelBounds = getElementBounds(
-          <Text fontSize={12} fontWeight="normal">
+          <ItemLabel
+            indexes={[relIndex]}
+            fontSize={FONT_SIZE}
+            fontWeight="normal"
+          >
             {relation.label}
-          </Text>,
+          </ItemLabel>,
         );
 
         // 标签背景
         decorElements.push(
-          <Rect
-            x={labelX - labelBounds.width / 2 - LABEL_BG_PADDING_H}
-            y={labelY - labelBounds.height / 2 - LABEL_BG_PADDING_V}
-            width={labelBounds.width + LABEL_BG_PADDING_H * 2}
-            height={labelBounds.height + LABEL_BG_PADDING_V * 2}
-            fill={colorBg}
-            rx={CORNER_RADIUS_LABEL}
-          />,
-        );
-
-        decorElements.push(
-          <Text
-            x={labelX - labelBounds.width / 2}
-            y={labelY - labelBounds.height / 2}
-            width={labelBounds.width}
-            height={labelBounds.height}
-            fontSize={12}
-            fontWeight="normal"
-            alignHorizontal="center"
-            alignVertical="middle"
-            fill={colorText}
-          >
-            {relation.label}
-          </Text>,
+          <ShapesGroup data-indexes={[relIndex]}>
+            <Rect
+              x={labelX - labelBounds.width / 2 - LABEL_BG_PADDING_H}
+              y={labelY - labelBounds.height / 2 - LABEL_BG_PADDING_V}
+              width={labelBounds.width + LABEL_BG_PADDING_H * 2}
+              height={labelBounds.height + LABEL_BG_PADDING_V * 2}
+              fill={colorBg}
+              rx={CORNER_RADIUS_LABEL}
+            />
+            <ItemLabel
+              indexes={[relIndex]}
+              x={labelX - labelBounds.width / 2}
+              y={labelY - labelBounds.height / 2}
+              width={labelBounds.width}
+              height={labelBounds.height}
+              fontSize={FONT_SIZE}
+              fontWeight="normal"
+              alignHorizontal="center"
+              alignVertical="middle"
+              fill={colorText}
+            >
+              {relation.label}
+            </ItemLabel>
+          </ShapesGroup>,
         );
       }
     }
