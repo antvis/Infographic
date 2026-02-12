@@ -246,6 +246,9 @@ const calculateEdgePath = (
 export const SequenceInteractionFlow: ComponentType<
   SequenceInteractionProps
 > = (props) => {
+  // 生成实例级唯一ID以避免多图表冲突
+  const instanceId = Math.random().toString(36).slice(2, 9);
+
   const {
     Title,
     Item,
@@ -677,7 +680,7 @@ export const SequenceInteractionFlow: ComponentType<
     let sourceArrowColor = themePrimary || '#999999';
 
     // 如果是渐变模式，使用渐变色
-    const gradientId = `arrow-gradient-${relIndex}`;
+    const gradientId = `arrow-gradient-${instanceId}-${relIndex}`;
     if (edgeColorMode === 'gradient') {
       edgeStroke = `url(#${gradientId})`;
       targetArrowColor = toColor;
@@ -722,7 +725,7 @@ export const SequenceInteractionFlow: ComponentType<
         const bgW = labelBounds.width;
         const bgH = labelBounds.height;
 
-        maskId = `edge-mask-${relIndex}`;
+        maskId = `edge-mask-${instanceId}-${relIndex}`;
 
         // 将 Mask 推入 defsElements
         // 逻辑：白色区域显示(全图)，黑色区域隐藏(标签位置)
