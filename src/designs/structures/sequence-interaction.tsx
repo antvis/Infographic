@@ -24,6 +24,11 @@ export interface InteractionChildDatum {
   label?: string;
   desc?: string;
   icon?: string;
+  /**
+   * 手动指定节点的垂直顺序（层级），默认为数组索引
+   * 相同 step 的节点会处于同一高度
+   */
+  step?: number;
 }
 
 /**
@@ -307,11 +312,17 @@ export const SequenceInteractionFlow: ComponentType<
   // 泳道列表（每个顶层item是一个泳道）
   const lanes = items as InteractionLaneDatum[];
 
-  // 计算最大行数（所有泳道中children最多的数量），至少为1
-  const maxRows = Math.max(
-    1,
-    ...lanes.map((lane) => lane.children?.length ?? 0),
-  );
+  // 计算最大行数（所有泳道中 children 的最大 step 或 索引），至少为1
+  let maxStep = 0;
+  lanes.forEach((lane) => {
+    lane.children?.forEach((child, index) => {
+      const currentStep = child.step ?? index;
+      if (currentStep > maxStep) {
+        maxStep = currentStep;
+      }
+    });
+  });
+  const maxRows = Math.max(1, maxStep + 1);
 
   const nodeLayoutById = new Map<string, NodeLayout>();
 
@@ -479,8 +490,11 @@ export const SequenceInteractionFlow: ComponentType<
   // 绘制节点（按行对齐）
   lanes.forEach((lane, laneIndex) => {
     lane.children?.forEach((child, rowIndex) => {
+      // 使用 step 属性作为行索引，如果未定义则回退到数组索引
+      const effectiveRowIndex = child.step ?? rowIndex;
+
       const centerX = getLaneCenterX(laneIndex);
-      const centerY = getRowY(rowIndex);
+      const centerY = getRowY(effectiveRowIndex);
 
       const x = centerX - itemWidth / 2;
       const y = centerY - itemHeight / 2;
@@ -494,7 +508,7 @@ export const SequenceInteractionFlow: ComponentType<
         centerX,
         centerY,
         laneIndex,
-        rowIndex,
+        rowIndex: effectiveRowIndex,
       });
 
       const nodeColor = getPaletteColor(options, [laneIndex]);
@@ -583,9 +597,18 @@ export const SequenceInteractionFlow: ComponentType<
 
     // 每个泳道底部的添加节点按钮
     const childCount = lane.children?.length ?? 0;
-    const lastRowIndex = Math.max(0, childCount - 1);
+
+    // 找出当前泳道最大的 step
+    let lastEffectRowIndex = -1;
+    lane.children?.forEach((child, index) => {
+      const s = child.step ?? index;
+      if (s > lastEffectRowIndex) lastEffectRowIndex = s;
+    });
+
     const lastRowY =
-      childCount > 0 ? getRowY(lastRowIndex) : padding + headerOffset;
+      lastEffectRowIndex >= 0
+        ? getRowY(lastEffectRowIndex)
+        : padding + headerOffset;
     const addNodeY =
       childCount > 0
         ? lastRowY + itemHeight / 2 + BTN_LANE_ADD_Gap
