@@ -23,7 +23,7 @@ type StopType =
   | symbol
   | undefined
   | null
-  | Function
+  | ((...args: any[]) => any)
   | Array<any>;
 
 // 3. 辅助：拼接两个路径片段 (K.P)
