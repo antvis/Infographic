@@ -1,4 +1,4 @@
-import { isEqual, isPlainObject } from 'lodash-es';
+import { cloneDeep, isEqual, isPlainObject } from 'lodash-es';
 
 export interface ApplyOptionUpdatesOptions {
   /** Whether to notify parent paths of changes (bubbling) */
@@ -23,7 +23,17 @@ export function applyOptionUpdates(
 ): void {
   const { bubbleUp = false, collector } = options ?? {};
 
-  applyOptionUpdatesInternal(target, source, basePath, collector, bubbleUp);
+  const hasChange = applyOptionUpdatesInternal(
+    target,
+    source,
+    basePath,
+    collector,
+    bubbleUp,
+  );
+
+  if (basePath === '' && hasChange && bubbleUp && collector) {
+    collector('', cloneDeep(target), undefined);
+  }
 }
 
 /**
@@ -40,6 +50,10 @@ function applyOptionUpdatesInternal(
   let hasChange = false;
 
   Object.keys(source).forEach((key) => {
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+      return;
+    }
+
     const fullPath = basePath ? `${basePath}.${key}` : key;
     const updateValue = source[key];
     const oldValue = target[key];
@@ -85,7 +99,7 @@ function applyOptionUpdatesInternal(
   // The recursion naturally ensures this happens in "deepest-first" (post-order) sequence.
   if (hasChange && bubbleUp && basePath !== '') {
     // Current target is now fully updated for this scope.
-    collector?.(basePath, target, undefined);
+    collector?.(basePath, cloneDeep(target), undefined);
   }
 
   return hasChange;

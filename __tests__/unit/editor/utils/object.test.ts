@@ -186,6 +186,33 @@ describe('applyOptionUpdates', () => {
     const collector = (path: string) => calls.push(path);
     applyOptionUpdates(target, source, '', { bubbleUp: true, collector });
     // 叶子节点先触发，然后是父路径（按深度降序）
-    expect(calls).toEqual(['a.b.c', 'a.b', 'a']);
+    expect(calls).toEqual(['a.b.c', 'a.b', 'a', '']);
+  });
+
+  it('prevents prototype pollution', () => {
+    const target = {};
+    const source = JSON.parse('{"__proto__": {"polluted": true}}');
+    applyOptionUpdates(target, source);
+    expect(({} as any).polluted).toBeUndefined();
+    expect(target).toEqual({});
+  });
+
+  it('collects cloned values during bubble up to prevent side effects', () => {
+    const target = { a: { b: 1 } };
+    const source = { a: { b: 2 } };
+    let capturedValue: any;
+    const collector = (_path: string, val: any) => {
+      if (_path === 'a') {
+        capturedValue = val;
+      }
+    };
+    applyOptionUpdates(target, source, '', { bubbleUp: true, collector });
+
+    expect(capturedValue).toEqual({ b: 2 });
+    expect(capturedValue).not.toBe(target.a); // Should be a different reference
+
+    // Verify modification to captured value doesn't affect target
+    capturedValue.b = 3;
+    expect(target.a.b).toBe(2);
   });
 });
