@@ -1,3 +1,5 @@
+import type { InfographicOptionPath } from '../../options';
+
 /**
  * Sync callback
  * @param newValue The new value after modification
@@ -14,7 +16,7 @@ export interface ISyncRegistry {
    * @returns unregister function
    */
   register(
-    path: string,
+    path: InfographicOptionPath | (string & {}),
     handler: SyncHandler,
     options?: { immediate?: boolean },
   ): () => void;

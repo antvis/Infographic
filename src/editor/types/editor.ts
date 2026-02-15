@@ -1,3 +1,4 @@
+import type { InfographicOptionPath } from '../../options';
 import type { ICommandManager } from './command';
 import type { IInteractionManager } from './interaction';
 import type { IPluginManager } from './plugin';
@@ -13,7 +14,7 @@ export interface IEditor {
 
   getDocument(): SVGSVGElement;
   registerSync(
-    path: string,
+    path: InfographicOptionPath | (string & {}),
     handler: SyncHandler,
     options?: { immediate?: boolean },
   ): () => void;

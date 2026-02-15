@@ -17,5 +17,6 @@ export * from './recognizer';
 export * from './style';
 export * from './svg';
 export * from './text';
+export * from './types';
 export * from './uuid';
 export * from './viewbox';

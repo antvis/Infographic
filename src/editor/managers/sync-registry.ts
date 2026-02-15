@@ -1,4 +1,5 @@
 import { get } from 'lodash-es';
+import type { InfographicOptionPath } from '../../options';
 import { ISyncRegistry, SyncHandler } from '../types';
 
 type OptionsGetter = () => any;
@@ -12,7 +13,7 @@ export class SyncRegistry implements ISyncRegistry {
   constructor(private getOptions: OptionsGetter) {}
 
   register(
-    path: string,
+    path: InfographicOptionPath | (string & {}),
     handler: SyncHandler,
     options?: { immediate?: boolean },
   ): () => void {

@@ -2,6 +2,7 @@ import type { DesignOptions, ParsedDesignsOptions } from '../designs';
 import type { ElementProps, IInteraction, IPlugin } from '../editor';
 import type { ThemeConfig } from '../themes';
 import type { Data, Padding, ParsedData } from '../types';
+import type { Path } from '../utils';
 
 export interface InfographicOptions {
   /** 容器，可以是选择器或者 HTMLElement */
@@ -66,3 +67,9 @@ interface SVGOptions {
   /** 是否启用背景 */
   background?: boolean;
 }
+
+/**
+ * All valid property paths for Infographic Options.
+ * Use this to validate paths in SyncRegistry and other places.
+ */
+export type InfographicOptionPath = Path<UpdatableInfographicOptions>;
