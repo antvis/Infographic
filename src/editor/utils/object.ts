@@ -1,4 +1,4 @@
-import { cloneDeep, get, isEqual, isPlainObject } from 'lodash-es';
+import { cloneDeep, isEqual, isPlainObject } from 'lodash-es';
 
 export interface ApplyOptionUpdatesOptions {
   /** Whether to notify parent paths of changes (bubbling) */
@@ -22,85 +22,95 @@ export function applyOptionUpdates(
   options?: ApplyOptionUpdatesOptions,
 ): void {
   const { bubbleUp = false, collector } = options ?? {};
-  // Set to store unique parent paths that need notification
-  const parentPathsToNotify = new Set<string>();
 
-  applyOptionUpdatesInternal(
+  const hasChange = applyOptionUpdatesInternal(
     target,
     source,
     basePath,
     collector,
     bubbleUp,
-    parentPathsToNotify,
   );
 
-  // Bubbling notification: from the deepest parent path to the shallowest
-  if (bubbleUp && collector && parentPathsToNotify.size > 0) {
-    // Sort by path depth in descending order (deepest first)
-    const sortedPaths = Array.from(parentPathsToNotify).sort((a, b) => {
-      const depthA = a === '' ? 0 : a.split('.').length;
-      const depthB = b === '' ? 0 : b.split('.').length;
-      return depthB - depthA;
-    });
-    for (const parentPath of sortedPaths) {
-      const newVal = parentPath ? get(target, parentPath) : target;
-      // For parent paths, we provide the cloned new value.
-      // oldVal is passed as undefined as tracking branch node state is complex.
-      collector(parentPath, cloneDeep(newVal), undefined);
-    }
+  if (basePath === '' && hasChange && bubbleUp && collector) {
+    collector('', cloneDeep(target), undefined);
   }
 }
 
+/**
+ * Internal recursive function.
+ * Returns true if any change occurred within this branch (or its children).
+ */
 function applyOptionUpdatesInternal(
   target: any,
   source: any,
   basePath: string,
   collector: ((path: string, newVal: any, oldVal: any) => void) | undefined,
   bubbleUp: boolean,
-  parentPathsToNotify: Set<string>,
-): void {
+): boolean {
+  let hasChange = false;
+
   Object.keys(source).forEach((key) => {
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+      return;
+    }
+
     const fullPath = basePath ? `${basePath}.${key}` : key;
     const updateValue = source[key];
     const oldValue = target[key];
+    let childChanged = false;
 
     if (updateValue === undefined) {
-      delete target[key];
-      collector?.(fullPath, undefined, oldValue);
-      if (bubbleUp) collectParentPaths(basePath, parentPathsToNotify);
+      // Handle deletion: Only delete and notify if the key actually exists
+      if (key in target) {
+        delete target[key];
+        collector?.(fullPath, undefined, oldValue);
+        childChanged = true;
+      }
     } else if (isPlainObject(updateValue)) {
-      if (!isPlainObject(target[key])) {
+      // Handle nested object
+      const oldValueIsObject = isPlainObject(target[key]);
+      if (!oldValueIsObject) {
         target[key] = {};
       }
-      applyOptionUpdatesInternal(
+
+      const grandChildChanged = applyOptionUpdatesInternal(
         target[key],
         updateValue,
         fullPath,
         collector,
         bubbleUp,
-        parentPathsToNotify,
       );
+
+      if (!oldValueIsObject) {
+        // Overwriting a primitive with an object is always a change.
+        childChanged = true;
+        // If the object was empty (grandChildChanged is false), we still need to report it.
+        if (!grandChildChanged) {
+          collector?.(fullPath, target[key], oldValue);
+        }
+      } else {
+        childChanged = grandChildChanged;
+      }
     } else {
+      // Handle primitive update
       target[key] = updateValue;
       if (!isEqual(updateValue, oldValue)) {
         collector?.(fullPath, updateValue, oldValue);
-        if (bubbleUp) collectParentPaths(basePath, parentPathsToNotify);
+        childChanged = true;
       }
     }
+
+    if (childChanged) {
+      hasChange = true;
+    }
   });
-}
 
-/**
- * Collects all parent paths of a given path and adds them to the provided set.
- */
-function collectParentPaths(path: string, set: Set<string>): void {
-  if (!path) {
-    set.add(''); // Root path
-    return;
+  // Bubbling: Notify if any child changed in this branch
+  // The recursion naturally ensures this happens in "deepest-first" (post-order) sequence.
+  if (hasChange && bubbleUp && basePath !== '') {
+    // Current target is now fully updated for this scope.
+    collector?.(basePath, cloneDeep(target), undefined);
   }
 
-  const parts = path.split('.');
-  for (let i = parts.length; i >= 0; i--) {
-    set.add(parts.slice(0, i).join('.'));
-  }
+  return hasChange;
 }

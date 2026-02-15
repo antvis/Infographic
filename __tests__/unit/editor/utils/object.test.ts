@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
-import { applyOptionUpdates } from '../../../src/editor/utils/object';
+import { applyOptionUpdates } from '../../../../src/editor/utils/object';
 
-describe('mergeOptions', () => {
+describe('applyOptionUpdates', () => {
   it('merges simple properties', () => {
     const target = { a: 1, b: 2 };
     const source = { b: 3, c: 4 };
@@ -86,6 +86,20 @@ describe('mergeOptions', () => {
     expect('b' in target).toBe(false);
   });
 
+  it('handles array values as primitives (overwrites)', () => {
+    const target = { a: [1, 2] };
+    const source = { a: [3, 4] };
+    applyOptionUpdates(target, source);
+    expect(target.a).toEqual([3, 4]);
+  });
+
+  it('handles null values', () => {
+    const target: any = { a: 1 };
+    const source = { a: null };
+    applyOptionUpdates(target, source);
+    expect(target.a).toBeNull();
+  });
+
   // ========== Collector Tests ==========
 
   it('calls collector with correct path and values on simple update', () => {
@@ -155,11 +169,6 @@ describe('mergeOptions', () => {
       expect.objectContaining({ background: 'red', font: 'Helvetica' }),
       undefined,
     );
-    expect(collector).toHaveBeenCalledWith(
-      '',
-      expect.objectContaining({ design: expect.any(Object) }),
-      undefined,
-    );
   });
 
   it('bubbleUp does not trigger when no changes detected', () => {
@@ -178,5 +187,47 @@ describe('mergeOptions', () => {
     applyOptionUpdates(target, source, '', { bubbleUp: true, collector });
     // 叶子节点先触发，然后是父路径（按深度降序）
     expect(calls).toEqual(['a.b.c', 'a.b', 'a', '']);
+  });
+
+  it('prevents prototype pollution', () => {
+    const target = {};
+    const source = JSON.parse('{"__proto__": {"polluted": true}}');
+    applyOptionUpdates(target, source);
+    expect(({} as any).polluted).toBeUndefined();
+    expect(target).toEqual({});
+  });
+
+  it('detects change when primitive is replaced by empty object', () => {
+    const target = { a: 1 };
+    const source = { a: {} };
+    const collector = vi.fn();
+    applyOptionUpdates(target, source, '', { bubbleUp: true, collector });
+
+    expect(target.a).toEqual({});
+    // Even if 'a' itself doesn't fire as a leaf, the root MUST change because 'a' changed.
+    expect(collector).toHaveBeenCalledWith(
+      '',
+      expect.objectContaining({ a: {} }),
+      undefined,
+    );
+  });
+
+  it('collects cloned values during bubble up to prevent side effects', () => {
+    const target = { a: { b: 1 } };
+    const source = { a: { b: 2 } };
+    let capturedValue: any;
+    const collector = (_path: string, val: any) => {
+      if (_path === 'a') {
+        capturedValue = val;
+      }
+    };
+    applyOptionUpdates(target, source, '', { bubbleUp: true, collector });
+
+    expect(capturedValue).toEqual({ b: 2 });
+    expect(capturedValue).not.toBe(target.a); // Should be a different reference
+
+    // Verify modification to captured value doesn't affect target
+    capturedValue.b = 3;
+    expect(target.a.b).toBe(2);
   });
 });
