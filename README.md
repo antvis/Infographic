@@ -128,12 +128,12 @@ AntV Infographic provides skills to integrate with AI agents:
 /plugin install antv-infographic-skills@antv-infographic
 ```
 
-Manual install (fallback):
+Manual install:
 
 ```bash
 set -e
 
-VERSION=0.2.4 # Replace with the latest tag, e.g. 0.2.4
+VERSION=0.2.4 # Replace with the latest tag, e.g. 0.2.14
 BASE_URL=https://github.com/antvis/Infographic/releases/download
 mkdir -p .claude/skills
 

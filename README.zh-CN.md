@@ -128,12 +128,12 @@ AntV Infographic 提供了多项能力，便于与 AI 大模型集成：
 /plugin install antv-infographic-skills@antv-infographic
 ```
 
-手动集成（兜底方式）：
+手动集成：
 
 ```bash
 set -e
 
-VERSION=0.2.4 # 替换为最新版本号，例如 0.2.4
+VERSION=0.2.4 # 替换为最新版本号，例如 0.2.14
 BASE_URL=https://github.com/antvis/Infographic/releases/download
 mkdir -p .claude/skills
 
