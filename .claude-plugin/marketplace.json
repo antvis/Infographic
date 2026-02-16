@@ -1,0 +1,26 @@
+{
+  "name": "antv-infographic",
+  "owner": {
+    "name": "AntV Visualization Team",
+    "email": "pub_antv@antgroup.com"
+  },
+  "metadata": {
+    "description": "Official AntV Infographic skills marketplace for Claude Code"
+  },
+  "plugins": [
+    {
+      "name": "antv-infographic-skills",
+      "source": "./",
+      "description": "An Infographic Generation and Rendering Framework, bring words to life!",
+      "version": "0.2.14",
+      "repository": "https://github.com/antvis/Infographic",
+      "homepage": "https://infographic.antv.vision/",
+      "license": "MIT",
+      "keywords": [
+        "antv",
+        "infographic",
+        "visualization"
+      ]
+    }
+  ]
+}

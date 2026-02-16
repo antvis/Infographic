@@ -121,7 +121,14 @@ AntV Infographic 提供了多项能力，便于与 AI 大模型集成：
 
 ### Claude Code
 
-> 我们暂未提供 claude marketplace，因此需要手动集成。
+> 已提供 Claude marketplace，可通过 marketplace 安装，也可继续手动集成。
+
+```bash
+/plugin marketplace add https://github.com/antvis/Infographic.git
+/plugin install antv-infographic-skills@antv-infographic
+```
+
+手动集成（兜底方式）：
 
 ```bash
 set -e

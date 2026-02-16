@@ -121,7 +121,14 @@ AntV Infographic provides skills to integrate with AI agents:
 
 ### Claude Code
 
-> We don't have a Claude marketplace entry yet, so install manually.
+> Claude marketplace is now available. You can install from marketplace, or keep using manual install.
+
+```bash
+/plugin marketplace add https://github.com/antvis/Infographic.git
+/plugin install antv-infographic-skills@antv-infographic
+```
+
+Manual install (fallback):
 
 ```bash
 set -e

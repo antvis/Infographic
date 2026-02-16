@@ -1,0 +1,17 @@
+{
+  "name": "antv-infographic-skills",
+  "version": "0.2.14",
+  "description": "An Infographic Generation and Rendering Framework, bring words to life!",
+  "author": {
+    "name": "AntV Visualization Team",
+    "email": "pub_antv@antgroup.com"
+  },
+  "homepage": "https://infographic.antv.vision/",
+  "repository": "https://github.com/antvis/Infographic",
+  "license": "MIT",
+  "keywords": [
+    "antv",
+    "infographic",
+    "visualization"
+  ]
+}
