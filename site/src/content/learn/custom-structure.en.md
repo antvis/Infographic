@@ -8,8 +8,8 @@ Structure development is relatively complex. AntV Infographic provides reusable 
 
 Structure rules and templates are packaged as a skill. The key files are:
 
-- `.skills/infographic-structure-creator/SKILL.md`
-- `.skills/infographic-structure-creator/references/structure-prompt.md`
+- `skills/infographic-structure-creator/SKILL.md`
+- `skills/infographic-structure-creator/references/structure-prompt.md`
 
 They include the following:
 
@@ -39,7 +39,7 @@ After generation, the AI will create the structure file and update exports. You 
 If you prefer to paste the reference yourself, read the skill reference:
 
 ```bash
-cat .skills/infographic-structure-creator/references/structure-prompt.md
+cat skills/infographic-structure-creator/references/structure-prompt.md
 ```
 
 Paste the content into your AI chat, then describe your requirements and generate code.

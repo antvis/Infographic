@@ -34,7 +34,7 @@
   <a href="https://infographic.antv.vision/gallery">
     <img src="https://img.shields.io/badge/%E7%A4%BA%E4%BE%8B-13C2C2?style=for-the-badge" alt="示例" />
   </a>
-  <a href="https://github.com/antvis/Infographic/tree/main/.skills">
+  <a href="https://github.com/antvis/Infographic/tree/main/skills">
     <img src="https://img.shields.io/badge/Skills-FA8C16?style=for-the-badge" alt="Skills" />
   </a>
   <a href="https://infographic.antv.vision/ai">
@@ -148,8 +148,8 @@ rm -f skills.zip
 
 ```codex
 # 将 <SKILL> 替换为需要安装的 skill 名称，例如 infographic-creator
-# https://github.com/antvis/Infographic/tree/main/.skills/<SKILL>
-$skill-installer install https://github.com/antvis/Infographic/tree/main/.skills/infographic-creator
+# https://github.com/antvis/Infographic/tree/main/skills/<SKILL>
+$skill-installer install https://github.com/antvis/Infographic/tree/main/skills/infographic-creator
 ```
 
 ## 💬 社区与交流

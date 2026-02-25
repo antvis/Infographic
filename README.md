@@ -34,7 +34,7 @@
   <a href="https://infographic.antv.vision/gallery">
     <img src="https://img.shields.io/badge/Gallery-13C2C2?style=for-the-badge" alt="Gallery" />
   </a>
-  <a href="https://github.com/antvis/Infographic/tree/main/.skills">
+  <a href="https://github.com/antvis/Infographic/tree/main/skills">
     <img src="https://img.shields.io/badge/Skills-FA8C16?style=for-the-badge" alt="Skills" />
   </a>
   <a href="https://infographic.antv.vision/ai">
@@ -148,8 +148,8 @@ rm -f skills.zip
 
 ```codex
 # Replace <SKILL> with the skill name, e.g. infographic-creator
-# https://github.com/antvis/Infographic/tree/main/.skills/<SKILL>
-$skill-installer install https://github.com/antvis/Infographic/tree/main/.skills/infographic-creator
+# https://github.com/antvis/Infographic/tree/main/skills/<SKILL>
+$skill-installer install https://github.com/antvis/Infographic/tree/main/skills/infographic-creator
 ```
 
 ## 💬 Community & Communication

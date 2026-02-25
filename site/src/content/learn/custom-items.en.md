@@ -8,8 +8,8 @@ Data item development also has a certain level of complexity. AntV Infographic p
 
 Item rules and templates are packaged as a skill. The key files are:
 
-- `.skills/infographic-item-creator/SKILL.md`
-- `.skills/infographic-item-creator/references/item-prompt.md`
+- `skills/infographic-item-creator/SKILL.md`
+- `skills/infographic-item-creator/references/item-prompt.md`
 
 They include the following:
 
@@ -39,7 +39,7 @@ After generation, the AI will create the item file and update exports. You only 
 If you prefer to paste the reference yourself, read the skill reference:
 
 ```bash
-cat .skills/infographic-item-creator/references/item-prompt.md
+cat skills/infographic-item-creator/references/item-prompt.md
 ```
 
 Paste the content into your AI chat, then describe your requirements and generate code.

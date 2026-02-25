@@ -66,8 +66,8 @@ rm -f skills.zip
 `,
       codexTitle: 'Codex',
       codexCommands: `# 将 <SKILL> 替换为需要安装的 skill 名称，例如 infographic-creator
-# https://github.com/antvis/Infographic/tree/main/.skills/<SKILL>
-$skill-installer install https://github.com/antvis/Infographic/tree/main/.skills/infographic-creator
+# https://github.com/antvis/Infographic/tree/main/skills/<SKILL>
+$skill-installer install https://github.com/antvis/Infographic/tree/main/skills/infographic-creator
 `,
     },
     preview: {
@@ -153,8 +153,8 @@ unzip -q -o skills.zip -d .claude/skills
 rm -f skills.zip`,
       codexTitle: 'Codex',
       codexCommands: `# Replace <SKILL> with the skill name, e.g. infographic-creator
-# https://github.com/antvis/Infographic/tree/main/.skills/<SKILL>
-$skill-installer install https://github.com/antvis/Infographic/tree/main/.skills/infographic-creator
+# https://github.com/antvis/Infographic/tree/main/skills/<SKILL>
+$skill-installer install https://github.com/antvis/Infographic/tree/main/skills/infographic-creator
 `,
     },
     preview: {
