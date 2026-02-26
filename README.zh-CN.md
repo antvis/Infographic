@@ -168,9 +168,13 @@ $skill-installer install https://github.com/antvis/Infographic/tree/main/skills/
 - 📦 **技术库**
   - [astro-koharu](https://github.com/cosZone/astro-koharu) — 支持信息图的 Astro 动漫风格博客主题
   - [docsify-infographic](https://github.com/bulexu/docsify-infographic) — 在 Docsify 中渲染信息图的插件
+  - [feffery-infographic](https://github.com/HogaStack/feffery-infographic) — 基于 Plotly Dash 在 Python 中创建信息图
   - [infographic-cli](https://github.com/lyw405/infographic-cli) — 命令行生成 SVG 信息图的 CLI 工具
   - [infographic-for-react](https://github.com/lyw405/infographic-for-react) — @antv/infographic 的 React 组件封装
+  - [markdown-it-infographic](https://github.com/hcg1023/markdown-it-infographic) — @antv/infographic 的 markdown-it 插件
   - [markstream-vue](https://github.com/Simon-He95/markstream-vue) — 支持信息图的 Vue 3 流式 Markdown 渲染库
+  - [obsidian-infographic](https://github.com/hcg1023/obsidian-infographic) — @antv/infographic 的 Obsidian 插件
+  - [slidev-addon-infographic](https://github.com/fxss5201/slidev-addon-infographic) — 适用于 Slidev 的 @antv/infographic 组件
   - [VSCode 插件](https://github.com/liwx2000/infographic-vscode-extension) — 在 VSCode Markdown 文件中预览信息图
 
 > 💡 有使用 AntV Infographic 的项目？欢迎在 [Issue #99](https://github.com/antvis/Infographic/issues/99) 中分享！
