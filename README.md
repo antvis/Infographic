@@ -163,10 +163,10 @@ Community projects and products powered by AntV Infographic:
   - [Nowledge Mem](https://mem.nowledge.co/) — AI Memory Bank with Presentation Creator supporting Infographic
   - [Welight](https://waer.ltd/) — WeChat article creation platform with Infographic support
   - [Alma](https://alma.now/) — Desktop AI provider orchestration app with Infographic
-- 📦 **Libraries**
-  - [VSCode Extension](https://github.com/liwx2000/infographic-vscode-extension) — Preview Infographic in VSCode Markdown files
   - [Chrome Extension](https://github.com/xicilion/markdown-viewer-extension) — Markdown viewer with Infographic support, export to Word
   - [WeChat Markdown Editor](https://md.doocs.org/) — Markdown to WeChat article editor with Infographic
+- 📦 **Libraries**
+  - [VSCode Extension](https://github.com/liwx2000/infographic-vscode-extension) — Preview Infographic in VSCode Markdown files
   - [markstream-vue](https://github.com/Simon-He95/markstream-vue) — Streaming Markdown rendering for Vue 3 with Infographic
   - [astro-koharu](https://github.com/cosZone/astro-koharu) — Anime blog theme (Astro) with Infographic support
   - [infographic-for-react](https://github.com/lyw405/infographic-for-react) — React component wrapper for @antv/infographic
