@@ -157,21 +157,21 @@ $skill-installer install https://github.com/antvis/Infographic/tree/main/skills/
 社区基于 AntV Infographic 构建的项目和产品：
 
 - 💼 **商业产品**
-  - [Zojo](https://zojo.ai/infographic) — 使用简单语法生成专业信息图
-  - [LangChat Slides](https://github.com/TyCoding/langchat-slides) — 基于 @antv/infographic 的新一代 AI 幻灯片生成器
-  - [InfographicAI](https://infographic-ai.tuntun.site/) — 基于信息图生成 PPT 的在线工具
-  - [Nowledge Mem](https://mem.nowledge.co/) — 支持信息图演示创作的 AI 记忆库
-  - [Welight](https://waer.ltd/) — 支持信息图的微信公众号创作平台
   - [Alma](https://alma.now/) — 集成信息图的桌面 AI 多模型管理应用
   - [Chrome 插件](https://github.com/xicilion/markdown-viewer-extension) — 支持信息图的 Markdown 查看器，支持导出 Word
+  - [InfographicAI](https://infographic-ai.tuntun.site/) — 基于信息图生成 PPT 的在线工具
+  - [LangChat Slides](https://github.com/TyCoding/langchat-slides) — 基于 @antv/infographic 的新一代 AI 幻灯片生成器
+  - [Nowledge Mem](https://mem.nowledge.co/) — 支持信息图演示创作的 AI 记忆库
   - [微信 Markdown 编辑器](https://md.doocs.org/) — 支持信息图的 Markdown 转微信图文编辑器
+  - [Welight](https://waer.ltd/) — 支持信息图的微信公众号创作平台
+  - [Zojo](https://zojo.ai/infographic) — 使用简单语法生成专业信息图
 - 📦 **技术库**
-  - [VSCode 插件](https://github.com/liwx2000/infographic-vscode-extension) — 在 VSCode Markdown 文件中预览信息图
-  - [markstream-vue](https://github.com/Simon-He95/markstream-vue) — 支持信息图的 Vue 3 流式 Markdown 渲染库
   - [astro-koharu](https://github.com/cosZone/astro-koharu) — 支持信息图的 Astro 动漫风格博客主题
-  - [infographic-for-react](https://github.com/lyw405/infographic-for-react) — @antv/infographic 的 React 组件封装
-  - [infographic-cli](https://github.com/lyw405/infographic-cli) — 命令行生成 SVG 信息图的 CLI 工具
   - [docsify-infographic](https://github.com/bulexu/docsify-infographic) — 在 Docsify 中渲染信息图的插件
+  - [infographic-cli](https://github.com/lyw405/infographic-cli) — 命令行生成 SVG 信息图的 CLI 工具
+  - [infographic-for-react](https://github.com/lyw405/infographic-for-react) — @antv/infographic 的 React 组件封装
+  - [markstream-vue](https://github.com/Simon-He95/markstream-vue) — 支持信息图的 Vue 3 流式 Markdown 渲染库
+  - [VSCode 插件](https://github.com/liwx2000/infographic-vscode-extension) — 在 VSCode Markdown 文件中预览信息图
 
 > 💡 有使用 AntV Infographic 的项目？欢迎在 [Issue #99](https://github.com/antvis/Infographic/issues/99) 中分享！
 
