@@ -152,6 +152,29 @@ rm -f skills.zip
 $skill-installer install https://github.com/antvis/Infographic/tree/main/skills/infographic-creator
 ```
 
+## 🌐 Ecosystem
+
+Community projects and products powered by AntV Infographic:
+
+| Project | Description |
+|---------|-------------|
+| [Zojo](https://zojo.ai/infographic) | Generate professional infographics with simple syntax |
+| [LangChat Slides](https://github.com/TyCoding/langchat-slides) | Next-Gen AI Slide Generator using @antv/infographic |
+| [InfographicAI](https://infographic-ai.tuntun.site/) | Generate PPT slides powered by Infographic |
+| [Nowledge Mem](https://mem.nowledge.co/) | AI Memory Bank with Presentation Creator supporting Infographic |
+| [Welight](https://waer.ltd/) | WeChat article creation platform with Infographic support |
+| [Alma](https://alma.now/) | Desktop AI provider orchestration app with Infographic |
+| [VSCode Extension](https://github.com/liwx2000/infographic-vscode-extension) | Preview Infographic in VSCode Markdown files |
+| [Chrome Extension](https://github.com/xicilion/markdown-viewer-extension) | Markdown viewer with Infographic support, export to Word |
+| [WeChat Markdown Editor](https://md.doocs.org/) | Markdown to WeChat article editor with Infographic |
+| [markstream-vue](https://github.com/Simon-He95/markstream-vue) | Streaming Markdown rendering for Vue 3 with Infographic |
+| [astro-koharu](https://github.com/cosZone/astro-koharu) | Anime blog theme (Astro) with Infographic support |
+| [infographic-for-react](https://github.com/lyw405/infographic-for-react) | React component wrapper for @antv/infographic |
+| [infographic-cli](https://github.com/lyw405/infographic-cli) | CLI tool to generate SVG infographics |
+| [docsify-infographic](https://github.com/bulexu/docsify-infographic) | Plugin to render Infographic diagrams in Docsify |
+
+> 💡 Have a project using AntV Infographic? Share it in [Issue #99](https://github.com/antvis/Infographic/issues/99)!
+
 ## 💬 Community & Communication
 
 - Submit your questions or suggestions on GitHub
