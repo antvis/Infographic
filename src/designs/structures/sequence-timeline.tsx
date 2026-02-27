@@ -15,12 +15,13 @@ import type { BaseStructureProps } from './types';
 export interface SequenceTimelineProps extends BaseStructureProps {
   gap?: number;
   lineOffset?: number;
+  showStepLabels?: boolean;
 }
 
 export const SequenceTimeline: ComponentType<SequenceTimelineProps> = (
   props,
 ) => {
-  const { Title, Item, data, gap = 10, options } = props;
+  const { Title, Item, data, gap = 10, showStepLabels = true, options } = props;
   const { title, desc, items = [] } = data;
 
   const titleContent = Title ? <Title title={title} desc={desc} /> : null;
@@ -90,20 +91,22 @@ export const SequenceTimeline: ComponentType<SequenceTimelineProps> = (
     const nodeY = itemY + itemBounds.height / 2;
     const indexes = [index];
 
-    decorElements.push(
-      <Text
-        x={stepLabelX}
-        y={nodeY}
-        width={70}
-        fontSize={18}
-        fontWeight="bold"
-        alignHorizontal="left"
-        alignVertical="middle"
-        fill={palette[index % palette.length]}
-      >
-        {`STEP ${index + 1}`}
-      </Text>,
-    );
+    if (showStepLabels) {
+      decorElements.push(
+        <Text
+          x={stepLabelX}
+          y={nodeY}
+          width={70}
+          fontSize={18}
+          fontWeight="bold"
+          alignHorizontal="left"
+          alignVertical="middle"
+          fill={palette[index % palette.length]}
+        >
+          {`STEP ${index + 1}`}
+        </Text>,
+      );
+    }
 
     itemElements.push(
       <Item

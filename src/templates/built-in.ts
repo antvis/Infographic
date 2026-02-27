@@ -210,7 +210,7 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
   'sequence-timeline-plain-text': {
     design: {
       title: 'default',
-      structure: { type: 'sequence-timeline' },
+      structure: { type: 'sequence-timeline', showStepLabels: false },
       items: [{ type: 'plain-text' }],
     },
   },
@@ -231,7 +231,7 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
   'sequence-timeline-simple': {
     design: {
       title: 'default',
-      structure: { type: 'sequence-timeline', gap: 20 },
+      structure: { type: 'sequence-timeline', gap: 20, showStepLabels: false },
       items: [{ type: 'simple', positionV: 'middle' }],
     },
   },
