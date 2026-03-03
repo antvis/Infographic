@@ -2,6 +2,7 @@ import {useInView} from 'framer-motion';
 import NextLink from 'next/link';
 import {CSSProperties, useCallback, useEffect, useRef, useState} from 'react';
 import {useFullscreen} from '../../../hooks/useFullscreen';
+import {useTheme} from '../../../hooks/useTheme';
 import {useLocaleBundle} from '../../../hooks/useTranslation';
 
 import {Infographic} from '../../Infographic';
@@ -321,6 +322,8 @@ export function StreamingSyntaxShowcase({
   highlights,
 }: StreamingSyntaxShowcaseProps) {
   const translation = useLocaleBundle(TRANSLATIONS);
+  const theme = useTheme();
+  const isDark = theme === 'dark';
   const [caseType, setCaseType] = useState<'timeline' | 'mindmap'>('timeline');
   const FULL_STREAM_TEXT = translation[caseType].syntax;
 
@@ -333,6 +336,7 @@ export function StreamingSyntaxShowcase({
   const [renderError, setRenderError] = useState<string | null>(null);
   const [isStreaming, setIsStreaming] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [previewKey, setPreviewKey] = useState(0);
 
   // 自定义全屏布局计算
   const calculateFullscreenLayout = useCallback(
@@ -399,6 +403,7 @@ export function StreamingSyntaxShowcase({
     if (progressRef.current === 0) {
       setDisplayCode('');
       setRenderError(null);
+      setPreviewKey((prev) => prev + 1);
     }
 
     setIsStreaming(true);
@@ -664,8 +669,14 @@ export function StreamingSyntaxShowcase({
             </div>
           ) : null}
           <Infographic
+            key={previewKey}
             options={displayCode}
-            init={{width: 720, height: 480, padding: 24}}
+            init={{
+              width: 720,
+              height: 480,
+              padding: 24,
+              ...(isDark ? {theme: 'dark'} : {}),
+            }}
             onError={(err) => setRenderError(err ? err.message : null)}
           />
         </div>
