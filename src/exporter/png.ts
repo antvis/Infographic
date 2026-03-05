@@ -6,8 +6,9 @@ export async function exportToPNGString(
   svg: SVGSVGElement,
   options: Omit<PNGExportOptions, 'type'> = {},
 ): Promise<string> {
-  const { dpr = globalThis.devicePixelRatio ?? 2 } = options;
-  const node = await exportToSVG(svg);
+  const { dpr = globalThis.devicePixelRatio ?? 2, removeBackground = false } =
+    options;
+  const node = await exportToSVG(svg, { removeBackground });
 
   const { width, height } = getViewBox(node);
 

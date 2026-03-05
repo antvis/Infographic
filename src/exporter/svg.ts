@@ -23,7 +23,11 @@ export async function exportToSVG(
   svg: SVGSVGElement,
   options: Omit<SVGExportOptions, 'type'> = {},
 ) {
-  const { embedResources = true, removeIds = false } = options;
+  const {
+    removeBackground = false,
+    embedResources = true,
+    removeIds = false,
+  } = options;
   const clonedSVG = svg.cloneNode(true) as SVGSVGElement;
   const { width, height } = getViewBox(svg);
   setAttributes(clonedSVG, { width, height });
@@ -36,6 +40,9 @@ export async function exportToSVG(
   }
   await embedFonts(clonedSVG, embedResources);
 
+  if (removeBackground) {
+    removeSVGBackground(clonedSVG);
+  }
   cleanSVG(clonedSVG);
 
   return clonedSVG;
@@ -320,6 +327,12 @@ function cleanSVG(svg: SVGSVGElement) {
   removeUselessAttrs(svg);
 
   clearDataset(svg);
+}
+
+function removeSVGBackground(svg: SVGSVGElement) {
+  svg.style.removeProperty('background-color');
+  const background = getElementByRole(svg, ElementTypeEnum.Background);
+  background?.remove();
 }
 
 function removeBtnGroup(svg: SVGSVGElement) {

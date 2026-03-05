@@ -1,6 +1,11 @@
 export interface SVGExportOptions {
   type: 'svg';
   /**
+   * 是否移除背景（SVG 背景样式 + 背景矩形）
+   * @default false
+   */
+  removeBackground?: boolean;
+  /**
    * 是否将远程资源嵌入到 SVG 中
    * @default true
    */
@@ -14,6 +19,11 @@ export interface SVGExportOptions {
 
 export interface PNGExportOptions {
   type: 'png';
+  /**
+   * 是否移除背景（SVG 背景样式 + 背景矩形）
+   * @default false
+   */
+  removeBackground?: boolean;
   /**
    * 设备像素比，默认为浏览器的 devicePixelRatio
    * @default globalThis.devicePixelRatio || 2

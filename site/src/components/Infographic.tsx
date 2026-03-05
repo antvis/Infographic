@@ -12,8 +12,8 @@ import {
 
 export type InfographicHandle = {
   copyToClipboard: () => Promise<boolean>;
-  exportPNG: () => Promise<void>;
-  exportSVG: () => Promise<void>;
+  exportPNG: (options?: {removeBackground?: boolean}) => Promise<void>;
+  exportSVG: (options?: {removeBackground?: boolean}) => Promise<void>;
 };
 
 export const Infographic = forwardRef<
@@ -133,49 +133,61 @@ export const Infographic = forwardRef<
     return `infographic-${Date.now()}.${extension}`;
   }, []);
 
-  const handleExportPNG = useCallback(async () => {
-    const instance = instanceRef.current;
-    if (!instance) return;
+  const handleExportPNG = useCallback(
+    async (options?: {removeBackground?: boolean}) => {
+      const instance = instanceRef.current;
+      if (!instance) return;
 
-    try {
-      const dataUrl = await instance.toDataURL();
-      if (!dataUrl) return;
+      try {
+        const dataUrl = await instance.toDataURL({
+          type: 'png',
+          removeBackground: options?.removeBackground ?? false,
+        });
+        if (!dataUrl) return;
 
-      // Create download link
-      const link = document.createElement('a');
-      link.href = dataUrl;
-      link.download = getFilename('png');
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (e) {
-      console.error('PNG export error', e);
-    }
-  }, [getFilename]);
+        // Create download link
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = getFilename('png');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (e) {
+        console.error('PNG export error', e);
+      }
+    },
+    [getFilename]
+  );
 
-  const handleExportSVG = useCallback(async () => {
-    const instance = instanceRef.current;
-    if (!instance) return;
+  const handleExportSVG = useCallback(
+    async (options?: {removeBackground?: boolean}) => {
+      const instance = instanceRef.current;
+      if (!instance) return;
 
-    try {
-      const svgDataUrl = await instance.toDataURL({type: 'svg'});
-      if (!svgDataUrl) return;
+      try {
+        const svgDataUrl = await instance.toDataURL({
+          type: 'svg',
+          removeBackground: options?.removeBackground ?? false,
+        });
+        if (!svgDataUrl) return;
 
-      // Convert data URL to blob
-      const response = await fetch(svgDataUrl);
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = getFilename('svg');
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    } catch (e) {
-      console.error('SVG export error', e);
-    }
-  }, [getFilename]);
+        // Convert data URL to blob
+        const response = await fetch(svgDataUrl);
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = getFilename('svg');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      } catch (e) {
+        console.error('SVG export error', e);
+      }
+    },
+    [getFilename]
+  );
 
   useImperativeHandle(
     ref,

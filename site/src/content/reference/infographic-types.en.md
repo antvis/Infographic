@@ -81,15 +81,17 @@ type ExportOptions = SVGExportOptions | PNGExportOptions;
 | Property       | Type      | Required | Description                              |
 | -------------- | --------- | -------- | ---------------------------------------- |
 | type           | `'svg'`   | **Yes**  | Export format                            |
+| removeBackground | `boolean` | No       | Remove background, default `false` |
 | embedResources | `boolean` | No       | Inline remote resources (default `true`) |
 | removeIds      | `boolean` | No       | Remove id dependencies (default `false`) |
 
 ### PNGExportOptions {#png-export-options}
 
-| Property | Type     | Required | Description                                                |
-| -------- | -------- | -------- | ---------------------------------------------------------- |
-| type     | `'png'`  | **Yes**  | Export format                                              |
-| dpr      | `number` | No       | Device pixel ratio (defaults to `window.devicePixelRatio`) |
+| Property         | Type      | Required | Description                                                |
+| ---------------- | --------- | -------- | ---------------------------------------------------------- |
+| type             | `'png'`   | **Yes**  | Export format                                              |
+| removeBackground | `boolean` | No       | Remove background, default `false` |
+| dpr              | `number`  | No       | Device pixel ratio (defaults to `window.devicePixelRatio`) |
 
 ## DesignOptions {#design-options}
 

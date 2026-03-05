@@ -7,6 +7,7 @@ import {useEffect, useRef, useState} from 'react';
 const TRANSLATIONS = {
   'zh-CN': {
     title: '实时预览',
+    keepBackground: '保留背景',
     copyButton: '复制',
     pngButton: 'PNG',
     svgButton: 'SVG',
@@ -17,6 +18,7 @@ const TRANSLATIONS = {
   },
   'en-US': {
     title: 'Live Preview',
+    keepBackground: 'Keep background',
     copyButton: 'Copy',
     pngButton: 'PNG',
     svgButton: 'SVG',
@@ -43,6 +45,7 @@ export function PreviewPanel({
   const texts = useLocaleBundle(TRANSLATIONS);
   const [displaySyntax, setDisplaySyntax] = useState(syntax);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [keepBackground, setKeepBackground] = useState(true);
   const debounceTimerRef = useRef<number>(0);
   const infographicRef = useRef<InfographicHandle>(null);
 
@@ -76,12 +79,16 @@ export function PreviewPanel({
   };
 
   const handleExportPNG = async () => {
-    await infographicRef.current?.exportPNG();
+    await infographicRef.current?.exportPNG({
+      removeBackground: !keepBackground,
+    });
     onExportSuccess(texts.pngExported);
   };
 
   const handleExportSVG = async () => {
-    await infographicRef.current?.exportSVG();
+    await infographicRef.current?.exportSVG({
+      removeBackground: !keepBackground,
+    });
     onExportSuccess(texts.svgExported);
   };
 
@@ -139,7 +146,16 @@ export function PreviewPanel({
           />
           {texts.title}
         </h2>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+          <label className="inline-flex items-center gap-1.5 text-xs text-secondary dark:text-secondary-dark select-none mr-1">
+            <input
+              type="checkbox"
+              checked={keepBackground}
+              onChange={(e) => setKeepBackground(e.target.checked)}
+              className="h-3.5 w-3.5 rounded border-border dark:border-border-dark text-link focus:ring-link/30"
+            />
+            {texts.keepBackground}
+          </label>
           <button
             onClick={handleCopy}
             title={texts.copyButton}

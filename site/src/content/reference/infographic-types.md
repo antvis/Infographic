@@ -81,15 +81,17 @@ type ExportOptions = SVGExportOptions | PNGExportOptions;
 | 属性           | 类型      | 必填   | 说明                           |
 | -------------- | --------- | ------ | ------------------------------ |
 | type           | `'svg'`   | **是** | 导出类型标识                   |
+| removeBackground | `boolean` | 否     | 是否移除背景，默认 `false` |
 | embedResources | `boolean` | 否     | 是否内嵌远程资源，默认 `true`  |
 | removeIds      | `boolean` | 否     | 是否移除 id 依赖，默认 `false` |
 
 ### PNGExportOptions {#png-export-options}
 
-| 属性 | 类型     | 必填   | 说明                                                  |
-| ---- | -------- | ------ | ----------------------------------------------------- |
-| type | `'png'`  | **是** | 导出类型标识                                          |
-| dpr  | `number` | 否     | 导出时的设备像素比，默认使用浏览器 `devicePixelRatio` |
+| 属性             | 类型     | 必填   | 说明                                                  |
+| ---------------- | -------- | ------ | ----------------------------------------------------- |
+| type             | `'png'`  | **是** | 导出类型标识                                          |
+| removeBackground | `boolean` | 否     | 是否移除背景，默认 `false` |
+| dpr              | `number` | 否     | 导出时的设备像素比，默认使用浏览器 `devicePixelRatio` |
 
 ## DesignOptions {#design-options}
 
