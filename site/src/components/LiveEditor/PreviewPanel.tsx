@@ -72,7 +72,9 @@ export function PreviewPanel({
   };
 
   const handleCopy = async () => {
-    const success = await infographicRef.current?.copyToClipboard();
+    const success = await infographicRef.current?.copyToClipboard({
+      removeBackground: !keepBackground,
+    });
     if (success) {
       onCopySuccess();
     }

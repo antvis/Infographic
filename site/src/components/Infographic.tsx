@@ -20,7 +20,7 @@ const downloadFile = (url: string, filename: string) => {
 };
 
 export type InfographicHandle = {
-  copyToClipboard: () => Promise<boolean>;
+  copyToClipboard: (options?: {removeBackground?: boolean}) => Promise<boolean>;
   exportPNG: (options?: {removeBackground?: boolean}) => Promise<void>;
   exportSVG: (options?: {removeBackground?: boolean}) => Promise<void>;
 };
@@ -89,39 +89,49 @@ export const Infographic = forwardRef<
     };
   }, []);
 
-  const handleCopy = useCallback(async () => {
-    const instance = instanceRef.current;
-    if (!instance) {
-      return false;
-    }
-
-    try {
-      const dataUrl = await instance.toDataURL();
-      if (!dataUrl) {
+  const handleCopy = useCallback(
+    async (options?: {removeBackground?: boolean}) => {
+      const instance = instanceRef.current;
+      if (!instance) {
         return false;
       }
 
-      const clipboard = navigator?.clipboard;
-      if (!clipboard) {
+      try {
+        const dataUrl = await instance.toDataURL({
+          type: 'png',
+          removeBackground: options?.removeBackground ?? false,
+        });
+        if (!dataUrl) {
+          return false;
+        }
+
+        const clipboard = navigator?.clipboard;
+        if (!clipboard) {
+          return false;
+        }
+
+        if ('write' in clipboard && typeof ClipboardItem !== 'undefined') {
+          const res = await fetch(dataUrl);
+          const blob = await res.blob();
+          await clipboard.write([new ClipboardItem({[blob.type]: blob})]);
+        } else if ('writeText' in clipboard) {
+          await clipboard.writeText(dataUrl);
+        } else {
+          return false;
+        }
+
+        return true;
+      } catch (e) {
+        console.error('Infographic copy error', e);
         return false;
       }
+    },
+    []
+  );
 
-      if ('write' in clipboard && typeof ClipboardItem !== 'undefined') {
-        const res = await fetch(dataUrl);
-        const blob = await res.blob();
-        await clipboard.write([new ClipboardItem({[blob.type]: blob})]);
-      } else if ('writeText' in clipboard) {
-        await clipboard.writeText(dataUrl);
-      } else {
-        return false;
-      }
-
-      return true;
-    } catch (e) {
-      console.error('Infographic copy error', e);
-      return false;
-    }
-  }, []);
+  const handleDoubleClick = useCallback(() => {
+    void handleCopy();
+  }, [handleCopy]);
 
   const getFilename = useCallback((extension: string) => {
     const instance = instanceRef.current;
@@ -200,7 +210,7 @@ export const Infographic = forwardRef<
     <div
       className={['w-full h-full', className].filter(Boolean).join(' ')}
       ref={containerRef}
-      onDoubleClick={handleCopy}
+      onDoubleClick={handleDoubleClick}
       style={style}
     />
   );
