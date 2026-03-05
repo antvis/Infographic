@@ -927,4 +927,31 @@ theme
     ).toBe(true);
     expect(result.options.themeConfig?.colorBg).toBe('#000');
   });
+
+  it('reports bad_syntax for unsafe non-dotted keys', () => {
+    const input = `
+__proto__ hacked
+constructor hacked
+prototype hacked
+theme
+  colorBg #000
+`;
+    const result = parseSyntax(input);
+    expect(
+      result.errors.some(
+        (error) => error.code === 'bad_syntax' && error.path === '__proto__',
+      ),
+    ).toBe(true);
+    expect(
+      result.errors.some(
+        (error) => error.code === 'bad_syntax' && error.path === 'constructor',
+      ),
+    ).toBe(true);
+    expect(
+      result.errors.some(
+        (error) => error.code === 'bad_syntax' && error.path === 'prototype',
+      ),
+    ).toBe(true);
+    expect(result.options.themeConfig?.colorBg).toBe('#000');
+  });
 });

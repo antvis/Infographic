@@ -75,6 +75,16 @@ function assignObjectEntry(
   errors: SyntaxError[],
 ): AssignEntryResult | null {
   if (!rawKey.includes('.')) {
+    if (isUnsafeObjectKey(rawKey)) {
+      errors.push({
+        path: rawKey,
+        line,
+        code: 'bad_syntax',
+        message: `Invalid key part: ${rawKey}`,
+        raw: rawKey,
+      });
+      return null;
+    }
     parent.entries[rawKey] = node;
     return { parent, key: rawKey };
   }

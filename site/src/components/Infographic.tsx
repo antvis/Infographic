@@ -10,6 +10,15 @@ import {
   useRef,
 } from 'react';
 
+const downloadFile = (url: string, filename: string) => {
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
 export type InfographicHandle = {
   copyToClipboard: () => Promise<boolean>;
   exportPNG: (options?: {removeBackground?: boolean}) => Promise<void>;
@@ -144,14 +153,7 @@ export const Infographic = forwardRef<
           removeBackground: options?.removeBackground ?? false,
         });
         if (!dataUrl) return;
-
-        // Create download link
-        const link = document.createElement('a');
-        link.href = dataUrl;
-        link.download = getFilename('png');
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        downloadFile(dataUrl, getFilename('png'));
       } catch (e) {
         console.error('PNG export error', e);
       }
@@ -175,12 +177,7 @@ export const Infographic = forwardRef<
         const response = await fetch(svgDataUrl);
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = getFilename('svg');
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        downloadFile(url, getFilename('svg'));
         URL.revokeObjectURL(url);
       } catch (e) {
         console.error('SVG export error', e);
