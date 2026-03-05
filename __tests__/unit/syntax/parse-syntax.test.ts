@@ -903,4 +903,28 @@ theme
     ).toBe(true);
     expect(result.options.themeConfig?.colorBg).toBe('#000');
   });
+
+  it('reports bad_syntax for unsafe key parts in dotted paths', () => {
+    const input = `
+data.__proto__.polluted true
+data.safe.constructor value
+theme
+  colorBg #000
+`;
+    const result = parseSyntax(input);
+    expect(
+      result.errors.some(
+        (error) =>
+          error.code === 'bad_syntax' &&
+          error.path === 'data.__proto__.polluted',
+      ),
+    ).toBe(true);
+    expect(
+      result.errors.some(
+        (error) =>
+          error.code === 'bad_syntax' && error.path === 'data.safe.constructor',
+      ),
+    ).toBe(true);
+    expect(result.options.themeConfig?.colorBg).toBe('#000');
+  });
 });

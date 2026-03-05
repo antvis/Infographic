@@ -63,6 +63,10 @@ interface AssignEntryResult {
   key: string;
 }
 
+function isUnsafeObjectKey(key: string) {
+  return key === '__proto__' || key === 'constructor' || key === 'prototype';
+}
+
 function assignObjectEntry(
   parent: ObjectNode,
   rawKey: string,
@@ -90,6 +94,16 @@ function assignObjectEntry(
   let current = parent;
   for (let index = 0; index < parts.length - 1; index += 1) {
     const part = parts[index];
+    if (isUnsafeObjectKey(part)) {
+      errors.push({
+        path: rawKey,
+        line,
+        code: 'bad_syntax',
+        message: `Invalid key part in dotted path: ${part}`,
+        raw: rawKey,
+      });
+      return null;
+    }
     const existing = current.entries[part];
     if (!existing) {
       const container = createObjectNode(line);
@@ -111,6 +125,16 @@ function assignObjectEntry(
   }
 
   const finalKey = parts[parts.length - 1];
+  if (isUnsafeObjectKey(finalKey)) {
+    errors.push({
+      path: rawKey,
+      line,
+      code: 'bad_syntax',
+      message: `Invalid key part in dotted path: ${finalKey}`,
+      raw: rawKey,
+    });
+    return null;
+  }
   current.entries[finalKey] = node;
   return { parent: current, key: finalKey };
 }
