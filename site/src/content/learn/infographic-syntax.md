@@ -87,6 +87,39 @@ data
 - 对象数组使用 `-` 换行（如 `data.lists`），简单数组使用行内写法（如 `palette`）
 - 容器相关配置写在 `new Infographic({ ... })`（如 `width`、`height`、`padding`、`editable`），语法中只写 `template`/`design`/`theme`
 
+### 点号路径写法 {#点号路径写法}
+
+当配置层级较深且字段较少时，可以使用 `xx.xx` 的点号路径写法来减少嵌套。
+
+例如下面两种写法等价：
+
+```infographic
+theme.base.text.fill #fff
+```
+
+```infographic
+theme
+  base
+    text
+      fill #fff
+```
+
+也可以与缩进块混用：
+
+```infographic
+theme
+  base
+    shape
+      stroke #654321
+  base.text.fill #123456
+```
+
+注意事项：
+
+- 点号路径用于对象字段（如 `theme.base.text.fill`）；
+- 如果路径中间层级是数组（例如 `data.items`），会报语法错误；
+- 同一路径重复赋值时，遵循“后写覆盖前写”。
+
 ### template {#template}
 
 模板在入口处直接指定。

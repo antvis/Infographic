@@ -87,6 +87,39 @@ data
 - Object arrays use `-` on new lines (e.g., `data.lists`), while simple arrays stay inline (e.g., `palette`).
 - Container-specific configurations belong in `new Infographic({ ... })` (such as `width`, `height`, `padding`, `editable`); inside the syntax you only define `template`, `design`, or `theme`.
 
+### Dotted Path Syntax {#dotted-path-syntax}
+
+When a config path is deep but only a few fields are needed, you can use dotted keys (`xx.xx`) to reduce nesting.
+
+The following two forms are equivalent:
+
+```infographic
+theme.base.text.fill #fff
+```
+
+```infographic
+theme
+  base
+    text
+      fill #fff
+```
+
+You can also mix dotted keys with indented blocks:
+
+```infographic
+theme
+  base
+    shape
+      stroke #654321
+  base.text.fill #123456
+```
+
+Notes:
+
+- Dotted paths are intended for object fields (for example, `theme.base.text.fill`).
+- If a path traverses an array node (for example, `data.items`), the parser reports a syntax error.
+- When the same path is assigned multiple times, the last assignment wins.
+
 ### template {#template}
 
 The template is declared directly in the entry point.

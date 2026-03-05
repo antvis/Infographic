@@ -58,6 +58,63 @@ function parseKeyValue(raw: string) {
   return { key: text, value: undefined };
 }
 
+interface AssignEntryResult {
+  parent: ObjectNode;
+  key: string;
+}
+
+function assignObjectEntry(
+  parent: ObjectNode,
+  rawKey: string,
+  node: ObjectNode,
+  line: number,
+  errors: SyntaxError[],
+): AssignEntryResult | null {
+  if (!rawKey.includes('.')) {
+    parent.entries[rawKey] = node;
+    return { parent, key: rawKey };
+  }
+
+  const parts = rawKey.split('.');
+  if (parts.some((part) => !part)) {
+    errors.push({
+      path: rawKey,
+      line,
+      code: 'bad_syntax',
+      message: 'Invalid dotted key path.',
+      raw: rawKey,
+    });
+    return null;
+  }
+
+  let current = parent;
+  for (let index = 0; index < parts.length - 1; index += 1) {
+    const part = parts[index];
+    const existing = current.entries[part];
+    if (!existing) {
+      const container = createObjectNode(line);
+      current.entries[part] = container;
+      current = container;
+      continue;
+    }
+    if (existing.kind !== 'object') {
+      errors.push({
+        path: parts.slice(0, index + 1).join('.'),
+        line,
+        code: 'bad_syntax',
+        message: 'Cannot assign dotted key under a list value.',
+        raw: rawKey,
+      });
+      return null;
+    }
+    current = existing;
+  }
+
+  const finalKey = parts[parts.length - 1];
+  current.entries[finalKey] = node;
+  return { parent: current, key: finalKey };
+}
+
 function createObjectNode(line: number, value?: string): ObjectNode {
   return { kind: 'object', line, value, entries: {} };
 }
@@ -203,12 +260,19 @@ export function parseSyntaxToAst(input: string): ParseResult {
     }
 
     const node = createObjectNode(lineNumber, parsed.value);
-    parentNode.entries[parsed.key] = node;
+    const assigned = assignObjectEntry(
+      parentNode,
+      parsed.key,
+      node,
+      lineNumber,
+      errors,
+    );
+    if (!assigned) return;
     stack.push({
       indent,
       node,
-      parent: parentNode,
-      key: parsed.key,
+      parent: assigned.parent,
+      key: assigned.key,
     });
   });
 

@@ -459,6 +459,37 @@ theme
     expect(result.options.themeConfig?.base?.shape?.fill).toBe('red');
   });
 
+  it('parses dotted key paths as nested objects', () => {
+    const input = `
+theme.base.text.fill #fff
+theme.base.shape.fill red
+data
+  items
+    - label A
+`;
+    const result = parseSyntax(input);
+    expect(result.errors).toHaveLength(0);
+    expect(result.options.themeConfig?.base?.text?.fill).toBe('#fff');
+    expect(result.options.themeConfig?.base?.shape?.fill).toBe('red');
+  });
+
+  it('supports mixing dotted keys with indented blocks', () => {
+    const input = `
+theme
+  base
+    shape
+      stroke #654321
+  base.text.fill #123456
+data
+  items
+    - label A
+`;
+    const result = parseSyntax(input);
+    expect(result.errors).toHaveLength(0);
+    expect(result.options.themeConfig?.base?.text?.fill).toBe('#123456');
+    expect(result.options.themeConfig?.base?.shape?.stroke).toBe('#654321');
+  });
+
   it('parses template block shorthand and width string values', () => {
     const input = `
 template sales-dashboard
@@ -852,6 +883,24 @@ theme
       true,
     );
     expect(result.options.data?.items?.[0]?.label).toBe('OK');
+    expect(result.options.themeConfig?.colorBg).toBe('#000');
+  });
+
+  it('reports bad_syntax when dotted keys traverse list nodes', () => {
+    const input = `
+data
+  items
+    - label A
+data.items.label B
+theme
+  colorBg #000
+`;
+    const result = parseSyntax(input);
+    expect(
+      result.errors.some(
+        (error) => error.code === 'bad_syntax' && error.path === 'data.items',
+      ),
+    ).toBe(true);
     expect(result.options.themeConfig?.colorBg).toBe('#000');
   });
 });
