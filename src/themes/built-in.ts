@@ -1,5 +1,9 @@
 import { registerTheme } from './registry';
 
+registerTheme('light', {
+  colorBg: '#ffffff',
+});
+
 registerTheme('dark', {
   colorBg: '#1F1F1F',
   base: {

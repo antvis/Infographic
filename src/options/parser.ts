@@ -230,6 +230,7 @@ function parseTheme(
   const parsedThemeConfig = merge({}, base, themeConfig);
   parsedThemeConfig.palette = themeConfig.palette || base.palette;
   parsedThemeConfig.stylize = themeConfig.stylize ?? base.stylize;
+  parsedThemeConfig.colorBg = themeConfig.colorBg || base.colorBg || '#ffffff';
 
   if (!parsedThemeConfig.colorPrimary) {
     parsedThemeConfig.colorPrimary = '#FF356A';
