@@ -31,7 +31,7 @@ const createDefaultInteractions = () => [
 
 export const DEFAULT_OPTIONS: Partial<InfographicOptions> = {
   padding: 20,
-  theme: 'light',
+  theme: 'default',
   themeConfig: {
     palette: 'antv',
   },
