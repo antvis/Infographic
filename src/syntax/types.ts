@@ -22,6 +22,7 @@ export interface ArrayNode {
 }
 
 export type SyntaxErrorCode =
+  | 'implicit_template'
   | 'unknown_key'
   | 'schema_mismatch'
   | 'invalid_value'

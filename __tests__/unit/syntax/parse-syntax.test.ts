@@ -504,6 +504,43 @@ data
     expect(result.options.width).toBe('100%');
   });
 
+  it('infers template from a bare first line and emits a warning', () => {
+    const input = `
+sales-dashboard
+data
+  items
+    - label A
+`;
+    const result = parseSyntax(input);
+    expect(result.errors).toHaveLength(0);
+    expect(result.options.template).toBe('sales-dashboard');
+    expect(result.options.data?.items?.[0]?.label).toBe('A');
+    expect(result.warnings).toMatchObject([
+      {
+        path: 'template',
+        code: 'implicit_template',
+        raw: 'sales-dashboard',
+      },
+    ]);
+  });
+
+  it('does not infer template from unknown root keys with values', () => {
+    const input = `
+widht 100
+data
+  items
+    - label A
+`;
+    const result = parseSyntax(input);
+    expect(result.warnings).toHaveLength(0);
+    expect(
+      result.errors.some(
+        (error) => error.code === 'unknown_key' && error.path === 'widht',
+      ),
+    ).toBe(true);
+    expect(result.options.template).toBeUndefined();
+  });
+
   it('treats block order as irrelevant', () => {
     const inputA = `
 infographic sales-dashboard
