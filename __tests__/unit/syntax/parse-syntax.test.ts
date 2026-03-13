@@ -188,6 +188,48 @@ data
     expect(result.options.data?.relations).toEqual([{ from: 'A', to: 'C' }]);
   });
 
+  it('fills missing ids from item labels when explicit relations exist', () => {
+    const input = `
+data
+  items
+    - label Start
+    - label End
+  relations
+    - from Start
+      to End
+`;
+    const result = parseSyntax(input);
+    expect(result.errors).toHaveLength(0);
+    expect(result.options.data?.items).toEqual([
+      { id: 'Start', label: 'Start' },
+      { id: 'End', label: 'End' },
+    ]);
+    expect(result.options.data?.relations).toEqual([
+      { from: 'Start', to: 'End' },
+    ]);
+  });
+
+  it('fills missing ids from node labels when explicit relations exist', () => {
+    const input = `
+data
+  nodes
+    - label Start
+    - label End
+  relations
+    - from Start
+      to End
+`;
+    const result = parseSyntax(input);
+    expect(result.errors).toHaveLength(0);
+    expect(result.options.data?.nodes).toEqual([
+      { id: 'Start', label: 'Start' },
+      { id: 'End', label: 'End' },
+    ]);
+    expect(result.options.data?.relations).toEqual([
+      { from: 'Start', to: 'End' },
+    ]);
+  });
+
   it('tolerates extra dashes and mermaid edge variants', () => {
     const input = `
 data

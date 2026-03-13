@@ -40,6 +40,14 @@ function normalizeItems(items: ItemDatum[]) {
   return normalized.reverse();
 }
 
+function assignMissingNodeIds(items: ItemDatum[]) {
+  items.forEach((item) => {
+    if (!item.id && item.label) {
+      item.id = item.label;
+    }
+  });
+}
+
 function resolveTemplate(
   node: SyntaxNode | undefined,
   errors: SyntaxParseResult['errors'],
@@ -158,6 +166,13 @@ export function parseSyntax(input: string): SyntaxParseResult {
       );
       if (parsed.relations.length > 0 || parsed.items.length > 0) {
         const current = (options.data ?? {}) as Record<string, any>;
+
+        if (Array.isArray(current.items)) {
+          assignMissingNodeIds(current.items as ItemDatum[]);
+        }
+        if (Array.isArray(current.nodes)) {
+          assignMissingNodeIds(current.nodes as ItemDatum[]);
+        }
 
         // 优先使用已存在的数据列表 (sequences, lists, etc.)
         const dataKeys = Object.keys(
