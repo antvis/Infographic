@@ -7,10 +7,12 @@
 - 目标与输入输出
 - 语法结构
 - 语法规范
-- 模板选择
+- 语法示例
+- 可用模板
+- 模板选择建议
 - 生成流程
 - 输出格式
-- 常见问题与最佳实践
+- 自检清单
 
 ## 目标与输入输出
 
@@ -23,17 +25,17 @@
 
 - **入口**：`infographic <template-name>`
 - **块**：`data` / `theme`
-  - 块内层级使用两个空格缩进
+- **缩进**：块内层级统一使用两个空格
 
-## 规范
+## 语法规范
 
 ### AntV Infographic 语法
 
-AntV Infographic 语法是一种自定义的 DSL，用于描述信息图渲染配置。它使用缩进描述信息，具有较强鲁棒性，便于 AI 流式输出并渲染信息图。主要包含以下信息：
+AntV Infographic 语法是一种基于 YAML 的自定义 DSL，用于描述信息图渲染配置。它使用缩进表达结构，适合 AI 直接生成并流式输出。核心信息包括：
 
-1. template：用模板表达文字信息结构。
-2. data：信息图数据，包含 title、desc、数据项等。数据项通常包含 label、desc、icon 等字段。
-3. theme：主题包含 palette、font 等样式配置。
+1. template：用模板表达信息结构。
+2. data：信息图数据，包含 `title`、`desc` 和主数据字段。
+3. theme：主题配置，包含 `palette`、字体、风格化等。
 
 例如：
 
@@ -51,60 +53,63 @@ theme
   palette #3b82f6 #8b5cf6 #f97316
 ```
 
-### 语法规范
+### 语法规则
 
-- 第一行必须是 `infographic <template-name>`，模板从下方列表中选择（见“可用模板”部分）。
-- 使用 `data` / `theme` 块，块内用两个空格缩进。
-- 键值对使用「键 空格 值」；数组使用 `-` 作为条目前缀。
-- icon 使用图标关键词（如 `star fill`）。
-- `data` 应包含 title/desc + 模板对应的主数据字段（不一定是 `items`）。
-- 主数据字段选择（只用一个，避免混用）：
-  - `list-*` → `lists`
-  - `sequence-*` → `sequences`（可选 `order asc|desc`）
-  - `sequence-interaction-*` → `sequences`（泳道列表，每个泳道包含 `label` 和 `children`）+ `relations`（节点间关系）；`children` 中的节点可用 `step` 字段指定时间层级（相同 step 的节点处于同一高度）
-  - `compare-*` → `compares`（支持 `children` 分组对比），可包含多个对比项
-  - `hierarchy-structure` → `items`（每一项对应一个独立层级，每一层级可以包含子项，最多可嵌套 3 层）
-  - `hierarchy-*` → 单一 `root`（树结构，通过 `children` 嵌套）；
-  - `relation-*` → `nodes` + `relations`；简单关系图可省略 `nodes`，在 relations 中用箭头语法
-  - `chart-*` → `values`（数值统计，可选 `category`）
-  - 不确定时再用 `items` 兜底
-- `compare-binary-*` / `compare-hierarchy-left-right-*` 二元模板：必须两个根节点，所有对比项挂在这两个根节点的 children
-- `hierarchy-*`：使用单一 `root`，通过 `children` 嵌套（不要重复 `root`）
-- `theme` 用于自定义主题（palette、font 等）
-  例如：暗色主题 + 自定义配色
-  ```infographic
-  infographic list-row-simple-horizontal-arrow
-  theme dark
-    palette
-      - #61DDAA
-      - #F6BD16
-      - #F08BB4
-  ```
-- 使用 `theme.base.text.font-family` 指定字体，如手写风格 `851tegakizatsu`
+- 第一行必须是 `infographic <template-name>`。
+- 使用 `data` / `theme` 块。
+- 键值对写法是 `键 空格 值`；对象数组使用 `-` 作为条目前缀并进行换行。
+- `icon` 使用图标关键词，例如 `star fill`、`mingcute/server-line`。
+- `value` 尽量使用纯数值；数值单位优先放在 `label` 或 `desc` 中表达。
+- `palette` 推荐使用行内简单数组写法，例如 `palette #4f46e5 #06b6d4 #10b981`。
+- `palette` 中的颜色值是裸值，不加引号，不加逗号。
+- `data` 只放一个与模板匹配的主数据字段，避免同时混用 `lists`、`sequences`、`compares`、`values`、`root`、`nodes`。
+
+主数据字段选择规则：
+
+- `list-*` → `lists`
+- `sequence-*` → `sequences`，可选 `order asc|desc`
+- `sequence-interaction-*` → `sequences` + `relations`
+  - `sequences` 表示泳道列表
+  - 每个泳道必须包含 `label`
+  - 每个泳道的 `children` 表示节点列表
+  - `children` 下的每一项都必须写成对象条目，并包含 `label`
+  - 节点可选 `id`、`icon`、`step`、`desc`、`value`
+  - `step` 用于表示时间层级；相同 `step` 处于同一高度
+- `compare-*` → `compares`
+  - `compare-binary-*` / `compare-hierarchy-left-right-*`
+    - `compares` 第一层必须且只能有两个根节点，分别表示对比双方
+    - 两个根节点都应包含 `children`
+    - 真正的对比项写在各自的 `children` 下
+    - `children` 下的每一项都必须写成对象条目，并包含 `label`
+    - 即使每一侧只有 1 个指标，也要写成 `children` 内含 1 个对象条目
+  - `compare-swot`
+    - `compares` 可直接放多个根节点
+    - 每个根节点下可选 `children`
+  - `compare-quadrant-*`
+    - `compares` 直接放 4 个象限根节点
+- `hierarchy-structure` → `items`
+- `hierarchy-*` → 单一 `root`，通过 `children` 递归嵌套
+- `relation-*` → `nodes` + `relations`
+  - 简单关系也可直接用箭头语法表达关系
+- `chart-*` → `values`
+  - `chart-line-plain-text` / `chart-bar-plain-text` / `chart-column-simple` 都使用单条有序 `values`
+  - 每个数据点使用 `label` 表示类目，使用 `value` 表示数值
+  - 折线图的顺序由 `values` 中条目的排列顺序表达
+- 结构无法明确判断时，再用 `items` 兜底
+
+主题规则：
+
+- `theme` 用于自定义主题，例如 `palette`、`base`、`stylize`
+- 使用 `theme.base.text.font-family` 指定全局字体，如 `851tegakizatsu`、`AliPuHuiTi`
 - 使用 `theme.stylize` 选择内置风格并传参
-  常见风格：
   - `rough`：手绘效果
   - `pattern`：图案填充
-  - `linear-gradient` / `radial-gradient`：线性/径向渐变
+  - `linear-gradient` / `radial-gradient`：渐变风格
+- 仅输出 Infographic 语法本身，不输出 JSON、解释性文字或额外 Markdown 段落
 
-  例如：手绘风格（rough）
+## 数据语法示例
 
-  ```infographic
-  infographic list-row-simple-horizontal-arrow
-  theme
-    stylize rough
-    base
-      text
-        font-family 851tegakizatsu
-  ```
-
-- 禁止输出 JSON、Markdown 或解释性文字
-
-### 数据语法示例
-
-按模板类别的数据语法示例（使用对应字段，避免同时添加 `items`）：
-
-- `list-*` 模版
+- `list-*` 模板
 
 ```infographic
 infographic list-grid-badge-card
@@ -114,154 +119,165 @@ data
     - label Fast
       icon flash fast
     - label Secure
-      icon secure shield check
+      icon shield check
 ```
 
-- `sequence-*` 模版
+- `sequence-*` 模板
 
 ```infographic
-infographic sequence-steps-simple
+infographic sequence-ascending-steps
 data
+  title 发布流程
   sequences
-    - label Step 1
-    - label Step 2
-    - label Step 3
+    - label 需求确认
+    - label 开发实现
+    - label 发布上线
   order asc
 ```
 
-- `sequence-interaction-*` 模版（交互流程/时序图）
+- `sequence-interaction-*` 模板
 
 ```infographic
 infographic sequence-interaction-compact-animated-badge-card
 data
-  title TCP三次握手
-  desc 客户端与服务器建立可靠连接的过程
+  title 登录校验流程
   sequences
-    - label 客户端
-      icon mingcute/computer-line
+    - label 用户
       children
-        - label CLOSED
-          id client-closed
-          icon mingcute/close-circle-line
+        - label 发起登录
+          id user-login
           step 0
-        - label SYN-SENT
-          id client-syn-sent
-          icon mingcute/send-line
+        - label 收到结果
+          id user-result
           step 2
-        - label ESTABLISHED
-          id client-established
-          icon mingcute/check-circle-line
-          step 4
-    - label 服务器
-      icon mingcute/server-line
+    - label 服务端
       children
-        - label CLOSED
-          id server-closed
-          icon mingcute/close-circle-line
-          step 0
-        - label LISTEN
-          id server-listen
-          icon mingcute/ear-line
+        - label 校验凭证
+          id server-verify
           step 1
-        - label SYN-RCVD
-          id server-syn-rcvd
-          icon mingcute/receive-line
-          step 3
-        - label ESTABLISHED
-          id server-established
-          icon mingcute/check-circle-line
-          step 4
+        - label 返回结果
+          id server-return
+          step 2
   relations
-    client-closed - SYN=1, seq=x -> server-listen
-    server-listen - SYN=1, ACK=1, seq=y, ack=x+1 -> client-syn-sent
-    client-syn-sent - ACK=1, seq=x+1, ack=y+1 -> server-syn-rcvd
-    client-established <- 数据传输 -> server-established
+    user-login - 提交账号密码 -> server-verify
+    server-verify - 生成结果 -> server-return
+    server-return - 返回结果 -> user-result
 ```
 
-- `hierarchy-*` 模版
+- `hierarchy-*` 模板
 
 ```infographic
-infographic hierarchy-structure
+infographic hierarchy-tree-curved-line-rounded-rect-node
 data
+  title 组织结构
   root
-    label Company
+    label 公司
     children
-      - label Dept A
-      - label Dept B
+      - label 产品部
+      - label 技术部
 ```
 
-- `compare-*` 模版
+- `compare-swot` 模板
 
 ```infographic
 infographic compare-swot
 data
+  title 产品 SWOT
   compares
     - label Strengths
       children
-        - label Strong brand
-        - label Loyal users
+        - label 品牌认知高
     - label Weaknesses
       children
-        - label High cost
-        - label Slow release
+        - label 成本压力大
 ```
 
-四象限图
+- `compare-quadrant-*` 模板
 
 ```infographic
 infographic compare-quadrant-quarter-simple-card
 data
+  title 任务优先级
   compares
-    - label High Impact & Low Effort
-    - label High Impact & High Effort
-    - label Low Impact & Low Effort
-    - label Low Impact & High Effort
+    - label 高价值低成本
+    - label 高价值高成本
+    - label 低价值低成本
+    - label 低价值高成本
 ```
 
-- `chart-*` 模版
+- `compare-*` 模板
+
+使用 `children` 形成对比层级，其中每个根节点表示一个对比对象，子节点表示该对象的具体指标，例如：
 
 ```infographic
-infographic chart-column-simple
+infographic compare-binary-horizontal-simple-fold
 data
-  values
-    - label Visits
-      value 1280
-    - label Conversion
-      value 12.4
+  title 年度大促优惠
+  compares
+    - label 平日
+      children
+        - label 原价 500
+        - label 最高 9 折
+    - label 大促
+      children
+        - label 实际支付 450
+        - label 最高 8 折
 ```
 
-- `relation-*` 模版
+- `chart-*` 模板
 
-> 边标签写法：A -label-> B 或 A -->|label| B
+values 下平铺每个数据项，例如：
+
+```infographic
+infographic chart-line-plain-text
+data
+  title 模型 A 准确率变化
+  desc 第 4 周提升最明显
+  values
+    - label Week1
+      value 86.5
+    - label Week2
+      value 87.3
+    - label Week3
+      value 89.1
+    - label Week4
+      value 91.2
+theme
+  palette #4f46e5 #db2777 #14b8a6
+```
+
+- `relation-*` 模板
 
 ```infographic
 infographic relation-dagre-flow-tb-simple-circle-node
 data
+  title 系统关系
   nodes
-    - id A
-      label Node A
-    - id B
-      label Node B
+    - label API
+    - id db
+      label DB
   relations
-    A - approves -> B
-    A -->|blocks| B
+    API - 读写 -> db
 ```
 
 - 兜底 `items` 示例
 
+如果不明确使用哪个数据字段，或者信息结构比较简单，可以直接用 `items` 列表表达，例如：
+
 ```infographic
 infographic list-row-horizontal-icon-arrow
 data
+  title 要点总结
   items
-    - label Item A
-      desc Description
-      icon sun
-    - label Item B
-      desc Description
-      icon moon
+    - label 效率优先
+      desc 聚焦关键动作
+    - label 结果导向
+      desc 输出可执行结论
 ```
 
 ### 可用模板
+
+以下列出常用模板名；实际输出时首行必须写 `infographic <template-name>`：
 
 - chart-bar-plain-text
 - chart-column-simple
@@ -329,80 +345,34 @@ data
 - sequence-interaction-default-capsule-item
 - sequence-interaction-default-rounded-rect-node
 
-**模板选择建议：**
+## 模板选择建议
 
-- 严格顺序（流程/步骤/发展趋势）→ `sequence-*`
-  - 时间线 → `sequence-timeline-*`
-  - 阶梯图 → `sequence-stairs-*`
-  - 路线图 → `sequence-roadmap-vertical-*`
-  - 折线路径 → `sequence-zigzag-*`
-  - 环形进度 → `sequence-circular-simple`
-  - 彩色蛇形步骤 → `sequence-color-snake-steps-*`
-  - 金字塔 → `sequence-pyramid-simple`
-- 交互流程/时序图（多角色/系统间的交互）→ `sequence-interaction-*`
-  - 标准间距 → `sequence-interaction-default-*`
-  - 紧凑布局 → `sequence-interaction-compact-*`
-  - 宽松布局 → `sequence-interaction-wide-*`
-  - 虚线箭头 → `sequence-interaction-*-dashed-*`
-  - 动画箭头 → `sequence-interaction-*-animated-*`
-- 观点列举 → `list-row-*` 或 `list-column-*`
-- 二元对比（利弊）→ `compare-binary-*`
-- SWOT → `compare-swot`
-- 层级结构（树图）→ `hierarchy-tree-*`
-- 数据图表 → `chart-*`
-- 象限分析 → `quadrant-*`
-- 网格列表（要点）→ `list-grid-*`
-- 关系展示 → `relation-*`
-- 词云 → `chart-wordcloud`
+- 严格顺序、步骤推进、阶段演进 → `sequence-*`
+- 多角色或多系统交互 → `sequence-interaction-*`
+- 并列要点列举 → `list-row-*` / `list-column-*` / `list-grid-*`
+- 双方对比、方案对比、前后对比 → `compare-*`
+  - 先确定双方是谁
+  - 再为双方分别展开 `children`
+- SWOT 分析 → `compare-swot`
+- 象限分析 → `compare-quadrant-*`
+- 层级树结构 → `hierarchy-tree-*`
+- 统计趋势、单条序列变化 → `chart-line-plain-text`
+- 统计对比、单组数值比较 → `chart-bar-plain-text` / `chart-column-simple`
+- 节点关系、流程依赖 → `relation-*`
+- 词频主题展示 → `chart-wordcloud`
 - 思维导图 → `hierarchy-mindmap-*`
-
-### 示例
-
-绘制互联网技术演进信息图
-
-```infographic
-infographic list-row-horizontal-icon-arrow
-data
-  title Internet Technology Evolution
-  desc From Web 1.0 to AI era, key milestones
-  lists
-    - time 1991
-      label Web 1.0
-      desc Tim Berners-Lee published the first website, opening the Internet era
-      icon web
-    - time 2004
-      label Web 2.0
-      desc Social media and user-generated content become mainstream
-      icon account multiple
-    - time 2007
-      label Mobile
-      desc iPhone released, smartphone changes the world
-      icon cellphone
-    - time 2015
-      label Cloud Native
-      desc Containerization and microservices architecture are widely used
-      icon cloud
-    - time 2020
-      label Low Code
-      desc Visual development lowers the technology threshold
-      icon application brackets
-    - time 2023
-      label AI Large Model
-      desc ChatGPT ignites the generative AI revolution
-      icon brain
-```
 
 ## 生成流程
 
-1. 提取用户内容中的标题、描述、条目与层级关系
-2. 匹配结构类型并选择模板
-3. 组织 `data`：为每个条目提供 `label/desc/value/icon` 中的必要字段
-4. 用户指定风格或色彩时，补充 `theme`
-5. 输出纯语法文本的 `plain` 代码块
+1. 提取用户内容中的标题、描述、条目、顺序和层级关系。
+2. 判断信息结构，选择匹配的模板系列。
+3. 组织 `data`，只保留与模板对应的主数据字段。
+4. 用户指定风格、配色、字体时，再补充 `theme`。
+5. 输出单个代码块，内容只包含 Infographic 语法。
 
 ## 输出格式
 
-只输出一个 `plain` 代码块，不添加任何解释性文字：
+只输出一个代码块，不添加任何解释性文字：
 
 ```infographic
 infographic list-row-horizontal-icon-arrow
@@ -415,15 +385,18 @@ data
       desc 说明
       icon document text
 theme
-  palette
-    - #3b82f6
-    - #8b5cf6
-    - #f97316
+  palette #3b82f6 #8b5cf6 #f97316
 ```
 
-## 常见问题与最佳实践
+## 自检清单
 
-- 信息不足时，可合理补全，但避免编造与主题无关内容
-- `value` 为数值类型，若无明确数值可省略
-- `children` 用于层级结构，避免层级与模板类型不匹配
-- 输出必须严格遵守缩进规则，便于流式渲染
+输出前检查以下事项：
+
+- 首行是否为 `infographic <template-name>`
+- 是否只使用了一个与模板匹配的主数据字段
+- `palette` 是否为裸颜色值，且没有引号和逗号
+- `sequence-interaction-*` 的泳道节点是否都写成 `children -> - label ...`
+- `compare-binary-*` / `compare-hierarchy-left-right-*` 是否只有两个根节点，且两侧内容都放在各自的 `children` 下
+- `children` 下的每一项是否都显式包含 `label`
+- `chart-line-plain-text` 是否使用单条有序 `values`
+- 输出中是否没有 JSON、解释文字或多余代码块

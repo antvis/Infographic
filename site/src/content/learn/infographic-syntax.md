@@ -310,12 +310,11 @@ infographic relation-dagre-flow-tb-simple-circle-node
 data
   title Relation Graph
   nodes
-    - id A
-      label Node A
+    - label Node A
     - id B
       label Node B
   relations
-    - from A
+    - from Node A
       to B
 ```
 

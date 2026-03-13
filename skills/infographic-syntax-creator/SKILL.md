@@ -19,4 +19,5 @@ Generate AntV Infographic syntax output from user content, following the rules i
    - Output is a single `plain` code block; no extra text.
    - First line is `infographic <template-name>`.
    - Use two-space indentation; key/value pairs are `key value`; arrays use `-`.
-   - Compare templates (`compare-*`) must have exactly two root nodes with children.
+   - `compare-binary-*` / `compare-hierarchy-left-right-*` must have exactly two root nodes, and the actual comparison points belong in each root node's `children`.
+   - `compare-swot` / `compare-quadrant-*` follow their own root-node counts and should not be forced into a binary structure.
