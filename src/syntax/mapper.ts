@@ -16,10 +16,18 @@ const HEX_COLOR_PATTERN =
   /^(#[0-9a-f]{8}|#[0-9a-f]{6}|#[0-9a-f]{4}|#[0-9a-f]{3})/i;
 const FUNCTION_COLOR_PATTERN = /^((?:rgb|rgba|hsl|hsla)\([^)]*\))/i;
 
+function normalizeBooleanLiteral(value: string) {
+  const trimmed = value.trim();
+  if (/^true$/i.test(trimmed)) return 'true';
+  if (/^false$/i.test(trimmed)) return 'false';
+  return undefined;
+}
+
 function parseScalar(value: string) {
   const trimmed = value.trim();
-  if (trimmed === 'true') return true;
-  if (trimmed === 'false') return false;
+  const normalizedBoolean = normalizeBooleanLiteral(trimmed);
+  if (normalizedBoolean === 'true') return true;
+  if (normalizedBoolean === 'false') return false;
   if (/^-?\d+(\.\d+)?$/.test(trimmed)) return parseFloat(trimmed);
   return trimmed;
 }
@@ -240,7 +248,8 @@ export function mapWithSchema(
         );
         return undefined;
       }
-      if (value !== 'true' && value !== 'false') {
+      const normalizedBoolean = normalizeBooleanLiteral(value);
+      if (!normalizedBoolean) {
         addError(
           errors,
           node,
@@ -251,7 +260,7 @@ export function mapWithSchema(
         );
         return undefined;
       }
-      return value === 'true';
+      return normalizedBoolean === 'true';
     }
     case 'enum': {
       const value = readScalar(node);
@@ -259,7 +268,12 @@ export function mapWithSchema(
         addError(errors, node, path, 'schema_mismatch', 'Expected enum value.');
         return undefined;
       }
-      if (!schema.values.includes(value)) {
+      const normalizedBoolean = normalizeBooleanLiteral(value);
+      const enumValue =
+        normalizedBoolean && schema.values.includes(normalizedBoolean)
+          ? normalizedBoolean
+          : value;
+      if (!schema.values.includes(enumValue)) {
         addError(
           errors,
           node,
@@ -270,7 +284,7 @@ export function mapWithSchema(
         );
         return undefined;
       }
-      return value;
+      return enumValue;
     }
     case 'array': {
       if (node.kind === 'array') {

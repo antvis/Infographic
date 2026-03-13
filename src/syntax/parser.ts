@@ -40,6 +40,15 @@ function stripComments(content: string) {
   return content.trimEnd();
 }
 
+function isCommentLine(content: string) {
+  const trimmed = content.trimStart();
+  return trimmed.startsWith('#') || trimmed.startsWith('//');
+}
+
+function isCodeFenceLine(content: string) {
+  return /^```[\w-]*\s*$/.test(content.trim());
+}
+
 function looksLikeRelationExpression(text: string) {
   return /[<>=o.x-]{2,}/.test(text);
 }
@@ -169,6 +178,7 @@ export function parseSyntaxToAst(input: string): ParseResult {
     const lineNumber = index + 1;
     if (!line.trim()) return;
     const { indent, content } = getIndentInfo(line);
+    if (isCommentLine(content) || isCodeFenceLine(content)) return;
     const stripped = stripComments(content);
     if (!stripped.trim()) return;
 
