@@ -8,6 +8,7 @@ const {
   structureMap,
   itemMap,
   templateMap,
+  resolveTemplateKeySpy,
   paletteSpy,
   generateColorsSpy,
   themeSpy,
@@ -18,6 +19,7 @@ const {
   structureMap: new Map<string, any>(),
   itemMap: new Map<string, any>(),
   templateMap: new Map<string, any>(),
+  resolveTemplateKeySpy: vi.fn((type?: string) => type),
   paletteSpy: vi.fn(() => '#123456'),
   generateColorsSpy: vi.fn().mockReturnValue({
     colorPrimary: '#123456',
@@ -34,8 +36,12 @@ const {
 vi.mock('../../../src/designs', () => ({
   getStructure: (type: string) => structureMap.get(type),
   getItem: (type: string) => itemMap.get(type),
-  getTemplate: (type: string) => templateMap.get(type),
   Title: (args: any) => titleComponent(args),
+}));
+
+vi.mock('../../../src/templates/registry', () => ({
+  getTemplate: (type: string) => templateMap.get(type),
+  resolveTemplateKey: (...args: any[]) => resolveTemplateKeySpy(...args),
 }));
 
 vi.mock('../../../src/renderer', () => ({
@@ -54,6 +60,7 @@ describe('parseOptions', () => {
     itemMap.clear();
     templateMap.clear();
     vi.clearAllMocks();
+    resolveTemplateKeySpy.mockImplementation((type?: string) => type);
   });
 
   it('merges template defaults and wires design components', () => {
@@ -208,6 +215,95 @@ describe('parseOptions', () => {
     } as any);
 
     expect(parsed.container).toBe(shadowRoot);
+  });
+
+  it('falls back to the nearest template key when the provided template is missing', () => {
+    const resolvedTemplate = 'sequence-cylinders-3d-simple';
+    resolveTemplateKeySpy.mockImplementation((type?: string) =>
+      type === 'sequence-cylindre-3d-simple' ? resolvedTemplate : type,
+    );
+
+    structureMap.set('sequence-structure', {
+      type: 'sequence-structure',
+      component: structureComponent,
+    });
+    itemMap.set('sequence-item', {
+      type: 'sequence-item',
+      component: itemComponent,
+    });
+    templateMap.set(resolvedTemplate, {
+      design: {
+        structure: { type: 'sequence-structure' },
+        item: { type: 'sequence-item' },
+      },
+    });
+
+    const parsed = parseOptions({
+      container: '#missing',
+      template: 'sequence-cylindre-3d-simple',
+      data: {
+        lists: [{ label: 'List item' }],
+        sequences: [{ label: 'Sequence item' }],
+      },
+    });
+
+    expect(parsed.template).toBe(resolvedTemplate);
+    expect(parsed.data?.items).toEqual([{ label: 'Sequence item' }]);
+    expect(parsed.design).toBeDefined();
+  });
+
+  it('uses template defaults from the resolved fallback key', () => {
+    const resolvedTemplate = 'sequence-cylinders-3d-simple';
+    resolveTemplateKeySpy.mockImplementation((type?: string) =>
+      type === 'sequence-cylindre-3d-simple' ? resolvedTemplate : type,
+    );
+
+    structureMap.set('sequence-structure', {
+      type: 'sequence-structure',
+      component: structureComponent,
+    });
+    itemMap.set('sequence-item', {
+      type: 'sequence-item',
+      component: itemComponent,
+    });
+    templateMap.set(resolvedTemplate, {
+      width: 960,
+      themeConfig: { colorBg: '#eeeeee', palette: ['tpl-primary'] },
+      design: {
+        structure: { type: 'sequence-structure' },
+        item: { type: 'sequence-item' },
+      },
+    });
+
+    const parsed = parseOptions({
+      container: '#missing',
+      template: 'sequence-cylindre-3d-simple',
+      data: {
+        lists: [{ label: 'List item' }],
+        sequences: [{ label: 'Sequence item' }],
+      },
+    });
+
+    expect(parsed.width).toBe(960);
+    expect(parsed.themeConfig?.palette).toEqual(['tpl-primary']);
+    expect(parsed.themeConfig?.colorBg).toBe('#eeeeee');
+  });
+
+  it('keeps template-dependent defaults disabled when no similar template can be resolved', () => {
+    resolveTemplateKeySpy.mockReturnValue(undefined);
+
+    const parsed = parseOptions({
+      container: '#missing',
+      template: 'totally-unknown-template',
+      data: {
+        lists: [{ label: 'List item' }],
+        sequences: [{ label: 'Sequence item' }],
+      },
+    });
+
+    expect(parsed.template).toBeUndefined();
+    expect(parsed.design).toBeUndefined();
+    expect(parsed.data?.items).toEqual([{ label: 'List item' }]);
   });
 
   it('skips design when structure is null', () => {

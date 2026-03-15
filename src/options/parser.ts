@@ -3,13 +3,13 @@ import {
   DesignOptions,
   getItem,
   getStructure,
-  getTemplate,
   NullableParsedDesignsOptions,
   ParsedDesignsOptions,
   Title,
 } from '../designs';
 import { getPaletteColor } from '../renderer';
 import type { TemplateOptions } from '../templates';
+import { getTemplate, resolveTemplateKey } from '../templates/registry';
 import { generateThemeColors, getTheme, type ThemeConfig } from '../themes';
 import type { Data, ItemDatum, ParsedData } from '../types';
 import {
@@ -32,14 +32,15 @@ export function parseOptions(
     data,
     ...restOptions
   } = options;
+  const resolvedTemplate = template ? resolveTemplateKey(template) : undefined;
 
   const parsedContainer =
     typeof container === 'string'
       ? document.querySelector(container) || document.createElement('div')
       : container;
 
-  const templateOptions: TemplateOptions | undefined = template
-    ? getTemplate(template)
+  const templateOptions: TemplateOptions | undefined = resolvedTemplate
+    ? getTemplate(resolvedTemplate)
     : undefined;
   const mergedThemeConfig = merge(
     {},
@@ -63,10 +64,10 @@ export function parseOptions(
 
   Object.assign(parsed, restOptions);
 
-  const parsedData = parseData(data, options.template);
+  const parsedData = parseData(data, resolvedTemplate);
   if (parsedData) parsed.data = parsedData;
 
-  if (template) parsed.template = template;
+  if (resolvedTemplate) parsed.template = resolvedTemplate;
   if (templateOptions?.design || design) {
     const designOptions = {
       ...(resolvedThemeConfig
