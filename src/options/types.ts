@@ -5,8 +5,8 @@ import type { Data, Padding, ParsedData } from '../types';
 import type { Path } from '../utils';
 
 export interface InfographicOptions {
-  /** 容器，可以是选择器或者 HTMLElement */
-  container?: string | HTMLElement;
+  /** 容器，可以是选择器、Element 或 ShadowRoot */
+  container?: string | Element | ShadowRoot;
   /** 宽度 */
   width?: number | string;
   /** 高度 */
@@ -37,7 +37,7 @@ export interface InfographicOptions {
 }
 
 export interface ParsedInfographicOptions {
-  container: HTMLElement;
+  container: Element | ShadowRoot;
   width?: number | string;
   height?: number | string;
   padding?: Padding;

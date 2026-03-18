@@ -198,6 +198,34 @@ describe('parseOptions', () => {
     );
   });
 
+  it('accepts a ShadowRoot instance as the container target', () => {
+    const host = document.createElement('div');
+    document.body.appendChild(host);
+
+    const shadowRoot = host.attachShadow({ mode: 'open' });
+    const parsed = parseOptions({
+      container: shadowRoot as unknown as Element,
+    } as any);
+
+    expect(parsed.container).toBe(shadowRoot);
+  });
+
+  it('resolves a container selector that only exists inside a ShadowRoot', () => {
+    const host = document.createElement('div');
+    document.body.appendChild(host);
+
+    const shadowRoot = host.attachShadow({ mode: 'open' });
+    const shadowContainer = document.createElement('div');
+    shadowContainer.id = 'shadow-container';
+    shadowRoot.appendChild(shadowContainer);
+
+    const parsed = parseOptions({
+      container: '#shadow-container',
+    });
+
+    expect(parsed.container).toBe(shadowContainer);
+  });
+
   it('skips design when structure is null', () => {
     itemMap.set('custom-item', {
       type: 'custom-item',
