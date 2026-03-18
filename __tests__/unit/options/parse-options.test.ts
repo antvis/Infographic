@@ -204,7 +204,7 @@ describe('parseOptions', () => {
 
     const shadowRoot = host.attachShadow({ mode: 'open' });
     const parsed = parseOptions({
-      container: shadowRoot as unknown as Element,
+      container: shadowRoot,
     } as any);
 
     expect(parsed.container).toBe(shadowRoot);

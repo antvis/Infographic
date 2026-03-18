@@ -74,7 +74,6 @@ export class Renderer implements IRenderer {
     if (isNode) {
       postRender();
     } else {
-      const observationTarget = getObservationTarget(this.options.container);
       const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
           mutation.addedNodes.forEach((node) => {
@@ -87,9 +86,8 @@ export class Renderer implements IRenderer {
       });
 
       try {
-        observer.observe(observationTarget, {
+        observer.observe(this.options.container, {
           childList: true,
-          subtree: observationTarget !== this.options.container,
         });
       } catch (error) {
         // Fallback for micro-app environments that proxy document.
@@ -101,12 +99,6 @@ export class Renderer implements IRenderer {
     this.rendered = true;
     return svg;
   }
-}
-
-export function getObservationTarget(container: Element | ShadowRoot) {
-  if (container instanceof ShadowRoot || container instanceof Element)
-    return container;
-  return document;
 }
 
 function renderTemplate(svg: SVGSVGElement, options: ParsedInfographicOptions) {
