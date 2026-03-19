@@ -94,6 +94,32 @@ describe('InteractionManager', () => {
     expect(manager.isActive()).toBe(false);
   });
 
+  it('activates when a shadow-root click path contains the svg document', () => {
+    const manager = new InteractionManager();
+    const host = document.createElement('div');
+    document.body.appendChild(host);
+
+    const shadowRoot = host.attachShadow({ mode: 'open' });
+    svg.remove();
+    shadowRoot.appendChild(svg);
+    editor = { getDocument: () => svg };
+
+    manager.init({
+      emitter,
+      editor,
+      commander,
+      state,
+      interactions: [],
+    });
+
+    (manager as any).handleClick({
+      target: host,
+      composedPath: () => [svg, shadowRoot, host, document.body, document],
+    } as unknown as MouseEvent);
+
+    expect(manager.isActive()).toBe(true);
+  });
+
   it('runs exclusive interactions only when active', async () => {
     const manager = new InteractionManager();
     manager.init({ state, emitter, editor, commander, interactions: [] });

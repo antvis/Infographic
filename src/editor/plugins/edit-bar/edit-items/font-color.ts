@@ -12,8 +12,10 @@ export const FontColor: EditItem<TextAttributes> = (
   selection,
   attrs,
   commander,
+  options,
 ) => {
-  ensureFontColorStyles();
+  const root = options?.root;
+  ensureFontColorStyles(root);
 
   const color = normalizeColor(attrs.fill);
   const isMixed = attrs.fill === undefined && selection.length > 1;
@@ -24,6 +26,7 @@ export const FontColor: EditItem<TextAttributes> = (
   setButtonColor(button, color ?? DEFAULT_COLOR, isMixed);
 
   const picker = ColorPicker({
+    root,
     value: color ?? DEFAULT_COLOR,
     onChange: (nextColor) => {
       setButtonColor(button, nextColor, false);
@@ -41,6 +44,7 @@ export const FontColor: EditItem<TextAttributes> = (
   return Popover({
     target: button,
     content: picker,
+    getContainer: root,
     placement: ['top', 'bottom'],
     offset: 12,
     trigger: 'hover',
@@ -65,7 +69,7 @@ function setButtonColor(
   else button.removeAttribute('data-mixed');
 }
 
-function ensureFontColorStyles() {
+function ensureFontColorStyles(target?: Node) {
   injectStyleOnce(
     FONT_COLOR_STYLE_ID,
     `
@@ -97,5 +101,6 @@ function ensureFontColorStyles() {
   );
 }
 `,
+    target,
   );
 }

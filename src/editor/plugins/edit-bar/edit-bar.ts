@@ -10,6 +10,7 @@ import {
   isIconElement,
   setElementRole,
 } from '../../../utils';
+import { getOverlayContainer } from '../../utils';
 import type {
   IPlugin,
   PluginInitOptions,
@@ -29,8 +30,10 @@ import {
 export interface EditBarOptions {
   style?: Partial<CSSStyleDeclaration>;
   className?: string;
-  getContainer?: HTMLElement | (() => HTMLElement);
+  getContainer?: OverlayRoot | (() => OverlayRoot);
 }
+
+type OverlayRoot = HTMLElement | ShadowRoot;
 
 type EditItem = HTMLElement;
 
@@ -169,12 +172,7 @@ export class EditBar extends Plugin implements IPlugin {
     setElementRole(container, COMPONENT_ROLE);
 
     this.container = container;
-
-    const { getContainer } = this.options || {};
-    const resolvedContainer =
-      typeof getContainer === 'function' ? getContainer() : getContainer;
-    const containerParent = resolvedContainer ?? document.body;
-
+    const containerParent = this.resolveOverlayRoot();
     containerParent?.appendChild(container);
 
     return container;
@@ -182,8 +180,9 @@ export class EditBar extends Plugin implements IPlugin {
 
   protected getTextEditItems(text: TextElement): EditItem[] {
     const { attributes = {} } = getTextElementProps(text);
+    const root = this.resolveOverlayRoot();
     return [FontColor, FontSize, FontAlign, FontFamily].map((item) =>
-      item([text], attributes, this.commander),
+      item([text], attributes, this.commander, { root }),
     );
   }
 
@@ -191,8 +190,9 @@ export class EditBar extends Plugin implements IPlugin {
     const attrs = getCommonAttrs(
       selection.map((text) => getTextElementProps(text).attributes || {}),
     );
+    const root = this.resolveOverlayRoot();
     const items = [FontColor, FontSize, FontAlign, FontFamily].map((item) =>
-      item(selection, attrs, this.commander),
+      item(selection, attrs, this.commander, { root }),
     );
     const commonItems = this.getElementCollectionEditItems(selection);
     return [...items, ...commonItems];
@@ -200,13 +200,19 @@ export class EditBar extends Plugin implements IPlugin {
 
   protected getIconEditItems(selection: Selection): EditItem[] {
     const attrs = getIconAttrs(selection[0] as IconElement);
-    return [IconColor].map((item) => item(selection, attrs, this.commander));
+    const root = this.resolveOverlayRoot();
+    return [IconColor].map((item) =>
+      item(selection, attrs, this.commander, { root }),
+    );
   }
   protected getIconCollectionEditItems(selection: Selection): EditItem[] {
     const attrs = getCommonAttrs(
       selection.map((icon) => getIconAttrs(icon as IconElement)),
     );
-    return [IconColor].map((item) => item(selection, attrs, this.commander));
+    const root = this.resolveOverlayRoot();
+    return [IconColor].map((item) =>
+      item(selection, attrs, this.commander, { root }),
+    );
   }
 
   protected getGeometryEditItems(_selection: Selection): EditItem[] {
@@ -220,11 +226,20 @@ export class EditBar extends Plugin implements IPlugin {
 
   protected getElementCollectionEditItems(selection: Selection): EditItem[] {
     if (selection.length <= 1) return [];
+    const root = this.resolveOverlayRoot();
     return [
       ElementAlign(selection, {}, this.commander, {
         enableDistribution: selection.length > 2,
+        root,
       }),
     ];
+  }
+
+  private resolveOverlayRoot(): OverlayRoot {
+    const { getContainer } = this.options || {};
+    const resolvedContainer =
+      typeof getContainer === 'function' ? getContainer() : getContainer;
+    return resolvedContainer ?? getOverlayContainer(this.editor.getDocument());
   }
 
   private placeEditBar(container: HTMLDivElement, selection: Selection) {

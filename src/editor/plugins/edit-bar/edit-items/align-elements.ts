@@ -40,6 +40,7 @@ type AlignAction =
 
 type AlignOptions = {
   enableDistribution?: boolean;
+  root?: HTMLElement | ShadowRoot;
 };
 
 type TransformParts = {
@@ -79,17 +80,19 @@ export const ElementAlign: EditItem = (
   commander: ICommandManager,
   options?: AlignOptions,
 ) => {
-  injectStyleOnce(GRID_STYLE_ID, GRID_STYLES);
+  injectStyleOnce(GRID_STYLE_ID, GRID_STYLES, options?.root);
   const enableDistribution = options?.enableDistribution ?? true;
 
   const content = createAlignContent(
     (action) => alignSelection(selection, action, commander),
     enableDistribution,
+    options?.root,
   );
 
   return Popover({
-    target: IconButton({ icon: ELEMENT_ICONS.align }),
+    target: IconButton({ icon: ELEMENT_ICONS.align, root: options?.root }),
     content,
+    getContainer: options?.root,
     placement: 'top',
     offset: 12,
   });
@@ -98,6 +101,7 @@ export const ElementAlign: EditItem = (
 function createAlignContent(
   onSelect: (action: AlignAction) => void,
   enableDistribution: boolean,
+  root?: Node,
 ) {
   const content = document.createElement('div');
   content.classList.add(GRID_CLASS);
@@ -111,6 +115,7 @@ function createAlignContent(
 
   visibleOptions.forEach(({ icon, action }) => {
     const button = IconButton({
+      root,
       icon,
       onClick: () => onSelect(action),
     });

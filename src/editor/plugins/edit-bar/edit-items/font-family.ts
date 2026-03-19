@@ -18,27 +18,29 @@ export const FontFamily: EditItem<TextAttributes> = (
   selection,
   attrs,
   commander,
+  editItemOptions,
 ) => {
-  ensureFontFamilyListStyle();
+  const root = editItemOptions?.root;
+  ensureFontFamilyListStyle(root);
 
   const fonts = getFonts();
   const current = normalizeFontFamily(attrs['font-family']);
 
-  const options = fonts.map((font) => ({
+  const fontOptions = fonts.map((font) => ({
     label: font.name || font.fontFamily,
     value: font.fontFamily,
   }));
   if (
-    !options.some((option) => normalizeFontFamily(option.value) === current)
+    !fontOptions.some((option) => normalizeFontFamily(option.value) === current)
   ) {
-    options.unshift({
+    fontOptions.unshift({
       label: DEFAULT_FONT_LABEL,
       value: current,
     });
   }
 
   let selected = current;
-  const content = createFontList(options, selected, (value) => {
+  const content = createFontList(fontOptions, selected, (value) => {
     if (selected === value) return;
     selected = value;
     commander.executeBatch(
@@ -51,11 +53,12 @@ export const FontFamily: EditItem<TextAttributes> = (
     );
   });
 
-  const button = IconButton({ icon: TEXT_ICONS.fontFamily });
+  const button = IconButton({ icon: TEXT_ICONS.fontFamily, root });
 
   const popover = Popover({
     target: button,
     content,
+    getContainer: root,
     placement: ['top', 'bottom'],
     offset: 12,
     trigger: 'hover',
@@ -110,7 +113,7 @@ function normalizeFontFamily(font: TextAttributes['font-family']) {
   return encodeFontFamily(String(font));
 }
 
-function ensureFontFamilyListStyle() {
+function ensureFontFamilyListStyle(target?: Node) {
   injectStyleOnce(
     FONT_LIST_STYLE_ID,
     `
@@ -143,5 +146,6 @@ function ensureFontFamilyListStyle() {
   color: #0958d9;
 }
 `,
+    target,
   );
 }

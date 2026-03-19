@@ -6,3 +6,4 @@ export * from './event';
 export * from './extension';
 export * from './hotkey';
 export * from './object';
+export * from './root';
