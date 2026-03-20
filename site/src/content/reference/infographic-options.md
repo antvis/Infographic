@@ -8,8 +8,8 @@ title: 配置
 
 ```typescript
 interface InfographicOptions {
-  /** 容器，可以是选择器或者 HTMLElement */
-  container?: string | HTMLElement;
+  /** 容器，可以是选择器、HTMLElement 或 ShadowRoot */
+  container?: string | HTMLElement | ShadowRoot;
   /** 宽度 */
   width?: number | string;
   /** 高度 */
