@@ -8,8 +8,8 @@ The following lists the detailed type definition for `InfographicOptions`.
 
 ```typescript
 interface InfographicOptions {
-  /** Container selector or HTMLElement */
-  container?: string | HTMLElement;
+  /** Container selector, HTMLElement, or ShadowRoot */
+  container?: string | HTMLElement | ShadowRoot;
   /** Width */
   width?: number | string;
   /** Height */

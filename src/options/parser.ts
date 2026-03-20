@@ -52,7 +52,7 @@ export function parseOptions(
       : undefined;
 
   const parsed: Partial<ParsedInfographicOptions> = {
-    container: parsedContainer as HTMLElement,
+    container: parsedContainer as HTMLElement | ShadowRoot,
     padding: parsePadding(padding),
   };
 

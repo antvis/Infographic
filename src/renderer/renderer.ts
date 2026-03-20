@@ -85,8 +85,21 @@ export class Renderer implements IRenderer {
         });
       });
 
+      // When the container is a ShadowRoot (or is hosted inside one), observe
+      // that shadow root so the MutationObserver fires when the SVG is inserted.
+      const { container } = this.options;
+      let observeRoot: Document | ShadowRoot = document;
+      if (container instanceof ShadowRoot) {
+        observeRoot = container;
+      } else if (container) {
+        const root = container.getRootNode();
+        if (root instanceof ShadowRoot) {
+          observeRoot = root;
+        }
+      }
+
       try {
-        observer.observe(document, {
+        observer.observe(observeRoot, {
           childList: true,
           subtree: true,
         });
