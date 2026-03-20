@@ -19,6 +19,82 @@ export async function exportToSVGString(
   return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(str);
 }
 
+function measureSpanContentHeight(span: HTMLElement): number {
+  const prevHeight = span.style.height;
+  const prevOverflow = span.style.overflow;
+  span.style.height = 'max-content';
+  span.style.overflow = 'hidden';
+  void span.offsetHeight; // force reflow
+  const height = span.scrollHeight;
+  span.style.height = prevHeight;
+  span.style.overflow = prevOverflow;
+  return height;
+}
+
+// Returns [contentTopSVG, contentBottomSVG] for a foreignObject, accounting for
+// flex alignment: bottom-aligned content overflows upward, center overflows both ways.
+function getFOContentBoundsInSVG(
+  fo: SVGForeignObjectElement,
+  span: HTMLElement,
+  toSVGCoord: (x: number, y: number) => SVGPoint,
+): [number, number] {
+  const foRect = fo.getBoundingClientRect();
+  const foTopSVG = toSVGCoord(foRect.left, foRect.top).y;
+  const foBottomSVG = toSVGCoord(foRect.left, foRect.bottom).y;
+  const foHeightSVG = foBottomSVG - foTopSVG;
+
+  const realScrollHeight = measureSpanContentHeight(span);
+  const contentHeightSVG = realScrollHeight > 0 ? realScrollHeight : foHeightSVG;
+
+  const alignItems = span.style.alignItems;
+  if (alignItems === 'flex-end') {
+    return [foBottomSVG - contentHeightSVG, foBottomSVG];
+  }
+  if (alignItems === 'center') {
+    const overflow = contentHeightSVG - foHeightSVG;
+    return [foTopSVG - overflow / 2, foBottomSVG + overflow / 2];
+  }
+  return [foTopSVG, foTopSVG + contentHeightSVG];
+}
+
+/**
+ * Computes a viewBox that fully covers all foreignObject text content,
+ * accounting for overflow caused by flex alignment (bottom/center align
+ * can push content outside the foreignObject bounds).
+ */
+function computeFullViewBox(svg: SVGSVGElement): string | null {
+  const viewBox = svg.viewBox?.baseVal;
+  if (!viewBox) return null;
+
+  const screenCTM = svg.getScreenCTM();
+  if (!screenCTM) return null;
+  const inverseCTM = screenCTM.inverse();
+
+  const toSVGCoord = (clientX: number, clientY: number) => {
+    const pt = svg.createSVGPoint();
+    pt.x = clientX;
+    pt.y = clientY;
+    return pt.matrixTransform(inverseCTM);
+  };
+
+  let minY = viewBox.y;
+  let maxY = viewBox.y + viewBox.height;
+
+  svg.querySelectorAll<SVGForeignObjectElement>('foreignObject').forEach((fo) => {
+    const span = fo.querySelector<HTMLElement>('span');
+    if (!span) return;
+    const [top, bottom] = getFOContentBoundsInSVG(fo, span, toSVGCoord);
+    minY = Math.min(minY, top);
+    maxY = Math.max(maxY, bottom);
+  });
+
+  const newY = minY;
+  const newHeight = maxY - newY;
+  if (newHeight <= viewBox.height + 0.5 && newY >= viewBox.y - 0.5) return null;
+
+  return `${viewBox.x} ${newY} ${viewBox.width} ${newHeight}`;
+}
+
 export async function exportToSVG(
   svg: SVGSVGElement,
   options: Omit<SVGExportOptions, 'type'> = {},
@@ -29,7 +105,15 @@ export async function exportToSVG(
     removeIds = false,
   } = options;
   const clonedSVG = svg.cloneNode(true) as SVGSVGElement;
-  const { width, height } = getViewBox(svg);
+
+  if (typeof document !== 'undefined') {
+    const fullViewBox = computeFullViewBox(svg);
+    if (fullViewBox) {
+      clonedSVG.setAttribute('viewBox', fullViewBox);
+    }
+  }
+
+  const { width, height } = getViewBox(clonedSVG);
   setAttributes(clonedSVG, { width, height });
 
   if (removeIds) {
