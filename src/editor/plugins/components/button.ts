@@ -7,6 +7,7 @@ export interface IconButtonProps {
   icon: Icon;
   onClick?: () => void;
   activate?: boolean;
+  root?: Node;
 }
 
 export interface IconButtonHandle {
@@ -18,8 +19,9 @@ export const IconButton = ({
   icon,
   onClick,
   activate = false,
+  root,
 }: IconButtonProps): Button => {
-  ensureIconButtonStyle();
+  ensureIconButtonStyle(root);
 
   const button = document.createElement('button');
   button.type = 'button';
@@ -44,7 +46,7 @@ export const IconButton = ({
 const ICON_BUTTON_CLASS = 'infographic-edit-bar-icon-btn';
 const ICON_BUTTON_STYLE_ID = 'infographic-edit-bar-icon-btn-style';
 
-function ensureIconButtonStyle() {
+function ensureIconButtonStyle(target?: Node) {
   injectStyleOnce(
     ICON_BUTTON_STYLE_ID,
     `
@@ -73,5 +75,6 @@ function ensureIconButtonStyle() {
   background-color: #d9d9d9;
 }
 `,
+    target,
   );
 }

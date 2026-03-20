@@ -1,5 +1,10 @@
-import { describe, expect, it } from 'vitest';
-import { parsePadding } from '../../../src/utils/padding';
+import { describe, expect, it, vi } from 'vitest';
+
+vi.mock('../../../src/utils/is-node', () => ({
+  isNode: false,
+}));
+
+import { parsePadding, setSVGPadding } from '../../../src/utils/padding';
 
 describe('padding', () => {
   describe('parsePadding', () => {
@@ -32,6 +37,39 @@ describe('padding', () => {
     it('should return default padding for invalid arrays', () => {
       expect(parsePadding([] as any)).toEqual([0, 0, 0, 0]);
       expect(parsePadding([1, 2, 3, 4, 5] as any)).toEqual([0, 0, 0, 0]);
+    });
+  });
+
+  describe('setSVGPadding', () => {
+    it('should compute viewBox for svg connected inside a ShadowRoot', () => {
+      const host = document.createElement('div');
+      document.body.appendChild(host);
+
+      const shadowRoot = host.attachShadow({ mode: 'open' });
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+
+      Object.defineProperty(svg, 'getBBox', {
+        value: () =>
+          ({
+            x: 10,
+            y: 20,
+            width: 100,
+            height: 50,
+          }) as SVGRect,
+      });
+      Object.defineProperty(svg, 'getBoundingClientRect', {
+        value: () =>
+          ({
+            width: 100,
+            height: 50,
+          }) as DOMRect,
+      });
+
+      shadowRoot.appendChild(svg);
+
+      setSVGPadding(svg, [10, 20, 30, 40]);
+
+      expect(svg.getAttribute('viewBox')).toBe('-30 10 160 90');
     });
   });
 });

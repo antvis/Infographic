@@ -1,3 +1,4 @@
+import { eventPathContains, getOverlayContainer } from '../../utils';
 import { COMPONENT_ROLE } from '../../../constants';
 import { injectStyleOnce, setElementRole } from '../../../utils';
 
@@ -7,7 +8,7 @@ export type PopoverPlacementPreference = PopoverPlacement | PopoverPlacement[];
 export interface PopoverProps {
   content: HTMLElement | string | (() => HTMLElement | string);
   target?: HTMLElement;
-  getContainer?: HTMLElement | (() => HTMLElement);
+  getContainer?: OverlayRoot | (() => OverlayRoot);
   placement?: PopoverPlacementPreference;
   padding?: number | string;
   open?: boolean;
@@ -17,6 +18,8 @@ export interface PopoverProps {
   mouseLeaveDelay?: number;
   offset?: number;
 }
+
+type OverlayRoot = HTMLElement | ShadowRoot;
 
 export interface PopoverHandle {
   setOpen: (open: boolean) => void;
@@ -32,8 +35,6 @@ const POPOVER_ARROW_CLASS = `${POPOVER_CLASS}__arrow`;
 const POPOVER_STYLE_ID = 'infographic-edit-popover-style';
 
 export function Popover(props: PopoverProps): HTMLDivElement & PopoverHandle {
-  ensurePopoverStyle();
-
   const placement = props.placement ?? 'top';
   const closeOnOutsideClick = props.closeOnOutsideClick ?? true;
   const triggerActions = Array.isArray(props.trigger)
@@ -60,7 +61,7 @@ export function Popover(props: PopoverProps): HTMLDivElement & PopoverHandle {
       typeof props.getContainer === 'function'
         ? props.getContainer()
         : props.getContainer;
-    return next ?? document.body;
+    return next ?? getOverlayContainer(trigger);
   };
 
   const content = document.createElement('div');
@@ -78,6 +79,7 @@ export function Popover(props: PopoverProps): HTMLDivElement & PopoverHandle {
   );
 
   const contentContainer = getContentContainer();
+  ensurePopoverStyle(contentContainer);
   const isPortal = contentContainer !== container;
 
   const arrow = document.createElement('div');
@@ -217,11 +219,9 @@ export function Popover(props: PopoverProps): HTMLDivElement & PopoverHandle {
   const toggle = () => setOpen(!open);
 
   const handleOutsideClick = (event: MouseEvent) => {
-    const targetNode = event.target as Node;
-    if (
-      !container.contains(targetNode) &&
-      (isPortal ? !content.contains(targetNode) : true)
-    ) {
+    const insideTrigger = eventPathContains(event, container);
+    const insideContent = eventPathContains(event, content);
+    if (!insideTrigger && !insideContent) {
       setOpen(false);
     }
   };
@@ -296,7 +296,7 @@ export function Popover(props: PopoverProps): HTMLDivElement & PopoverHandle {
   return Object.assign(container, api);
 }
 
-function ensurePopoverStyle() {
+function ensurePopoverStyle(target?: Node) {
   injectStyleOnce(
     POPOVER_STYLE_ID,
     `
@@ -442,5 +442,6 @@ function ensurePopoverStyle() {
   transform: translate(0, -50%);
 }
 `,
+    target,
   );
 }
