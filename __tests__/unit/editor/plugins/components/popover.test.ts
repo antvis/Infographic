@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { Popover } from '../../../../../src/editor/plugins/components/popover';
 
@@ -75,6 +75,73 @@ describe('Popover', () => {
 
     expect(content?.getAttribute('data-open')).toBe('true');
 
+    popover.destroy();
+  });
+
+  it('positions a shadow-root portal popover relative to the shadow host', () => {
+    const { host, shadowRoot, trigger } = createShadowTrigger();
+
+    Object.defineProperty(document.documentElement, 'clientWidth', {
+      value: 800,
+      configurable: true,
+    });
+    Object.defineProperty(document.documentElement, 'clientHeight', {
+      value: 600,
+      configurable: true,
+    });
+
+    const rectSpy = vi
+      .spyOn(HTMLElement.prototype, 'getBoundingClientRect')
+      .mockImplementation(function (this: HTMLElement) {
+        if (this === host) {
+          return DOMRect.fromRect({
+            x: 40,
+            y: 80,
+            width: 320,
+            height: 240,
+          });
+        }
+        if (this === trigger) {
+          return DOMRect.fromRect({
+            x: 140,
+            y: 160,
+            width: 40,
+            height: 24,
+          });
+        }
+        if (this.classList.contains('infographic-edit-popover__content')) {
+          return DOMRect.fromRect({
+            x: 0,
+            y: 0,
+            width: 80,
+            height: 32,
+          });
+        }
+        return DOMRect.fromRect({
+          x: 0,
+          y: 0,
+          width: 0,
+          height: 0,
+        });
+      });
+
+    const popover = Popover({
+      target: trigger,
+      content: 'Font tools',
+      getContainer: shadowRoot,
+      open: true,
+      trigger: 'click',
+      placement: 'top',
+    });
+    shadowRoot.appendChild(popover);
+
+    const content = shadowRoot.querySelector(
+      '.infographic-edit-popover__content',
+    ) as HTMLElement | null;
+    expect(content?.style.left).toBe('80px');
+    expect(content?.style.top).toBe('40px');
+
+    rectSpy.mockRestore();
     popover.destroy();
   });
 });

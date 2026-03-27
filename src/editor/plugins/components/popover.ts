@@ -82,6 +82,14 @@ export function Popover(props: PopoverProps): HTMLDivElement & PopoverHandle {
   ensurePopoverStyle(contentContainer);
   const isPortal = contentContainer !== container;
 
+  const getPortalOffsetParent = () => {
+    const offsetParent = content.offsetParent as HTMLElement | null;
+    if (offsetParent) return offsetParent;
+    if (contentContainer instanceof ShadowRoot) return contentContainer.host;
+    if (contentContainer instanceof HTMLElement) return contentContainer;
+    return document.documentElement as HTMLElement;
+  };
+
   const arrow = document.createElement('div');
   arrow.classList.add(POPOVER_ARROW_CLASS);
   content.appendChild(arrow);
@@ -172,8 +180,18 @@ export function Popover(props: PopoverProps): HTMLDivElement & PopoverHandle {
     if (!isPortal) return;
 
     ({ left, top } = position);
-    content.style.left = `${left}px`;
-    content.style.top = `${top}px`;
+    const offsetParent = getPortalOffsetParent();
+    if (
+      offsetParent === document.body ||
+      offsetParent === document.documentElement
+    ) {
+      content.style.left = `${left}px`;
+      content.style.top = `${top}px`;
+    } else {
+      const parentRect = offsetParent.getBoundingClientRect();
+      content.style.left = `${left - parentRect.left + offsetParent.scrollLeft}px`;
+      content.style.top = `${top - parentRect.top + offsetParent.scrollTop}px`;
+    }
     content.style.right = 'auto';
     content.style.bottom = 'auto';
     content.style.transform = 'translate(0, 0)';
