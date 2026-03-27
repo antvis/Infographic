@@ -30,10 +30,12 @@ export const FontSize: EditItem<TextAttributes> = (
   selection,
   attrs,
   commander,
+  options,
 ) => {
-  injectStyleOnce(FONT_SIZE_STYLE_ID, FONT_SIZE_STYLES);
+  const root = options?.root;
+  injectStyleOnce(FONT_SIZE_STYLE_ID, FONT_SIZE_STYLES, root);
 
-  const button = IconButton({ icon: TEXT_ICONS.fontSize });
+  const button = IconButton({ icon: TEXT_ICONS.fontSize, root });
   const currentSize = normalizeFontSize(attrs['font-size']);
   const content = createFontSizeContent(currentSize, (size) => {
     commander.executeBatch(
@@ -44,11 +46,12 @@ export const FontSize: EditItem<TextAttributes> = (
           }),
       ),
     );
-  });
+  }, root);
 
   return Popover({
     target: button,
     content,
+    getContainer: root,
     placement: 'top',
     offset: 12,
   });
@@ -57,6 +60,7 @@ export const FontSize: EditItem<TextAttributes> = (
 function createFontSizeContent(
   defaultSize: number,
   onSizeChange: (size: number) => void,
+  root?: Node,
 ) {
   const content = document.createElement('div');
   content.classList.add(FONT_SIZE_CLASS);
@@ -73,6 +77,7 @@ function createFontSizeContent(
 
   FONT_SIZE_OPTIONS.forEach(({ label, value }) => {
     const button = IconButton({
+      root,
       icon: createLabelIcon(label),
       onClick: () => {
         if (selected === value) return;

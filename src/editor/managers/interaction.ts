@@ -16,6 +16,7 @@ import type {
   SelectionChangePayload,
   SelectMode,
 } from '../types';
+import { eventPathContains } from '../utils';
 import { Extension } from '../utils';
 
 export class InteractionManager implements IInteractionManager {
@@ -129,18 +130,19 @@ export class InteractionManager implements IInteractionManager {
 
   private handleClick = (event: MouseEvent) => {
     const doc = this.editor.getDocument();
-    const target = event.target;
+    const path = typeof event.composedPath === 'function' ? event.composedPath() : [];
+    const insideInfographic =
+      eventPathContains(event, doc) ||
+      path.some(
+        (node) => node instanceof HTMLElement && isInfographicComponent(node),
+      );
 
-    if (!target) {
+    if (!event.target) {
       this.deactivate();
       return;
     }
     // 点击画布 SVG 或者标记为组件的元素
-    if (
-      doc.contains(target as Node) ||
-      isInfographicComponent(target as HTMLElement)
-    )
-      this.activate();
+    if (insideInfographic) this.activate();
     else this.deactivate();
   };
 
