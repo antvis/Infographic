@@ -68,6 +68,7 @@ function computeFullViewBox(svg: SVGSVGElement): string | null {
   const viewBox = svg.viewBox?.baseVal;
   if (!viewBox) return null;
 
+  if (typeof svg.getScreenCTM !== 'function') return null;
   const screenCTM = svg.getScreenCTM();
   if (!screenCTM) return null;
   const inverseCTM = screenCTM.inverse();
