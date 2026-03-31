@@ -4,7 +4,7 @@ import {
   registerResourceLoader,
   Infographic as Renderer,
 } from '@antv/infographic';
-import { useEffect, useRef } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 
 const svgTextCache = new Map<string, string>();
 const pendingRequests = new Map<string, Promise<string | null>>();
@@ -91,57 +91,90 @@ registerResourceLoader(async (config) => {
   }
 });
 
-export const Infographic = ({
-  options,
-  init,
-  onError,
-}: {
+type ExportType = 'png' | 'svg';
+
+export interface InfographicHandle {
+  download: (type: ExportType, filename?: string) => Promise<void>;
+}
+
+type InfographicProps = {
   options: string | InfographicOptions;
   init?: Partial<InfographicOptions>;
   onError?: (error: Error | null) => void;
-}) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const instanceRef = useRef<Renderer | null>(null);
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-    if (instanceRef.current) return;
-
-    const instance = new Renderer({
-      container: containerRef.current,
-      svg: {
-        attributes: {
-          width: '100%',
-          height: '100%',
-        },
-        style: {
-          maxHeight: '80vh',
-        },
-      },
-      ...init,
-    });
-    instanceRef.current = instance;
-    Object.assign(window, { infographic: instance });
-
-    return () => {
-      instance.destroy();
-      instanceRef.current = null;
-    };
-  }, [init]);
-
-  useEffect(() => {
-    const instance = instanceRef.current;
-    if (!instance || !options) return;
-
-    try {
-      onError?.(null);
-      instance.render(options);
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error(String(err));
-      console.error('Dev Infographic render error', error);
-      onError?.(error);
-    }
-  }, [options, onError]);
-
-  return <div ref={containerRef} style={{ width: '100%', height: '100%' }} />;
 };
+
+function downloadDataURL(dataURL: string, filename: string) {
+  const link = document.createElement('a');
+  link.href = dataURL;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+}
+
+export const Infographic = forwardRef<InfographicHandle, InfographicProps>(
+  ({ options, init, onError }, ref) => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const instanceRef = useRef<Renderer | null>(null);
+
+    useImperativeHandle(
+      ref,
+      () => ({
+        async download(type, filename = `infographic.${type}`) {
+          const instance = instanceRef.current;
+          if (!instance) {
+            throw new Error('Infographic is not ready yet.');
+          }
+
+          const dataURL = await instance.toDataURL({ type });
+          downloadDataURL(dataURL, filename);
+        },
+      }),
+      [],
+    );
+
+    useEffect(() => {
+      if (!containerRef.current) return;
+      if (instanceRef.current) return;
+
+      const instance = new Renderer({
+        container: containerRef.current,
+        svg: {
+          attributes: {
+            width: '100%',
+            height: '100%',
+          },
+          style: {
+            maxHeight: '80vh',
+          },
+        },
+        ...init,
+      });
+      instanceRef.current = instance;
+      Object.assign(window, { infographic: instance });
+
+      return () => {
+        instance.destroy();
+        instanceRef.current = null;
+      };
+    }, [init]);
+
+    useEffect(() => {
+      const instance = instanceRef.current;
+      if (!instance || !options) return;
+
+      try {
+        onError?.(null);
+        instance.render(options);
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error(String(err));
+        console.error('Dev Infographic render error', error);
+        onError?.(error);
+      }
+    }, [options, onError]);
+
+    return <div ref={containerRef} style={{ width: '100%', height: '100%' }} />;
+  },
+);
+
+Infographic.displayName = 'Infographic';

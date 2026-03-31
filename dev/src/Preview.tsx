@@ -1,16 +1,39 @@
 import Editor from '@monaco-editor/react';
-import { Button, Card, Checkbox, ColorPicker, Form, Select } from 'antd';
-import { useCallback } from 'react';
-import { Infographic } from './Infographic';
+import {
+  Button,
+  Card,
+  Checkbox,
+  ColorPicker,
+  Form,
+  Select,
+  message,
+} from 'antd';
+import { useCallback, useRef, useState } from 'react';
+import { Infographic, type InfographicHandle } from './Infographic';
 import { useKeyboardNavigation } from './hooks/useKeyboardNavigation';
 import { usePreviewData } from './hooks/usePreviewData';
 import { usePreviewInteractions } from './hooks/usePreviewInteractions';
 import { usePreviewSettings } from './hooks/usePreviewSettings';
 
+type ExportType = 'png' | 'svg';
+
+function getDownloadFilename(template: string, type: ExportType) {
+  const normalized =
+    template
+      .trim()
+      .replace(/[^a-zA-Z0-9_-]+/g, '-')
+      .replace(/^-+|-+$/g, '') || 'infographic';
+  return `${normalized}.${type}`;
+}
+
 export const Preview = () => {
   const settings = usePreviewSettings();
   const dataState = usePreviewData(settings.isSettingsHydrated);
   const interactions = usePreviewInteractions(settings, dataState);
+  const infographicRef = useRef<InfographicHandle>(null);
+  const [downloadingType, setDownloadingType] = useState<ExportType | null>(
+    null,
+  );
 
   // 键盘导航：上下或左右方向键切换模板
   useKeyboardNavigation({
@@ -44,6 +67,33 @@ export const Preview = () => {
       dataState.setCustomData(value || '');
     },
     [dataState.setCustomData],
+  );
+
+  const handleDownload = useCallback(
+    async (type: ExportType) => {
+      if (!infographicRef.current) {
+        message.error('预览尚未准备好');
+        return;
+      }
+
+      try {
+        setDownloadingType(type);
+        await infographicRef.current.download(
+          type,
+          getDownloadFilename(settings.template, type),
+        );
+      } catch (error) {
+        const msg =
+          error instanceof Error
+            ? error.message
+            : `下载 ${type.toUpperCase()} 失败`;
+        console.error(`Failed to download ${type.toUpperCase()}`, error);
+        message.error(msg);
+      } finally {
+        setDownloadingType(null);
+      }
+    },
+    [settings.template],
   );
 
   if (!interactions.isHydrated) {
@@ -221,8 +271,33 @@ export const Preview = () => {
 
       {/* Right Panel - Preview */}
       <div style={{ flex: 1, overflow: 'auto' }}>
-        <Card title="预览" size="small" style={{ height: '100%' }}>
+        <Card
+          title="预览"
+          size="small"
+          style={{ height: '100%' }}
+          extra={
+            <div style={{ display: 'flex', gap: 8 }}>
+              <Button
+                size="small"
+                onClick={() => void handleDownload('png')}
+                loading={downloadingType === 'png'}
+                disabled={downloadingType !== null && downloadingType !== 'png'}
+              >
+                下载 PNG
+              </Button>
+              <Button
+                size="small"
+                onClick={() => void handleDownload('svg')}
+                loading={downloadingType === 'svg'}
+                disabled={downloadingType !== null && downloadingType !== 'svg'}
+              >
+                下载 SVG
+              </Button>
+            </div>
+          }
+        >
           <Infographic
+            ref={infographicRef}
             options={{
               template: settings.template,
               // 如果解析出错 (null)，传空对象防止崩溃，错误提示已在编辑器上方显示
