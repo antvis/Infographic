@@ -10,6 +10,8 @@ import {
 import { embedFonts } from './font';
 import type { SVGExportOptions } from './types';
 
+const VIEWBOX_CHANGE_TOLERANCE = 0.5;
+
 export async function exportToSVGString(
   svg: SVGSVGElement,
   options: Omit<SVGExportOptions, 'type'> = {},
@@ -17,6 +19,31 @@ export async function exportToSVGString(
   const node = await exportToSVG(svg, options);
   const str = new XMLSerializer().serializeToString(node);
   return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(str);
+}
+
+function getExportViewBox(svg: SVGSVGElement) {
+  if (svg.hasAttribute('viewBox')) return getViewBox(svg);
+
+  const width = parseAbsoluteLength(svg.getAttribute('width'));
+  const height = parseAbsoluteLength(svg.getAttribute('height'));
+  if (width > 0 && height > 0) {
+    return { x: 0, y: 0, width, height };
+  }
+
+  const rect = svg.getBoundingClientRect();
+  if (rect.width > 0 && rect.height > 0) {
+    return { x: 0, y: 0, width: rect.width, height: rect.height };
+  }
+
+  return null;
+}
+
+function parseAbsoluteLength(value: string | null): number {
+  if (!value) return Number.NaN;
+  const trimmed = value.trim();
+  if (!trimmed) return Number.NaN;
+  if (!/^[-+]?(?:\d+\.?\d*|\.\d+)(?:px)?$/.test(trimmed)) return Number.NaN;
+  return Number.parseFloat(trimmed);
 }
 
 function measureSpanContentHeight(span: HTMLElement): number {
@@ -44,9 +71,12 @@ function getFOContentBoundsInSVG(
   const foTopSVG = toSVGCoord(foRect.left, foRect.top).y;
   const foBottomSVG = toSVGCoord(foRect.left, foRect.bottom).y;
   const foHeightSVG = foBottomSVG - foTopSVG;
+  const svgUnitsPerClientPx =
+    foRect.height > 0 ? foHeightSVG / foRect.height : 1;
 
   const realScrollHeight = measureSpanContentHeight(span);
-  const contentHeightSVG = realScrollHeight > 0 ? realScrollHeight : foHeightSVG;
+  const contentHeightSVG =
+    realScrollHeight > 0 ? realScrollHeight * svgUnitsPerClientPx : foHeightSVG;
 
   const alignItems = span.style.alignItems;
   if (alignItems === 'flex-end') {
@@ -65,7 +95,7 @@ function getFOContentBoundsInSVG(
  * can push content outside the foreignObject bounds).
  */
 function computeFullViewBox(svg: SVGSVGElement): string | null {
-  const viewBox = svg.viewBox?.baseVal;
+  const viewBox = getExportViewBox(svg);
   if (!viewBox) return null;
 
   if (typeof svg.getScreenCTM !== 'function') return null;
@@ -83,18 +113,23 @@ function computeFullViewBox(svg: SVGSVGElement): string | null {
   let minY = viewBox.y;
   let maxY = viewBox.y + viewBox.height;
 
-  svg.querySelectorAll<SVGForeignObjectElement>('foreignObject').forEach((fo) => {
-    const span = fo.querySelector<HTMLElement>('span');
-    if (!span) return;
-    const [top, bottom] = getFOContentBoundsInSVG(fo, span, toSVGCoord);
-    minY = Math.min(minY, top);
-    maxY = Math.max(maxY, bottom);
-  });
+  svg
+    .querySelectorAll<SVGForeignObjectElement>('foreignObject')
+    .forEach((fo) => {
+      const span = fo.querySelector<HTMLElement>('span');
+      if (!span) return;
+      const [top, bottom] = getFOContentBoundsInSVG(fo, span, toSVGCoord);
+      minY = Math.min(minY, top);
+      maxY = Math.max(maxY, bottom);
+    });
 
   const newY = minY;
   const newHeight = maxY - newY;
-  const tolerance = 0.5;
-  if (newHeight <= viewBox.height + tolerance && newY >= viewBox.y - tolerance) return null;
+  if (
+    newHeight <= viewBox.height + VIEWBOX_CHANGE_TOLERANCE &&
+    newY >= viewBox.y - VIEWBOX_CHANGE_TOLERANCE
+  )
+    return null;
 
   return `${viewBox.x} ${newY} ${viewBox.width} ${newHeight}`;
 }

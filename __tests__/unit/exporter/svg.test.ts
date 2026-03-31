@@ -9,6 +9,84 @@ vi.mock('../../../src/exporter/font', () => ({
 
 const svgNS = 'http://www.w3.org/2000/svg';
 
+function mockRect(
+  element: Element,
+  {
+    left = 0,
+    top = 0,
+    width,
+    height,
+  }: {
+    left?: number;
+    top?: number;
+    width: number;
+    height: number;
+  },
+) {
+  Object.defineProperty(element, 'getBoundingClientRect', {
+    configurable: true,
+    value: () =>
+      ({
+        x: left,
+        y: top,
+        left,
+        top,
+        width,
+        height,
+        right: left + width,
+        bottom: top + height,
+        toJSON: () => ({}),
+      }) as DOMRect,
+  });
+}
+
+function mockSvgCoordinateSpace(
+  svg: SVGSVGElement,
+  { scaleX = 1, scaleY = 1 }: { scaleX?: number; scaleY?: number } = {},
+) {
+  const screenCTM = {
+    a: scaleX,
+    d: scaleY,
+    e: 0,
+    f: 0,
+    inverse() {
+      return {
+        a: 1 / scaleX,
+        d: 1 / scaleY,
+        e: 0,
+        f: 0,
+      };
+    },
+  };
+
+  Object.defineProperty(svg, 'getScreenCTM', {
+    configurable: true,
+    value: () => screenCTM,
+  });
+
+  Object.defineProperty(svg, 'createSVGPoint', {
+    configurable: true,
+    value: () => {
+      const point = {
+        x: 0,
+        y: 0,
+        matrixTransform(transform: {
+          a?: number;
+          d?: number;
+          e?: number;
+          f?: number;
+        }) {
+          return {
+            x: point.x * (transform.a ?? 1) + (transform.e ?? 0),
+            y: point.y * (transform.d ?? 1) + (transform.f ?? 0),
+          };
+        },
+      };
+      return point;
+    },
+  });
+}
+
 describe('exporter/svg', () => {
   beforeEach(() => {
     document.body.innerHTML = '';
@@ -165,5 +243,80 @@ describe('exporter/svg', () => {
     expect(exported.querySelector('defs')).toBeNull();
     expect(exportedRect?.getAttribute('fill')).toContain('data:image/svg+xml');
     expect(exportedRect?.getAttribute('fill')).not.toContain('url(#');
+  });
+
+  it('converts foreignObject overflow measurements from client pixels to svg units', async () => {
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('viewBox', '0 0 100 100');
+    mockSvgCoordinateSpace(svg, { scaleX: 2, scaleY: 2 });
+
+    const foreignObject = document.createElementNS(svgNS, 'foreignObject');
+    const span = document.createElement('span');
+    span.style.alignItems = 'flex-end';
+    Object.defineProperty(span, 'scrollHeight', {
+      configurable: true,
+      get: () => 300,
+    });
+    foreignObject.appendChild(span);
+    svg.appendChild(foreignObject);
+
+    mockRect(foreignObject, { left: 0, top: 0, width: 200, height: 200 });
+
+    const exported = await exportToSVG(svg);
+
+    expect(exported.getAttribute('viewBox')).toBe('0 -50 100 150');
+    expect(exported.getAttribute('width')).toBe('100');
+    expect(exported.getAttribute('height')).toBe('150');
+  });
+
+  it('expands exports for root svg elements without an explicit viewBox', async () => {
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('width', '200');
+    svg.setAttribute('height', '100');
+    mockSvgCoordinateSpace(svg);
+
+    const foreignObject = document.createElementNS(svgNS, 'foreignObject');
+    const span = document.createElement('span');
+    span.style.alignItems = 'flex-end';
+    Object.defineProperty(span, 'scrollHeight', {
+      configurable: true,
+      get: () => 150,
+    });
+    foreignObject.appendChild(span);
+    svg.appendChild(foreignObject);
+
+    mockRect(foreignObject, { left: 0, top: 0, width: 200, height: 100 });
+
+    const exported = await exportToSVG(svg);
+
+    expect(exported.getAttribute('viewBox')).toBe('0 -50 200 150');
+    expect(exported.getAttribute('width')).toBe('200');
+    expect(exported.getAttribute('height')).toBe('150');
+  });
+
+  it('uses rendered bounds when root svg width and height are relative values', async () => {
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('width', '100%');
+    svg.setAttribute('height', '100%');
+    mockSvgCoordinateSpace(svg);
+    mockRect(svg, { left: 0, top: 0, width: 320, height: 180 });
+
+    const foreignObject = document.createElementNS(svgNS, 'foreignObject');
+    const span = document.createElement('span');
+    span.style.alignItems = 'flex-end';
+    Object.defineProperty(span, 'scrollHeight', {
+      configurable: true,
+      get: () => 270,
+    });
+    foreignObject.appendChild(span);
+    svg.appendChild(foreignObject);
+
+    mockRect(foreignObject, { left: 0, top: 0, width: 320, height: 180 });
+
+    const exported = await exportToSVG(svg);
+
+    expect(exported.getAttribute('viewBox')).toBe('0 -90 320 270');
+    expect(exported.getAttribute('width')).toBe('320');
+    expect(exported.getAttribute('height')).toBe('270');
   });
 });
