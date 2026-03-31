@@ -9,6 +9,7 @@ import {
 } from '../../utils';
 import { UpdateOptionsCommand } from '../commands';
 import type { IPlugin, PluginInitOptions } from '../types';
+import { getOverlayContainer } from '../utils';
 import { Plugin } from './base';
 import { IconButton } from './components';
 import { RESET_ICON } from './components/icons';
@@ -19,8 +20,10 @@ const BUTTON_SIZE = 40;
 export interface ResetViewBoxOptions {
   style?: Partial<CSSStyleDeclaration>;
   className?: string;
-  getContainer?: HTMLElement | (() => HTMLElement);
+  getContainer?: OverlayRoot | (() => OverlayRoot);
 }
+
+type OverlayRoot = HTMLElement | ShadowRoot;
 
 export class ResetViewBox extends Plugin implements IPlugin {
   name = 'reset-viewBox';
@@ -38,7 +41,7 @@ export class ResetViewBox extends Plugin implements IPlugin {
     super.init(options);
 
     // Initialize originViewBox
-    this.ensureButtonStyle();
+    this.ensureButtonStyle(this.resolveOverlayRoot());
     this.updateOriginViewBox();
 
     this.unregisterSync = this.editor.registerSync(
@@ -91,10 +94,13 @@ export class ResetViewBox extends Plugin implements IPlugin {
     if (this.resetButton) return this.resetButton;
 
     const { style, className } = this.options || {};
+    const containerParent = this.resolveOverlayRoot();
+    this.ensureButtonStyle(containerParent);
 
     const button = IconButton({
       icon: RESET_ICON,
       onClick: this.resetViewBox,
+      root: containerParent,
     });
 
     button.classList.add(RESET_BUTTON_CLASS);
@@ -110,11 +116,6 @@ export class ResetViewBox extends Plugin implements IPlugin {
     setElementRole(button, COMPONENT_ROLE);
 
     this.resetButton = button;
-
-    const { getContainer } = this.options || {};
-    const resolvedContainer =
-      typeof getContainer === 'function' ? getContainer() : getContainer;
-    const containerParent = resolvedContainer ?? document.body;
 
     containerParent?.appendChild(button);
 
@@ -229,7 +230,14 @@ export class ResetViewBox extends Plugin implements IPlugin {
     this.resetButton = undefined;
   };
 
-  private ensureButtonStyle() {
+  private resolveOverlayRoot(): OverlayRoot {
+    const { getContainer } = this.options || {};
+    const resolvedContainer =
+      typeof getContainer === 'function' ? getContainer() : getContainer;
+    return resolvedContainer ?? getOverlayContainer(this.editor.getDocument());
+  }
+
+  private ensureButtonStyle(target?: Node) {
     injectStyleOnce(
       RESET_BUTTON_STYLE_ID,
       `
@@ -250,6 +258,7 @@ export class ResetViewBox extends Plugin implements IPlugin {
         cursor: pointer;
       }
       `,
+      target,
     );
   }
 }

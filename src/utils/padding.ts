@@ -27,7 +27,7 @@ export function setSVGPadding(svg: SVGSVGElement, padding: ParsedPadding) {
   if (isNode) {
     setSVGPaddingInNode(svg, padding);
   } else {
-    if (document.contains(svg)) {
+    if (svg.isConnected) {
       setSVGPaddingInBrowser(svg, padding);
     } else {
       try {

@@ -6,6 +6,7 @@ export type ColorPickerProps = {
   value?: string;
   swatches?: string[];
   onChange?: (value: string) => void;
+  root?: Node;
 };
 
 export type ColorPickerHandle = {
@@ -66,7 +67,7 @@ export function ColorPicker(
     throw new Error('ColorPicker can only be used in the browser.');
   }
 
-  ensureColorPickerStyles();
+  ensureColorPickerStyles(props.root);
 
   const container = document.createElement('div');
   container.classList.add(COLOR_PICKER_CLASS);
@@ -279,7 +280,7 @@ function createSwitchLabel(text: string): HTMLSpanElement {
   return span;
 }
 
-function ensureColorPickerStyles() {
+function ensureColorPickerStyles(target?: Node) {
   injectStyleOnce(
     COLOR_PICKER_STYLE_ID,
     `
@@ -393,5 +394,6 @@ function ensureColorPickerStyles() {
   color: #ffffff;
 }
 `,
+    target,
   );
 }

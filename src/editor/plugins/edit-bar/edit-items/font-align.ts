@@ -48,15 +48,17 @@ export const FontAlign: EditItem<TextAttributes> = (
   selection,
   attrs,
   commander,
+  options,
 ) => {
-  injectStyleOnce(GRID_STYLE_ID, GRID_STYLES);
+  const root = options?.root;
+  injectStyleOnce(GRID_STYLE_ID, GRID_STYLES, root);
 
   const state: AlignState = {
     horizontal: attrs['data-horizontal-align'],
     vertical: attrs['data-vertical-align'],
   };
 
-  const button = IconButton({ icon: TEXT_ICONS.align });
+  const button = IconButton({ icon: TEXT_ICONS.align, root });
 
   const content = createAlignContent(state, (align) => {
     const attributes: Partial<TextAttributes> = {};
@@ -74,11 +76,12 @@ export const FontAlign: EditItem<TextAttributes> = (
           }),
       ),
     );
-  });
+  }, root);
 
   return Popover({
     target: button,
     content,
+    getContainer: root,
     placement: 'top',
     offset: 12,
   });
@@ -87,6 +90,7 @@ export const FontAlign: EditItem<TextAttributes> = (
 function createAlignContent(
   state: AlignState,
   onAlignChange: (align: AlignState) => void,
+  root?: Node,
 ) {
   const content = document.createElement('div');
   content.classList.add(GRID_CLASS);
@@ -106,6 +110,7 @@ function createAlignContent(
   ) => {
     options.forEach(({ icon, align }) => {
       const button = IconButton({
+        root,
         icon,
         onClick: () => {
           if (state[stateKey] === align) return;

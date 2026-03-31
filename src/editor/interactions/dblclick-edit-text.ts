@@ -92,7 +92,7 @@ function editText(text: TextElement, options?: EditTextOptions) {
   const entity = getTextEntity(text);
   if (!entity) return;
 
-  ensureEditorStyles();
+  ensureEditorStyles(entity);
   new InlineTextEditor(entity, options).start();
 }
 
@@ -240,7 +240,7 @@ class InlineTextEditor {
   }
 }
 
-function ensureEditorStyles() {
+function ensureEditorStyles(target?: Node) {
   injectStyleOnce(
     EDITOR_STYLE_ID,
     `
@@ -256,5 +256,6 @@ function ensureEditorStyles() {
   background-color: #b3d4fc;
 }
 `,
+    target,
   );
 }
