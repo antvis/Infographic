@@ -124,7 +124,7 @@ export const ChartLine: ComponentType<ChartLineProps> = (props) => {
   const tickStep =
     ticksY.length > 1 ? Math.abs(ticksY[1] - ticksY[0]) : 1;
   const tickDecimals =
-    tickStep > 0 ? Math.max(0, Math.ceil(-Math.log10(tickStep))) : 0;
+    tickStep > 0 ? Math.max(0, -Math.floor(Math.log10(tickStep))) : 0;
   const formatTickY = (tick: number) =>
     tickDecimals === 0 ? tick.toString() : tick.toFixed(tickDecimals);
 
