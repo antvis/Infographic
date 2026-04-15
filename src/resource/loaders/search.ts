@@ -11,8 +11,8 @@ const queryIcon = async (query: string): Promise<string | null> => {
     const response = await fetchWithCache(url);
     if (!response.ok) return null;
     const result = await response.json();
-    if (!result?.status || !Array.isArray(result.data?.data)) return null;
-    return (result.data.data[0] as string) || null;
+    if (!result?.success || !Array.isArray(result.data)) return null;
+    return (result.data[0] as string) || null;
   } catch (error) {
     console.error(`Failed to query icon for "${query}":`, error);
     return null;

@@ -259,11 +259,11 @@ export function IconPageContent() {
           topK: topK.toString(),
         });
         const response = await fetch(
-          `https://www.weavefox.cn/api/open/v1/icon?${params.toString()}`
+          `https://lab.weavefox.cn/api/v1/infographic/icon?${params.toString()}`
         );
         const result = await response.json();
-        if (result.status && result.data && result.data.success) {
-          setIcons(result.data.data);
+        if (result.success && Array.isArray(result.data)) {
+          setIcons(result.data);
         } else {
           setError(iconTexts.errors.noResult);
         }
@@ -299,7 +299,7 @@ export function IconPageContent() {
       text: endpointParams.text,
       topK: endpointParams.topK,
     });
-    return `https://www.weavefox.cn/api/open/v1/icon?${params.toString()}`;
+    return `https://lab.weavefox.cn/api/v1/infographic/icon?${params.toString()}`;
   }, [endpointParams]);
 
   const copyEndpoint = async () => {
@@ -484,7 +484,7 @@ export function IconPageContent() {
                         GET
                       </span>
                       <span className="whitespace-pre-wrap break-words">
-                        https://www.weavefox.cn/api/open/v1/icon?
+                        https://lab.weavefox.cn/api/v1/infographic/icon?
                         <span className="font-semibold text-primary dark:text-primary-dark">
                           {sidebarTexts.paramTextLabel}
                         </span>
@@ -549,15 +549,12 @@ export function IconPageContent() {
                     <div className="bg-gray-5 dark:bg-gray-90 p-4 rounded-lg font-mono text-sm overflow-x-auto border border-gray-10 dark:border-gray-80">
                       <pre className="text-secondary dark:text-secondary-dark">
                         {`{
-  "status": true,
-  "message": "success",
-  "data": {
-    "success": true,
-    "data": [
-      "https://example.com/icon1.svg",
-      "https://example.com/icon2.svg"
-    ]
-  }
+  "success": true,
+  "data": [
+    "https://example.com/icon1.svg",
+    "https://example.com/icon2.svg"
+  ],
+  "message": "success"
 }`}
                       </pre>
                     </div>
