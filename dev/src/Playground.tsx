@@ -26,17 +26,11 @@ data
 `;
 
 export const Playground = () => {
-  const [code, setCode] = useState(DEFAULT_CODE);
-  const [options, setOptions] = useState(DEFAULT_CODE);
-
-  // Hydrate from localStorage on mount
-  useEffect(() => {
+  const [code, setCode] = useState(() => {
     const saved = getStoredValues<{ code: string }>(STORAGE_KEY);
-    if (saved?.code) {
-      setCode(saved.code);
-      setOptions(saved.code);
-    }
-  }, []);
+    return saved?.code || DEFAULT_CODE;
+  });
+  const [options, setOptions] = useState(code);
 
   // Debounce: update preview 500ms after last edit, also persist
   useEffect(() => {
@@ -58,8 +52,20 @@ export const Playground = () => {
       }}
     >
       <div style={{ width: 420, display: 'flex', flexDirection: 'column' }}>
-        <Card title="语法输入" size="small" style={{ flex: 1 }}>
-          <div style={{ height: 'calc(100vh - 160px)' }}>
+        <Card
+          title="语法输入"
+          size="small"
+          style={{ flex: 1, display: 'flex', flexDirection: 'column' }}
+          styles={{
+            body: {
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden',
+            },
+          }}
+        >
+          <div style={{ flex: 1 }}>
             <Editor
               height="100%"
               defaultLanguage="plaintext"
