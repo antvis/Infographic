@@ -1,1 +1,1 @@
-export const ICON_SERVICE_URL = 'https://www.weavefox.cn/api/open/v1/icon';
+export const ICON_SERVICE_URL = 'https://lab.weavefox.cn/api/v1/infographic/icon';
