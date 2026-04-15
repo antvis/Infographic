@@ -121,6 +121,8 @@ export const ChartLine: ComponentType<ChartLineProps> = (props) => {
   const tickElements: JSXElement[] = [];
 
   const ticksY = scaleY.ticks(6);
+  const formatTickY = scaleY.tickFormat(6);
+
   ticksY.forEach((tick) => {
     const yPos = chartOriginY + scaleY(tick);
     gridElements.push(
@@ -145,7 +147,7 @@ export const ChartLine: ComponentType<ChartLineProps> = (props) => {
         fontSize={12}
         fill={axisColor}
       >
-        {Number.isInteger(tick) ? tick.toString() : tick.toFixed(1)}
+        {formatTickY(tick)}
       </Text>,
     );
   });
