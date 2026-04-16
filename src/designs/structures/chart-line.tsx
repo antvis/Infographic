@@ -18,6 +18,9 @@ export interface ChartLineProps extends BaseStructureProps {
   valueFormatter?: (value: number, datum: ItemDatum) => string;
 }
 
+const ITEM_POSITION_H = 'center' as const;
+const ITEM_POSITION_V = 'normal' as const;
+
 export const ChartLine: ComponentType<ChartLineProps> = (props) => {
   const {
     Title,
@@ -50,9 +53,6 @@ export const ChartLine: ComponentType<ChartLineProps> = (props) => {
 
   const [paddingTop, paddingRight, paddingBottom, paddingLeft] =
     parsePadding(padding);
-
-  const ITEM_POSITION_H = 'center' as const;
-  const ITEM_POSITION_V = 'normal' as const;
 
   const itemProps = {
     indexes: [0],
@@ -399,11 +399,6 @@ export const ChartLine: ComponentType<ChartLineProps> = (props) => {
           </linearGradient>
           <linearGradient id={gradientAreaId} x1="0%" y1="0%" x2="100%" y2="0%">
             {areaStops}
-            <stop
-              offset="100%"
-              stopColor={colorStopsData[colorStopsData.length - 1]?.color ?? colorPrimary}
-              stopOpacity="0.04"
-            />
           </linearGradient>
         </Defs>
         <Group>{gridElements}</Group>

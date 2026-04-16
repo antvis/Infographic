@@ -26,7 +26,12 @@ function getExportViewBox(svg: SVGSVGElement) {
 
   const width = parseAbsoluteLength(svg.getAttribute('width'));
   const height = parseAbsoluteLength(svg.getAttribute('height'));
-  if (!Number.isNaN(width) && width > 0 && !Number.isNaN(height) && height > 0) {
+  if (
+    !Number.isNaN(width) &&
+    width > 0 &&
+    !Number.isNaN(height) &&
+    height > 0
+  ) {
     return { x: 0, y: 0, width, height };
   }
 
@@ -506,80 +511,77 @@ function collectDefElements(svg: SVGSVGElement, ids: Set<string>) {
   return collected;
 }
 
+// Fallback implementation based on the CSS.escape algorithm
+function cssEscape(value: string): string {
+  const string = String(value);
+  const length = string.length;
+  let result = '';
+
+  if (length === 0) {
+    return '';
+  }
+
+  for (let i = 0; i < length; i++) {
+    const codeUnit = string.charCodeAt(i);
+
+    // Null character
+    if (codeUnit === 0x0000) {
+      result += '\uFFFD';
+      continue;
+    }
+
+    // Control characters or DEL
+    if ((codeUnit >= 0x0001 && codeUnit <= 0x001f) || codeUnit === 0x007f) {
+      result += '\\' + codeUnit.toString(16) + ' ';
+      continue;
+    }
+
+    // Escape if first character is a digit
+    if (i === 0 && codeUnit >= 0x0030 && codeUnit <= 0x0039) {
+      result += '\\' + codeUnit.toString(16) + ' ';
+      continue;
+    }
+
+    // Escape if second character is a digit and first is a hyphen
+    if (
+      i === 1 &&
+      codeUnit >= 0x0030 &&
+      codeUnit <= 0x0039 &&
+      string.charCodeAt(0) === 0x002d
+    ) {
+      result += '\\' + codeUnit.toString(16) + ' ';
+      continue;
+    }
+
+    // If the character is the first and is a hyphen followed by end of string, escape it
+    if (i === 0 && length === 1 && codeUnit === 0x002d) {
+      result += '\\' + string.charAt(i);
+      continue;
+    }
+
+    // Characters that are safe to use unescaped
+    if (
+      (codeUnit >= 0x0030 && codeUnit <= 0x0039) || // 0-9
+      (codeUnit >= 0x0041 && codeUnit <= 0x005a) || // A-Z
+      (codeUnit >= 0x0061 && codeUnit <= 0x007a) || // a-z
+      codeUnit === 0x002d || // -
+      codeUnit === 0x005f // _
+    ) {
+      result += string.charAt(i);
+      continue;
+    }
+
+    // All other characters
+    result += '\\' + string.charAt(i);
+  }
+
+  return result;
+}
+
 function escapeCssId(id: string) {
   if (globalThis.CSS && typeof globalThis.CSS.escape === 'function') {
     return globalThis.CSS.escape(id);
   }
-
-  // Fallback implementation based on the CSS.escape algorithm
-  const cssEscape = (value: string): string => {
-    const string = String(value);
-    const length = string.length;
-    let result = '';
-
-    if (length === 0) {
-      return '';
-    }
-
-    for (let i = 0; i < length; i++) {
-      const codeUnit = string.charCodeAt(i);
-
-      // Null character
-      if (codeUnit === 0x0000) {
-        result += '\uFFFD';
-        continue;
-      }
-
-      // Control characters or DEL
-      if (
-        (codeUnit >= 0x0001 && codeUnit <= 0x001f) ||
-        codeUnit === 0x007f
-      ) {
-        result += '\\' + codeUnit.toString(16) + ' ';
-        continue;
-      }
-
-      // Escape if first character is a digit
-      if (i === 0 && codeUnit >= 0x0030 && codeUnit <= 0x0039) {
-        result += '\\' + string.charAt(i);
-        continue;
-      }
-
-      // Escape if second character is a digit and first is a hyphen
-      if (
-        i === 1 &&
-        codeUnit >= 0x0030 &&
-        codeUnit <= 0x0039 &&
-        string.charCodeAt(0) === 0x002d
-      ) {
-        result += '\\' + string.charAt(i);
-        continue;
-      }
-
-      // If the character is the first and is a hyphen followed by end of string, escape it
-      if (i === 0 && length === 1 && codeUnit === 0x002d) {
-        result += '\\' + string.charAt(i);
-        continue;
-      }
-
-      // Characters that are safe to use unescaped
-      if (
-        (codeUnit >= 0x0030 && codeUnit <= 0x0039) || // 0-9
-        (codeUnit >= 0x0041 && codeUnit <= 0x005a) || // A-Z
-        (codeUnit >= 0x0061 && codeUnit <= 0x007a) || // a-z
-        codeUnit === 0x002d || // -
-        codeUnit === 0x005f // _
-      ) {
-        result += string.charAt(i);
-        continue;
-      }
-
-      // All other characters
-      result += '\\' + string.charAt(i);
-    }
-
-    return result;
-  };
 
   return cssEscape(id);
 }
