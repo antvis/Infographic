@@ -489,12 +489,9 @@ function collectDefElements(svg: SVGSVGElement, ids: Set<string>) {
 
   while (queue.length) {
     const id = queue.shift()!;
+    if (!id) continue;
     if (visited.has(id)) continue;
     visited.add(id);
-
-    if (!id) {
-      continue;
-    }
 
     const selector = `#${escapeCssId(id)}`;
     const target = svg.querySelector(selector);
@@ -567,9 +564,9 @@ function escapeCssId(id: string) {
 
       // Characters that are safe to use unescaped
       if (
-        codeUnit >= 0x0030 && codeUnit <= 0x0039 || // 0-9
-        codeUnit >= 0x0041 && codeUnit <= 0x005a || // A-Z
-        codeUnit >= 0x0061 && codeUnit <= 0x007a || // a-z
+        (codeUnit >= 0x0030 && codeUnit <= 0x0039) || // 0-9
+        (codeUnit >= 0x0041 && codeUnit <= 0x005a) || // A-Z
+        (codeUnit >= 0x0061 && codeUnit <= 0x007a) || // a-z
         codeUnit === 0x002d || // -
         codeUnit === 0x005f // _
       ) {
