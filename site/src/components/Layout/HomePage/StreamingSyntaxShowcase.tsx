@@ -627,17 +627,22 @@ export function StreamingSyntaxShowcase({
           </button>
         </div>
       </div>
-      <div className="grid md:grid-cols-2 h-[450px] md:h-[500px] divide-y md:divide-y-0 md:divide-x divide-border dark:divide-border-dark">
-        <div className="relative bg-wash dark:bg-gray-95 overflow-hidden">
+      <div className="grid md:grid-cols-2 flex-1 h-[450px] md:h-auto min-h-[500px] divide-y md:divide-y-0 md:divide-x divide-border dark:divide-border-dark">
+        <div className="relative min-w-0 bg-wash dark:bg-gray-95 overflow-hidden">
           <div
             ref={bufferRef}
-            className="absolute inset-0 overflow-y-scroll overflow-x-hidden scrollbar-hide"
+            className="absolute inset-0 overflow-x-auto overflow-y-scroll scrollbar-hide"
             style={{
               overscrollBehavior: 'contain',
               scrollbarWidth: 'none',
               msOverflowStyle: 'none',
             }}>
-            <pre className="text-[13px] leading-relaxed text-secondary dark:text-secondary-dark font-mono p-4 md:p-6 m-0 whitespace-pre">
+            <pre
+              className="text-[13px] leading-relaxed text-secondary dark:text-secondary-dark font-mono p-4 md:p-6 m-0 whitespace-pre scrollbar-hide"
+              style={{
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+              }}>
               {displayCode}
             </pre>
           </div>
@@ -662,7 +667,7 @@ export function StreamingSyntaxShowcase({
             </svg>
           )}
         </div>
-        <div className="relative bg-white dark:bg-gray-950 overflow-hidden">
+        <div className="relative min-w-0 bg-white dark:bg-gray-950 overflow-hidden">
           {renderError ? (
             <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/90 dark:bg-black/80 backdrop-blur-sm text-sm text-red-600 dark:text-red-400 px-4 text-center font-medium">
               {renderError}
@@ -717,7 +722,8 @@ export function StreamingSyntaxShowcase({
             }
           }
           .scrollbar-hide::-webkit-scrollbar {
-            display: none;
+            width: 0;
+            height: 0;
           }
           .scrollbar-hide {
             -ms-overflow-style: none;
@@ -726,8 +732,8 @@ export function StreamingSyntaxShowcase({
         `,
           }}
         />
-        <div className="grid gap-6 lg:gap-10 lg:grid-cols-[0.5fr,1.5fr] items-stretch">
-          <div className="relative flex flex-col justify-center gap-6 py-8 text-secondary dark:text-secondary-dark">
+        <div className="grid gap-6 lg:gap-10 lg:grid-cols-[0.5fr,1.5fr] lg:items-stretch">
+          <div className="relative flex flex-col justify-center gap-6 py-8 lg:py-0 text-secondary dark:text-secondary-dark">
             <p className="max-w-3xl mx-auto text-lg lg:text-xl text-secondary dark:text-secondary-dark leading-normal">
               {translation.description}
             </p>

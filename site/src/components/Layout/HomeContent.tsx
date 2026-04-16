@@ -156,6 +156,8 @@ const TRANSLATIONS = {
         roadmapLabel: '未来计划',
         cta: '了解更多动态',
         alt: 'AntV Infographic 团队技术探索示意',
+        image:
+          'https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*15OrQo7ftkAAAAAASxAAAAgAemJ7AQ/original',
       },
       welcome: {
         title: '欢迎使用 AntV Infographic',
@@ -256,6 +258,8 @@ const TRANSLATIONS = {
         roadmapLabel: 'Roadmap',
         cta: 'More Updates',
         alt: 'AntV Infographic team exploration illustration',
+        image:
+          'https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*ycICR7i9WDwAAAAAYPAAAAgAemJ7AQ/fmt.avif',
       },
       welcome: {
         title: 'Welcome to AntV Infographic',
@@ -696,7 +700,7 @@ export function HomeContent(): JSX.Element {
               </div>
               <div className="w-full lg:w-6/12 flex flex-col items-center lg:items-end">
                 <img
-                  src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*15OrQo7ftkAAAAAASxAAAAgAemJ7AQ/original"
+                  src={sectionContent.evolution.image}
                   alt={sectionContent.evolution.alt}
                   className="w-full h-auto rounded-2xl lg:max-h-[480px] object-contain"
                   draggable={false}
