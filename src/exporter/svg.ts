@@ -561,6 +561,7 @@ function cssEscape(value: string): string {
 
     // Characters that are safe to use unescaped
     if (
+      codeUnit >= 0x0080 ||
       (codeUnit >= 0x0030 && codeUnit <= 0x0039) || // 0-9
       (codeUnit >= 0x0041 && codeUnit <= 0x005a) || // A-Z
       (codeUnit >= 0x0061 && codeUnit <= 0x007a) || // a-z

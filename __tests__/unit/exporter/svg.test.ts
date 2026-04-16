@@ -245,7 +245,7 @@ describe('exporter/svg', () => {
     expect(exportedRect?.getAttribute('fill')).not.toContain('url(#');
   });
 
-  it.each(['1grad', '-1grad'])(
+  it.each(['1grad', '-1grad', '💡grad'])(
     'inlines defs references for ids requiring CSS.escape fallback (%s)',
     async (gradientId) => {
       const originalCSS = globalThis.CSS;
