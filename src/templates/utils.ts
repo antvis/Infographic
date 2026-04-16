@@ -43,11 +43,32 @@ function getCommonPrefixLength(source: string, target: string): number {
   const limit = Math.min(source.length, target.length);
   let index = 0;
 
-  while (index < limit && source[index] === target[index]) {
+  while (
+    index < limit &&
+    source.charCodeAt(index) === target.charCodeAt(index)
+  ) {
     index += 1;
   }
 
   return index;
+}
+
+function isBetterMatch(
+  bestMatch: string | undefined,
+  bestDistance: number,
+  bestPrefixLength: number,
+  candidateKey: string,
+  candidateDistance: number,
+  candidatePrefixLength: number,
+): boolean {
+  return (
+    candidateDistance < bestDistance ||
+    (candidateDistance === bestDistance &&
+      candidatePrefixLength > bestPrefixLength) ||
+    (candidateDistance === bestDistance &&
+      candidatePrefixLength === bestPrefixLength &&
+      (!bestMatch || candidateKey < bestMatch))
+  );
 }
 
 export function findClosestTemplateKey(
@@ -71,11 +92,14 @@ export function findClosestTemplateKey(
     const prefixLength = getCommonPrefixLength(normalizedType, normalizedKey);
 
     if (
-      distance < bestDistance ||
-      (distance === bestDistance && prefixLength > bestPrefixLength) ||
-      (distance === bestDistance &&
-        prefixLength === bestPrefixLength &&
-        (!bestMatch || key < bestMatch))
+      isBetterMatch(
+        bestMatch,
+        bestDistance,
+        bestPrefixLength,
+        key,
+        distance,
+        prefixLength,
+      )
     ) {
       bestMatch = key;
       bestDistance = distance;

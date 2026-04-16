@@ -51,12 +51,15 @@ export const ChartLine: ComponentType<ChartLineProps> = (props) => {
   const [paddingTop, paddingRight, paddingBottom, paddingLeft] =
     parsePadding(padding);
 
+  const ITEM_POSITION_H = 'center' as const;
+  const ITEM_POSITION_V = 'normal' as const;
+
   const itemProps = {
     indexes: [0],
     datum: items[0],
     data,
-    positionH: 'center',
-    positionV: 'normal',
+    positionH: ITEM_POSITION_H,
+    positionV: ITEM_POSITION_V,
   };
   const sampleBounds = getElementBounds(<Item {...itemProps} />);
   const labelWidth = sampleBounds.width;
@@ -396,7 +399,11 @@ export const ChartLine: ComponentType<ChartLineProps> = (props) => {
           </linearGradient>
           <linearGradient id={gradientAreaId} x1="0%" y1="0%" x2="100%" y2="0%">
             {areaStops}
-            <stop offset="100%" stopColor={colorPrimary} stopOpacity="0.04" />
+            <stop
+              offset="100%"
+              stopColor={colorStopsData[colorStopsData.length - 1]?.color ?? colorPrimary}
+              stopOpacity="0.04"
+            />
           </linearGradient>
         </Defs>
         <Group>{gridElements}</Group>

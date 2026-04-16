@@ -30,12 +30,12 @@ export const Playground = () => {
     const saved = getStoredValues<{ code: string }>(STORAGE_KEY);
     return saved?.code || DEFAULT_CODE;
   });
-  const [options, setOptions] = useState(code);
+  const [previewCode, setPreviewCode] = useState(code);
 
   // Debounce: update preview 500ms after last edit, also persist
   useEffect(() => {
     const timer = setTimeout(() => {
-      setOptions(code);
+      setPreviewCode(code);
       setStoredValues(STORAGE_KEY, { code });
     }, 500);
     return () => clearTimeout(timer);
@@ -86,7 +86,7 @@ export const Playground = () => {
 
       <div style={{ flex: 1, overflow: 'auto' }}>
         <Card title="预览" size="small" style={{ height: '100%' }}>
-          <Infographic options={options} />
+          <Infographic options={previewCode} />
         </Card>
       </div>
     </div>
