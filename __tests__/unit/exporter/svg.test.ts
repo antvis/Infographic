@@ -245,6 +245,58 @@ describe('exporter/svg', () => {
     expect(exportedRect?.getAttribute('fill')).not.toContain('url(#');
   });
 
+  it.each(['1grad', '-1grad', '💡grad'])(
+    'inlines defs references for ids requiring CSS.escape fallback (%s)',
+    async (gradientId) => {
+      const originalCSS = globalThis.CSS;
+      Object.defineProperty(globalThis, 'CSS', {
+        configurable: true,
+        value: undefined,
+      });
+
+      try {
+        const defs = document.createElementNS(svgNS, 'defs');
+        const gradient = document.createElementNS(svgNS, 'linearGradient');
+        gradient.setAttribute('id', gradientId);
+        const stop1 = document.createElementNS(svgNS, 'stop');
+        stop1.setAttribute('offset', '0');
+        stop1.setAttribute('stop-color', '#fff');
+        const stop2 = document.createElementNS(svgNS, 'stop');
+        stop2.setAttribute('offset', '1');
+        stop2.setAttribute('stop-color', '#000');
+        gradient.appendChild(stop1);
+        gradient.appendChild(stop2);
+        defs.appendChild(gradient);
+
+        const svg = document.createElementNS(svgNS, 'svg');
+        svg.setAttribute('viewBox', '0 0 10 10');
+        svg.appendChild(defs);
+
+        const rect = document.createElementNS(svgNS, 'rect');
+        rect.setAttribute('width', '10');
+        rect.setAttribute('height', '10');
+        rect.setAttribute('fill', `url(#${gradientId})`);
+        svg.appendChild(rect);
+
+        const exported = await exportToSVG(svg, { removeIds: true });
+
+        const exportedRect = exported.querySelector('rect');
+        expect(exported.querySelector('defs')).toBeNull();
+        expect(exportedRect?.getAttribute('fill')).toContain(
+          'data:image/svg+xml',
+        );
+        expect(exportedRect?.getAttribute('fill')).toContain(
+          `#${encodeURIComponent(gradientId)}`,
+        );
+      } finally {
+        Object.defineProperty(globalThis, 'CSS', {
+          configurable: true,
+          value: originalCSS,
+        });
+      }
+    },
+  );
+
   it('converts foreignObject overflow measurements from client pixels to svg units', async () => {
     const svg = document.createElementNS(svgNS, 'svg');
     svg.setAttribute('viewBox', '0 0 100 100');

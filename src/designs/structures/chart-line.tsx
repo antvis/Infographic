@@ -18,6 +18,9 @@ export interface ChartLineProps extends BaseStructureProps {
   valueFormatter?: (value: number, datum: ItemDatum) => string;
 }
 
+const ITEM_POSITION_H = 'center' as const;
+const ITEM_POSITION_V = 'normal' as const;
+
 export const ChartLine: ComponentType<ChartLineProps> = (props) => {
   const {
     Title,
@@ -55,8 +58,8 @@ export const ChartLine: ComponentType<ChartLineProps> = (props) => {
     indexes: [0],
     datum: items[0],
     data,
-    positionH: 'center',
-    positionV: 'normal',
+    positionH: ITEM_POSITION_H,
+    positionV: ITEM_POSITION_V,
   };
   const sampleBounds = getElementBounds(<Item {...itemProps} />);
   const labelWidth = sampleBounds.width;
@@ -396,7 +399,6 @@ export const ChartLine: ComponentType<ChartLineProps> = (props) => {
           </linearGradient>
           <linearGradient id={gradientAreaId} x1="0%" y1="0%" x2="100%" y2="0%">
             {areaStops}
-            <stop offset="100%" stopColor={colorPrimary} stopOpacity="0.04" />
           </linearGradient>
         </Defs>
         <Group>{gridElements}</Group>

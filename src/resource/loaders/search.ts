@@ -43,9 +43,6 @@ export async function loadSearchResource(query: string, format?: string) {
       const svgText = commaIndex >= 0 ? result.slice(commaIndex + 1) : result;
       return loadSVGResource(svgText);
     }
-    if (mimeType === 'image/svg+xml' && format === 'svg' && isBase64) {
-      return loadImageBase64Resource(result);
-    }
     return loadImageBase64Resource(result);
   }
 
