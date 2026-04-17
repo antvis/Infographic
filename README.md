@@ -158,7 +158,7 @@ Community projects and products powered by AntV Infographic:
 
 - 💼 **Products**
   - [Alma](https://alma.now/) — Desktop AI provider orchestration app with Infographic
-  - [Chrome Extension](https://github.com/xicilion/markdown-viewer-extension) — Markdown viewer with Infographic support, export to Word
+  - [Markdown Viewer](https://docu.me) — Markdown viewer with Infographic support, export to Word, extension for Chrome/VS Code/Firefox
   - [InfographicAI](https://infographic-ai.tuntun.site/) — Generate PPT slides powered by Infographic
   - [LangChat Slides](https://github.com/TyCoding/langchat-slides) — Next-Gen AI Slide Generator using @antv/infographic
   - [Nowledge Mem](https://mem.nowledge.co/) — AI Memory Bank with Presentation Creator supporting Infographic
