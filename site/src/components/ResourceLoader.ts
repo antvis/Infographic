@@ -25,7 +25,11 @@ registerResourceLoader(async (config) => {
           let url: string | null;
 
           if (scene === 'icon') {
-            url = `https://api.iconify.design/${data}.svg`;
+            url = await fetch(
+              `https://lab.weavefox.cn/api/v1/infographic/icon?text=${data}&topK=${1}`
+            )
+              .then((res) => res.json())
+              .then((res) => res.data?.[0] || '');
           } else if (scene === 'illus') {
             url = `https://raw.githubusercontent.com/balazser/undraw-svg-collection/refs/heads/main/svgs/${data}.svg`;
           } else return null;
