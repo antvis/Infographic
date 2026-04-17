@@ -14,6 +14,7 @@ interface BrowserChromeProps {
   hasRefresh?: boolean;
   hasPulse?: boolean;
   hasFullscreen?: boolean;
+  isLoading?: boolean;
   onRestart?: () => void;
   error?: string | null;
   errorTitle?: string;
@@ -38,6 +39,7 @@ export function BrowserChrome({
   hasRefresh = false,
   hasPulse = false,
   hasFullscreen = false,
+  isLoading = false,
   onRestart,
   error,
   errorTitle,
@@ -123,7 +125,7 @@ export function BrowserChrome({
         <div className="h-8 relative bg-gray-30/20 dark:bg-gray-950 text-sm text-tertiary dark:text-tertiary-dark text-center rounded-full flex-1 min-w-0 flex-row flex items-center justify-center px-3">
           {hasRefresh && <div className="h-4 w-6" />}
           <div className="w-full leading-snug flex flex-row items-center justify-center truncate">
-            {/* 锁图标或错误图标 */}
+            {/* 锁图标、加载图标或错误图标 */}
             {error ? (
               <Tooltip
                 placement="bottom"
@@ -142,6 +144,25 @@ export function BrowserChrome({
                   <IconErrorCircle className="text-red-500 dark:text-red-400 me-1" />
                 </span>
               </Tooltip>
+            ) : isLoading ? (
+              <svg
+                className="text-link dark:text-link-dark me-1 animate-spin"
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeDasharray="32"
+                  strokeDashoffset="12"
+                />
+              </svg>
             ) : (
               <svg
                 className="text-tertiary dark:text-tertiary-dark me-1 opacity-60"
