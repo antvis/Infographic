@@ -29,7 +29,7 @@ const TRANSLATIONS = {
       github: 'GitHub',
       contribute: '参与贡献',
     },
-    friendlyLinksHeader: '友情链接',
+    friendlyLinksHeader: '相关项目',
   },
   'en-US': {
     docs: {
@@ -48,11 +48,11 @@ const TRANSLATIONS = {
     more: {
       header: 'More',
       moreExamples: 'More Examples',
-      aiInfographic: 'AI Generated Infographics',
+      aiInfographic: 'AI Generator',
       github: 'GitHub',
       contribute: 'Contribute',
     },
-    friendlyLinksHeader: 'Friendly Links',
+    friendlyLinksHeader: 'Related Projects',
   },
 };
 
@@ -77,7 +77,7 @@ export function Footer() {
           <div
             className="text-xs text-left rtl:text-right mt-2 pe-0.5"
             dir="ltr">
-            Copyright &copy; Ant Group Co.
+            Copyright &copy; Ant Group
           </div>
           <div className="flex flex-row items-center mt-6 gap-x-2">
             <ExternalLink
