@@ -158,7 +158,7 @@ $skill-installer install https://github.com/antvis/Infographic/tree/main/skills/
 
 - 💼 **商业产品**
   - [Alma](https://alma.now/) — 集成信息图的桌面 AI 多模型管理应用
-  - [Chrome 插件](https://github.com/xicilion/markdown-viewer-extension) — 支持信息图的 Markdown 查看器，支持导出 Word
+  - [Markdown Viewer](https://github.com/xicilion/markdown-viewer-extension) — 支持信息图的 Markdown 查看器，支持导出 Word，提供 Chrome/VS Code/Firefox 扩展
   - [InfographicAI](https://infographic-ai.tuntun.site/) — 基于信息图生成 PPT 的在线工具
   - [LangChat Slides](https://github.com/TyCoding/langchat-slides) — 基于 @antv/infographic 的新一代 AI 幻灯片生成器
   - [Nowledge Mem](https://mem.nowledge.co/) — 支持信息图演示创作的 AI 记忆库
