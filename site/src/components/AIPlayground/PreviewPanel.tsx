@@ -15,16 +15,12 @@ const TRANSLATIONS = {
     tabPreview: '预览',
     tabSyntax: '语法',
     copyImage: '复制图片',
-    generating: '生成中...',
-    empty: '输入提示语以生成信息图语法',
     copyImageHint: '已复制图片',
   },
   'en-US': {
     tabPreview: 'Preview',
     tabSyntax: 'Syntax',
     copyImage: 'Copy image',
-    generating: 'Generating...',
-    empty: 'Enter a prompt to generate infographic syntax',
     copyImageHint: 'Image copied',
   },
 };
@@ -147,6 +143,7 @@ export function PreviewPanel({
         }
         hasRefresh
         error={error || null}
+        isLoading={isGenerating}
         hideDefaultActions
         toolbarContent={navButtons}>
         <div className="pt-14 h-full flex flex-col bg-wash dark:bg-wash-dark">
@@ -162,24 +159,6 @@ export function PreviewPanel({
                   exit={{opacity: 0, y: -8}}
                   transition={{duration: 0.35, ease: 'easeOut'}}
                   className="relative bg-gradient-to-br from-card to-wash dark:from-gray-90 dark:to-gray-95 overflow-hidden rounded-b-2xl">
-                  <AnimatePresence>
-                    {isGenerating && (
-                      <motion.div
-                        key="loading"
-                        initial={{opacity: 0}}
-                        animate={{opacity: 1}}
-                        exit={{opacity: 0}}
-                        transition={{duration: 0.25}}
-                        className="absolute inset-0 z-10 flex items-center justify-center bg-white/80 dark:bg-black/70 backdrop-blur-sm">
-                        <div className="flex flex-col items-center gap-3">
-                          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-link dark:border-link-dark" />
-                          <p className="text-sm text-secondary dark:text-secondary-dark font-medium">
-                            {previewTexts.generating}
-                          </p>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
                   <div className="relative h-full w-full p-4 lg:p-6">
                     {previewValue ? (
                       <Infographic
@@ -190,13 +169,7 @@ export function PreviewPanel({
                           onRenderError?.(err ? err.message : null)
                         }
                       />
-                    ) : (
-                      <div className="h-full w-full flex items-center justify-center rounded-xl border border-dashed border-border dark:border-border-dark">
-                        <p className="text-sm text-tertiary dark:text-tertiary-dark">
-                          {previewTexts.empty}
-                        </p>
-                      </div>
-                    )}
+                    ) : null}
                   </div>
                 </motion.div>
               ) : (

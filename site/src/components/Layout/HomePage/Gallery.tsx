@@ -3,10 +3,19 @@
 import {InfographicOptions} from '@antv/infographic';
 import cn from 'classnames';
 import {memo, useEffect, useRef, useState} from 'react';
+import {useLocaleBundle} from '../../../hooks/useTranslation';
 import {Infographic} from '../../Infographic';
+
+type GalleryItem = {
+  options: Partial<InfographicOptions>;
+};
 
 export function Gallery() {
   const ref = useRef<HTMLDivElement>(null);
+  const localizedList = useLocaleBundle({
+    'zh-CN': list,
+    'en-US': ENGLISH_LIST,
+  });
 
   const [shouldPlay, setShouldPlay] = useState(false);
   useEffect(() => {
@@ -64,7 +73,7 @@ export function Gallery() {
         style={{
           animationPlayState: shouldPlay ? 'running' : 'paused',
         }}>
-        <InfographicItems isLazy={isLazy} />
+        <InfographicItems isLazy={isLazy} items={localizedList} />
       </div>
       <div
         aria-hidden="true"
@@ -72,15 +81,13 @@ export function Gallery() {
         style={{
           animationPlayState: shouldPlay ? 'running' : 'paused',
         }}>
-        <InfographicItems isLazy={isLazy} />
+        <InfographicItems isLazy={isLazy} items={localizedList} />
       </div>
     </div>
   );
 }
 
-const list: Array<{
-  options: Partial<InfographicOptions>;
-}> = [
+const list: GalleryItem[] = [
   {
     options: {
       template: 'sequence-filter-mesh-underline-text',
@@ -446,12 +453,379 @@ const list: Array<{
   },
 ];
 
-const InfographicItems = memo<{isLazy: boolean}>(function InfographicItems({
-  isLazy,
-}) {
+const ENGLISH_LIST: GalleryItem[] = [
+  {
+    options: {
+      template: 'sequence-filter-mesh-underline-text',
+      themeConfig: {
+        palette: ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#00f2fe'],
+        colorBg: '#f8f9ff',
+      },
+      data: {
+        title: 'Product Design Workflow',
+        items: [
+          {
+            label: 'User Research',
+            desc: 'Understand target users, needs, and pain points',
+          },
+          {
+            label: 'Prototyping',
+            desc: 'Validate core features and interactions quickly',
+          },
+          {
+            label: 'Visual Design',
+            desc: 'Craft a visual system aligned with the brand',
+          },
+          {
+            label: 'Development & Testing',
+            desc: 'Ensure product quality and user experience',
+          },
+          {
+            label: 'Launch & Growth',
+            desc: 'Iterate continuously after launch based on feedback',
+          },
+        ],
+      },
+    },
+  },
+  {
+    options: {
+      template: 'sequence-color-snake-steps-horizontal-icon-line',
+      themeConfig: {
+        palette: [
+          '#ff6b6b',
+          '#ee5a6f',
+          '#f06595',
+          '#cc5de8',
+          '#845ef7',
+          '#5c7cfa',
+          '#339af0',
+          '#22b8cf',
+          '#20c997',
+        ],
+        colorBg: '#fff5f7',
+      },
+      data: {
+        title: 'Company Growth Timeline',
+        items: [
+          {
+            icon: 'mdi/lightbulb-on',
+            label: 'Idea Spark',
+            time: '2017',
+          },
+          {
+            icon: 'mdi/rocket-launch',
+            label: 'Project Kickoff',
+            time: '2018',
+          },
+          {
+            icon: 'mdi/account-group',
+            label: 'Team Formation',
+            time: '2019',
+          },
+          {
+            icon: 'mdi/chart-line',
+            label: 'Rapid Growth',
+            time: '2020',
+          },
+          {
+            icon: 'mdi/shield-check',
+            label: 'Stable Operations',
+            time: '2021',
+          },
+          {
+            icon: 'mdi/trending-up',
+            label: 'Scale Expansion',
+            time: '2022',
+          },
+          {
+            icon: 'mdi/medal',
+            label: 'Industry Recognition',
+            time: '2023',
+          },
+          {
+            icon: 'mdi/trophy',
+            label: 'Market Leadership',
+            time: '2024',
+          },
+          {
+            icon: 'mdi/star',
+            label: 'Future Vision',
+            time: '2025',
+          },
+        ],
+      },
+    },
+  },
+  {
+    options: {
+      template: 'sequence-ascending-stairs-3d-underline-text',
+      themeConfig: {
+        palette: ['#ef476f', '#ffd166', '#06d6a0', '#118ab2', '#073b4c'],
+        colorBg: '#fffbf5',
+      },
+      data: {
+        title: 'Skill Growth Path',
+        desc: 'A step-by-step path from beginner to expert',
+        items: [
+          {
+            label: 'Foundations',
+            desc: 'Master core concepts and principles',
+          },
+          {
+            label: 'Practical Application',
+            desc: 'Build real-world capability through projects',
+          },
+          {
+            label: 'Deep Dive',
+            desc: 'Understand mechanisms and best practices',
+          },
+          {
+            label: 'Architecture Design',
+            desc: 'Design and optimize systems with confidence',
+          },
+          {
+            label: 'Technical Leadership',
+            desc: 'Grow into a domain expert and technical leader',
+          },
+        ],
+      },
+    },
+  },
+  {
+    options: {
+      template: 'sequence-mountain-underline-text',
+      themeConfig: {
+        palette: ['#76c893', '#52b69a', '#34a0a4', '#168aad', '#1a759f'],
+        colorBg: '#f0f9f9',
+      },
+      data: {
+        title: 'Sustainability Journey',
+        items: [
+          {
+            label: 'Awareness',
+            desc: 'Recognize environmental issues and why they matter',
+          },
+          {
+            label: 'Action',
+            desc: 'Reduce disposables and sort waste responsibly',
+          },
+          {
+            label: 'Habit Building',
+            desc: 'Make sustainable living part of everyday routines',
+          },
+          {
+            label: 'Influence Others',
+            desc: 'Encourage participation and organize local actions',
+          },
+          {
+            label: 'Systemic Change',
+            desc: 'Support policy and long-term sustainable development',
+          },
+        ],
+      },
+    },
+  },
+  {
+    options: {
+      padding: 0,
+      template: 'compare-binary-horizontal-underline-text-arrow',
+      themeConfig: {
+        palette: ['#e03131', '#1971c2'],
+        colorBg: '#faf8ff',
+      },
+      data: {
+        title: 'Business Model Comparison',
+        items: [
+          {
+            label: 'Traditional Model',
+            children: [
+              {
+                label: 'Offline-first Channels',
+                desc: 'Relies on physical stores and traditional sales networks',
+              },
+              {
+                label: 'Manual Service',
+                desc: 'Customer support is slower and less efficient',
+              },
+              {
+                label: 'High Fixed Costs',
+                desc: 'Rent and labor account for a large share of spending',
+              },
+            ],
+          },
+          {
+            label: 'Digital Model',
+            children: [
+              {
+                label: 'Omnichannel Integration',
+                desc: 'Connect online and offline touchpoints to reach more users',
+              },
+              {
+                label: 'AI Automation',
+                desc: 'Deliver 24/7 automated service responses',
+              },
+              {
+                label: 'Flexible Cost Structure',
+                desc: 'Scale on demand while reducing fixed overhead',
+              },
+            ],
+          },
+        ],
+      },
+    },
+  },
+  {
+    options: {
+      template: 'hierarchy-tree-tech-style-compact-card',
+      themeConfig: {
+        palette: ['#5c7cfa', '#37b24d', '#f59f00', '#e03131', '#9775fa'],
+        colorBg: '#fafbff',
+      },
+      data: {
+        title: 'Enterprise Strategy Blueprint',
+        items: [
+          {
+            label: 'Company Strategy',
+            children: [
+              {
+                label: 'Market Expansion',
+                children: [
+                  {
+                    label: 'Domestic Market',
+                  },
+                  {
+                    label: 'International Market',
+                  },
+                ],
+              },
+              {
+                label: 'Product Innovation',
+                children: [
+                  {
+                    label: 'R&D',
+                  },
+                  {
+                    label: 'User Experience',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    },
+  },
+  {
+    options: {
+      template: 'sequence-cylinders-3d-simple',
+      themeConfig: {
+        palette: ['#ef476f', '#ffd166', '#06d6a0', '#118ab2', '#073b4c'],
+        colorBg: '#fffaf5',
+      },
+      data: {
+        title: 'Customer Loyalty Journey',
+        items: [
+          {
+            label: 'Brand Awareness',
+            desc: 'Build recognition and a strong first impression',
+          },
+          {
+            label: 'Product Experience',
+            desc: 'Earn trust through a high-quality product experience',
+          },
+          {
+            label: 'Emotional Connection',
+            desc: 'Create deeper relationships with customers',
+          },
+          {
+            label: 'Word of Mouth',
+            desc: 'Motivate customers to recommend and share',
+          },
+          {
+            label: 'Loyalty Conversion',
+            desc: 'Turn customers into long-term brand advocates',
+          },
+        ],
+      },
+    },
+  },
+  {
+    options: {
+      template: 'compare-hierarchy-row-letter-card-compact-card',
+      themeConfig: {
+        palette: ['#37b24d', '#f59f00', '#5c7cfa', '#e03131'],
+        colorBg: '#f5f7ff',
+      },
+      data: {
+        title: 'SWOT Strategic Analysis',
+        items: [
+          {
+            label: 'Strengths',
+            children: [
+              {
+                label: 'Strong Innovation Capability',
+              },
+              {
+                label: 'Strong Team Culture',
+              },
+              {
+                label: 'Comprehensive Product Portfolio',
+              },
+            ],
+          },
+          {
+            label: 'Weaknesses',
+            children: [
+              {
+                label: 'Brand awareness needs improvement',
+              },
+              {
+                label: 'Limited market penetration',
+              },
+            ],
+          },
+          {
+            label: 'Opportunities',
+            children: [
+              {
+                label: 'Growing market demand',
+              },
+              {
+                label: 'Accelerating AI adoption',
+              },
+              {
+                label: 'Stronger policy support',
+              },
+            ],
+          },
+          {
+            label: 'Threats',
+            children: [
+              {
+                label: 'Rapid competitor growth',
+              },
+              {
+                label: 'Faster technology cycles',
+              },
+              {
+                label: 'More diverse user needs',
+              },
+            ],
+          },
+        ],
+      },
+    },
+  },
+];
+
+const InfographicItems = memo<{
+  isLazy: boolean;
+  items: GalleryItem[];
+}>(function InfographicItems({isLazy, items}) {
   return (
     <>
-      {list.map(({options}, i) => (
+      {items.map(({options}, i) => (
         <div
           key={i}
           className={cn(

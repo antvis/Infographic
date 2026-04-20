@@ -15,6 +15,7 @@ const nextConfig = {
     externalDir: true,
   },
   env: {},
+  devIndicators: false,
   webpack: (config, {isServer}) => {
     if (process.env.ANALYZE) {
       const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');

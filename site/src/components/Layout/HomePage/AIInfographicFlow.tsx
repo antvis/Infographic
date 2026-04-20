@@ -1,14 +1,25 @@
 import {motion, useInView} from 'framer-motion';
 import Image from 'next/image';
 import {useRef} from 'react';
+import {useLocaleBundle} from '../../../hooks/useTranslation';
+
+const TRANSLATIONS = {
+  'zh-CN': {
+    alt: 'AI 生成信息图流程：从用户文本输入，经过智能推荐、信息抽取、生成配置，最终渲染出专业信息图',
+  },
+  'en-US': {
+    alt: 'AI infographic workflow: from text input to recommendation, information extraction, configuration generation, and final rendering',
+  },
+};
 
 export function AIInfographicFlow() {
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, {once: true, margin: '-100px'});
+  const texts = useLocaleBundle(TRANSLATIONS);
 
   const imgProps = {
     src: 'https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*NQfsRok_qYoAAAAAXQAAAAgAemJ7AQ/original.svg',
-    alt: 'AI 生成信息图流程：从用户文本输入，经过智能推荐、信息抽取、生成配置，最终渲染出专业信息图',
+    alt: texts.alt,
     width: 600,
     height: 360,
     priority: true,

@@ -116,8 +116,8 @@ const TRANSLATIONS = {
       declarative: {
         title: '声明式信息图渲染框架',
         keyword: '声明式',
-        description: '配置描述信息图，让数据叙事更简单、更优雅、更高效',
-        note: '~200 内置模板与组件，开箱可用；从 0 到 1 构建信息图，从未如此轻松',
+        description: '以声明式配置描述信息图，让数据叙事更简单、更优雅、更高效',
+        note: '内置约 200 个模板与组件，开箱可用，让信息图从 0 到 1 更轻松',
       },
       ai: {
         title: 'AI 轻松生成专业信息图',
@@ -127,7 +127,7 @@ const TRANSLATIONS = {
         cta: '前往体验',
       },
       streaming: {
-        title: 'AI 友好的信息图语法',
+        title: '面向 AI 的信息图语法',
         cta: '了解信息图语法',
         highlights: [
           '简洁：语法简洁直观，易于理解和编写',
@@ -137,20 +137,20 @@ const TRANSLATIONS = {
         ],
       },
       themes: {
-        title: '多样主题效果',
-        description: '一键切换风格，满足不同场景需求',
-        note: '支持自定义主题配置，灵活扩展样式系统',
+        title: '丰富主题风格',
+        description: '一键切换风格，适配不同表达场景',
+        note: '支持自定义主题配置，灵活扩展视觉样式系统',
         cta: '查看主题配置文档',
       },
       playground: {
         title: '在线体验',
         description:
-          '在线编辑器中创建你的第一张信息图。用简洁配置快速完成可视化，实时预览即改即见',
-        note: '无需安装，在浏览器即可创作。丰富示例助你快速上手，轻松打造专业信息图',
+          '在在线编辑器中创建你的第一张信息图。用简洁配置快速完成可视化，实时预览、所改即所得',
+        note: '无需安装，在浏览器中即可创作。丰富示例帮助你快速上手，轻松打造专业信息图',
         cta: '查看更多示例',
       },
       evolution: {
-        title: '持续演进，拥抱未来',
+        title: '持续进化，面向未来',
         description: '愿景：让信息图成为 AI 时代的视觉语言基础设施',
         featuresLabel: '特性',
         roadmapLabel: '未来计划',
@@ -187,26 +187,26 @@ const TRANSLATIONS = {
           'Declarative syntax tailored for infographic features, covering layouts, elements, and themes',
       },
       {
-        title: 'JSX Custom Development',
+        title: 'JSX-Based Customization',
         detail:
-          'Describe design assets with JSX, intuitive and reusable, flexibly extensible',
+          'Describe design assets with JSX for reusable, extensible customization',
       },
       {
         title: 'Stylized Rendering',
         detail:
-          'One template, multiple styles, supporting hand-drawn, textures, gradients, and other effects',
+          'Apply multiple visual styles to a single template, including hand-drawn, textured, and gradient looks',
       },
       {
         title: 'Visual Editing',
         detail:
-          'Interactive addition and deletion of data items, adding shapes and annotations, WYSIWYG',
+          'Add or remove data items, annotations, and shapes interactively with true WYSIWYG editing',
       },
     ],
     hero: {
       tagline: 'Next-generation declarative infographic engine',
       ctaStart: 'Get Started',
-      ctaAi: 'AI Generate',
-      aiCardTitle: 'AI Generated Infographics',
+      ctaAi: 'Generate with AI',
+      aiCardTitle: 'AI Infographic Generator',
       inputLabel: 'Enter an infographic description',
       inputPlaceholder: 'Describe the infographic you want in one sentence',
       submitFull: 'Generate',
@@ -217,53 +217,54 @@ const TRANSLATIONS = {
         title: 'Declarative Infographic Rendering',
         keyword: 'Declarative',
         description:
-          'Describe infographics declaratively to make data stories simpler, cleaner, and more efficient',
-        note: '~200 built-in templates and components help you go from 0 to 1 with ease',
+          'Describe infographics declaratively to turn ideas and data into clear, efficient visual stories',
+        note: 'More than 200 built-in templates and components help you go from idea to infographic faster',
       },
       ai: {
-        title: 'AI Creates Pro Infographics',
+        title: 'Generate Professional Infographics with AI',
         description:
-          'Let AI understand text, extract key information, and render polished infographics in one click',
-        note: 'No design background required—AI covers the entire flow from understanding to visualization',
+          'Let AI understand your text, extract the right structure, and render polished infographics in one click',
+        note: 'No design experience needed. AI handles the full workflow from content understanding to visual output',
         cta: 'Try It Now',
       },
       streaming: {
-        title: 'AI friendly Infographic Syntax',
+        title: 'AI-Friendly Infographic Syntax',
         cta: 'View Infographic Syntax',
         highlights: [
-          'Simplicity: Concise and intuitive syntax, easy to understand and write',
-          'Fault Tolerance: Resilient to errors in human or AI-generated syntax',
-          'Completeness: Comprehensive infographic configuration capabilities',
-          'Streaming Output: Naturally supports AI streaming with segmented rendering',
+          'Simplicity: Concise, intuitive syntax that is easy to read and write',
+          'Fault Tolerance: Handles common mistakes in both human-written and AI-generated syntax',
+          'Completeness: Covers the full range of infographic configuration needs',
+          'Streaming Output: Built for incremental AI output with step-by-step descriptions and live rendering',
         ],
       },
       themes: {
-        title: 'Rich Theme Effects',
-        description: 'Switch styles in one click to fit different scenarios',
-        note: 'Customize theme configuration to extend the styling system',
-        cta: 'View Theme Docs',
+        title: 'Flexible Visual Themes',
+        description:
+          'Switch styles in one click for different storytelling scenarios',
+        note: 'Customize theme settings to extend your visual language',
+        cta: 'Explore Theme Docs',
       },
       playground: {
-        title: 'Playground',
+        title: 'Online Playground',
         description:
-          'Create your first infographic in the online editor. Use concise configs and preview changes instantly',
-        note: 'Create right in the browser. Plenty of examples help you ramp up fast',
-        cta: 'View More Examples',
+          'Create your first infographic in the browser with concise configs and instant live preview',
+        note: 'No setup required. Start from built-in examples and iterate quickly',
+        cta: 'Browse More Examples',
       },
       evolution: {
-        title: 'Evolving for the Future',
+        title: "Built for What's Next",
         description:
-          'Vision: make infographics the visual language infrastructure for the AI era',
+          'Vision: make infographics a foundational visual language for the AI era',
         featuresLabel: 'Features',
         roadmapLabel: 'Roadmap',
-        cta: 'More Updates',
+        cta: "See What's Next",
         alt: 'AntV Infographic team exploration illustration',
         image:
           'https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*ycICR7i9WDwAAAAAYPAAAAgAemJ7AQ/fmt.avif',
       },
       welcome: {
-        title: 'Welcome to AntV Infographic',
-        cta: 'Start Now',
+        title: 'Start Building with AntV Infographic',
+        cta: 'Get Started',
       },
     },
   },

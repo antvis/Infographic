@@ -2,6 +2,14 @@
 
 本文件用于指导生成符合 AntV Infographic 语法规范的纯文本输出。
 
+## Critical: Output Language Follows User Input
+
+- 本规范和示例即使主要使用中文书写，也不能据此把英文用户输入翻译成中文。
+- The language used in this prompt or in the examples must never override the user's input language.
+- 对所有面向读者的文案，优先跟随最新用户输入的主要语言，而不是跟随本文件的书写语言。
+- Example: if the user writes in English, output `title` / `desc` / `label` in English too, such as `Product Roadmap`, not `产品路线图`.
+- 示例：如果用户输入是中文，输出中的 `title` / `desc` / `label` 也必须保持中文，例如写 `产品路线图`，不要改成 `Product Roadmap`。
+
 ## 目录
 
 - 目标与输入输出
@@ -17,7 +25,8 @@
 ## 目标与输入输出
 
 - **输入**：用户的文字内容或需求描述
-- **输出**：仅包含 Infographic 语法的 `plain` 代码块
+- **输出**：仅包含 Infographic 语法的单个 fenced 代码块
+- **职责边界**：本规范只负责生成语法，不负责生成 HTML 文件、React/TSX 组件或模板源码
 
 ## 语法结构
 
@@ -58,7 +67,14 @@ theme
 - 第一行必须是 `infographic <template-name>`。
 - 使用 `data` / `theme` 块。
 - 键值对写法是 `键 空格 值`；对象数组使用 `-` 作为条目前缀并进行换行。
-- `icon` 使用图标关键词，例如 `star fill`、`mingcute/server-line`。
+- `title`、`desc`、`label` 以及其他面向读者的文案，默认保持与用户输入语言一致；除非用户明确要求，否则不要擅自翻译成另一种语言。
+- 如果用户输入混合多种语言，优先保持原始专有名词、产品名和缩写不变，并让补全文案跟随主要输入语言。
+- `icon` 可以使用精确图标 ID，例如 `mingcute/server-line`，也可以使用语义关键词短语，例如 `star fill`。
+- 如果使用语义关键词短语，多个关键词之间使用空格分隔，不要使用短横线；例如写 `rocket launch`，不要写 `rocket-launch`。
+- 对 `lists`、`sequences`、`nodes`、`items` 以及 `compares`/`children` 下的语义型数据项，默认应补充 `icon`；不要因为字段是可选就省略。
+- 如果模板名或视觉样式明显依赖图标（例如名称里包含 `icon`，或该模板本身就是图标型卡片/节点），则每个主要数据项都应包含 `icon`。
+- 如果不确定精确图标 ID，也要优先写一个简洁的语义关键词，例如 `rocket`、`shield`、`database`、`users`、`chart line`，而不是省略 `icon` 字段。
+- 仅在纯图表类数据点、纯数值序列，或用户明确要求极简文本版时，才可以省略 `icon`。
 - `value` 尽量使用纯数值；数值单位优先放在 `label` 或 `desc` 中表达。
 - `palette` 推荐使用行内简单数组写法，例如 `palette #4f46e5 #06b6d4 #10b981`。
 - `palette` 中的颜色值是裸值，不加引号，不加逗号。
@@ -130,8 +146,11 @@ data
   title 发布流程
   sequences
     - label 需求确认
+      icon clipboard check
     - label 开发实现
+      icon code
     - label 发布上线
+      icon rocket
   order asc
 ```
 
@@ -143,21 +162,27 @@ data
   title 登录校验流程
   sequences
     - label 用户
+      icon user
       children
         - label 发起登录
           id user-login
           step 0
+          icon login
         - label 收到结果
           id user-result
           step 2
+          icon inbox check
     - label 服务端
+      icon server
       children
         - label 校验凭证
           id server-verify
           step 1
+          icon shield check
         - label 返回结果
           id server-return
           step 2
+          icon send
   relations
     user-login - 提交账号密码 -> server-verify
     server-verify - 生成结果 -> server-return
@@ -185,11 +210,15 @@ data
   title 产品 SWOT
   compares
     - label Strengths
+      icon trophy
       children
         - label 品牌认知高
+          icon star
     - label Weaknesses
+      icon alert circle
       children
         - label 成本压力大
+          icon wallet
 ```
 
 - `compare-quadrant-*` 模板
@@ -215,13 +244,19 @@ data
   title 年度大促优惠
   compares
     - label 平日
+      icon calendar
       children
         - label 原价 500
+          icon tag
         - label 最高 9 折
+          icon percent
     - label 大促
+      icon megaphone
       children
         - label 实际支付 450
+          icon wallet
         - label 最高 8 折
+          icon badge percent
 ```
 
 - `chart-*` 模板
@@ -254,8 +289,10 @@ data
   title 系统关系
   nodes
     - label API
+      icon api
     - id db
       label DB
+      icon database
   relations
     API - 读写 -> db
 ```
@@ -277,7 +314,7 @@ data
 
 ### 可用模板
 
-以下列出常用模板名；实际输出时首行必须写 `infographic <template-name>`：
+以下列出常用模板名，而不是完整模板全集；实际输出时首行必须写 `infographic <template-name>`：
 
 - chart-bar-plain-text
 - chart-column-simple
@@ -365,10 +402,14 @@ data
 ## 生成流程
 
 1. 提取用户内容中的标题、描述、条目、顺序和层级关系。
-2. 判断信息结构，选择匹配的模板系列。
-3. 组织 `data`，只保留与模板对应的主数据字段。
-4. 用户指定风格、配色、字体时，再补充 `theme`。
-5. 输出单个代码块，内容只包含 Infographic 语法。
+2. 如果用户明确指定了模板名，且该模板与内容结构兼容，则优先使用该模板。
+3. 如果用户只指定了模板系列，则在该系列内选择最匹配的模板。
+4. 否则判断信息结构，选择匹配的模板系列。
+5. 组织 `data`，只保留与模板对应的主数据字段。
+6. 为语义明确的主要数据项补充 `icon`；如果模板本身偏图标化，默认不要省略。
+7. 保持 `title`、`desc`、`label` 等文案与用户输入语言一致；仅在用户明确要求时做翻译或双语化。
+8. 用户指定风格、配色、字体时，再补充 `theme`。
+9. 输出单个代码块，内容只包含 Infographic 语法。
 
 ## 输出格式
 
@@ -394,6 +435,8 @@ theme
 
 - 首行是否为 `infographic <template-name>`
 - 是否只使用了一个与模板匹配的主数据字段
+- 主要数据项是否都带有合理的 `icon`，尤其是列表、步骤、节点、对比项与名称中含 `icon` 的模板
+- 文案语言是否与用户输入语言一致，且没有无故翻译
 - `palette` 是否为裸颜色值，且没有引号和逗号
 - `sequence-interaction-*` 的泳道节点是否都写成 `children -> - label ...`
 - `compare-binary-*` / `compare-hierarchy-left-right-*` 是否只有两个根节点，且两侧内容都放在各自的 `children` 下
