@@ -260,6 +260,8 @@ export function IconPageContent() {
         });
         const response = await fetch(
           `https://www.weavefox.cn/api/v1/infographic/icon?${params.toString()}`
+        );
+        const result = await response.json();
         if (result.success && Array.isArray(result.data)) {
           setIcons(result.data);
         } else {
