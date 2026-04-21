@@ -26,7 +26,7 @@ registerResourceLoader(async (config) => {
 
           if (scene === 'icon') {
             url = await fetch(
-              'https://lab.weavefox.cn/api/v1/infographic/icon?text=' +
+              'https://www.weavefox.cn/api/v1/infographic/icon?text=' +
                 encodeURIComponent(data) +
                 '&topK=1'
             )
