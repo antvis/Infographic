@@ -259,9 +259,7 @@ export function IconPageContent() {
           topK: topK.toString(),
         });
         const response = await fetch(
-          `https://lab.weavefox.cn/api/v1/infographic/icon?${params.toString()}`
-        );
-        const result = await response.json();
+          `https://www.weavefox.cn/api/v1/infographic/icon?${params.toString()}`
         if (result.success && Array.isArray(result.data)) {
           setIcons(result.data);
         } else {
@@ -299,7 +297,7 @@ export function IconPageContent() {
       text: endpointParams.text,
       topK: endpointParams.topK,
     });
-    return `https://lab.weavefox.cn/api/v1/infographic/icon?${params.toString()}`;
+    return `https://www.weavefox.cn/api/v1/infographic/icon?${params.toString()}`;
   }, [endpointParams]);
 
   const copyEndpoint = async () => {
@@ -484,7 +482,7 @@ export function IconPageContent() {
                         GET
                       </span>
                       <span className="whitespace-pre-wrap break-words">
-                        https://lab.weavefox.cn/api/v1/infographic/icon?
+                        https://www.weavefox.cn/api/v1/infographic/icon?
                         <span className="font-semibold text-primary dark:text-primary-dark">
                           {sidebarTexts.paramTextLabel}
                         </span>
