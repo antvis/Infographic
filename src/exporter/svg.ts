@@ -11,6 +11,12 @@ import { embedFonts } from './font';
 import type { SVGExportOptions } from './types';
 
 const VIEWBOX_CHANGE_TOLERANCE = 0.5;
+type BoundsTuple = [number, number, number, number];
+
+interface ForeignObjectExportAdjustment {
+  rootBounds: BoundsTuple;
+  localBounds: BoundsTuple;
+}
 
 export async function exportToSVGString(
   svg: SVGSVGElement,
@@ -58,7 +64,9 @@ function measureSpanContentHeight(span: HTMLElement): number {
     span.style.height = 'max-content';
     span.style.overflow = 'hidden';
     void span.offsetHeight; // force reflow
-    return span.scrollHeight;
+    const scrollHeight = span.scrollHeight;
+    const rectHeight = span.getBoundingClientRect().height;
+    return Math.max(scrollHeight, rectHeight);
   } finally {
     span.style.height = prevHeight;
     span.style.overflow = prevOverflow;
@@ -79,7 +87,39 @@ function measureSpanContentWidth(span: HTMLElement): number {
   }
 }
 
-// Returns [left, top, right, bottom] in SVG coordinates for a foreignObject,
+function shouldKeepForeignObjectWidth(style: CSSStyleDeclaration): boolean {
+  const whiteSpace = style.whiteSpace;
+  const flexWrap = style.flexWrap;
+  const wordBreak = style.wordBreak;
+
+  return (
+    flexWrap === 'wrap' ||
+    flexWrap === 'wrap-reverse' ||
+    whiteSpace === 'pre-wrap' ||
+    whiteSpace === 'normal' ||
+    wordBreak === 'break-word' ||
+    wordBreak === 'break-all'
+  );
+}
+
+function createCoordConverter(
+  svg: SVGSVGElement,
+  element: SVGGraphicsElement,
+): ((x: number, y: number) => SVGPoint) | null {
+  if (typeof element.getScreenCTM !== 'function') return null;
+  const screenCTM = element.getScreenCTM();
+  if (!screenCTM) return null;
+  const inverseCTM = screenCTM.inverse();
+
+  return (clientX: number, clientY: number) => {
+    const pt = svg.createSVGPoint();
+    pt.x = clientX;
+    pt.y = clientY;
+    return pt.matrixTransform(inverseCTM);
+  };
+}
+
+// Returns [left, top, right, bottom] in target coordinates for a foreignObject,
 // accounting for flex alignment: bottom/center-aligned content can overflow,
 // and horizontally aligned content can overflow as well.
 function getFOContentBoundsInSVG(
@@ -110,13 +150,17 @@ function getFOContentBoundsInSVG(
       ? realScrollHeight * svgUnitsPerClientPxY
       : foHeightSVG;
 
-  const realScrollWidth = measureSpanContentWidth(content);
-  const contentWidthSVG =
-    realScrollWidth > 0 ? realScrollWidth * svgUnitsPerClientPxX : foWidthSVG;
-
   const computedStyle = window.getComputedStyle(content);
   const alignItems = computedStyle.alignItems;
   const justifyContent = computedStyle.justifyContent;
+  const contentWidthSVG = shouldKeepForeignObjectWidth(computedStyle)
+    ? foWidthSVG
+    : (() => {
+        const realScrollWidth = measureSpanContentWidth(content);
+        return realScrollWidth > 0
+          ? Math.max(foWidthSVG, realScrollWidth * svgUnitsPerClientPxX)
+          : foWidthSVG;
+      })();
 
   // Calculate vertical bounds
   let top: number, bottom: number;
@@ -153,47 +197,49 @@ function getFOContentBoundsInSVG(
   return [left, top, right, bottom];
 }
 
-/**
- * Computes a viewBox that fully covers all foreignObject text content,
- * accounting for overflow caused by flex alignment (bottom/center align
- * can push content outside the foreignObject bounds).
- */
-function computeFullViewBox(svg: SVGSVGElement): string | null {
+function collectForeignObjectExportAdjustments(svg: SVGSVGElement) {
+  const toSVGCoord = createCoordConverter(svg, svg);
+  if (!toSVGCoord) return [];
+
+  return Array.from(
+    svg.querySelectorAll<SVGForeignObjectElement>('foreignObject'),
+  ).flatMap((fo) => {
+    const content = fo.firstElementChild as HTMLElement | null;
+    if (!content) return [];
+
+    const parent =
+      fo.parentElement instanceof SVGGraphicsElement ? fo.parentElement : svg;
+    const toParentCoord = createCoordConverter(svg, parent);
+    if (!toParentCoord) return [];
+
+    return [
+      {
+        rootBounds: getFOContentBoundsInSVG(fo, content, toSVGCoord),
+        localBounds: getFOContentBoundsInSVG(fo, content, toParentCoord),
+      } satisfies ForeignObjectExportAdjustment,
+    ];
+  });
+}
+
+function computeFullViewBox(
+  svg: SVGSVGElement,
+  adjustments: ForeignObjectExportAdjustment[],
+): string | null {
   const viewBox = getExportViewBox(svg);
   if (!viewBox) return null;
-
-  if (typeof svg.getScreenCTM !== 'function') return null;
-  const screenCTM = svg.getScreenCTM();
-  if (!screenCTM) return null;
-  const inverseCTM = screenCTM.inverse();
-
-  const toSVGCoord = (clientX: number, clientY: number) => {
-    const pt = svg.createSVGPoint();
-    pt.x = clientX;
-    pt.y = clientY;
-    return pt.matrixTransform(inverseCTM);
-  };
 
   let minX = viewBox.x;
   let minY = viewBox.y;
   let maxX = viewBox.x + viewBox.width;
   let maxY = viewBox.y + viewBox.height;
 
-  svg
-    .querySelectorAll<SVGForeignObjectElement>('foreignObject')
-    .forEach((fo) => {
-      const content = fo.firstElementChild as HTMLElement;
-      if (!content) return;
-      const [left, top, right, bottom] = getFOContentBoundsInSVG(
-        fo,
-        content,
-        toSVGCoord,
-      );
-      minX = Math.min(minX, left);
-      minY = Math.min(minY, top);
-      maxX = Math.max(maxX, right);
-      maxY = Math.max(maxY, bottom);
-    });
+  adjustments.forEach(({ rootBounds }) => {
+    const [left, top, right, bottom] = rootBounds;
+    minX = Math.min(minX, left);
+    minY = Math.min(minY, top);
+    maxX = Math.max(maxX, right);
+    maxY = Math.max(maxY, bottom);
+  });
 
   const newX = minX;
   const newY = minY;
@@ -210,6 +256,28 @@ function computeFullViewBox(svg: SVGSVGElement): string | null {
   return `${newX} ${newY} ${newWidth} ${newHeight}`;
 }
 
+function applyForeignObjectExportAdjustments(
+  svg: SVGSVGElement,
+  adjustments: ForeignObjectExportAdjustment[],
+) {
+  const clonedForeignObjects = Array.from(
+    svg.querySelectorAll<SVGForeignObjectElement>('foreignObject'),
+  );
+
+  adjustments.forEach((adjustment, index) => {
+    const clonedForeignObject = clonedForeignObjects[index];
+    if (!clonedForeignObject) return;
+
+    const [left, top, right, bottom] = adjustment.localBounds;
+    setAttributes(clonedForeignObject, {
+      x: left,
+      y: top,
+      width: right - left,
+      height: bottom - top,
+    });
+  });
+}
+
 export async function exportToSVG(
   svg: SVGSVGElement,
   options: Omit<SVGExportOptions, 'type'> = {},
@@ -222,7 +290,9 @@ export async function exportToSVG(
   const clonedSVG = svg.cloneNode(true) as SVGSVGElement;
 
   if (typeof document !== 'undefined') {
-    const fullViewBox = computeFullViewBox(svg);
+    const adjustments = collectForeignObjectExportAdjustments(svg);
+    applyForeignObjectExportAdjustments(clonedSVG, adjustments);
+    const fullViewBox = computeFullViewBox(svg, adjustments);
     if (fullViewBox) {
       clonedSVG.setAttribute('viewBox', fullViewBox);
     }

@@ -371,4 +371,127 @@ describe('exporter/svg', () => {
     expect(exported.getAttribute('width')).toBe('320');
     expect(exported.getAttribute('height')).toBe('270');
   });
+
+  it('keeps wrapped foreignObject text within the original export width', async () => {
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('viewBox', '0 0 200 100');
+    mockSvgCoordinateSpace(svg);
+
+    const foreignObject = document.createElementNS(svgNS, 'foreignObject');
+    const span = document.createElement('span');
+    span.style.width = '100%';
+    span.style.height = '100%';
+    span.style.display = 'flex';
+    span.style.flexWrap = 'wrap';
+    span.style.wordBreak = 'break-word';
+    span.style.whiteSpace = 'pre-wrap';
+
+    Object.defineProperty(span, 'scrollWidth', {
+      configurable: true,
+      get: () => 320,
+    });
+    Object.defineProperty(span, 'scrollHeight', {
+      configurable: true,
+      get: () => 160,
+    });
+
+    foreignObject.appendChild(span);
+    svg.appendChild(foreignObject);
+
+    mockRect(foreignObject, { left: 0, top: 0, width: 200, height: 100 });
+
+    const exported = await exportToSVG(svg);
+
+    expect(exported.getAttribute('viewBox')).toBe('0 0 200 160');
+    expect(exported.getAttribute('width')).toBe('200');
+    expect(exported.getAttribute('height')).toBe('160');
+  });
+
+  it('resizes exported foreignObject height to the measured wrapped content height', async () => {
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('viewBox', '0 0 200 100');
+    mockSvgCoordinateSpace(svg);
+
+    const foreignObject = document.createElementNS(svgNS, 'foreignObject');
+    foreignObject.setAttribute('x', '20');
+    foreignObject.setAttribute('y', '30');
+    foreignObject.setAttribute('width', '140');
+    foreignObject.setAttribute('height', '40');
+
+    const span = document.createElement('span');
+    span.style.width = '100%';
+    span.style.height = '100%';
+    span.style.display = 'flex';
+    span.style.flexWrap = 'wrap';
+    span.style.wordBreak = 'break-word';
+    span.style.whiteSpace = 'pre-wrap';
+
+    Object.defineProperty(span, 'scrollHeight', {
+      configurable: true,
+      get: () => 80,
+    });
+
+    foreignObject.appendChild(span);
+    svg.appendChild(foreignObject);
+
+    mockRect(foreignObject, { left: 20, top: 30, width: 140, height: 40 });
+
+    const exported = await exportToSVG(svg);
+    const exportedForeignObject = exported.querySelector('foreignObject');
+
+    expect(exportedForeignObject?.getAttribute('x')).toBe('20');
+    expect(exportedForeignObject?.getAttribute('y')).toBe('30');
+    expect(exportedForeignObject?.getAttribute('width')).toBe('140');
+    expect(exportedForeignObject?.getAttribute('height')).toBe('80');
+  });
+
+  it('uses rendered content height when it is larger than scrollHeight', async () => {
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('viewBox', '0 0 200 100');
+    mockSvgCoordinateSpace(svg);
+
+    const foreignObject = document.createElementNS(svgNS, 'foreignObject');
+    foreignObject.setAttribute('x', '20');
+    foreignObject.setAttribute('y', '30');
+    foreignObject.setAttribute('width', '140');
+    foreignObject.setAttribute('height', '40');
+
+    const span = document.createElement('span');
+    span.style.width = '100%';
+    span.style.height = '100%';
+    span.style.display = 'flex';
+    span.style.flexWrap = 'wrap';
+    span.style.wordBreak = 'break-word';
+    span.style.whiteSpace = 'pre-wrap';
+
+    Object.defineProperty(span, 'scrollHeight', {
+      configurable: true,
+      get: () => 80,
+    });
+    Object.defineProperty(span, 'getBoundingClientRect', {
+      configurable: true,
+      value: () =>
+        ({
+          x: 0,
+          y: 0,
+          left: 0,
+          top: 0,
+          width: 140,
+          height: 84.4,
+          right: 140,
+          bottom: 84.4,
+          toJSON: () => ({}),
+        }) as DOMRect,
+    });
+
+    foreignObject.appendChild(span);
+    svg.appendChild(foreignObject);
+
+    mockRect(foreignObject, { left: 20, top: 30, width: 140, height: 40 });
+
+    const exported = await exportToSVG(svg);
+    const exportedForeignObject = exported.querySelector('foreignObject');
+
+    expect(exportedForeignObject?.getAttribute('height')).toBe('84.4');
+  });
 });
