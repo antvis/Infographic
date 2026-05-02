@@ -15,7 +15,12 @@ type BoundsTuple = [number, number, number, number];
 
 interface ForeignObjectExportAdjustment {
   rootBounds: BoundsTuple;
-  localBounds: BoundsTuple;
+  exportBounds: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
 }
 
 export async function exportToSVGString(
@@ -55,6 +60,11 @@ function parseAbsoluteLength(value: string | null): number {
   if (!trimmed) return Number.NaN;
   if (!/^[-+]?(?:\d+\.?\d*|\.\d+)(?:px)?$/.test(trimmed)) return Number.NaN;
   return Number.parseFloat(trimmed);
+}
+
+function parseCoordinate(value: string | null): number {
+  const parsed = parseAbsoluteLength(value);
+  return Number.isNaN(parsed) ? 0 : parsed;
 }
 
 function measureSpanContentHeight(span: HTMLElement): number {
@@ -158,12 +168,7 @@ function getFOContentBoundsInSVG(
   const justifyContent = computedStyle.justifyContent;
   const contentWidthSVG = shouldKeepForeignObjectWidth(computedStyle)
     ? foWidthSVG
-    : (() => {
-        const realScrollWidth = measureSpanContentWidth(content);
-        return realScrollWidth > 0
-          ? Math.max(foWidthSVG, realScrollWidth * svgUnitsPerClientPxX)
-          : foWidthSVG;
-      })();
+    : Math.max(foWidthSVG, measureSpanContentWidth(content) * svgUnitsPerClientPxX);
 
   // Calculate vertical bounds
   let top: number, bottom: number;
@@ -213,11 +218,35 @@ function collectForeignObjectExportAdjustments(svg: SVGSVGElement) {
     const parent =
       fo.parentElement instanceof SVGGraphicsElement ? fo.parentElement : svg;
     const toParentCoord = createCoordConverter(svg, parent);
+    const toLocalCoord = createCoordConverter(svg, fo);
     if (!toParentCoord) return null;
+
+    const parentBounds = getFOContentBoundsInSVG(fo, content, toParentCoord);
+    const originalX = parseCoordinate(fo.getAttribute('x'));
+    const originalY = parseCoordinate(fo.getAttribute('y'));
+    const localBounds = toLocalCoord
+      ? getFOContentBoundsInSVG(fo, content, toLocalCoord)
+      : null;
+    const hasTransform = fo.hasAttribute('transform');
+    if (hasTransform && !localBounds) return null;
+
+    const exportBounds = localBounds
+      ? {
+          x: originalX + localBounds[0],
+          y: originalY + localBounds[1],
+          width: localBounds[2] - localBounds[0],
+          height: localBounds[3] - localBounds[1],
+        }
+      : {
+          x: parentBounds[0],
+          y: parentBounds[1],
+          width: parentBounds[2] - parentBounds[0],
+          height: parentBounds[3] - parentBounds[1],
+        };
 
     return {
       rootBounds: getFOContentBoundsInSVG(fo, content, toSVGCoord),
-      localBounds: getFOContentBoundsInSVG(fo, content, toParentCoord),
+      exportBounds,
     } satisfies ForeignObjectExportAdjustment;
   });
 }
@@ -272,13 +301,7 @@ function applyForeignObjectExportAdjustments(
     const clonedForeignObject = clonedForeignObjects[index];
     if (!clonedForeignObject) return;
 
-    const [left, top, right, bottom] = adjustment.localBounds;
-    setAttributes(clonedForeignObject, {
-      x: left,
-      y: top,
-      width: right - left,
-      height: bottom - top,
-    });
+    setAttributes(clonedForeignObject, adjustment.exportBounds);
   });
 }
 
