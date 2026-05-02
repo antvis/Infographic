@@ -67,8 +67,17 @@ function parseCoordinate(value: string | null): number {
   return Number.isNaN(parsed) ? 0 : parsed;
 }
 
-function measureSpanContentHeight(span: HTMLElement): number {
+interface MeasuredSpanContentDimensions {
+  height: number;
+  width: number;
+}
+
+function measureSpanContentDimensions(
+  span: HTMLElement,
+  measureWidth: boolean,
+): MeasuredSpanContentDimensions {
   const prevHeight = span.style.height;
+  const prevWidth = span.style.width;
   const prevOverflow = span.style.overflow;
   try {
     span.style.height = 'max-content';
@@ -76,22 +85,20 @@ function measureSpanContentHeight(span: HTMLElement): number {
     void span.offsetHeight; // force reflow
     const scrollHeight = span.scrollHeight;
     const rectHeight = span.getBoundingClientRect().height;
-    return Math.max(scrollHeight, rectHeight);
+    let width = span.scrollWidth;
+
+    if (measureWidth) {
+      span.style.width = 'max-content';
+      void span.offsetWidth; // force reflow
+      width = span.scrollWidth;
+    }
+
+    return {
+      height: Math.max(scrollHeight, rectHeight),
+      width,
+    };
   } finally {
     span.style.height = prevHeight;
-    span.style.overflow = prevOverflow;
-  }
-}
-
-function measureSpanContentWidth(span: HTMLElement): number {
-  const prevWidth = span.style.width;
-  const prevOverflow = span.style.overflow;
-  try {
-    span.style.width = 'max-content';
-    span.style.overflow = 'hidden';
-    void span.offsetWidth; // force reflow
-    return span.scrollWidth;
-  } finally {
     span.style.width = prevWidth;
     span.style.overflow = prevOverflow;
   }
@@ -137,8 +144,16 @@ function createCoordConverter(
 // and horizontally aligned content can overflow as well.
 function getFOContentBoundsInSVG(
   fo: SVGForeignObjectElement,
-  content: HTMLElement,
   toSVGCoord: (x: number, y: number) => SVGPoint,
+  {
+    contentHeight,
+    contentWidth,
+    keepForeignObjectWidth,
+  }: {
+    contentHeight: number;
+    contentWidth: number;
+    keepForeignObjectWidth: boolean;
+  },
 ): [number, number, number, number] {
   const foRect = fo.getBoundingClientRect();
   const foTopLeft = toSVGCoord(foRect.left, foRect.top);
@@ -156,19 +171,17 @@ function getFOContentBoundsInSVG(
     foRect.height > 0 ? foHeightSVG / foRect.height : 1;
   const svgUnitsPerClientPxX = foRect.width > 0 ? foWidthSVG / foRect.width : 1;
 
-  // Measure actual content dimensions
-  const realScrollHeight = measureSpanContentHeight(content);
   const contentHeightSVG =
-    realScrollHeight > 0
-      ? realScrollHeight * svgUnitsPerClientPxY
+    contentHeight > 0
+      ? contentHeight * svgUnitsPerClientPxY
       : foHeightSVG;
 
-  const computedStyle = window.getComputedStyle(content);
+  const computedStyle = window.getComputedStyle(fo.firstElementChild as Element);
   const alignItems = computedStyle.alignItems;
   const justifyContent = computedStyle.justifyContent;
-  const contentWidthSVG = shouldKeepForeignObjectWidth(computedStyle)
+  const contentWidthSVG = keepForeignObjectWidth
     ? foWidthSVG
-    : Math.max(foWidthSVG, measureSpanContentWidth(content) * svgUnitsPerClientPxX);
+    : Math.max(foWidthSVG, contentWidth * svgUnitsPerClientPxX);
 
   // Calculate vertical bounds
   let top: number, bottom: number;
@@ -214,6 +227,12 @@ function collectForeignObjectExportAdjustments(svg: SVGSVGElement) {
   ).map((fo) => {
     const content = fo.firstElementChild as HTMLElement | null;
     if (!content) return null;
+    const computedStyle = window.getComputedStyle(content);
+    const keepForeignObjectWidth = shouldKeepForeignObjectWidth(computedStyle);
+    const measuredContent = measureSpanContentDimensions(
+      content,
+      !keepForeignObjectWidth,
+    );
 
     const parent =
       fo.parentElement instanceof SVGGraphicsElement ? fo.parentElement : svg;
@@ -221,11 +240,19 @@ function collectForeignObjectExportAdjustments(svg: SVGSVGElement) {
     const toLocalCoord = createCoordConverter(svg, fo);
     if (!toParentCoord) return null;
 
-    const parentBounds = getFOContentBoundsInSVG(fo, content, toParentCoord);
+    const parentBounds = getFOContentBoundsInSVG(fo, toParentCoord, {
+      contentHeight: measuredContent.height,
+      contentWidth: measuredContent.width,
+      keepForeignObjectWidth,
+    });
     const originalX = parseCoordinate(fo.getAttribute('x'));
     const originalY = parseCoordinate(fo.getAttribute('y'));
     const localBounds = toLocalCoord
-      ? getFOContentBoundsInSVG(fo, content, toLocalCoord)
+      ? getFOContentBoundsInSVG(fo, toLocalCoord, {
+          contentHeight: measuredContent.height,
+          contentWidth: measuredContent.width,
+          keepForeignObjectWidth,
+        })
       : null;
     const hasTransform = fo.hasAttribute('transform');
     if (hasTransform && !localBounds) return null;
@@ -245,7 +272,11 @@ function collectForeignObjectExportAdjustments(svg: SVGSVGElement) {
         };
 
     return {
-      rootBounds: getFOContentBoundsInSVG(fo, content, toSVGCoord),
+      rootBounds: getFOContentBoundsInSVG(fo, toSVGCoord, {
+        contentHeight: measuredContent.height,
+        contentWidth: measuredContent.width,
+        keepForeignObjectWidth,
+      }),
       exportBounds,
     } satisfies ForeignObjectExportAdjustment;
   });
