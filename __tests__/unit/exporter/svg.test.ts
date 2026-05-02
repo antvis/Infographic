@@ -494,4 +494,61 @@ describe('exporter/svg', () => {
 
     expect(exportedForeignObject?.getAttribute('height')).toBe('84.4');
   });
+
+  it('keeps foreignObject adjustments aligned when earlier foreignObjects are skipped', async () => {
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('viewBox', '0 0 200 100');
+    mockSvgCoordinateSpace(svg);
+
+    const skippedForeignObject = document.createElementNS(svgNS, 'foreignObject');
+    skippedForeignObject.setAttribute('x', '0');
+    skippedForeignObject.setAttribute('y', '0');
+    skippedForeignObject.setAttribute('width', '10');
+    skippedForeignObject.setAttribute('height', '10');
+    svg.appendChild(skippedForeignObject);
+
+    const adjustedForeignObject = document.createElementNS(
+      svgNS,
+      'foreignObject',
+    );
+    adjustedForeignObject.setAttribute('x', '20');
+    adjustedForeignObject.setAttribute('y', '30');
+    adjustedForeignObject.setAttribute('width', '140');
+    adjustedForeignObject.setAttribute('height', '40');
+
+    const span = document.createElement('span');
+    span.style.width = '100%';
+    span.style.height = '100%';
+    span.style.display = 'flex';
+    span.style.flexWrap = 'wrap';
+    span.style.wordBreak = 'break-word';
+    span.style.whiteSpace = 'pre-wrap';
+
+    Object.defineProperty(span, 'scrollHeight', {
+      configurable: true,
+      get: () => 80,
+    });
+
+    adjustedForeignObject.appendChild(span);
+    svg.appendChild(adjustedForeignObject);
+
+    mockRect(skippedForeignObject, { left: 0, top: 0, width: 10, height: 10 });
+    mockRect(adjustedForeignObject, {
+      left: 20,
+      top: 30,
+      width: 140,
+      height: 40,
+    });
+
+    const exported = await exportToSVG(svg);
+    const [firstForeignObject, secondForeignObject] =
+      exported.querySelectorAll('foreignObject');
+
+    expect(firstForeignObject?.getAttribute('width')).toBe('10');
+    expect(firstForeignObject?.getAttribute('height')).toBe('10');
+    expect(secondForeignObject?.getAttribute('x')).toBe('20');
+    expect(secondForeignObject?.getAttribute('y')).toBe('30');
+    expect(secondForeignObject?.getAttribute('width')).toBe('140');
+    expect(secondForeignObject?.getAttribute('height')).toBe('80');
+  });
 });

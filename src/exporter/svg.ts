@@ -91,12 +91,15 @@ function shouldKeepForeignObjectWidth(style: CSSStyleDeclaration): boolean {
   const whiteSpace = style.whiteSpace;
   const flexWrap = style.flexWrap;
   const wordBreak = style.wordBreak;
+  const overflowWrap = style.overflowWrap;
 
   return (
     flexWrap === 'wrap' ||
     flexWrap === 'wrap-reverse' ||
     whiteSpace === 'pre-wrap' ||
+    whiteSpace === 'pre-line' ||
     whiteSpace === 'normal' ||
+    overflowWrap === 'break-word' ||
     wordBreak === 'break-word' ||
     wordBreak === 'break-all'
   );
@@ -203,27 +206,25 @@ function collectForeignObjectExportAdjustments(svg: SVGSVGElement) {
 
   return Array.from(
     svg.querySelectorAll<SVGForeignObjectElement>('foreignObject'),
-  ).flatMap((fo) => {
+  ).map((fo) => {
     const content = fo.firstElementChild as HTMLElement | null;
-    if (!content) return [];
+    if (!content) return null;
 
     const parent =
       fo.parentElement instanceof SVGGraphicsElement ? fo.parentElement : svg;
     const toParentCoord = createCoordConverter(svg, parent);
-    if (!toParentCoord) return [];
+    if (!toParentCoord) return null;
 
-    return [
-      {
-        rootBounds: getFOContentBoundsInSVG(fo, content, toSVGCoord),
-        localBounds: getFOContentBoundsInSVG(fo, content, toParentCoord),
-      } satisfies ForeignObjectExportAdjustment,
-    ];
+    return {
+      rootBounds: getFOContentBoundsInSVG(fo, content, toSVGCoord),
+      localBounds: getFOContentBoundsInSVG(fo, content, toParentCoord),
+    } satisfies ForeignObjectExportAdjustment;
   });
 }
 
 function computeFullViewBox(
   svg: SVGSVGElement,
-  adjustments: ForeignObjectExportAdjustment[],
+  adjustments: Array<ForeignObjectExportAdjustment | null>,
 ): string | null {
   const viewBox = getExportViewBox(svg);
   if (!viewBox) return null;
@@ -233,7 +234,9 @@ function computeFullViewBox(
   let maxX = viewBox.x + viewBox.width;
   let maxY = viewBox.y + viewBox.height;
 
-  adjustments.forEach(({ rootBounds }) => {
+  adjustments.forEach((adjustment) => {
+    if (!adjustment) return;
+    const { rootBounds } = adjustment;
     const [left, top, right, bottom] = rootBounds;
     minX = Math.min(minX, left);
     minY = Math.min(minY, top);
@@ -258,13 +261,14 @@ function computeFullViewBox(
 
 function applyForeignObjectExportAdjustments(
   svg: SVGSVGElement,
-  adjustments: ForeignObjectExportAdjustment[],
+  adjustments: Array<ForeignObjectExportAdjustment | null>,
 ) {
   const clonedForeignObjects = Array.from(
     svg.querySelectorAll<SVGForeignObjectElement>('foreignObject'),
   );
 
   adjustments.forEach((adjustment, index) => {
+    if (!adjustment) return;
     const clonedForeignObject = clonedForeignObjects[index];
     if (!clonedForeignObject) return;
 
