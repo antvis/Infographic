@@ -14,7 +14,8 @@ export type AIProvider =
   | 'google'
   | 'xai'
   | 'deepseek'
-  | 'qwen';
+  | 'qwen'
+  | 'atlascloud';
 
 export type AIConfig = {
   provider: AIProvider;

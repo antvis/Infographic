@@ -69,11 +69,11 @@ export function ConfigPanel({
     const baseUrl = (stored && stored.baseUrl) || preset.baseUrl || '';
     const nextConfig: AIConfig =
       stored && stored.provider === provider
-        ? {...stored, baseUrl}
+        ? {...stored, baseUrl, model: stored.model || preset.model || ''}
         : {
             provider,
             baseUrl,
-            model: '',
+            model: preset.model || '',
             apiKey: '',
           };
     setDraft(nextConfig);
@@ -90,7 +90,7 @@ export function ConfigPanel({
     setDraft({
       provider: safeProvider,
       baseUrl: value.baseUrl || preset?.baseUrl || DEFAULT_CONFIG.baseUrl,
-      model: value.model,
+      model: value.model || preset?.model || '',
       apiKey: value.apiKey,
     });
     setModels(value.model ? [value.model] : []);

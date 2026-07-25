@@ -43,6 +43,7 @@ export async function fetchModels(
       case 'deepseek':
       case 'xai':
       case 'qwen':
+      case 'atlascloud':
         return fetchOpenAIModels(normalizedBase, apiKey);
       case 'anthropic':
         return fetchAnthropicModels(normalizedBase, apiKey);
@@ -158,6 +159,7 @@ async function callAI(
       case 'deepseek':
       case 'xai':
       case 'qwen':
+      case 'atlascloud':
         return callOpenAICompatible(
           baseURL,
           apiKey,
@@ -409,6 +411,7 @@ function extractContentFromResponse(provider: AIProvider, data: any): string {
     case 'deepseek':
     case 'xai':
     case 'qwen':
+    case 'atlascloud':
       return data.choices?.[0]?.delta?.content || '';
     case 'anthropic':
       if (data.type === 'content_block_delta') {

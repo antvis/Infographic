@@ -17,6 +17,7 @@ export const PROVIDER_OPTIONS: Array<{
   value: AIProvider;
   label: string;
   baseUrl: string;
+  model?: string;
   logo?: string;
 }> = [
   {
@@ -60,5 +61,11 @@ export const PROVIDER_OPTIONS: Array<{
     label: 'Qwen',
     baseUrl: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
     logo: '/images/qwen.svg',
+  },
+  {
+    value: 'atlascloud',
+    label: 'Atlas Cloud',
+    baseUrl: 'https://api.atlascloud.ai/v1',
+    model: 'deepseek-ai/deepseek-v4-pro',
   },
 ];
