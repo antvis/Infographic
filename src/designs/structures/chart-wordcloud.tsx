@@ -14,6 +14,7 @@ interface WordCandidate {
   fontSize: number;
   width: number;
   height: number;
+  index: number;
 }
 
 interface PlacedWord extends WordCandidate {
@@ -208,6 +209,7 @@ export const ChartWordCloud: ComponentType<ChartWordCloudProps> = (props) => {
         getColorPrimary(options) ||
         '#333333';
       return {
+        index,
         label: datum.label as string,
         value: datum.value,
         color,
@@ -235,7 +237,7 @@ export const ChartWordCloud: ComponentType<ChartWordCloudProps> = (props) => {
   const containerWidth = maxX - minX + padding * 2;
   const containerHeight = maxY - minY + padding * 2;
 
-  const wordElements: JSXElement[] = placedWords.map((word, index) => {
+  const wordElements: JSXElement[] = placedWords.map((word) => {
     const translateX = word.centerX - word.width / 2 + offsetX;
     const translateY = word.centerY - word.height / 2 + offsetY;
     const rotationOriginX = word.width / 2;
@@ -252,7 +254,7 @@ export const ChartWordCloud: ComponentType<ChartWordCloudProps> = (props) => {
           alignHorizontal="center"
           alignVertical="middle"
           fill={word.color}
-          data-indexes={index}
+          data-indexes={[word.index]}
           data-element-type={ElementTypeEnum.ItemLabel}
         >
           {word.label}
