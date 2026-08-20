@@ -3,10 +3,11 @@ name: release
 on:
   push:
     tags:
-      - "*"
+      - '*.*.*'
 
 permissions:
   contents: write
+  id-token: write
 
 jobs:
   release:
@@ -14,6 +15,18 @@ jobs:
     steps:
       - name: ⤵️ Checkout
         uses: actions/checkout@v4
+
+      - name: 🎉 Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🚀 Publish to npm
+        run: npm publish --access public
 
       - name: 📦 Package skills
         run: zip -r ../skills.zip .
