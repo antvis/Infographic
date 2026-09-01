@@ -364,6 +364,7 @@ export const SequenceInteractionFlow: ComponentType<
       <Item
         indexes={[0]}
         datum={sampleNode.datum}
+        data={data}
         positionH="center"
         positionV="middle"
       />,
@@ -440,6 +441,7 @@ export const SequenceInteractionFlow: ComponentType<
               icon: lane.icon,
               desc: lane.desc,
             }}
+            data={data}
             x={centerX - itemWidth / 2}
             y={padding}
             width={itemWidth}

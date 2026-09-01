@@ -168,3 +168,138 @@ export function measureText(
     height: Math.ceil(metrics.height * FONT_EXTEND_FACTOR),
   };
 }
+
+// 断行单元：CJK 逐字断行，其余按连续非空白片段（单词）断行
+const CJK_RANGE =
+  '\\u2e80-\\u9fff\\uac00-\\ud7ff\\uf900-\\ufaff\\ufe30-\\ufe4f\\uff00-\\uffef';
+const BREAK_UNIT_REGEX = new RegExp(
+  `\\s*(?:[${CJK_RANGE}]|[^\\s${CJK_RANGE}]+)`,
+  'g',
+);
+
+// 单个断行单元仍超出容器宽度时，模拟 word-break: break-word 强制断开
+function breakLongUnit(
+  unit: string,
+  maxWidth: number,
+  widthOf: (value: string) => number,
+) {
+  let rest = unit;
+  let extraLines = 0;
+
+  while (rest.length > 1 && widthOf(rest) > maxWidth) {
+    let fitted = 1;
+    while (
+      fitted < rest.length &&
+      widthOf(rest.slice(0, fitted + 1)) <= maxWidth
+    ) {
+      fitted++;
+    }
+    if (fitted >= rest.length) break;
+    extraLines++;
+    rest = rest.slice(fitted);
+  }
+
+  return { extraLines, rest };
+}
+
+function countWrappedLines(
+  line: string,
+  maxWidth: number,
+  widthOf: (value: string) => number,
+) {
+  const units = line.match(BREAK_UNIT_REGEX);
+  if (!units) return 1;
+
+  let lines = 1;
+  let current = '';
+
+  for (const unit of units) {
+    const candidate = current ? current + unit : unit.trimStart();
+    if (!candidate) continue;
+
+    if (!current || widthOf(candidate) <= maxWidth) {
+      current = candidate;
+    } else {
+      lines++;
+      current = unit.trimStart();
+    }
+
+    const { extraLines, rest } = breakLongUnit(current, maxWidth, widthOf);
+    lines += extraLines;
+    current = rest;
+  }
+
+  return lines;
+}
+
+// 同一批 item 会互相测量彼此的文本，缓存行数避免 O(n²) 的重复折行计算。
+// 仅在单次渲染内复用：Web 字体是渲染后才注入的，加载完成前后同一段文字的
+// 度量结果不同，跨渲染复用会让行数停留在回退字体的测量值。
+let lineCountCache: Map<string, number> | null = null;
+
+/** 在一次渲染范围内复用折行测量结果，作用域外不缓存 */
+export function withTextLinesCache<T>(render: () => T): T {
+  const previous = lineCountCache;
+  lineCountCache = new Map();
+  try {
+    return render();
+  } finally {
+    lineCountCache = previous;
+  }
+}
+
+function getLineCountCacheKey(
+  content: string,
+  attrs: TextProps & { maxWidth: number },
+) {
+  const {
+    maxWidth,
+    fontFamily = DEFAULT_FONT,
+    fontSize = 14,
+    fontWeight = 'normal',
+    lineHeight = 1.4,
+  } = attrs;
+  return [
+    maxWidth,
+    fontFamily,
+    fontSize,
+    fontWeight,
+    lineHeight,
+    FONT_EXTEND_FACTOR,
+    content,
+  ].join('|');
+}
+
+/**
+ * 测量文本在给定宽度内折行后的行数，与渲染层的换行行为对齐。
+ */
+export function measureTextLines(
+  text: JSXNode = '',
+  attrs: TextProps & { maxWidth: number },
+): number {
+  if (typeof text !== 'string' && typeof text !== 'number') return 0;
+  const content = text.toString();
+  if (!content) return 0;
+
+  const { maxWidth } = attrs;
+  const lines = content.split(/\r?\n/);
+  if (!Number.isFinite(maxWidth) || maxWidth <= 0) return lines.length;
+
+  const compute = () => {
+    // 测量单个片段的自然宽度，不能带入容器宽高（会短路 measureText）
+    const textAttrs = { ...attrs, width: undefined, height: undefined };
+    const widthOf = (value: string) => measureText(value, textAttrs).width;
+    return lines.reduce(
+      (count, line) => count + countWrappedLines(line, maxWidth, widthOf),
+      0,
+    );
+  };
+
+  if (!lineCountCache) return compute();
+
+  const cacheKey = getLineCountCacheKey(content, attrs);
+  let total = lineCountCache.get(cacheKey);
+  if (total === undefined) lineCountCache.set(cacheKey, (total = compute()));
+
+  return total;
+}
