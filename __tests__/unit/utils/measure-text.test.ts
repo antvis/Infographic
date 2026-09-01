@@ -235,3 +235,59 @@ describe('measureText', () => {
     expect(fallbackMeasureText).toHaveBeenCalledTimes(1);
   });
 });
+
+describe('measureTextLines', () => {
+  const attrs = { fontSize: 12, lineHeight: 1.2, maxWidth: 184 };
+
+  it('returns 0 for empty or non-text content', async () => {
+    const { measureTextLines } =
+      await import('../../../src/utils/measure-text');
+
+    expect(measureTextLines('', attrs)).toBe(0);
+    expect(measureTextLines(undefined, attrs)).toBe(0);
+    expect(measureTextLines({} as any, attrs)).toBe(0);
+  });
+
+  it('counts explicit newlines as separate lines', async () => {
+    const { measureTextLines } =
+      await import('../../../src/utils/measure-text');
+
+    expect(measureTextLines('a\nb\nc', attrs)).toBe(3);
+  });
+
+  it('falls back to newline splitting when maxWidth is unusable', async () => {
+    const { measureTextLines } =
+      await import('../../../src/utils/measure-text');
+
+    expect(measureTextLines('a\nb', { ...attrs, maxWidth: 0 })).toBe(2);
+  });
+
+  it('caches the line count within a withTextLinesCache scope', async () => {
+    const { measureTextLines, withTextLinesCache } =
+      await import('../../../src/utils/measure-text');
+
+    fallbackMeasureText.mockClear();
+    const callsAfterFirst = withTextLinesCache(() => {
+      measureTextLines('cache probe', attrs);
+      const calls = fallbackMeasureText.mock.calls.length;
+      measureTextLines('cache probe', attrs);
+      expect(fallbackMeasureText).toHaveBeenCalledTimes(calls);
+      return calls;
+    });
+
+    expect(callsAfterFirst).toBeGreaterThan(0);
+  });
+
+  it('does not cache across withTextLinesCache scopes', async () => {
+    const { measureTextLines, withTextLinesCache } =
+      await import('../../../src/utils/measure-text');
+
+    fallbackMeasureText.mockClear();
+    withTextLinesCache(() => measureTextLines('cross scope probe', attrs));
+    const callsAfterFirst = fallbackMeasureText.mock.calls.length;
+    withTextLinesCache(() => measureTextLines('cross scope probe', attrs));
+
+    expect(callsAfterFirst).toBeGreaterThan(0);
+    expect(fallbackMeasureText.mock.calls.length).toBe(callsAfterFirst * 2);
+  });
+});
