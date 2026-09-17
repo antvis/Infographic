@@ -1,6 +1,12 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { getElementRole, setElementRole } from '../../../src/utils';
-import { createTextElement, getTextEntity } from '../../../src/utils/text';
+import {
+  createTextElement,
+  getTextElementProps,
+  getTextEntity,
+  getTextStyle,
+  updateTextElement,
+} from '../../../src/utils/text';
 
 describe('text', () => {
   beforeEach(() => {
@@ -47,6 +53,7 @@ describe('text', () => {
         'font-family': 'Arial',
         'line-height': 1.2,
         'letter-spacing': 1,
+        'word-spacing': 2,
       });
 
       const span = textElement.querySelector('span') as HTMLSpanElement;
@@ -55,6 +62,7 @@ describe('text', () => {
       expect(span.style.fontFamily).toBe('Arial');
       expect(span.style.lineHeight).toBe('1.2');
       expect(span.style.letterSpacing).toBe('1px');
+      expect(span.style.wordSpacing).toBe('2px');
     });
 
     it('should handle horizontal alignment', () => {
@@ -168,6 +176,138 @@ describe('text', () => {
       });
 
       expect(textElement.getAttribute('overflow')).toBe('visible');
+    });
+  });
+});
+
+describe('text spacing', () => {
+  beforeEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  describe('getTextStyle spacing normalization', () => {
+    it('should treat bare numbers and numeric strings as pixels', () => {
+      const style = getTextStyle({
+        'letter-spacing': 1.5,
+        'word-spacing': '2',
+      });
+
+      expect(style.letterSpacing).toBe('1.5px');
+      expect(style.wordSpacing).toBe('2px');
+    });
+
+    it('should keep CSS lengths with an explicit unit untouched', () => {
+      const style = getTextStyle({
+        'letter-spacing': '0.5em',
+        'word-spacing': '  3pt  ',
+      });
+
+      expect(style.letterSpacing).toBe('0.5em');
+      expect(style.wordSpacing).toBe('3pt');
+    });
+
+    it('should keep an explicit zero rather than dropping it', () => {
+      const style = getTextStyle({ 'letter-spacing': 0, 'word-spacing': 0 });
+
+      expect(style.letterSpacing).toBe('0px');
+      expect(style.wordSpacing).toBe('0px');
+    });
+
+    it('should omit spacing that was not provided', () => {
+      const style = getTextStyle({});
+
+      expect(style.letterSpacing).toBeUndefined();
+      expect(style.wordSpacing).toBeUndefined();
+    });
+
+    it('should skip null spacing instead of throwing', () => {
+      const style = getTextStyle({
+        'letter-spacing': null,
+        'word-spacing': null,
+      } as any);
+
+      expect(style.letterSpacing).toBeUndefined();
+      expect(style.wordSpacing).toBeUndefined();
+    });
+  });
+
+  describe('updateTextElement measurement', () => {
+    it('should measure the element when width and height are missing', () => {
+      const textElement = createTextElement('Measured', {
+        width: '100',
+        height: '30',
+      });
+      textElement.removeAttribute('width');
+      textElement.removeAttribute('height');
+
+      updateTextElement(textElement, {
+        textContent: 'Measured',
+        attributes: { 'font-size': 16, 'line-height': 1.5 },
+      });
+
+      expect(Number(textElement.getAttribute('width'))).toBeGreaterThan(0);
+      expect(Number(textElement.getAttribute('height'))).toBeGreaterThan(0);
+    });
+
+    it('should widen the measured box as letter spacing grows', () => {
+      const measure = (letterSpacing: number) => {
+        const textElement = createTextElement('Spacing', {
+          width: '100',
+          height: '30',
+        });
+        textElement.removeAttribute('width');
+        textElement.removeAttribute('height');
+        updateTextElement(textElement, {
+          textContent: 'Spacing',
+          attributes: { 'font-size': 16, 'letter-spacing': letterSpacing },
+        });
+        return Number(textElement.getAttribute('width'));
+      };
+
+      expect(measure(10)).toBeGreaterThan(measure(0));
+    });
+
+    it('should keep an explicitly sized element unmeasured', () => {
+      const textElement = createTextElement('Sized', {
+        width: '120',
+        height: '40',
+      });
+
+      updateTextElement(textElement, {
+        textContent: 'Sized',
+        attributes: { width: '120', height: '40', 'font-size': 16 },
+      });
+
+      expect(textElement.getAttribute('width')).toBe('120');
+      expect(textElement.getAttribute('height')).toBe('40');
+    });
+  });
+
+  describe('getTextElementProps spacing round-trip', () => {
+    it('should read spacing back off the entity', () => {
+      const textElement = createTextElement('Round trip', {
+        width: '100',
+        height: '30',
+        'letter-spacing': 2,
+        'word-spacing': '0.25em',
+      });
+
+      const { attributes } = getTextElementProps(textElement);
+
+      expect(attributes?.['letter-spacing']).toBe('2px');
+      expect(attributes?.['word-spacing']).toBe('0.25em');
+    });
+
+    it('should omit spacing when the entity has none', () => {
+      const textElement = createTextElement('No spacing', {
+        width: '100',
+        height: '30',
+      });
+
+      const { attributes } = getTextElementProps(textElement);
+
+      expect(attributes?.['letter-spacing']).toBeUndefined();
+      expect(attributes?.['word-spacing']).toBeUndefined();
     });
   });
 });
