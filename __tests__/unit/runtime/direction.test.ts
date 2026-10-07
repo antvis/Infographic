@@ -40,4 +40,22 @@ describe('Infographic direction', () => {
   it('does not warn when editing in LTR', () => {
     expect(renderEditable('ltr')).not.toHaveBeenCalled();
   });
+
+  it.each([
+    ['rtl', 'ltr', false],
+    ['ltr', 'rtl', true],
+  ] as const)(
+    'lets direction %s in options be overridden by direction %s in the syntax',
+    (option, spec, mirrored) => {
+      const container = document.createElement('div');
+      const infographic = new Infographic({ container, direction: option });
+
+      infographic.render(`${SYNTAX}\ndirection ${spec}`);
+
+      const mirror = container.querySelector(
+        'svg > g[transform^="matrix(-1 0 0 1"]',
+      );
+      expect(mirror !== null).toBe(mirrored);
+    },
+  );
 });

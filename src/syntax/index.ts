@@ -20,6 +20,7 @@ const ALLOWED_ROOT_KEYS = new Set([
   'theme',
   'width',
   'height',
+  'direction',
 ]);
 
 function normalizeItems(items: ItemDatum[]) {
@@ -262,6 +263,17 @@ export function parseSyntax(input: string): SyntaxParseResult {
       errors,
     );
     if (height !== undefined) options.height = height;
+  }
+
+  const directionNode = mergedEntries.direction as SyntaxNode | undefined;
+  if (directionNode) {
+    const direction = mapWithSchema(
+      directionNode,
+      RootSchema.fields.direction,
+      'direction',
+      errors,
+    );
+    if (direction !== undefined) options.direction = direction;
   }
 
   return {
