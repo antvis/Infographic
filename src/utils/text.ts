@@ -216,6 +216,29 @@ export function getTextElementProps(text: TextElement): Partial<TextProps> {
   return { attributes: attrs, textContent: getTextContent(text) };
 }
 
+export function getTextHorizontalAlign(text: TextElement): TextHorizontalAlign {
+  const [horizontal] = flexToAlign(
+    getTextEntity(text)?.style.justifyContent,
+    undefined,
+  );
+  return horizontal;
+}
+
+/**
+ * Unlike `alignToFlex`, holds regardless of the span's inline direction
+ * (e.g. `dir="auto"` resolving to RTL).
+ */
+export function setTextPhysicalHorizontalAlign(
+  text: TextElement,
+  align: TextHorizontalAlign,
+) {
+  const entity = getTextEntity(text);
+  if (!entity) return;
+  const side = align.toLowerCase();
+  entity.style.textAlign = side;
+  entity.style.justifyContent = side;
+}
+
 function flexToAlign(
   justifyContent: string | null | undefined,
   alignContent: string | null | undefined,
