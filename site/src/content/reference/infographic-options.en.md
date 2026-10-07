@@ -28,6 +28,8 @@ interface InfographicOptions {
   themeConfig?: ThemeConfig;
   /** SVG container options */
   svg?: SVGOptions;
+  /** Reading direction, defaults to 'ltr' */
+  direction?: 'ltr' | 'rtl';
 
   /** Enable editor mode */
   editable?: boolean;

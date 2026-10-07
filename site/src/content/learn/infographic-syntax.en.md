@@ -85,7 +85,7 @@ data
 - Key-value pairs use spaces for separation, and indentation is done with two spaces.
 - blocks like `structure [name]`, `item [name]`, or `title [name]` omit the `type`.
 - Object arrays use `-` on new lines (e.g., `data.lists`), while simple arrays stay inline (e.g., `palette`).
-- Container-specific configurations belong in `new Infographic({ ... })` (such as `width`, `height`, `padding`, `editable`); inside the syntax you only define `template`, `design`, or `theme`.
+- Container-specific configurations belong in `new Infographic({ ... })` (such as `width`, `height`, `padding`, `editable`); inside the syntax you only define `template`, `design`, `theme`, or `direction`.
 
 ### Dotted Path Syntax {#dotted-path-syntax}
 
@@ -386,6 +386,22 @@ theme
   palette #ff5a5f #1fb6ff #13ce66
   stylize rough
     roughness 0.3
+```
+
+### direction {#direction}
+
+The top-level `direction` key sets the reading direction: `ltr` (default) or `rtl`. With `rtl`, the layout is rendered as the horizontal mirror image of the `ltr` layout, while text, icons and illustrations stay readable. The default can be set with the `direction` option in `new Infographic({ ... })`; the syntax key overrides it.
+
+```infographic
+infographic list-row-horizontal-icon-arrow
+direction rtl
+data
+  title موتور رشد مشتری
+  lists
+    - label جذب مشتری
+      icon company-021_v1_lineal
+    - label بهبود نرخ تبدیل
+      icon antenna-bars-5_v1_lineal
 ```
 
 ## Usage Cases {#usage-cases}

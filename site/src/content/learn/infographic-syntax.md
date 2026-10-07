@@ -85,7 +85,7 @@ data
 - 键值对使用空格分隔，缩进使用两个空格
 - `structure [name]`、`item [name]`、`title [name]` 省略 `type`
 - 对象数组使用 `-` 换行（如 `data.lists`），简单数组使用行内写法（如 `palette`）
-- 容器相关配置写在 `new Infographic({ ... })`（如 `width`、`height`、`padding`、`editable`），语法中只写 `template`/`design`/`theme`
+- 容器相关配置写在 `new Infographic({ ... })`（如 `width`、`height`、`padding`、`editable`），语法中只写 `template`/`design`/`theme`/`direction`
 
 ### 点号路径写法 {#点号路径写法}
 
@@ -386,6 +386,22 @@ theme
   palette #ff5a5f #1fb6ff #13ce66
   stylize rough
     roughness 0.3
+```
+
+### direction {#direction}
+
+顶层 `direction` 键用于设置阅读方向：`ltr`（默认）或 `rtl`。`rtl` 时布局整体水平镜像，文字、图标与插图保持可读。默认值可通过 `new Infographic({ ... })` 的 `direction` 配置设置；语法中的该键会覆盖它。
+
+```infographic
+infographic list-row-horizontal-icon-arrow
+direction rtl
+data
+  title موتور رشد مشتری
+  lists
+    - label جذب مشتری
+      icon company-021_v1_lineal
+    - label بهبود نرخ تبدیل
+      icon antenna-bars-5_v1_lineal
 ```
 
 ## 使用案例 {#使用案例}
