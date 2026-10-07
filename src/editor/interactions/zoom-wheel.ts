@@ -6,7 +6,7 @@ import {
 } from '../../utils/viewbox';
 import { UpdateOptionsCommand } from '../commands';
 import type { IInteraction, InteractionInitOptions } from '../types';
-import { clientToViewport } from '../utils';
+import { clientToViewBox } from '../utils';
 import { Interaction } from './base';
 
 export interface ZoomWheelOptions {
@@ -93,7 +93,7 @@ export class ZoomWheel extends Interaction implements IInteraction {
   };
 
   private getMousePoint = (svg: SVGSVGElement, event: WheelEvent) => {
-    return clientToViewport(svg, event.clientX, event.clientY);
+    return clientToViewBox(svg, event.clientX, event.clientY);
   };
 
   private getCenterPoint = (viewBox: {

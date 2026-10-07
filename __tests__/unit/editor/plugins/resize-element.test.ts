@@ -2,6 +2,14 @@ import { describe, expect, it, vi } from 'vitest';
 import { UpdateElementCommand } from '../../../../src/editor/commands';
 import { ResizeElement } from '../../../../src/editor/plugins/resize-element';
 
+vi.mock('../../../../src/editor/utils', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../../../../src/editor/utils')>()),
+  clientToViewport: vi.fn((_svg: SVGSVGElement, x: number, y: number) => ({
+    x,
+    y,
+  })),
+}));
+
 describe('ResizeElement internal geometry helpers', () => {
   const plugin = new ResizeElement() as any;
 
@@ -66,9 +74,6 @@ describe('ResizeElement pointer interactions', () => {
     target.setAttribute('data-element-type', 'title');
     plugin.target = target;
 
-    plugin.clientToElement = vi.fn((_el: any, x: number, y: number) => {
-      return { x, y };
-    });
     plugin.getCurrentAttributes = vi
       .fn()
       .mockReturnValue({ x: 0, y: 0, width: 50, height: 20 });

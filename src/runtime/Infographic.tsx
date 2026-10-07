@@ -111,14 +111,6 @@ export class Infographic {
     this.editor?.destroy();
     this.editor = undefined;
     if (this.options.editable) {
-      if (parsedOptions.direction === 'rtl') {
-        this.emitter.emit('warning', {
-          message:
-            'Editing is not supported with direction "rtl", and doesn\'t work correctly.',
-          options: this.options,
-        });
-      }
-
       this.editor = new Editor(this.emitter, this.node, parsedOptions);
     }
 

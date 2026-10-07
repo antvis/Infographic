@@ -1,11 +1,18 @@
 import { describe, expect, it } from 'vitest';
 import {
   applyLayoutDirection,
+  getLayoutRoot,
+  mirrorSide,
+  syncUnmirroredAtom,
   toPhysicalPadding,
 } from '../../../src/renderer/rtl';
 import type { TextHorizontalAlign } from '../../../src/types';
 import { createElement, createTextElement } from '../../../src/utils';
-import { getTextEntity } from '../../../src/utils/text';
+import {
+  getTextElementProps,
+  getTextEntity,
+  updateTextElement,
+} from '../../../src/utils/text';
 
 const mirror = (pivotX: number) => `matrix(-1 0 0 1 ${2 * pivotX} 0)`;
 
@@ -26,6 +33,13 @@ function createText(align: TextHorizontalAlign) {
 }
 
 const rtl = { direction: 'rtl' } as const;
+
+/** The flip this module put around a box atom. */
+const flipOf = (element: Element) => {
+  const flip = element.parentElement!;
+  expect(flip.hasAttribute('data-layout-flip')).toBe(true);
+  return flip.getAttribute('transform');
+};
 
 describe('applyLayoutDirection', () => {
   it.each([undefined, 'ltr'] as const)(
@@ -76,7 +90,8 @@ describe('applyLayoutDirection', () => {
       applyLayoutDirection(svg, rtl);
 
       const entity = getTextEntity(text)!;
-      expect(text.getAttribute('transform')).toBe(mirror(30));
+      expect(flipOf(text)).toBe(mirror(30));
+      expect(text.hasAttribute('transform')).toBe(false);
       expect(entity.style.textAlign).toBe(textAlign);
       expect(entity.style.justifyContent).toBe(justifyContent);
       expect(entity.getAttribute('dir')).toBe('auto');
@@ -137,10 +152,11 @@ describe('applyLayoutDirection', () => {
 
     applyLayoutDirection(svg, rtl);
 
-    expect(icon.getAttribute('transform')).toBe(mirror(20));
-    expect(illus.getAttribute('transform')).toBe(mirror(100));
+    expect(flipOf(icon)).toBe(mirror(20));
+    expect(flipOf(illus)).toBe(mirror(100));
+    expect(illus.parentElement!.parentElement).toBe(illusGroup);
     expect(illusGroup.hasAttribute('transform')).toBe(false);
-    expect(button.hasAttribute('transform')).toBe(false);
+    expect(button.parentElement).toBe(svg.firstElementChild);
   });
 
   it.each(['defs', 'symbol', 'clipPath'])(
@@ -165,5 +181,74 @@ describe('toPhysicalPadding', () => {
     expect(toPhysicalPadding([1, 2, 3, 4], 'rtl')).toEqual([1, 4, 3, 2]);
     expect(toPhysicalPadding([1, 2, 3, 4], 'ltr')).toEqual([1, 2, 3, 4]);
     expect(toPhysicalPadding([1, 2, 3, 4], undefined)).toEqual([1, 2, 3, 4]);
+  });
+});
+
+describe('editing a mirrored layout', () => {
+  function renderMirroredText(align: TextHorizontalAlign) {
+    const svg = createSVG();
+    const text = createText(align);
+    svg.append(text);
+    applyLayoutDirection(svg, rtl);
+    return { svg, text };
+  }
+
+  it('exposes the mirrored group as the layout root, and the svg in LTR', () => {
+    const { svg } = renderMirroredText('LEFT');
+    expect(getLayoutRoot(svg)).toBe(svg.firstElementChild);
+
+    const ltr = createSVG();
+    expect(getLayoutRoot(ltr)).toBe(ltr);
+  });
+
+  it('re-centres the flip after the geometry changes', () => {
+    const { text } = renderMirroredText('LEFT');
+    text.setAttribute('x', '50');
+    text.setAttribute('width', '100');
+
+    syncUnmirroredAtom(text);
+
+    expect(flipOf(text)).toBe(mirror(100));
+  });
+
+  it('reads back the stored alignment and re-mirrors a newly written one', () => {
+    const { text } = renderMirroredText('LEFT');
+    expect(
+      getTextElementProps(text).attributes?.['data-horizontal-align'],
+    ).toBe('LEFT');
+
+    updateTextElement(text, {
+      attributes: { 'data-horizontal-align': 'RIGHT' },
+    });
+    syncUnmirroredAtom(text);
+    syncUnmirroredAtom(text);
+
+    expect(getTextEntity(text)!.style.justifyContent).toBe('left');
+    expect(
+      getTextElementProps(text).attributes?.['data-horizontal-align'],
+    ).toBe('RIGHT');
+  });
+
+  it('leaves elements it did not flip alone', () => {
+    const svg = createSVG();
+    const rect = createElement('rect', { x: 5, width: 10 });
+    svg.append(rect);
+    applyLayoutDirection(svg, rtl);
+
+    syncUnmirroredAtom(rect);
+
+    expect(rect.hasAttribute('transform')).toBe(false);
+    expect(rect.parentElement).toBe(svg.firstElementChild);
+  });
+
+  it('swaps LEFT and RIGHT between stored and on-screen sides inside a mirrored layout only', () => {
+    const { text } = renderMirroredText('LEFT');
+    expect(mirrorSide(text, 'LEFT')).toBe('RIGHT');
+    expect(mirrorSide(text, 'RIGHT')).toBe('LEFT');
+    expect(mirrorSide(text, 'CENTER')).toBe('CENTER');
+
+    const ltrText = createText('LEFT');
+    createSVG().append(ltrText);
+    expect(mirrorSide(ltrText, 'LEFT')).toBe('LEFT');
   });
 });

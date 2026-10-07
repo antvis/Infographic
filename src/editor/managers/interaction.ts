@@ -1,3 +1,4 @@
+import { getLayoutRoot } from '../../renderer/rtl';
 import type { IEventEmitter } from '../../types';
 import {
   createElement,
@@ -219,7 +220,7 @@ export class InteractionManager implements IInteractionManager {
 
     const g = createElement('g');
     setElementRole(g, role);
-    doc.appendChild(g);
+    getLayoutRoot(doc).appendChild(g);
     return g;
   }
 

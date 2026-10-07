@@ -2,21 +2,25 @@ import type { LayoutDirection, ParsedInfographicOptions } from '../options';
 import type { ParsedPadding, TextElement, TextHorizontalAlign } from '../types';
 import {
   createElement,
+  flexToAlign,
   getTextEntity,
-  getTextHorizontalAlign,
   getViewBox,
   isIllus,
   isItemIcon,
   parseViewBox,
-  setTextPhysicalHorizontalAlign,
   traverse,
 } from '../utils';
+
+/** Marks the group holding the whole mirrored layout. */
+const MIRROR_ATTRIBUTE = 'data-layout-mirror';
+/** Marks the group flipping one box atom back; owned by this module, never by designs or the editor. */
+const FLIP_ATTRIBUTE = 'data-layout-flip';
 
 /**
  * Right-to-left layout as a post-render pass: the whole infographic is
  * mirrored horizontally, then every element that must stay readable (an
- * "unmirrored atom") is mirrored back in place. Designs never see the
- * direction.
+ * "unmirrored atom") is flipped back in place. Designs never see the
+ * direction; the editor keeps working in the mirrored (logical LTR) space.
  */
 export function applyLayoutDirection(
   svg: SVGSVGElement,
@@ -28,6 +32,7 @@ export function applyLayoutDirection(
     ? parseViewBox(options.viewBox)
     : getViewBox(svg);
   const mirror = createElement<SVGGElement>('g', {
+    [MIRROR_ATTRIBUTE]: '',
     transform: horizontalMirror(x + width / 2),
   });
   mirror.append(...Array.from(svg.childNodes));
@@ -44,6 +49,45 @@ export function toPhysicalPadding(
   if (direction !== 'rtl') return padding;
   const [top, right, bottom, left] = padding;
   return [top, left, bottom, right];
+}
+
+/** The group whose user space is the layout's own (mirrored in RTL); the svg itself otherwise. */
+export function getLayoutRoot(svg: SVGSVGElement): SVGGraphicsElement {
+  return (
+    svg.querySelector<SVGGElement>(`:scope > [${MIRROR_ATTRIBUTE}]`) ?? svg
+  );
+}
+
+/**
+ * Re-centres an atom's flip after its geometry or alignment was written, so it
+ * stays readable in place; no-op for anything not flipped by this module.
+ */
+export function syncUnmirroredAtom(element: Element) {
+  const flip = element.parentElement;
+  if (!flip?.hasAttribute(FLIP_ATTRIBUTE)) return;
+  flip.setAttribute('transform', boxFlip(element as SVGElement));
+  if (tagNameOf(element as SVGElement) === 'foreignobject') {
+    mirrorTextAlign(element as TextElement);
+  }
+}
+
+/** Sides with a horizontal mirror image: alignments, and the diagonal resize cursors. */
+const MIRRORED_SIDES: Record<string, string> = {
+  LEFT: 'RIGHT',
+  RIGHT: 'LEFT',
+  'nwse-resize': 'nesw-resize',
+  'nesw-resize': 'nwse-resize',
+};
+
+/** Inside a mirrored layout, converts a side between stored and on-screen, both ways. */
+export function mirrorSide<T extends string | undefined>(
+  element: Element,
+  side: T,
+): T {
+  if (side === undefined || !element.closest(`[${MIRROR_ATTRIBUTE}]`)) {
+    return side;
+  }
+  return (MIRRORED_SIDES[side] ?? side) as T;
 }
 
 interface UnmirroredAtom {
@@ -65,7 +109,7 @@ const UNMIRRORED_ATOMS: UnmirroredAtom[] = [
   {
     matches: (element) =>
       tagNameOf(element) === 'use' && (isItemIcon(element) || isIllus(element)),
-    unmirror: unmirrorBox,
+    unmirror: wrapInFlip,
   },
 ];
 
@@ -89,58 +133,65 @@ function unmirrorAtoms(root: SVGElement) {
   });
 }
 
-const MIRRORED_ALIGN: Record<TextHorizontalAlign, TextHorizontalAlign> = {
-  LEFT: 'RIGHT',
-  CENTER: 'CENTER',
-  RIGHT: 'LEFT',
-};
-
 const MIRRORED_TEXT_ANCHOR: Record<string, string> = {
   start: 'end',
   middle: 'middle',
   end: 'start',
 };
 
-function unmirrorBox(element: SVGElement) {
-  mirrorInPlace(
-    element,
-    numberAttribute(element, 'x') + numberAttribute(element, 'width') / 2,
-  );
+/**
+ * Box atoms get their flip on a wrapping group, so their own attributes stay
+ * exactly what the editor reads, writes and persists.
+ */
+function wrapInFlip(element: SVGElement) {
+  const flip = createElement<SVGGElement>('g', {
+    [FLIP_ATTRIBUTE]: '',
+    transform: boxFlip(element),
+  });
+  element.replaceWith(flip);
+  flip.append(element);
 }
 
-function unmirrorTextBox(element: SVGElement) {
-  const text = element as TextElement; // matched as a foreignObject
-  unmirrorBox(text);
+function unmirrorTextBox(text: SVGElement) {
+  wrapInFlip(text);
+  mirrorTextAlign(text as TextElement);
+  getTextEntity(text as TextElement)?.setAttribute('dir', 'auto');
+}
+
+/** Physical side a mirrored text box shows, whatever its span's `dir`. */
+const MIRRORED_TEXT_SIDE: Record<TextHorizontalAlign, string> = {
+  LEFT: 'right',
+  CENTER: 'center',
+  RIGHT: 'left',
+};
+
+/** Idempotent: `flexToAlign` reads the stored alignment back from either representation. */
+function mirrorTextAlign(text: TextElement) {
   const entity = getTextEntity(text);
   if (!entity) return;
-  setTextPhysicalHorizontalAlign(
-    text,
-    MIRRORED_ALIGN[getTextHorizontalAlign(text)],
-  );
-  entity.setAttribute('dir', 'auto');
+  const [horizontal] = flexToAlign(entity.style.justifyContent, undefined);
+  const side = MIRRORED_TEXT_SIDE[horizontal];
+  entity.style.textAlign = side;
+  entity.style.justifyContent = side;
 }
 
 /**
- * Pivot on the anchor point and swap the anchor: the text then occupies the
- * mirror of its box without being measured.
+ * Not editable, and may carry its own rotate/scale: the flip is appended as
+ * its innermost transform, pivoting on the anchor with the anchor swapped, so
+ * the text occupies the mirror of its box without being measured.
  */
 function unmirrorSVGText(text: SVGElement) {
-  mirrorInPlace(text, numberAttribute(text, 'x'));
+  const existing = text.getAttribute('transform');
+  const flip = horizontalMirror(numberAttribute(text, 'x'));
+  text.setAttribute('transform', existing ? `${existing} ${flip}` : flip);
   const anchor = text.getAttribute('text-anchor') || 'start';
   text.setAttribute('text-anchor', MIRRORED_TEXT_ANCHOR[anchor] ?? anchor);
   text.style.setProperty('unicode-bidi', 'plaintext');
 }
 
-/**
- * Appended as the innermost transform so it acts in the element's own
- * coordinates, whatever transform the design already set.
- */
-function mirrorInPlace(element: SVGElement, pivotX: number) {
-  const existing = element.getAttribute('transform');
-  const mirror = horizontalMirror(pivotX);
-  element.setAttribute(
-    'transform',
-    existing ? `${existing} ${mirror}` : mirror,
+function boxFlip(element: SVGElement) {
+  return horizontalMirror(
+    numberAttribute(element, 'x') + numberAttribute(element, 'width') / 2,
   );
 }
 
