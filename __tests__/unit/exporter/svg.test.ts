@@ -254,6 +254,83 @@ describe('exporter/svg', () => {
     expect(inlined?.querySelector('path')).toBeTruthy();
   });
 
+  describe('keeps the use transform outside its x/y translation when removeIds is enabled', () => {
+    const useTransform = 'matrix(-1 0 0 1 10 0)';
+
+    function createPath() {
+      const path = document.createElementNS(svgNS, 'path');
+      path.setAttribute('d', 'M0 0 L10 0 L5 10 Z');
+      return path;
+    }
+
+    function createViewBoxTarget(tag: 'symbol' | 'svg') {
+      const target = document.createElementNS(svgNS, tag);
+      target.setAttribute('viewBox', '0 0 10 10');
+      target.appendChild(createPath());
+      return target;
+    }
+
+    it.each([
+      {
+        kind: 'element',
+        createTarget: createPath,
+        wrapperTransform: `${useTransform} translate(1 2)`,
+        content: { tag: 'path', attributes: {} },
+      },
+      {
+        kind: 'symbol',
+        createTarget: () => createViewBoxTarget('symbol'),
+        wrapperTransform: useTransform,
+        content: {
+          tag: 'svg',
+          attributes: { x: '1', y: '2', transform: null },
+        },
+      },
+      {
+        kind: 'svg',
+        createTarget: () => createViewBoxTarget('svg'),
+        wrapperTransform: useTransform,
+        content: {
+          tag: 'svg',
+          attributes: { x: '1', y: '2', transform: null },
+        },
+      },
+    ])(
+      'for a $kind target',
+      async ({ createTarget, wrapperTransform, content }) => {
+        const defs = document.createElementNS(svgNS, 'defs');
+        const target = createTarget();
+        target.id = 'use-target';
+        defs.appendChild(target);
+        document.body.appendChild(defs);
+
+        const svg = document.createElementNS(svgNS, 'svg');
+        svg.setAttribute('viewBox', '0 0 10 10');
+        const use = document.createElementNS(svgNS, 'use');
+        use.setAttribute('href', '#use-target');
+        use.setAttribute('x', '1');
+        use.setAttribute('y', '2');
+        use.setAttribute('width', '8');
+        use.setAttribute('height', '8');
+        use.setAttribute('transform', useTransform);
+        svg.appendChild(use);
+
+        const exported = await exportToSVG(svg, { removeIds: true });
+
+        expect(exported.querySelector('use')).toBeNull();
+        const wrapper = exported.lastElementChild;
+        expect(wrapper?.tagName.toLowerCase()).toBe('g');
+        expect(wrapper?.getAttribute('transform')).toBe(wrapperTransform);
+        expect(wrapper?.children).toHaveLength(1);
+        const inlined = wrapper!.firstElementChild!;
+        expect(inlined.tagName.toLowerCase()).toBe(content.tag);
+        Object.entries(content.attributes).forEach(([name, value]) => {
+          expect(inlined.getAttribute(name)).toBe(value);
+        });
+      },
+    );
+  });
+
   it('inlines defs references when removeIds is enabled', async () => {
     const defs = document.createElementNS(svgNS, 'defs');
     const gradient = document.createElementNS(svgNS, 'linearGradient');
