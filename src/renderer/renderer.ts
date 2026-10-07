@@ -35,6 +35,7 @@ import {
   renderText,
 } from './composites';
 import { loadFonts } from './fonts';
+import { applyLayoutDirection, toPhysicalPadding } from './rtl';
 import type { IRenderer } from './types';
 
 const upsert = (original: SVGElement, modified: SVGElement | null) => {
@@ -64,6 +65,7 @@ export class Renderer implements IRenderer {
     if (this.rendered) return svg;
 
     renderTemplate(svg, this.options);
+    applyLayoutDirection(svg, this.options);
     svg.style.visibility = 'hidden';
     const postRender = () => {
       setView(this.template, this.options);
@@ -227,11 +229,11 @@ function setSVG(svg: SVGSVGElement, options: ParsedInfographicOptions) {
 }
 
 function setView(svg: SVGSVGElement, options: ParsedInfographicOptions) {
-  const { padding = 0, viewBox } = options;
+  const { padding = 0, viewBox, direction } = options;
 
   if (viewBox) {
     svg.setAttribute('viewBox', viewBox);
   } else if (padding !== undefined) {
-    setSVGPadding(svg, parsePadding(padding));
+    setSVGPadding(svg, toPhysicalPadding(parsePadding(padding), direction));
   }
 }

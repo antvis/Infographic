@@ -1084,4 +1084,26 @@ theme
     ).toBe(true);
     expect(result.options.themeConfig?.colorBg).toBe('#000');
   });
+
+  it('parses direction', () => {
+    const result = parseSyntax(`
+infographic list-row-simple-horizontal-arrow
+direction rtl
+`);
+
+    expect(result.errors).toEqual([]);
+    expect(result.options.direction).toBe('rtl');
+  });
+
+  it('rejects an unknown direction', () => {
+    const result = parseSyntax(`
+infographic list-row-simple-horizontal-arrow
+direction up
+`);
+
+    expect(result.options.direction).toBeUndefined();
+    expect(result.errors).toEqual([
+      expect.objectContaining({ code: 'invalid_value', path: 'direction' }),
+    ]);
+  });
 });

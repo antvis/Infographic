@@ -1,3 +1,4 @@
+import { mirrorSide } from '../../../../renderer/rtl';
 import type {
   TextAttributes,
   TextHorizontalAlign,
@@ -54,7 +55,7 @@ export const FontAlign: EditItem<TextAttributes> = (
   injectStyleOnce(GRID_STYLE_ID, GRID_STYLES, root);
 
   const state: AlignState = {
-    horizontal: attrs['data-horizontal-align'],
+    horizontal: mirrorSide(selection[0], attrs['data-horizontal-align']),
     vertical: attrs['data-vertical-align'],
   };
 
@@ -62,8 +63,8 @@ export const FontAlign: EditItem<TextAttributes> = (
 
   const content = createAlignContent(state, (align) => {
     const attributes: Partial<TextAttributes> = {};
-    if (align.horizontal)
-      attributes['data-horizontal-align'] = align.horizontal;
+    const horizontal = mirrorSide(selection[0], align.horizontal);
+    if (horizontal) attributes['data-horizontal-align'] = horizontal;
     if (align.vertical) attributes['data-vertical-align'] = align.vertical;
 
     if (!Object.keys(attributes).length) return;

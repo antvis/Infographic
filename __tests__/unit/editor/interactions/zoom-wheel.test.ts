@@ -8,7 +8,7 @@ import '../../../setup/dom-polyfills';
 const createSVG = (viewBox: string) => {
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('viewBox', viewBox);
-  // Mock getScreenCTM for clientToViewport
+  // Mock getScreenCTM for clientToViewBox
   (svg as any).getScreenCTM = () => new DOMMatrix();
   return svg;
 };
@@ -134,10 +134,10 @@ describe('ZoomWheel interaction', () => {
         updateOptions: vi.fn(),
       } as any;
 
-      // Mock clientToViewport to return a specific point (e.g., 25, 25)
+      // Mock clientToViewBox to return a specific point (e.g., 25, 25)
       // This represents the mouse cursor position in SVG coordinates
-      const clientToViewportSpy = vi.spyOn(EditorUtils, 'clientToViewport');
-      clientToViewportSpy.mockReturnValue({ x: 25, y: 25 } as DOMPoint);
+      const clientToViewBoxSpy = vi.spyOn(EditorUtils, 'clientToViewBox');
+      clientToViewBoxSpy.mockReturnValue({ x: 25, y: 25 } as DOMPoint);
 
       const instance = new ZoomWheel();
       instance.init({
@@ -158,7 +158,7 @@ describe('ZoomWheel interaction', () => {
       const event = new WheelEvent('wheel', {
         deltaY: 120,
         ctrlKey: true,
-        clientX: 100, // Arbitrary, mocked by clientToViewport
+        clientX: 100, // Arbitrary, mocked by clientToViewBox
         clientY: 100,
       });
       document.dispatchEvent(event);
@@ -184,8 +184,8 @@ describe('ZoomWheel interaction', () => {
       } as any;
 
       // Mock mouse at (80, 80)
-      const clientToViewportSpy = vi.spyOn(EditorUtils, 'clientToViewport');
-      clientToViewportSpy.mockReturnValue({ x: 80, y: 80 } as DOMPoint);
+      const clientToViewBoxSpy = vi.spyOn(EditorUtils, 'clientToViewBox');
+      clientToViewBoxSpy.mockReturnValue({ x: 80, y: 80 } as DOMPoint);
 
       const instance = new ZoomWheel();
       instance.init({
