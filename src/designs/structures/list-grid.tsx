@@ -1,4 +1,4 @@
-import type { ComponentType, JSXElement } from '../../jsx';
+import type { Bounds, ComponentType, JSXElement } from '../../jsx';
 import { getElementBounds, Group } from '../../jsx';
 import { BtnAdd, BtnRemove, BtnsGroup, ItemsGroup } from '../components';
 import { FlexLayout } from '../layouts';
@@ -18,15 +18,38 @@ export const ListGrid: ComponentType<ListGridProps> = (props) => {
   const titleContent = Title ? <Title title={title} desc={desc} /> : null;
 
   const btnBounds = getElementBounds(<BtnAdd indexes={[0]} />);
-  const itemBounds = getElementBounds(
-    <Item indexes={[0]} data={data} datum={items[0]} positionH="center" />,
-  );
+  const itemBoundsList: Bounds[] = [];
+  const rowHeights: number[] = [];
+  const colWidths: number[] = [];
+
+  items.forEach((item, index) => {
+    const row = Math.floor(index / columns);
+    const col = index % columns;
+    const bounds = getElementBounds(
+      <Item
+        indexes={[index]}
+        data={data}
+        datum={item}
+        positionH="center"
+        positionV={zigzag && index % 2 === 0 ? 'normal' : 'flipped'}
+      />,
+    );
+    itemBoundsList.push(bounds);
+    rowHeights[row] = Math.max(rowHeights[row] || 0, bounds.height);
+    colWidths[col] = Math.max(colWidths[col] || 0, bounds.width);
+  });
+
+  const rowOffsets: number[] = [0];
+  const colOffsets: number[] = [0];
+  rowHeights.forEach((height, row) => {
+    rowOffsets[row + 1] = rowOffsets[row] + height + gap;
+  });
+  colWidths.forEach((width, col) => {
+    colOffsets[col + 1] = colOffsets[col] + width + gap;
+  });
 
   const btnElements: JSXElement[] = [];
   const itemElements: JSXElement[] = [];
-
-  const rowHeight = itemBounds.height + gap;
-  const colWidth = itemBounds.width + gap;
 
   // Track processed rows for left/right buttons
   const processedRows = new Set<number>();
@@ -34,8 +57,9 @@ export const ListGrid: ComponentType<ListGridProps> = (props) => {
   items.forEach((item, index) => {
     const row = Math.floor(index / columns);
     const col = index % columns;
-    const itemX = col * colWidth;
-    const itemY = row * rowHeight;
+    const itemX = colOffsets[col];
+    const itemY = rowOffsets[row];
+    const itemBounds = itemBoundsList[index];
     const indexes = [index];
 
     itemElements.push(
