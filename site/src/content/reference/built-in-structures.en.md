@@ -6,6 +6,47 @@ Below are the styling features and parameter types for built-in structures (unli
 
 Use the `id` below to specify them.
 
+## ChartBarStacked100 {#chart-bar-stacked-100}
+
+**id**: `chart-bar-stacked-100`; built-in template: `chart-bar-stacked-100-plain-text`
+
+A horizontal 100% stacked bar chart. `categories` sets legend, stacking, and palette order. Each row in `values` contains `children` with category IDs and raw nonnegative numbers. Percentages are calculated per row. Missing categories count as zero; a row with a zero total displays “No Data”. Category IDs must be unique, and a row cannot repeat or reference an unknown ID.
+
+```infographic
+infographic chart-bar-stacked-100-plain-text
+data
+  title Team allocation
+  categories
+    - id research
+      label Research
+    - id design
+      label Design
+  values
+    - label Product team
+      children
+        - id research
+          value 3
+        - id design
+          value 1
+    - label Platform team
+      children
+        - id research
+          value 2
+        - id design
+          value 2
+```
+
+```ts
+export interface ChartBarStacked100Props extends BaseStructureProps {
+  barAreaWidth?: number; // Plot width; defaults to 600
+  barHeight?: number; // Bar height; defaults to 32
+  rowGap?: number; // Gap between rows; defaults to 20
+  labelGap?: number; // Gap between row labels and bars; defaults to 16
+  padding?: Padding; // Outer padding; defaults to 24
+  showPercentage?: boolean; // Show percentages when they fit; defaults to true
+}
+```
+
 ## ChartColumn {#chart-column}
 
 **id**: `chart-column`

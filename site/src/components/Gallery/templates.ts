@@ -20,6 +20,7 @@ const DATA_KEY_ORDER = [
   'root',
   'nodes',
   'relations',
+  'categories',
   'values',
   'items',
 ] as const;

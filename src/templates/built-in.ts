@@ -1,3 +1,4 @@
+import { chartBarStacked100Templates } from './chart-bar-stacked-100';
 import { chartPieTemplates } from './chart-pie';
 import { compareQuadrantTemplates } from './compare-quadrant';
 import { hierarchyMindmapTemplates } from './hierarchy-mindmap';
@@ -746,6 +747,7 @@ const BUILT_IN_TEMPLATES: Record<string, TemplateOptions> = {
     },
   },
   ...chartPieTemplates,
+  ...chartBarStacked100Templates,
   ...compareQuadrantTemplates,
   ...hierarchyTreeTemplates,
   ...hierarchyMindmapTemplates,

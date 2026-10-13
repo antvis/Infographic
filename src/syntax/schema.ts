@@ -127,6 +127,7 @@ export const DataSchema = object({
   compares: array(itemDatumSchema),
   nodes: array(itemDatumSchema),
   relations: array(RelationSchema),
+  categories: array(object({ id: string(), label: string() })),
   values: array(itemDatumSchema),
   order: enumOf(['asc', 'desc']),
   illus: anyObject(),

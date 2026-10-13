@@ -134,13 +134,34 @@ export interface StatisticsData extends BaseData {
   values?: StatisticsDatum[];
 }
 
+/** 100% 堆叠条形图的分类，顺序同时决定图例与色板顺序。 */
+export interface StackedBarCategory {
+  id: string;
+  label: string;
+}
+
+export interface StackedBarSegmentDatum extends BaseDatum {
+  id: string;
+  value: number;
+}
+
+export interface StackedBarRowDatum extends BaseDatum {
+  children: StackedBarSegmentDatum[];
+}
+
+export interface StackedBarData extends BaseData {
+  categories: StackedBarCategory[];
+  values: StackedBarRowDatum[];
+}
+
 export type Data =
   | ListData
   | SequenceData
   | HierarchyData
   | CompareData
   | RelationData
-  | StatisticsData;
+  | StatisticsData
+  | StackedBarData;
 
 export type ParsedData = Data & {
   items: ItemDatum[];
