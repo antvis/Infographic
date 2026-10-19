@@ -1,12 +1,10 @@
 import {CopyToast, useCopyToast} from 'components/CopyToast';
 import {motion} from 'framer-motion';
 import {useLocaleBundle} from 'hooks/useTranslation';
-import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
 import {DEFAULT_SYNTAX} from './defaultSyntax';
 import {EditorPanel} from './EditorPanel';
 import {PreviewPanel} from './PreviewPanel';
-import {extractContentFromUrl, generateShareUrl} from './utils';
 
 const STORAGE_KEY = 'live-editor-syntax';
 
@@ -15,43 +13,28 @@ const TRANSLATIONS = {
     title: 'Live Editor',
     description: '编辑 AntV Infographic Syntax 并查看实时预览',
     resetButton: '重置为默认',
-    shareButton: '分享',
     imageCopied: '图片已复制到剪贴板',
-    linkCopied: '分享链接已复制到剪贴板',
-    shareFailed: '生成分享链接失败',
   },
   'en-US': {
     title: 'Live Editor',
     description: 'Edit AntV Infographic Syntax and see real-time preview',
     resetButton: 'Reset to Default',
-    shareButton: 'Share',
     imageCopied: 'Image copied to clipboard',
-    linkCopied: 'Share link copied to clipboard',
-    shareFailed: 'Failed to generate share link',
   },
 };
 
 export function EditorContent() {
-  const router = useRouter();
   const [syntax, setSyntax] = useState(DEFAULT_SYNTAX);
   const [error, setError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const {message: copyHint, show: showCopyHint} = useCopyToast(2500);
   const texts = useLocaleBundle(TRANSLATIONS);
 
-  // Load from URL or localStorage on mount
+  // Load from localStorage on mount
   useEffect(() => {
     setMounted(true);
     if (typeof window === 'undefined') return;
 
-    // Try URL first
-    const urlContent = extractContentFromUrl();
-    if (urlContent) {
-      setSyntax(urlContent);
-      return;
-    }
-
-    // Fall back to localStorage
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       setSyntax(saved);
@@ -66,52 +49,10 @@ export function EditorContent() {
     localStorage.setItem(STORAGE_KEY, syntax);
   }, [syntax, mounted]);
 
-  // Debounced URL update when content is edited (if URL has content param)
-  useEffect(() => {
-    if (!mounted) return;
-    if (typeof window === 'undefined') return;
-
-    // Check if current URL has content parameter
-    const hasContentParam = window.location.search.includes('content=');
-    if (!hasContentParam) return;
-
-    // Debounce URL update (same delay as preview: 300ms)
-    const timer = setTimeout(() => {
-      const shareUrl = generateShareUrl(syntax);
-      if (shareUrl) {
-        window.history.replaceState(null, '', shareUrl);
-      }
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [syntax, mounted]);
-
   const handleReset = () => {
     setSyntax(DEFAULT_SYNTAX);
     if (typeof window !== 'undefined') {
       localStorage.removeItem(STORAGE_KEY);
-    }
-    // Clear URL params
-    router.replace('/editor', undefined, {shallow: true});
-  };
-
-  const handleShare = async () => {
-    const shareUrl = generateShareUrl(syntax);
-    if (!shareUrl) {
-      showCopyHint(texts.shareFailed);
-      return;
-    }
-
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      showCopyHint(texts.linkCopied);
-      // Use native history API to update URL without triggering re-render
-      if (typeof window !== 'undefined') {
-        window.history.replaceState(null, '', shareUrl);
-      }
-    } catch (e) {
-      console.error('Failed to copy share link:', e);
-      showCopyHint(texts.shareFailed);
     }
   };
 
@@ -142,7 +83,6 @@ export function EditorContent() {
           <EditorPanel
             value={syntax}
             onChange={setSyntax}
-            onShare={handleShare}
             onReset={handleReset}
           />
           <PreviewPanel

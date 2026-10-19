@@ -10,7 +10,6 @@ import type {EditorView} from '@codemirror/view';
 import {Select} from 'antd';
 import {TEMPLATES} from 'components/Gallery/templates';
 import {IconClose} from 'components/Icon/IconClose';
-import {IconLink} from 'components/Icon/IconLink';
 import {IconRestart} from 'components/Icon/IconRestart';
 import {CodeEditor} from 'components/MDX/CodeEditor';
 import {useLocaleBundle} from 'hooks/useTranslation';
@@ -326,7 +325,6 @@ const TRANSLATIONS = {
     themeLabel: '主题',
     paletteLabel: '配色',
     resetButton: '重置',
-    shareButton: '分享',
     clearButton: '清空',
     searchPlaceholder: '搜索',
     noResults: '无匹配选项',
@@ -339,7 +337,6 @@ const TRANSLATIONS = {
     themeLabel: 'Theme',
     paletteLabel: 'Palette',
     resetButton: 'Reset',
-    shareButton: 'Share',
     clearButton: 'Clear',
     searchPlaceholder: 'Search',
     noResults: 'No results',
@@ -368,12 +365,10 @@ const CUSTOM_PALETTES = [
 export function EditorPanel({
   value,
   onChange,
-  onShare,
   onReset,
 }: {
   value: string;
   onChange: (value: string) => void;
-  onShare: () => void;
   onReset: () => void;
 }) {
   const texts = useLocaleBundle(TRANSLATIONS);
@@ -611,13 +606,6 @@ export function EditorPanel({
             className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border dark:border-border-dark text-secondary dark:text-secondary-dark bg-white/80 dark:bg-gray-900/60 hover:border-link hover:text-link hover:bg-link/10 dark:hover:border-link-dark dark:hover:text-link-dark transition"
             aria-label={texts.resetButton}>
             <IconRestart className="w-4 h-4" />
-          </button>
-          <div className="w-[1px] h-5 bg-border dark:bg-border-dark self-center mx-1" />
-          <button
-            onClick={onShare}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white rounded-full bg-gradient-to-r from-link to-link/80 dark:from-link-dark dark:to-link-dark/90 shadow-sm hover:shadow-md transition">
-            <IconLink className="w-4 h-4" />
-            {texts.shareButton}
           </button>
         </div>
       </div>
