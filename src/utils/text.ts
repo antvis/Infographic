@@ -51,7 +51,14 @@ export function updateTextElement(
     Object.assign(entity.style, getTextStyle(attributes));
     if (!width || !height) {
       const content = textContent ?? getTextContent(text);
-      const { fontFamily, fontSize, fontWeight, lineHeight } = entity.style;
+      const {
+        fontFamily,
+        fontSize,
+        fontWeight,
+        lineHeight,
+        letterSpacing,
+        wordSpacing,
+      } = entity.style;
       const fSize = fontSize ? parseFloat(String(fontSize)) : 12;
       const rect = measureText(content, {
         fontFamily,
@@ -60,6 +67,8 @@ export function updateTextElement(
         lineHeight: lineHeight.endsWith('px')
           ? parseFloat(lineHeight)
           : (parseFloat(lineHeight) || 1.4) * fSize,
+        letterSpacing,
+        wordSpacing,
       });
 
       if (!width && !text.hasAttribute('width')) width = String(rect.width);
@@ -138,6 +147,7 @@ export function getTextStyle(attributes: TextAttributes) {
     ['data-vertical-align']: verticalAlign, // omit
     ['font-size']: fontSize,
     ['letter-spacing']: letterSpacing,
+    ['word-spacing']: wordSpacing,
     ['line-height']: lineHeight,
     fill,
     ['stroke-width']: strokeWidth,
@@ -164,11 +174,18 @@ export function getTextStyle(attributes: TextAttributes) {
       typeof lineHeight === 'string' && lineHeight.endsWith('px')
         ? lineHeight
         : +lineHeight;
-  if (letterSpacing) style.letterSpacing = `${letterSpacing}px`;
+  if (letterSpacing != null) style.letterSpacing = formatSpacing(letterSpacing);
+  if (wordSpacing != null) style.wordSpacing = formatSpacing(wordSpacing);
   if (strokeWidth) style.strokeWidth = `${strokeWidth}px`;
   if (fontFamily) style.fontFamily = encodeFontFamily(fontFamily);
 
   return style;
+}
+
+function formatSpacing(value: number | string): string {
+  if (typeof value === 'number') return `${value}px`;
+  const trimmed = value.trim();
+  return /^[-+]?\d*\.?\d+$/.test(trimmed) ? `${trimmed}px` : trimmed;
 }
 
 export function getTextContent(text: TextElement): string {
@@ -199,6 +216,8 @@ export function getTextElementProps(text: TextElement): Partial<TextProps> {
     justifyContent,
     alignContent,
     fontWeight,
+    letterSpacing,
+    wordSpacing,
   } = entity.style;
 
   const [horizontal, vertical] = flexToAlign(justifyContent, alignContent);
@@ -212,6 +231,8 @@ export function getTextElementProps(text: TextElement): Partial<TextProps> {
   if (fontWeight) attrs['font-weight'] = fontWeight;
   if (fontSize) attrs['font-size'] = String(parseInt(fontSize));
   if (color) attrs['fill'] = color;
+  if (letterSpacing) attrs['letter-spacing'] = letterSpacing;
+  if (wordSpacing) attrs['word-spacing'] = wordSpacing;
 
   return { attributes: attrs, textContent: getTextContent(text) };
 }

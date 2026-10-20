@@ -89,6 +89,33 @@ function resolveLineHeight(
   return lineHeight > 4 ? lineHeight : lineHeight * fontSize;
 }
 
+function resolveSpacing(
+  spacing: number | string | undefined,
+  fontSize: number,
+): number {
+  if (spacing === undefined || spacing === null) return 0;
+  if (typeof spacing === 'number')
+    return Number.isFinite(spacing) ? spacing : 0;
+
+  const value = spacing.trim();
+  if (!value) return 0;
+  const match = value.match(/^([-+]?(?:\d+\.?\d*|\.\d+))(px|em)?$/i);
+  if (!match) return 0;
+  const amount = Number(match[1]);
+  if (!Number.isFinite(amount)) return 0;
+  return match[2]?.toLowerCase() === 'em' ? amount * fontSize : amount;
+}
+
+function lineSpacing(
+  line: string,
+  letterSpacing: number,
+  wordSpacing: number,
+): number {
+  const letterCount = Math.max(line.length - 1, 0);
+  const wordCount = (line.match(/[ \t]/g) || []).length;
+  return letterCount * letterSpacing + wordCount * wordSpacing;
+}
+
 function measureTextInBrowser(
   content: string,
   {
@@ -96,24 +123,30 @@ function measureTextInBrowser(
     fontSize,
     fontWeight,
     lineHeight,
+    letterSpacing,
+    wordSpacing,
   }: {
     fontFamily: string;
     fontSize: number;
     fontWeight: string | number;
     lineHeight: number | string | undefined;
+    letterSpacing: number;
+    wordSpacing: number;
   },
 ) {
   const lines = content.split(/\r?\n/);
   const normalizedFamily = encodeFontFamily(fontFamily);
   const normalizedWeight = fontWeight || 'normal';
   const lineHeightPx = resolveLineHeight(fontSize, lineHeight);
-
   const context = getCanvasContext();
   if (context) {
     context.font = `${normalizedWeight} ${fontSize}px ${normalizedFamily}`;
     const width = lines.reduce((maxWidth, line) => {
       const metrics = context.measureText(line);
-      return Math.max(maxWidth, metrics.width);
+      return Math.max(
+        maxWidth,
+        metrics.width + lineSpacing(line, letterSpacing, wordSpacing),
+      );
     }, 0);
     return { width, height: lineHeightPx * Math.max(lines.length, 1) };
   }
@@ -124,6 +157,8 @@ function measureTextInBrowser(
   span.style.fontSize = `${fontSize}px`;
   span.style.fontWeight = String(normalizedWeight);
   span.style.lineHeight = `${lineHeightPx}px`;
+  span.style.letterSpacing = `${letterSpacing}px`;
+  span.style.wordSpacing = `${wordSpacing}px`;
   span.textContent = content;
   const rect = span.getBoundingClientRect();
   if (content && rect.width <= 0 && rect.height <= 0) return null;
@@ -145,15 +180,20 @@ export function measureText(
     fontSize = 14,
     fontWeight = 'normal',
     lineHeight = 1.4,
+    letterSpacing,
+    wordSpacing,
   } = attrs;
 
   const content = text.toString();
   ensureMeasuryFont(fontFamily);
+  const normalizedFontSize = parseFloat(fontSize.toString());
   const options = {
     fontFamily,
-    fontSize: parseFloat(fontSize.toString()),
+    fontSize: normalizedFontSize,
     fontWeight,
     lineHeight,
+    letterSpacing: resolveSpacing(letterSpacing, normalizedFontSize),
+    wordSpacing: resolveSpacing(wordSpacing, normalizedFontSize),
   };
   const fallback = () =>
     measure(content, {

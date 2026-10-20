@@ -37,6 +37,7 @@ export type TextAttributes = {
   'font-style'?: NumericalValue;
   'font-variant'?: NumericalValue;
   'letter-spacing'?: NumericalValue;
+  'word-spacing'?: NumericalValue;
   'line-height'?: NumericalValue;
   fill?: TextualValue;
   stroke?: TextualValue;

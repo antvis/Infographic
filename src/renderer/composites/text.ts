@@ -50,8 +50,7 @@ export function renderItemText(
   const datum = getDatumByIndexes(data, indexes) as ItemDatum | undefined;
   const text = String(get(datum, type, ''));
   const dataAttrs = datum?.attributes?.[type] as
-    | Record<string, any>
-    | undefined;
+    Record<string, any> | undefined;
   const attrs = Object.assign(
     {},
     themeConfig.base?.text,
@@ -109,6 +108,7 @@ function getTextAttributes(textElement: SVGTextElement) {
     'font-style',
     'font-variant',
     'letter-spacing',
+    'word-spacing',
     'line-height',
     'fill',
     'stroke',
