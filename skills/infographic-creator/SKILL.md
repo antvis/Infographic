@@ -91,6 +91,7 @@ theme
   - `chart-line-plain-text` / `chart-bar-plain-text` / `chart-column-simple` 都使用单条有序 `values`
   - 每个数据点使用 `label` 表示类目，使用 `value` 表示数值
   - 折线图的顺序由 `values` 中条目的排列顺序表达
+  - `chart-bar-stacked-100-plain-text` 还需要 `categories`：每项包含唯一 `id` 和 `label`；`values` 中每行用 `label` 和 `children`，子项用分类 `id` 和非负数 `value`。每行自动归一化到 100%，不要手动计算百分比
 - 结构无法明确判断时，再用 `items` 兜底
 
 主题规则：
@@ -257,6 +258,32 @@ theme
   palette #4f46e5 #db2777 #14b8a6
 ```
 
+- `chart-bar-stacked-100-plain-text` 模板
+
+```infographic
+infographic chart-bar-stacked-100-plain-text
+data
+  title 团队投入构成
+  categories
+    - id research
+      label 研发
+    - id design
+      label 设计
+  values
+    - label 产品团队
+      children
+        - id research
+          value 3
+        - id design
+          value 1
+    - label 平台团队
+      children
+        - id research
+          value 2
+        - id design
+          value 2
+```
+
 - `relation-*` 模板
 
 ```infographic
@@ -287,6 +314,7 @@ data
 ### 可用模板
 
 - chart-bar-plain-text
+- chart-bar-stacked-100-plain-text
 - chart-column-simple
 - chart-line-plain-text
 - chart-pie-compact-card
@@ -365,6 +393,7 @@ data
 - 层级树结构 → `hierarchy-tree-*`
 - 统计趋势、单条序列变化 → `chart-line-plain-text`
 - 统计对比、单组数值比较 → `chart-bar-plain-text` / `chart-column-simple`
+- 多组构成占比比较 → `chart-bar-stacked-100-plain-text`
 - 节点关系、流程依赖 → `relation-*`
 - 词频主题展示 → `chart-wordcloud`
 - 思维导图 → `hierarchy-mindmap-*`
@@ -418,8 +447,9 @@ theme
 - `palette` 是否为裸颜色值，且没有引号和逗号
 - `sequence-interaction-*` 的泳道节点是否都写成 `children -> - label ...`
 - `compare-binary-*` / `compare-hierarchy-left-right-*` 是否只有两个根节点，且两侧内容都放在各自的 `children` 下
-- `children` 下的每一项是否都显式包含 `label`
+- 对比和交互序列模板的 `children` 下每一项是否都显式包含 `label`
 - `chart-line-plain-text` 是否使用单条有序 `values`
+- `chart-bar-stacked-100-plain-text` 是否提供唯一分类 `id`，且每行 `children` 只引用这些 `id` 并填写非负数字
 - 输出中是否没有 JSON、解释文字或多余代码块
 
 ## 生成流程

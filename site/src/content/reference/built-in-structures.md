@@ -6,6 +6,47 @@ title: 内置结构
 
 使用时通过下方 `id` 指定。
 
+## ChartBarStacked100 {#chart-bar-stacked-100}
+
+**id**: `chart-bar-stacked-100`，内置模板：`chart-bar-stacked-100-plain-text`
+
+横向 100% 堆叠条形图。`categories` 定义图例、堆叠顺序和配色顺序；`values` 中每行的 `children` 填写分类 `id` 与原始非负数值。结构按行计算百分比。未填写的分类视为 0，整行总和为 0 时显示“No Data”。分类 ID 必须唯一，每行不能重复或引用未知 ID。
+
+```infographic
+infographic chart-bar-stacked-100-plain-text
+data
+  title 团队项目投入构成
+  categories
+    - id research
+      label 研发
+    - id design
+      label 设计
+  values
+    - label 产品团队
+      children
+        - id research
+          value 3
+        - id design
+          value 1
+    - label 平台团队
+      children
+        - id research
+          value 2
+        - id design
+          value 2
+```
+
+```ts
+export interface ChartBarStacked100Props extends BaseStructureProps {
+  barAreaWidth?: number; // 绘图区宽度，默认 600
+  barHeight?: number; // 条形高度，默认 32
+  rowGap?: number; // 行间距，默认 20
+  labelGap?: number; // 行标签与条形之间的距离，默认 16
+  padding?: Padding; // 外边距，默认 24
+  showPercentage?: boolean; // 是否显示可容纳的百分比标签，默认 true
+}
+```
+
 ## ChartColumn {#chart-column}
 
 **id**: `chart-column`

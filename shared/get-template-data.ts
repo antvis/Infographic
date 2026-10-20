@@ -27,6 +27,9 @@ export const getDataByTemplate = (
   if (template.startsWith('chart-wordcloud')) {
     return DATASET.WORD_CLOUD;
   }
+  if (template.startsWith('chart-bar-stacked-100')) {
+    return DATASET.STACKED_BAR;
+  }
   if (template.startsWith('chart-')) {
     return DATASET.CHART;
   }

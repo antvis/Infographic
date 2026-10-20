@@ -173,6 +173,41 @@ export const DATASET = {
       },
     ],
   },
+  STACKED_BAR: {
+    title: '各团队项目投入构成',
+    desc: '每行按实际投入自动换算为 100%，用于比较团队构成',
+    categories: [
+      { id: 'research', label: '研发' },
+      { id: 'design', label: '设计' },
+      { id: 'operations', label: '运营' },
+    ],
+    values: [
+      {
+        label: '产品团队',
+        children: [
+          { id: 'research', value: 48 },
+          { id: 'design', value: 32 },
+          { id: 'operations', value: 20 },
+        ],
+      },
+      {
+        label: '平台团队',
+        children: [
+          { id: 'research', value: 75 },
+          { id: 'design', value: 15 },
+          { id: 'operations', value: 10 },
+        ],
+      },
+      {
+        label: '增长团队',
+        children: [
+          { id: 'research', value: 20 },
+          { id: 'design', value: 25 },
+          { id: 'operations', value: 55 },
+        ],
+      },
+    ],
+  },
   PROS_CONS: {
     title: '企业优劣势对比',
     desc: '呈现企业当前在市场中的核心优势与待改善劣势',
