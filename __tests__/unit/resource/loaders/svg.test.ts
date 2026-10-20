@@ -47,6 +47,52 @@ describe('resource/loaders/svg', () => {
     );
   });
 
+  it('removes script and foreignObject elements', () => {
+    const data =
+      '<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script><foreignObject><body onclick="alert(1)"></body></foreignObject><rect width="10" height="10"/></svg>';
+
+    const result = loadSVGResource(data);
+    expect(result?.querySelector('script')).toBeNull();
+    expect(result?.querySelector('foreignObject')).toBeNull();
+    expect(result?.querySelector('rect')).not.toBeNull();
+  });
+
+  it('removes SMIL animation elements', () => {
+    const data =
+      '<svg xmlns="http://www.w3.org/2000/svg"><set attributeName="onmouseover" to="alert(1)"/><animate onbegin="alert(1)"/><animateTransform onbegin="alert(1)"/><animateMotion/><discard/><rect width="10"/></svg>';
+
+    const result = loadSVGResource(data);
+    expect(result?.querySelector('set')).toBeNull();
+    expect(result?.querySelector('animate')).toBeNull();
+    expect(result?.querySelector('animateTransform')).toBeNull();
+    expect(result?.querySelector('animateMotion')).toBeNull();
+    expect(result?.querySelector('discard')).toBeNull();
+    expect(result?.querySelector('rect')).not.toBeNull();
+  });
+
+  it('removes all event handler attributes', () => {
+    const data =
+      '<svg xmlns="http://www.w3.org/2000/svg" onload="alert(1)"><circle r="5" onmouseover="alert(1)" OnClick="alert(2)"/></svg>';
+
+    const result = loadSVGResource(data);
+    expect(result?.getAttribute('onload')).toBeNull();
+    const circle = result?.querySelector('circle');
+    expect(circle?.getAttribute('onmouseover')).toBeNull();
+    expect(circle?.getAttribute('OnClick')).toBeNull();
+    expect(circle?.getAttribute('r')).toBe('5');
+  });
+
+  it('removes unsafe protocol href attributes', () => {
+    const data =
+      '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><a href="javascript:alert(1)"><rect width="10"/></a><a xlink:href=" java\tscript:alert(2)"><circle r="5"/></a><a href="#anchor"><line/></a></svg>';
+
+    const result = loadSVGResource(data);
+    const anchors = result?.querySelectorAll('a');
+    expect(anchors?.[0].getAttribute('href')).toBeNull();
+    expect(anchors?.[1].getAttribute('xlink:href')).toBeNull();
+    expect(anchors?.[2].getAttribute('href')).toBe('#anchor');
+  });
+
   it('parse iconfont icon', () => {
     const data = `<svg t="1767770225208" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5909" width="200" height="200"><path d="M904 476H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z" p-id="5910"></path></svg>`;
     const result = loadSVGResource(data);
