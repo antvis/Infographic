@@ -28,6 +28,8 @@ interface InfographicOptions {
   themeConfig?: ThemeConfig;
   /** svg 容器上的配置 */
   svg?: SVGOptions;
+  /** 阅读方向，默认 'ltr' */
+  direction?: 'ltr' | 'rtl';
 
   /** 启用编辑 */
   editable?: boolean;

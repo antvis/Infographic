@@ -4,6 +4,9 @@ import type { ThemeConfig } from '../themes';
 import type { Data, Padding, ParsedData } from '../types';
 import type { Path } from '../utils';
 
+/** 阅读方向 */
+export type LayoutDirection = 'ltr' | 'rtl';
+
 export interface InfographicOptions {
   /** 容器，可以是选择器、Element 或 ShadowRoot */
   container?: string | Element | ShadowRoot;
@@ -25,6 +28,8 @@ export interface InfographicOptions {
   themeConfig?: ThemeConfig;
   /** svg 容器上的配置 */
   svg?: SVGOptions;
+  /** 阅读方向，默认 'ltr'；'rtl' 时整体水平镜像，文字、图标和插图保持可读 */
+  direction?: LayoutDirection;
 
   /** 启用编辑 */
   editable?: boolean;
@@ -48,6 +53,7 @@ export interface ParsedInfographicOptions {
   theme?: string;
   themeConfig: ThemeConfig;
   svg?: SVGOptions;
+  direction?: LayoutDirection;
 
   editable?: boolean;
   plugins?: IPlugin[];

@@ -147,4 +147,5 @@ export const RootSchema = object({
   theme: ThemeSchema,
   width: union(number(), string()),
   height: union(number(), string()),
+  direction: enumOf(['ltr', 'rtl']),
 });

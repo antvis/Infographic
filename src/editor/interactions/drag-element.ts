@@ -1,5 +1,6 @@
 import type { Bounds } from '../../jsx/types/bounds';
 import { getCombinedBounds } from '../../jsx/utils/bounds';
+import { syncUnmirroredAtom } from '../../renderer/rtl';
 import type { Element } from '../../types';
 import {
   createElement,
@@ -199,6 +200,7 @@ export class DragElement extends Interaction implements IInteraction {
         );
         setAttributes(item.element, { transform });
       }
+      syncUnmirroredAtom(item.element);
     });
   }
 

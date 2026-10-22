@@ -1,7 +1,7 @@
 import { getViewBox, viewBoxToString } from '../../utils';
 import { UpdateOptionsCommand } from '../commands';
 import { IInteraction, InteractionInitOptions, KeyCode } from '../types';
-import { clientToViewport, isTextSelectionTarget } from '../utils';
+import { clientToViewBox, isTextSelectionTarget } from '../utils';
 import { Interaction } from './base';
 
 type CursorType = 'grab' | 'grabbing' | 'default';
@@ -104,7 +104,7 @@ export class DragCanvas extends Interaction implements IInteraction {
     event.stopPropagation();
 
     const svg = this.document;
-    this.startPoint = clientToViewport(svg, event.clientX, event.clientY);
+    this.startPoint = clientToViewBox(svg, event.clientX, event.clientY);
     this.pointerId = event.pointerId;
 
     this.setCursor('grabbing');
@@ -120,7 +120,7 @@ export class DragCanvas extends Interaction implements IInteraction {
     event.stopPropagation();
 
     const svg = this.document;
-    const current = clientToViewport(svg, event.clientX, event.clientY);
+    const current = clientToViewBox(svg, event.clientX, event.clientY);
     const dx = current.x - this.startPoint.x;
     const dy = current.y - this.startPoint.y;
 

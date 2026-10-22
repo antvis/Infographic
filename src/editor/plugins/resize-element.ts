@@ -1,3 +1,8 @@
+import {
+  getLayoutRoot,
+  mirrorSide,
+  syncUnmirroredAtom,
+} from '../../renderer/rtl';
 import type { TextElement } from '../../types';
 import {
   createElement,
@@ -12,7 +17,7 @@ import type {
   Selection,
   SelectionChangePayload,
 } from '../types';
-import { getElementViewportBounds } from '../utils';
+import { clientToViewport, getElementViewportBounds } from '../utils';
 import { Plugin } from './base';
 
 type HandlePosition =
@@ -155,7 +160,7 @@ export class ResizeElement extends Plugin implements IPlugin {
             stroke: '#fff',
             'stroke-width': 1.5,
           });
-      handle.style.cursor = cursors[pos];
+      handle.style.cursor = mirrorSide(this.target!, cursors[pos]);
       handle.style.pointerEvents = 'all';
       handle.addEventListener('pointerdown', (event) =>
         this.handlePointerDown(event as PointerEvent, pos),
@@ -168,7 +173,7 @@ export class ResizeElement extends Plugin implements IPlugin {
       this.handles[index] = handle;
     });
 
-    this.editor.getDocument().appendChild(container);
+    getLayoutRoot(this.editor.getDocument()).appendChild(container);
     this.container = container;
 
     return container;
@@ -236,8 +241,8 @@ export class ResizeElement extends Plugin implements IPlugin {
     event.stopPropagation();
     event.preventDefault();
 
-    const point = this.clientToElement(
-      this.target,
+    const point = clientToViewport(
+      this.editor.getDocument(),
       event.clientX,
       event.clientY,
     );
@@ -268,8 +273,8 @@ export class ResizeElement extends Plugin implements IPlugin {
       return;
     }
 
-    const point = this.clientToElement(
-      this.target,
+    const point = clientToViewport(
+      this.editor.getDocument(),
       event.clientX,
       event.clientY,
     );
@@ -343,6 +348,7 @@ export class ResizeElement extends Plugin implements IPlugin {
       width: rect.width,
       height: rect.height,
     });
+    syncUnmirroredAtom(target);
   }
 
   private getViewportRect(element: TextElement): Rect {
@@ -351,18 +357,6 @@ export class ResizeElement extends Plugin implements IPlugin {
       element,
     );
     return { x, y, width, height };
-  }
-
-  private clientToElement(
-    element: TextElement,
-    x: number,
-    y: number,
-  ): DOMPoint {
-    const matrix =
-      element.getScreenCTM()?.inverse() ||
-      this.editor.getDocument().getScreenCTM()?.inverse() ||
-      new DOMMatrix();
-    return new DOMPoint(x, y).matrixTransform(matrix);
   }
 
   private getCurrentAttributes(element: TextElement): Rect {

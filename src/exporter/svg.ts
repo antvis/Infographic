@@ -433,12 +433,28 @@ function resolveUseTarget(svg: SVGSVGElement, href: string) {
 function createInlineElement(use: SVGUseElement, target: SVGElement) {
   const tag = target.tagName.toLowerCase();
   if (tag === 'symbol') {
-    return materializeSymbol(use, target as SVGSymbolElement);
+    return wrapInUseTransform(
+      use,
+      materializeSymbol(use, target as SVGSymbolElement),
+    );
   }
   if (tag === 'svg') {
-    return materializeSVG(use, target as SVGSVGElement);
+    return wrapInUseTransform(
+      use,
+      materializeSVG(use, target as SVGSVGElement),
+    );
   }
   return materializeElement(use, target);
+}
+
+// SVG 1.1 consumers (WebKit) ignore `transform` on a nested <svg>, so the
+// <use> transform goes on a wrapping <g> instead.
+function wrapInUseTransform(use: SVGUseElement, svg: SVGSVGElement) {
+  const transform = use.getAttribute('transform');
+  if (!transform) return svg;
+  const wrapper = createElement<SVGGElement>('g', { transform });
+  wrapper.appendChild(svg);
+  return wrapper;
 }
 
 function materializeSymbol(use: SVGUseElement, symbol: SVGSymbolElement) {
@@ -446,7 +462,7 @@ function materializeSymbol(use: SVGUseElement, symbol: SVGSymbolElement) {
   const svg = createElement<SVGSVGElement>('svg');
 
   applyAttributes(svg, symbolClone, new Set(['id']));
-  applyAttributes(svg, use, new Set(['href', 'xlink:href']));
+  applyAttributes(svg, use, new Set(['href', 'xlink:href', 'transform']));
 
   while (symbolClone.firstChild) {
     svg.appendChild(symbolClone.firstChild);
@@ -458,7 +474,7 @@ function materializeSymbol(use: SVGUseElement, symbol: SVGSymbolElement) {
 function materializeSVG(use: SVGUseElement, source: SVGSVGElement) {
   const clone = source.cloneNode(true) as SVGSVGElement;
   clone.removeAttribute('id');
-  applyAttributes(clone, use, new Set(['href', 'xlink:href']));
+  applyAttributes(clone, use, new Set(['href', 'xlink:href', 'transform']));
   return clone;
 }
 
@@ -487,7 +503,7 @@ function buildUseTransform(use: SVGUseElement) {
   const y = use.getAttribute('y');
   const translate = x || y ? `translate(${x ?? 0} ${y ?? 0})` : '';
   const transform = use.getAttribute('transform') ?? '';
-  if (translate && transform) return `${translate} ${transform}`;
+  if (translate && transform) return `${transform} ${translate}`;
   return translate || transform || null;
 }
 

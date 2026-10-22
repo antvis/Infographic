@@ -1,4 +1,5 @@
 import { getCombinedBounds } from '../../../../jsx';
+import { mirrorSide } from '../../../../renderer/rtl';
 import type { Element } from '../../../../types';
 import {
   getAttributes,
@@ -149,7 +150,7 @@ function alignSelection(
   );
   const commands: UpdateElementCommand[] = [];
 
-  switch (action) {
+  switch (mirrorSide(selection[0], action)) {
     case 'LEFT': {
       const target = reference.x;
       movable.forEach((item) => {

@@ -1,10 +1,11 @@
+import { getLayoutRoot } from '../../renderer/rtl';
 import type { Element } from '../../types';
 
 export function getScreenCTM(svg: SVGSVGElement): DOMMatrix {
   return svg.getScreenCTM() || new DOMMatrix();
 }
 
-export function getInverseScreenCTM(svg: SVGSVGElement): DOMMatrix {
+export function getInverseScreenCTM(svg: SVGGraphicsElement): DOMMatrix {
   return svg.getScreenCTM()?.inverse() || new DOMMatrix();
 }
 
@@ -21,7 +22,19 @@ export function viewportToClient(
   );
 }
 
+/** Into the layout's own space (mirrored in RTL), where element geometry lives. */
 export function clientToViewport(
+  svg: SVGSVGElement,
+  x: number,
+  y: number,
+): DOMPoint {
+  return new DOMPoint(x, y).matrixTransform(
+    getInverseScreenCTM(getLayoutRoot(svg)),
+  );
+}
+
+/** Into the svg's own space, where its viewBox lives. */
+export function clientToViewBox(
   svg: SVGSVGElement,
   x: number,
   y: number,

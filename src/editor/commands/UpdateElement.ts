@@ -1,3 +1,4 @@
+import { syncUnmirroredAtom } from '../../renderer/rtl';
 import type { Element, IconElement } from '../../types';
 import {
   getAttributes,
@@ -59,6 +60,7 @@ function updateElement(element: Element, props: Partial<ElementProps>) {
   } else if (props.attributes) {
     setAttributes(element, props.attributes);
   }
+  syncUnmirroredAtom(element);
 }
 
 function getOriginalProps(

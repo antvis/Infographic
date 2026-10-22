@@ -216,7 +216,7 @@ export function getTextElementProps(text: TextElement): Partial<TextProps> {
   return { attributes: attrs, textContent: getTextContent(text) };
 }
 
-function flexToAlign(
+export function flexToAlign(
   justifyContent: string | null | undefined,
   alignContent: string | null | undefined,
 ): [TextHorizontalAlign, TextVerticalAlign] {
@@ -231,6 +231,13 @@ function flexToAlign(
       horizontal = 'CENTER';
       break;
     case 'flex-end':
+      horizontal = 'RIGHT';
+      break;
+    // Physical sides are only written by the RTL pass (renderer/rtl).
+    case 'right':
+      horizontal = 'LEFT';
+      break;
+    case 'left':
       horizontal = 'RIGHT';
       break;
   }

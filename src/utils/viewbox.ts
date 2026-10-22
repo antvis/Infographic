@@ -1,9 +1,11 @@
+export function parseViewBox(viewBox: string) {
+  const [x, y, width, height] = viewBox.split(' ').map(Number);
+  return { x, y, width, height };
+}
+
 export function getViewBox(svg: SVGSVGElement) {
   const viewBox = svg.getAttribute('viewBox');
-  if (viewBox) {
-    const [x, y, width, height] = viewBox.split(' ').map(Number);
-    return { x, y, width, height };
-  }
+  if (viewBox) return parseViewBox(viewBox);
   const widthStr = svg.getAttribute('width');
   const heightStr = svg.getAttribute('height');
   const width = Number(widthStr) || 0;

@@ -4,14 +4,14 @@ import { DragCanvas } from '../../../../src/editor/interactions/drag-canvas';
 
 // Hoist mocks to be used in vi.mock
 const {
-  clientToViewportMock,
+  clientToViewBoxMock,
   getViewBoxMock,
   viewBoxToStringMock,
   isTextSelectionTargetMock,
   executeMock,
 } = vi.hoisted(() => {
   return {
-    clientToViewportMock: vi.fn(),
+    clientToViewBoxMock: vi.fn(),
     getViewBoxMock: vi.fn(),
     viewBoxToStringMock: vi.fn(),
     isTextSelectionTargetMock: vi.fn(),
@@ -24,7 +24,7 @@ vi.mock('../../../../src/editor/utils', async () => {
   const actual = await vi.importActual<any>('../../../../src/editor/utils');
   return {
     ...actual,
-    clientToViewport: clientToViewportMock,
+    clientToViewBox: clientToViewBoxMock,
     isTextSelectionTarget: isTextSelectionTargetMock,
   };
 });
@@ -94,7 +94,7 @@ describe('DragCanvas Interaction', () => {
     viewBoxToStringMock.mockImplementation(
       (box: any) => `${box.x} ${box.y} ${box.width} ${box.height}`,
     );
-    clientToViewportMock.mockReturnValue({ x: 0, y: 0 });
+    clientToViewBoxMock.mockReturnValue({ x: 0, y: 0 });
     isTextSelectionTargetMock.mockReturnValue(false);
   });
 
@@ -241,7 +241,7 @@ describe('DragCanvas Interaction', () => {
       svg.dispatchEvent(event);
 
       expect(preventDefaultSpy).toHaveBeenCalled();
-      expect(clientToViewportMock).toHaveBeenCalledWith(svg, 10, 10);
+      expect(clientToViewBoxMock).toHaveBeenCalledWith(svg, 10, 10);
       expect(document.body.style.cursor).toBe('grabbing');
     });
 
@@ -257,13 +257,13 @@ describe('DragCanvas Interaction', () => {
 
     it('updates viewBox on move', () => {
       // Start drag at 10,10
-      clientToViewportMock.mockReturnValue({ x: 10, y: 10 });
+      clientToViewBoxMock.mockReturnValue({ x: 10, y: 10 });
       svg.dispatchEvent(
         new PointerEvent('pointerdown', { button: 0, pointerId: 1 }),
       );
 
       // Move to 20,20
-      clientToViewportMock.mockReturnValue({ x: 20, y: 20 });
+      clientToViewBoxMock.mockReturnValue({ x: 20, y: 20 });
       const moveEvent = new PointerEvent('pointermove', { pointerId: 1 });
       window.dispatchEvent(moveEvent);
 
@@ -308,13 +308,13 @@ describe('DragCanvas Interaction', () => {
       // Initial state set in beforeEach is 0,0,100,100
 
       // Start Drag
-      clientToViewportMock.mockReturnValue({ x: 10, y: 10 });
+      clientToViewBoxMock.mockReturnValue({ x: 10, y: 10 });
       svg.dispatchEvent(
         new PointerEvent('pointerdown', { button: 0, pointerId: 1 }),
       );
 
       // Move
-      clientToViewportMock.mockReturnValue({ x: 20, y: 20 });
+      clientToViewBoxMock.mockReturnValue({ x: 20, y: 20 });
       window.dispatchEvent(new PointerEvent('pointermove', { pointerId: 1 }));
 
       // Mock current viewBox as changed for the stop check
