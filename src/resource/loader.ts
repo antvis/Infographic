@@ -107,19 +107,19 @@ function getFallbackQuery(
   datum?: ItemDatum,
 ): string {
   const defaultQuery = scene === 'illus' ? 'illustration' : 'icon';
-  const datumQuery =
-    normalizeQuery(cfg.data) ||
-    normalizeQuery(datum?.label) ||
-    normalizeQuery(datum?.desc);
-  if (datumQuery) return datumQuery;
-
   const data = normalizeQuery(cfg.data);
-  if (!data) return defaultQuery;
-  if (cfg.source === 'inline') return defaultQuery;
-  if (data.startsWith('data:')) return defaultQuery;
-  if (data.startsWith('<svg') || data.startsWith('<symbol'))
-    return defaultQuery;
-  return data;
+  if (
+    data &&
+    cfg.source !== 'inline' &&
+    !data.startsWith('data:') &&
+    !data.startsWith('<svg') &&
+    !data.startsWith('<symbol')
+  ) {
+    return data;
+  }
+  return (
+    normalizeQuery(datum?.label) || normalizeQuery(datum?.desc) || defaultQuery
+  );
 }
 
 function normalizeQuery(value?: string): string | null {
