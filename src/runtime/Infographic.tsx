@@ -15,7 +15,7 @@ import { DEFAULT_FONT, Renderer, setDefaultFont } from '../renderer';
 import { waitForSvgLoads } from '../resource';
 import { parseSyntax, type SyntaxError } from '../syntax';
 import { IEventEmitter } from '../types';
-import { getTypes, parseSVG } from '../utils';
+import { getTypes, parseSVG, withTextLinesCache } from '../utils';
 import { DEFAULT_OPTIONS } from './options';
 import {
   cloneOptions,
@@ -146,15 +146,19 @@ export class Infographic {
     if (themeFontFamily) setDefaultFont(themeFontFamily);
 
     try {
-      const svg = renderSVG(
-        <Structure
-          data={data}
-          Title={Title}
-          Item={Item}
-          Items={Items}
-          options={parsedOptions}
-          {...structureProps}
-        />,
+      // Text measurements are memoized per compose pass only — font metrics can
+      // change between renders once web fonts finish loading.
+      const svg = withTextLinesCache(() =>
+        renderSVG(
+          <Structure
+            data={data}
+            Title={Title}
+            Item={Item}
+            Items={Items}
+            options={parsedOptions}
+            {...structureProps}
+          />,
+        ),
       );
 
       const template = parseSVG(svg);
