@@ -148,7 +148,7 @@
     "vite": "^7.1.5",
     "vite-node": "^3.2.4",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.8"
   },
   "publishConfig": {
     "access": "public",
