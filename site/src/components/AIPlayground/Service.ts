@@ -44,6 +44,7 @@ export async function fetchModels(
       case 'xai':
       case 'qwen':
       case 'atlascloud':
+      case 'uberllm':
         return fetchOpenAIModels(normalizedBase, apiKey);
       case 'anthropic':
         return fetchAnthropicModels(normalizedBase, apiKey);
@@ -160,6 +161,7 @@ async function callAI(
       case 'xai':
       case 'qwen':
       case 'atlascloud':
+      case 'uberllm':
         return callOpenAICompatible(
           baseURL,
           apiKey,
@@ -412,6 +414,7 @@ function extractContentFromResponse(provider: AIProvider, data: any): string {
     case 'xai':
     case 'qwen':
     case 'atlascloud':
+    case 'uberllm':
       return data.choices?.[0]?.delta?.content || '';
     case 'anthropic':
       if (data.type === 'content_block_delta') {

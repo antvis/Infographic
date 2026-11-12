@@ -68,4 +68,10 @@ export const PROVIDER_OPTIONS: Array<{
     baseUrl: 'https://api.atlascloud.ai/v1',
     model: 'deepseek-ai/deepseek-v4-pro',
   },
+  {
+    value: 'uberllm',
+    label: 'UberLLM',
+    baseUrl: 'https://api.uberllm.dev/v1',
+    model: 'deepseek/deepseek-v4-pro',
+  },
 ];

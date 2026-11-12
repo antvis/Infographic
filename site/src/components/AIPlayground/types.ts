@@ -15,7 +15,8 @@ export type AIProvider =
   | 'xai'
   | 'deepseek'
   | 'qwen'
-  | 'atlascloud';
+  | 'atlascloud'
+  | 'uberllm';
 
 export type AIConfig = {
   provider: AIProvider;
